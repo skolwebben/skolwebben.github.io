@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vittra Södermalm</title>
+    <link rel="stylesheet" href="css/teknik.css">
+</head>
+<body>
+<div class="container">
+<div class="header">
+    <img id="page_image" alt="AI Bild">
+</div>
+	
+    
+    <h2>Matematik årskurs 8</h2>
+    
+    <h3 style="cursor: pointer" onclick="location.href='ma-vt2025.pdf';">Planering VT 2025 →</h3>
+    <p>Terminsplanering samt veckoplanering fram till sportlovet.</p>
+    
+    
+    <h3 style="cursor: pointer" onclick="location.href='samband.pdf';">Samband →</h3>
+    <p>Ett häfte om samband som tillhör kapitel 4 i Matte Direkt åk 8.</p>
+    
+    <h3 style="cursor: pointer" onclick="location.href='samband-np-uppgifter.pdf';">Samband NP-uppgifter →</h3>
+    <p>Uppgifter från gamla nationella prov i matematik som handlar om samband.</p>
+    
+    <h3 style="cursor: pointer" onclick="location.href='procent.pdf';">Procent →</h3>
+    <p>Ett häfte om procent som tillhör kapitel 5 i Matte Direkt åk 8.</p>
+    
+    <h3 style="cursor: pointer" onclick="location.href='procent-np-uppgifter.pdf';">Procent NP-uppgifter →</h3>
+    <p>Uppgifter från gamla nationella prov i matematik som handlar om procent.</p>
+    
+    
+    <br>
+    <h2>NO/Tk årskurs 8</h2>
+    
+    <h3 style="cursor: pointer" onclick="location.href='no-vt2025.pdf';">Planering VT 2025 →</h3>
+    <p>Terminsplanering samt veckoplanering fram till sportlovet.</p>
+    
+    
+    <h3 style="cursor: pointer" onclick="location.href='bi-kap5.pdf';">Cellen, genetik och bioteknik →</h3>
+    <p>Kunskapshäftet <i>Cellen, genetik och bioteknik</i> som tillhör kapitel 5 i Biologi Direkt.</p>
+    
+    <h3 style="cursor: pointer" onclick="location.href='bi-kap5-np-uppgifter.pdf';">Biologi Direkt kapitel 5: NP-uppgifter →</h3>
+    <p>Uppgifter från gamla nationella prov i NO som berör kapitel 5 i Biologi Direkt.</p>
+    
+    <h3 style="cursor: pointer" onclick="location.href='fy-kap4.pdf';">Ljud och ljus →</h3>
+    <p>Kunskapshäftet <i>Ljud och ljus</i> som tillhör kapitel 4 i Fysik Direkt.</p>
+    
+    <h3 style="cursor: pointer" onclick="location.href='fy-kap4-np-uppgifter.pdf';">Fysik Direkt kapitel 4: NP-uppgifter →</h3>
+    <p>Uppgifter från gamla nationella prov i NO som berör kapitel 4 i Fysik Direkt.</p>
+    
+    
+
+<script>
+	if (!localStorage.hasOwnProperty("index")) {
+		localStorage.setItem("index", "2");
+	}
+	let idx = parseInt(localStorage.getItem("index"));
+	idx = (idx + 1) % 3;
+	localStorage.setItem("index", idx + "");
+	images = ["images/ai.png", "images/ai2.png", "images/ai3.png"]
+    document.getElementById("page_image").src = images[idx];
+</script>
+</body>
+</html>
+
