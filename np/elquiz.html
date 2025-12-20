@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fysikquiz: El & Magnetism (Åk 9)</title>
+    <!-- Importerar moderna fonter från Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Färgpalett - Professionell & Ren */
+            --card-bg: #ffffff;
+            
+            --brand-color: #2c3e50;
+            --brand-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            
+            --accent-color: #3498db;
+            
+            --success-color: #10ac84;
+            --success-bg: #e3f9f1;
+            
+            --error-color: #ee5253;
+            --error-bg: #ffeded;
+            
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            
+            --shadow-card: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+            --radius-main: 16px;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            /* Gråaktig fade (Silver/Metallic style) */
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 680px; 
+            border-radius: var(--radius-main);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-top: 3vh;
+            margin-bottom: 3vh;
+        }
+
+        header {
+            background: var(--brand-gradient);
+            color: white;
+            padding: 20px; 
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            font-size: 1.5rem; 
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .content-area {
+            padding: 25px 30px; 
+            flex-grow: 1;
+        }
+
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--brand-color);
+            margin-top: 0;
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        /* Fact Section Styles */
+        .fact-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            /* Borttagen border-left enligt önskemål */
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        
+        .fact-icon {
+            font-size: 2rem;
+            display: block;
+            margin-top: -5px;
+        }
+        
+        .fact-content {
+            flex: 1;
+        }
+
+        .btn {
+            background: var(--brand-gradient);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
+            opacity: 0.95;
+        }
+
+        /* Question Styles */
+        .question-meta {
+            display: inline-block;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #f1f2f6;
+            padding: 15px 20px;
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            color: var(--text-main);
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent-color);
+            background-color: #f8fcff;
+            transform: translateX(3px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        /* Status states for options */
+        .option-btn.correct {
+            background-color: var(--success-bg);
+            border-color: var(--success-color);
+            color: #0b6e4f;
+            font-weight: 600;
+        }
+        
+        .option-btn.correct::after {
+            content: "✓";
+            position: absolute;
+            right: 15px;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--error-bg);
+            border-color: var(--error-color);
+            color: #c0392b;
+            opacity: 0.8;
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        /* Feedback Box */
+        .feedback-box {
+            margin-top: 20px;
+            padding: 20px 25px;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            color: var(--text-main);
+            border: 1px solid #e9ecef;
+            display: none; 
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .feedback-box h3 {
+            margin-top: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .feedback-box.success h3 {
+            color: var(--success-color);
+        }
+        
+        .feedback-box.error h3 {
+            color: var(--error-color);
+        }
+
+        .feedback-box strong {
+            color: var(--brand-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Progress Bar Styles */
+        .progress-bar-container {
+            height: 6px; 
+            background-color: #f1f3f5;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        /* Summary Styles */
+        .summary-stats {
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-score {
+            font-size: 3.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            display: block;
+            margin: 5px 0;
+            line-height: 1;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .summary-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .summary-item {
+            background: white;
+            border-bottom: 1px solid #f1f1f1;
+            padding: 12px 0;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-question {
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+            font-size: 0.95rem;
+        }
+        
+        .summary-answer-row {
+            font-size: 0.9rem;
+        }
+
+        .summary-correct-text { color: var(--success-color); font-weight: 600; }
+        .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+        .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+        /* Helpers */
+        strong {
+            color: var(--brand-color);
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 id="header-title">Fysikquiz: El & Magnetism</h1>
+    </header>
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="content-area" id="app">
+        <!-- Content will be injected here by JavaScript -->
+    </div>
+</div>
+
+<script>
+    // --- DATA ---
+    const quizData = [
+        {
+            title: "Block 1: Statisk Elektricitet",
+            icon: "⚡",
+            text: "En atom består av negativt laddade <strong>elektroner</strong> och positivt laddade <strong>protoner</strong>. Normalt är atomen oladdad, men <strong>statisk elektricitet</strong> uppstår när man gnider bort negativa laddningar, vilket gör att atomen blir positivt laddad. Naturen strävar alltid efter att jämna ut skillnader, så atomen kommer förr eller senare att återfå sin negativa laddning. Ett exempel på statisk elektricitet är <strong>åska</strong>, där åskmolnen blir positivt laddade upptill och negativt laddade nertill, närmast jorden.",
+            questions: [
+                {
+                    q: "Vilken partikel i atomen är negativt laddad?",
+                    options: [
+                        "Protoner",
+                        "Neutroner",
+                        "Elektroner",
+                        "Nukleoner"
+                    ],
+                    correct: 2, 
+                    explanation: "<strong>Elektronerna</strong> är de negativt laddade partiklarna som finns i atomen. Neutroner är oladdade och protoner är positivt laddade."
+                },
+                {
+                    q: "Vad kallas det när en oladdad atom tappar negativa laddningar och blir positivt laddad?",
+                    options: [
+                        "Elektrisk potential",
+                        "Statisk elektricitet",
+                        "Induktion",
+                        "Kärnenergi"
+                    ],
+                    correct: 1,
+                    explanation: "När negativa laddningar (elektroner) gnids bort och den elektriska skillnaden uppstår, kallas det <strong>statisk elektricitet</strong>. Denna skillnad försöker naturen sedan jämna ut."
+                },
+                {
+                    q: "Vilken naturlig process är ett exempel på statisk elektricitet?",
+                    options: [
+                        "Värmeutvidgning",
+                        "Strålningsenergi",
+                        "Växelström",
+                        "Åska"
+                    ],
+                    correct: 3,
+                    explanation: "<strong>Åska</strong> är ett exempel på statisk elektricitet som uppstår när laddningsskillnaden i åskmoln jämnas ut som en blixt."
+                }
+            ]
+        },
+        {
+            title: "Block 2: Spänning och Ström",
+            icon: "🔌",
+            text: "Elektricitet är ett flöde av elektroner. <strong>Spänning</strong> (mäts i <strong>volt, V</strong>) är skillnaden i laddning (elektrisk potential) mellan plus- och minuspolen, och det är spänningen som får elektronerna att röra sig. <strong>Ström</strong> (mäts i <strong>Ampere, A</strong>) är flödet av elektroner i en ledning. Spänningen gör det möjligt för strömmen att existera, men det är strömmen som driver elektriska produkter.",
+            questions: [
+                {
+                    q: "Vilken enhet används för att mäta spänning?",
+                    options: [
+                        "Ampere (A)",
+                        "Volt (V)",
+                        "Ohm (Ω)",
+                        "Watt (W)"
+                    ],
+                    correct: 1,
+                    explanation: "Spänning är ett mått på elektrisk kraft och mäts i enheten <strong>volt (V)</strong>. Ström mäts i Ampere."
+                },
+                {
+                    q: "Vad driver elektriska produkter enligt källorna?",
+                    options: [
+                        "Spänningen (skillnaden mellan polerna)",
+                        "Elektrisk potential",
+                        "Strömmen",
+                        "Likström"
+                    ],
+                    correct: 2,
+                    explanation: "Det är <strong>strömmen</strong> som driver elektriska produkter, medan spänningen skapar möjligheten för strömmen att existera."
+                },
+                {
+                    q: "Vad är skillnaden mellan likström och växelström?",
+                    options: [
+                        "Likström finns i vägguttag, växelström i batterier.",
+                        "Växelström är starkare än likström.",
+                        "Likström åker alltid i samma riktning, medan växelström byter riktning",
+                        "Växelström mäts i Watt och likström i Ampere."
+                    ],
+                    correct: 2,
+                    explanation: "<strong>Likström</strong> (som i batterier) färdas alltid i en riktning, medan <strong>växelström</strong> (som i vägguttag) byter riktning 100 gånger per sekund."
+                }
+            ]
+        },
+        {
+            title: "Block 3: Resistans & Ohms lag",
+            icon: "💡",
+            text: "<strong>Elektrisk resistans</strong> (motstånd) påverkar strömmen i en ledare. En bra ledare, som <strong>koppar</strong>, har låg resistans, vilket tillåter fler elektroner att passera. Låg resistans uppnås genom <strong>låg temperatur</strong>, <strong>stor diameter</strong> och <strong>kort längd</strong> på ledaren. Sambandet mellan spänning (U), ström (I) och resistans (R) beskrivs av <strong>Ohms lag</strong>: U = R * I. När ström stöter på motstånd omvandlas elektrisk energi till värmeenergi.",
+            questions: [
+                {
+                    q: "Vilket uttalande om en ledares egenskaper ger den lägsta möjliga resistansen?",
+                    options: [
+                        "Hög temperatur och stor diameter.",
+                        "Låg temperatur och stor diameter.",
+                        "Kort längd och litet motstånd.",
+                        "Lång längd och låg temperatur."
+                    ],
+                    correct: 1,
+                    explanation: "Låg resistans uppnås när temperaturen är <strong>låg</strong>, diametern på ledaren är <strong>stor</strong> och längden är <strong>kort</strong>."
+                },
+                {
+                    q: "Vilken metall används vanligen i elledningar i Sverige eftersom den är en bra ledare?",
+                    options: [
+                        "Silver",
+                        "Guld",
+                        "Koppar",
+                        "Plast"
+                    ],
+                    correct: 2,
+                    explanation: "Silver, koppar och guld leder elektricitet bäst, men <strong>koppar</strong> används i vanliga elledningar. Plast är en isolator som inte leder ström."
+                },
+                {
+                    q: "Vilket samband beskriver Ohms lag?",
+                    options: [
+                        "Motstånd = Spänning / Ström (R = U/I)",
+                        "Ström = Motstånd / Spänning (I = R/U)",
+                        "Spänning = Ström * Motstånd (U = I*R)",
+                        "Effekt = Spänning * Ström (P = U*I)"
+                    ],
+                    correct: 2,
+                    explanation: "<strong>Ohms lag</strong> fastställer att spänningen (U) är lika med strömstyrkan (I) multiplicerat med resistansen (R)."
+                }
+            ]
+        },
+        {
+            title: "Block 4: Kopplingar & Effekt",
+            icon: "🔋",
+            text: "<strong>Elektrisk effekt</strong> (P, mäts i <strong>watt, W</strong>) mäter hur snabbt en apparat omvandlar elektrisk energi. För att mäta den totala energiförbrukningen multiplicerar man effekten med tiden, vilket mäts i <strong>watt-timmar (Wh)</strong> eller kilowatt-timmar (kWh). När komponenter kopplas i <strong>seriekoppling</strong> adderas spänningen om det är batterier, men om en komponent går sönder bryts kretsen. I en <strong>parallellkoppling</strong> har strömmen flera vägar, vilket gör att om en lampa går sönder fortsätter de andra att lysa.",
+            questions: [
+                {
+                    q: "Vad händer i en seriekoppling om en av lamporna går sönder?",
+                    options: [
+                        "Spänningen i kretsen ökar.",
+                        "De andra lamporna fortsätter att lysa.",
+                        "Strömmen i kretsen dubbleras.",
+                        "Alla lampor slocknar."
+                    ],
+                    correct: 3,
+                    explanation: "Om en lampa i en <strong>seriekoppling</strong> går sönder blir det inte en sluten krets, och strömmen kan då inte ta sig runt mellan minus- och pluspolen."
+                },
+                {
+                    q: "Hur förhåller sig spänningen i en parallellkoppling med flera lampor till batteriets spänning?",
+                    options: [
+                        "Spänningen halveras för varje lampa.",
+                        "Spänningen dubbleras.",
+                        "Spänningen över varje lampa är lika stor som batteriets spänning.",
+                        "Spänningen över lamporna minskar med antalet lampor."
+                    ],
+                    correct: 2,
+                    explanation: "I en <strong>parallellkoppling</strong> lyser alla lampor lika starkt eftersom spänningen över dem kommer att vara lika stor som batteriets spänning."
+                },
+                {
+                    q: "Vilken enhet används för att mäta elektrisk effekt?",
+                    options: [
+                        "Joule (J)",
+                        "Volt (V)",
+                        "Ampere (A)",
+                        "Watt (W)"
+                    ],
+                    correct: 3,
+                    explanation: "<strong>Elektrisk effekt</strong> (P) mäts i enheten <strong>watt (W)</strong>."
+                }
+            ]
+        },
+        {
+            title: "Block 5: Magnetism",
+            icon: "🧲",
+            text: "Magneter drar till sig magnetiska metaller som järn (Fe), nickel (Ni) och kobolt (Co). Runt varje magnet finns ett osynligt <strong>magnetfält</strong>. Lika magnetpoler stöter bort varandra (<strong>repellera</strong>), medan olika poler dras mot varandra (<strong>attrahera</strong>). Runt en strömförande ledare uppstår det alltid ett magnetfält. Detta utnyttjas i <strong>elektromagneter</strong>, vars styrka kan ökas genom att linda metalltråden som en <strong>spole</strong> (ju fler varv desto starkare) och använda en järnspik som kärna.",
+            questions: [
+                {
+                    q: "Vad händer med en kompass i närheten av en magnet?",
+                    options: [
+                        "Kompassen blir elektriskt laddad.",
+                        "Magneten avmagnetiserar kompassen.",
+                        "Kompassnålen börjar snurra på grund av magnetfältet.",
+                        "Magnetfältet skyddar kompassen från strålning."
+                    ],
+                    correct: 2,
+                    explanation: "Kring en magnet finns ett osynligt <strong>magnetfält</strong> som påverkar kompasser så att kompassnålen börjar snurra när den förs mot magneten."
+                },
+                {
+                    q: "Vad är det som skapar magnetfältet kring en elektromagnet?",
+                    options: [
+                        "Järnspiken eller metallstaven.",
+                        "Den statiska elektriciteten i spolen.",
+                        "Strömmen som går genom ledaren.",
+                        "Attraktionen mellan nord- och sydpolen."
+                    ],
+                    correct: 2,
+                    explanation: "Runt en sladd där det går <strong>ström</strong> (ledare) uppstår det alltid ett <strong>magnetfält</strong>."
+                },
+                {
+                    q: "Vilken regel gäller för magnetpoler?",
+                    options: [
+                        "En nordpol och en sydpol repellerar varandra.",
+                        "Två sydpoler attraherar varandra.",
+                        "Två nordpoler stöter bort varandra.",
+                        "En nordpol kan attrahera ett icke-magnetiskt föremål."
+                    ],
+                    correct: 2,
+                    explanation: "Två nordpoler eller två sydpoler vill stöta bort varandra (<strong>repellera</strong>)."
+                }
+            ]
+        },
+        {
+            title: "Block 6: Elmotor och Generator",
+            icon: "⚙️",
+            text: "Sambandet mellan elektricitet och magnetism har lett till uppfinningar som elmotorn och generatorn. En <strong>elmotor</strong> omvandlar <strong>elektrisk energi till rörelseenergi</strong>. Den fungerar genom att en elektromagnet roterar i ett magnetfält, där snabba riktningsbyten i strömmen får elektromagnetens magnetfält att växla, vilket driver rotationen. En <strong>generator</strong> är motsatsen till elmotorn; den omvandlar <strong>rörelseenergi till elektrisk energi</strong> genom <strong>induktion</strong>. Generatorer producerar nästan all elektricitet i Sverige och kan finnas i vattenkraftverk, vindkraftverk och kärnkraftverk.",
+            questions: [
+                {
+                    q: "Vad omvandlar en generator?",
+                    options: [
+                        "Rörelseenergi till elektrisk energi.",
+                        "Elektrisk energi till rörelseenergi.",
+                        "Värmeenergi till kemisk energi.",
+                        "Kemisk energi till elektrisk energi."
+                    ],
+                    correct: 0,
+                    explanation: "En <strong>generator</strong> är elmotorns motsats och omvandlar <strong>rörelseenergi till elektrisk energi</strong>, till exempel i vattenkraftverk."
+                },
+                {
+                    q: "Vad kallas det när en magnet snurrar inuti en spole och alstrar ström?",
+                    options: [
+                        "Spänning",
+                        "Induktion",
+                        "Ohms lag",
+                        "Resistans"
+                    ],
+                    correct: 1,
+                    explanation: "Elektriciteten uppkommer genom att en magnet snurrar snabbt inuti en spole, vilket är ett fenomen som kallas <strong>induktion</strong>."
+                },
+                {
+                    q: "Vad är den grundläggande funktionen hos en elmotor?",
+                    options: [
+                        "Att utjämna laddningsskillnader.",
+                        "Att mäta strömstyrka.",
+                        "Att reglera växelström.",
+                        "Att omvandla elektrisk energi till rörelseenergi."
+                    ],
+                    correct: 3,
+                    explanation: "<strong>Elmotorer</strong> används för att omvandla <strong>elektrisk energi till rörelseenergi</strong>, som i hushållsredskap och fordon."
+                }
+            ]
+        }
+    ];
+
+    // --- STATE MANAGEMENT ---
+    let currentSectionIndex = 0;
+    let currentQuestionIndex = 0; // Relative to current section
+    let score = 0;
+    let userAnswers = [];
+    let state = 'intro'; // 'intro', 'question', 'summary'
+
+    // --- DOM ELEMENTS ---
+    const app = document.getElementById('app');
+    const headerTitle = document.getElementById('header-title');
+    const progressBar = document.getElementById('progress-bar');
+
+    // --- MAIN RENDER FUNCTION ---
+    function render() {
+        if (state === 'summary') {
+            renderSummary();
+            return;
+        }
+
+        const section = quizData[currentSectionIndex];
+
+        // Update Header with smooth fade
+        headerTitle.style.opacity = '0';
+        setTimeout(() => {
+            headerTitle.innerText = section.title;
+            headerTitle.style.transition = 'opacity 0.2s';
+            headerTitle.style.opacity = '1';
+        }, 150);
+
+        // Calculate total progress
+        let totalQuestions = 0;
+        let answeredQuestions = 0;
+        
+        quizData.forEach((sec, idx) => {
+            totalQuestions += sec.questions.length;
+            if (idx < currentSectionIndex) {
+                answeredQuestions += sec.questions.length;
+            } else if (idx === currentSectionIndex && state === 'question') {
+                answeredQuestions += currentQuestionIndex;
+            }
+        });
+        const pct = (answeredQuestions / totalQuestions) * 100;
+        progressBar.style.width = `${pct}%`;
+
+        if (state === 'intro') {
+            renderSectionIntro(section);
+        } else if (state === 'question') {
+            renderQuestion(section.questions[currentQuestionIndex]);
+        }
+    }
+
+    // --- RENDER SECTION TEXT ---
+    function renderSectionIntro(section) {
+        // Simple animation class reset
+        app.classList.remove('fade-in');
+        void app.offsetWidth; // trigger reflow
+        app.classList.add('fade-in');
+
+        app.innerHTML = `
+            <div class="fact-box">
+                <span class="fact-icon">${section.icon}</span>
+                <div class="fact-content">
+                    <h2>Fakta</h2>
+                    <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+                </div>
+            </div>
+            <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+        `;
+    }
+
+    // --- RENDER QUESTION ---
+    function renderQuestion(q) {
+        const totalInCurrent = quizData[currentSectionIndex].questions.length;
+        
+        // Render with reset styles for feedback box
+        app.innerHTML = `
+            <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+            <h2 style="color: #2c3e50; font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+            <div class="options-grid">
+                ${q.options.map((opt, idx) => `
+                    <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+                `).join('')}
+            </div>
+            <div id="feedback" class="feedback-box">
+                <h3 id="feedback-title"></h3>
+                <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+                <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+            </div>
+        `;
+    }
+
+    // --- RENDER SUMMARY ---
+    function renderSummary() {
+        headerTitle.innerText = "Sammanfattning";
+        progressBar.style.width = '100%';
+        
+        let totalQ = 0;
+        quizData.forEach(s => totalQ += s.questions.length);
+        
+        // Calculate score
+        let correctCount = userAnswers.filter(a => a.isCorrect).length;
+        let pct = Math.round((correctCount / totalQ) * 100);
+        
+        let gradeTitle = "";
+        
+        if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+        else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+        else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+        else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+        let html = `
+            <div class="summary-stats">
+                <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+                <span class="summary-score">${correctCount}/${totalQ}</span>
+                <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+                <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+            </div>
+            <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+            <div class="summary-list">
+        `;
+
+        userAnswers.forEach((ans, idx) => {
+            const isCorrect = ans.isCorrect;
+            
+            html += `
+                <div class="summary-item">
+                    <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                    <div class="summary-answer-row">
+                        ${isCorrect 
+                            ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>` 
+                            : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                        }
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+        app.innerHTML = html;
+    }
+
+    // --- LOGIC FUNCTIONS ---
+    window.startQuestions = function() {
+        state = 'question';
+        currentQuestionIndex = 0;
+        render();
+    };
+
+    window.handleAnswer = function(selectedIndex) {
+        // Disable all buttons
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.disabled = true);
+
+        const section = quizData[currentSectionIndex];
+        const currentQ = section.questions[currentQuestionIndex];
+        const isCorrect = selectedIndex === currentQ.correct;
+
+        // Visual feedback on buttons
+        const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+        const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+        if (isCorrect) {
+            selectedBtn.classList.add('correct');
+        } else {
+            selectedBtn.classList.add('incorrect');
+            correctBtn.classList.add('correct'); // Show which one was right
+        }
+
+        // Show feedback box
+        const feedbackBox = document.getElementById('feedback');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-btn');
+
+        feedbackBox.style.display = 'block';
+        
+        // Add class for success/error styling
+        if (isCorrect) {
+            feedbackBox.className = "feedback-box success";
+            feedbackTitle.innerHTML = "Rätt svar!"; 
+        } else {
+            feedbackBox.className = "feedback-box error";
+            feedbackTitle.innerHTML = "Inte riktigt..."; 
+        }
+        
+        feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+        // Check if last question of entire quiz
+        const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+        
+        if(isLastQuestionOverall) {
+            nextBtn.innerText = "Se resultat 🏁";
+        } else if (currentQuestionIndex === section.questions.length - 1) {
+            nextBtn.innerText = "Nästa del ➔";
+        }
+
+        // Scroll to feedback if needed on mobile, but gently
+        const rect = feedbackBox.getBoundingClientRect();
+        const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+        if (!isVisible) {
+             setTimeout(() => {
+                feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // Save data
+        userAnswers.push({
+            question: currentQ.q,
+            userAnswer: currentQ.options[selectedIndex],
+            correctAnswer: currentQ.options[currentQ.correct],
+            isCorrect: isCorrect
+        });
+    };
+
+    window.nextStep = function() {
+        const section = quizData[currentSectionIndex];
+        
+        // Reset feedback styles for next render
+        const feedbackBox = document.getElementById('feedback');
+        if(feedbackBox) {
+            feedbackBox.style.display = 'none';
+        }
+
+        // Check if there are more questions in this section
+        if (currentQuestionIndex < section.questions.length - 1) {
+            currentQuestionIndex++;
+            render();
+        } else {
+            // End of section, move to next section
+            if (currentSectionIndex < quizData.length - 1) {
+                currentSectionIndex++;
+                state = 'intro';
+                render();
+            } else {
+                // End of quiz
+                state = 'summary';
+                render();
+            }
+        }
+    };
+
+    // --- INIT ---
+    render();
+
+</script>
+
+</body>
+</html>
