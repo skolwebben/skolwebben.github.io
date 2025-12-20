@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>NP-Guiden | Din väg till A</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Plus Jakarta Sans', sans-serif;
+           background-color: #0f172a; /* Slate 900 */
+       }
+       .glass {
+           background: rgba(30, 41, 59, 0.7); /* Mörkare glass-effekt för läsbarhet */
+           backdrop-filter: blur(12px);
+           border: 1px solid rgba(255, 255, 255, 0.1);
+       }
+       .hero-gradient {
+           background: radial-gradient(circle at top right, #4f46e5, transparent 40%),
+                       radial-gradient(circle at bottom left, #0ea5e9, #0f172a 40%);
+       }
+       .subject-card {
+           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+           position: relative;
+           overflow: hidden;
+       }
+       .subject-card:hover {
+           transform: translateY(-8px);
+           border-color: rgba(255, 255, 255, 0.3);
+           box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+       }
+       .subject-card img {
+           transition: transform 0.7s ease;
+       }
+       .subject-card:hover img {
+           transform: scale(1.1);
+       }
+       .info-content {
+           display: none;
+           animation: fadeIn 0.5s ease-out;
+       }
+       .info-content.active {
+           display: block;
+       }
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(-10px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+       .btn-glow {
+           position: relative;
+           overflow: hidden;
+       }
+       .btn-glow::after {
+           content: '';
+           position: absolute;
+           top: 0;
+           left: -100%;
+           width: 100%;
+           height: 100%;
+           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+           transition: 0.5s;
+       }
+       .btn-glow:hover::after {
+           left: 100%;
+       }
+   </style>
+</head>
+<body class="text-slate-200 antialiased min-h-screen flex flex-col">
+
+
+   <!-- Hero Section -->
+   <div class="hero-gradient flex-grow">
+       <nav class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+           <div class="text-2xl font-extrabold tracking-tighter text-white">
+               NP-<span class="text-indigo-400">Guiden</span>
+           </div>
+           <!-- Placeholder links for future functionality -->
+       </nav>
+
+
+       <header class="max-w-4xl mx-auto px-6 pt-16 pb-24 text-center">
+           <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-8 leading-tight tracking-tight">
+               Nationella proven i <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">NO</span>
+           </h1>
+           <p class="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+               Din guide till de nationella proven i årskurs 9. Här hittar du fakta, övningar och strategier för biologi, kemi och fysik.
+           </p>
+
+
+           <!-- Info Dropdown Button -->
+           <button onclick="toggleInfo()" class="group glass px-8 py-4 rounded-full inline-flex items-center space-x-3 hover:bg-white/10 hover:border-indigo-400/50 transition-all duration-300 border border-indigo-500/30 shadow-lg shadow-indigo-500/20">
+               <span class="font-semibold text-white">Så fungerar provet</span>
+               <svg id="info-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-300 group-hover:translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+               </svg>
+           </button>
+
+
+           <!-- Info Panel (Faktagranskad mot Skolverket/Umeå Universitet) -->
+           <div id="info-panel" class="info-content max-w-5xl mx-auto mt-10 text-left relative z-10">
+               <div class="glass p-8 md:p-10 rounded-3xl border border-white/10 shadow-2xl bg-slate-900/80">
+                   <div class="grid md:grid-cols-2 gap-10">
+                       <div>
+                           <div class="flex items-center space-x-3 mb-4">
+                               <span class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 font-bold border border-indigo-500/30">A</span>
+                               <h3 class="text-xl font-bold text-white">Delprov A (90 min)</h3>
+                           </div>
+                           <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                               Detta delprov innehåller uppgifter som handlar om <strong>ämnets begrepp och förklaringsmodeller</strong> samt uppgifter som handlar om att <strong>granska information, kommunicera och ta ställning</strong>.
+                           </p>
+                       </div>
+
+
+                       <div>
+                           <div class="flex items-center space-x-3 mb-4">
+                               <span class="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">B</span>
+                               <h3 class="text-xl font-bold text-white">Delprov B (90 min)</h3>
+                           </div>
+                           <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                               Detta delprov fokuserar på <strong>systematiska undersökningar</strong>. Du ska teoretiskt visa din förmåga att planera undersökningar, formulera hypoteser, tolka resultat och dra slutsatser. Det innehåller även uppgifter om ämnets begrepp och förklaringsmodeller.
+                           </p>
+                           <p class="text-xs text-slate-500 italic">
+                               *Provet innehåller vanligtvis 15-20 uppgifter per delprov.
+                           </p>
+                       </div>
+                   </div>
+
+
+                   <div class="mt-8 pt-6 border-t border-white/10 bg-indigo-500/5 -mx-8 -mb-8 p-6 rounded-b-3xl flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6 text-center md:text-left">
+                       <div class="p-2 bg-indigo-500/20 rounded-lg text-indigo-300">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                           </svg>
+                       </div>
+                       <div>
+                           <p class="text-sm text-slate-300">
+                               <strong class="text-white">Vilket ämne får jag?</strong><br>
+                               Skolverket bestämmer vilket ämne (Biologi, Fysik eller Kemi) din skola ska skriva.
+                               Detta meddelas skolan c:a tre veckor innan provdagen.
+                           </p>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </header>
+
+
+       <!-- Subjects Grid -->
+       <section class="max-w-7xl mx-auto px-6 pb-32">
+           <h2 class="text-center text-slate-500 text-sm font-bold tracking-widest uppercase mb-12">Välj ämne att plugga på</h2>
+           <div class="grid lg:grid-cols-3 gap-8">
+              
+               <!-- Biologi -->
+               <div class="subject-card group rounded-[2rem] bg-slate-800/50 border border-white/5 shadow-xl">
+                   <div class="h-56 overflow-hidden rounded-t-[2rem] relative">
+                       <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent z-10 opacity-60"></div>
+                       <!-- Unsplash source: Nature/Biology/Fern -->
+                       <img src="https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&q=80&w=800" alt="Biologi" class="w-full h-full object-cover">
+                   </div>
+                   <div class="p-8 relative z-20 -mt-12">
+                       <div class="inline-block bg-green-500/20 text-green-400 text-xs font-bold px-3 py-1 rounded-full border border-green-500/30 mb-4 backdrop-blur-md">
+                           EKOLOGI & KROPPEN
+                       </div>
+                       <h3 class="text-3xl font-bold text-white mb-3">Biologi</h3>
+                       <p class="text-slate-400 mb-8 text-sm leading-relaxed">
+                           Fördjupa dig i cellen, genetik, ekosystemtjänster och evolutionens mekanismer.
+                       </p>
+                       <a href="#biologi" class="btn-glow block w-full bg-green-600 hover:bg-green-500 text-white text-center font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-green-900/20">
+                           Öppna Biologi
+                       </a>
+                   </div>
+               </div>
+
+
+               <!-- Kemi -->
+               <div class="subject-card group rounded-[2rem] bg-slate-800/50 border border-white/5 shadow-xl">
+                   <div class="h-56 overflow-hidden rounded-t-[2rem] relative">
+                       <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent z-10 opacity-60"></div>
+                       <!-- Unsplash source: Laboratory Glassware/Chemistry -->
+                       <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=800" alt="Kemi" class="w-full h-full object-cover">
+                   </div>
+                   <div class="p-8 relative z-20 -mt-12">
+                       <div class="inline-block bg-blue-500/20 text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/30 mb-4 backdrop-blur-md">
+                           MATERIA & REAKTIONER
+                       </div>
+                       <h3 class="text-3xl font-bold text-white mb-3">Kemi</h3>
+                       <p class="text-slate-400 mb-8 text-sm leading-relaxed">
+                           Lär dig om periodiska systemet, kemiska bindningar, syror, baser och organisk kemi.
+                       </p>
+                       <a href="#kemi" class="btn-glow block w-full bg-blue-600 hover:bg-blue-500 text-white text-center font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-900/20">
+                           Öppna Kemi
+                       </a>
+                   </div>
+               </div>
+
+
+               <!-- Fysik -->
+               <div class="subject-card group rounded-[2rem] bg-slate-800/50 border border-white/5 shadow-xl">
+                   <div class="h-56 overflow-hidden rounded-t-[2rem] relative">
+                       <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent z-10 opacity-60"></div>
+                       <!-- Unsplash source: Abstract/Physics/Particles -->
+                       <img src="https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&q=80&w=800" alt="Fysik" class="w-full h-full object-cover">
+                   </div>
+                   <div class="p-8 relative z-20 -mt-12">
+                       <div class="inline-block bg-purple-500/20 text-purple-400 text-xs font-bold px-3 py-1 rounded-full border border-purple-500/30 mb-4 backdrop-blur-md">
+                           ENERGI & KRAFTER
+                       </div>
+                       <h3 class="text-3xl font-bold text-white mb-3">Fysik</h3>
+                       <p class="text-slate-400 mb-8 text-sm leading-relaxed">
+                           Utforska elektricitet, astronomi, mekanik och atomfysikens grunder.
+                       </p>
+                       <a href="fysik" class="btn-glow block w-full bg-purple-600 hover:bg-purple-500 text-white text-center font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-purple-900/20">
+                           Öppna Fysik
+                       </a>
+                   </div>
+               </div>
+
+
+           </div>
+       </section>
+   </div>
+
+
+   <!-- Footer -->
+   <footer class="bg-black py-12 px-6 border-t border-white/5">
+       <div class="max-w-7xl mx-auto text-center md:text-left flex flex-col md:flex-row justify-between items-center">
+           <div class="mb-4 md:mb-0">
+               <span class="text-white font-bold">NP-Guiden</span>
+               <span class="text-slate-600 mx-2">|</span>
+               <span class="text-slate-500 text-sm">Årskurs 9</span>
+           </div>
+           <!-- Removed the bottom text content as requested -->
+       </div>
+   </footer>
+
+
+   <script>
+       function toggleInfo() {
+           const panel = document.getElementById('info-panel');
+           const icon = document.getElementById('info-icon');
+          
+           panel.classList.toggle('active');
+          
+           if (panel.classList.contains('active')) {
+               icon.style.transform = 'rotate(180deg)';
+               // Scrolla så att infon syns, men med lite marginal (offset)
+               const yOffset = -100;
+               const y = panel.getBoundingClientRect().top + window.pageYOffset + yOffset;
+               window.scrollTo({top: y, behavior: 'smooth'});
+           } else {
+               icon.style.transform = 'rotate(0deg)';
+           }
+       }
+   </script>
+</body>
+</html>
+
+
