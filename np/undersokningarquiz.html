@@ -1,0 +1,848 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Fysikquiz: Systematiska Undersökningar (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Professionell & Ren */
+           --card-bg: #ffffff;
+          
+           --brand-color: #2c3e50;
+           --brand-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+          
+           --accent-color: #3498db;
+          
+           --success-color: #10ac84;
+           --success-bg: #e3f9f1;
+          
+           --error-color: #ee5253;
+           --error-bg: #ffeded;
+          
+           --text-main: #2d3436;
+           --text-muted: #636e72;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.15);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade (Silver/Metallic style) */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--brand-color);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #f8f9fa;
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           /* Ingen border-left */
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--text-muted);
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 600;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f1f2f6;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #f8fcff;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #0b6e4f;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #c0392b;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f8f9fa;
+           color: var(--text-main);
+           border: 1px solid #e9ecef;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: var(--brand-color);
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #f1f3f5;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+           border: 1px solid #dee2e6;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #f1f1f1;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: var(--brand-color);
+           font-weight: 700;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Fysikquiz: Systematiska Undersökningar</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Planering och Variabler",
+           icon: "📝",
+           text: "En systematisk undersökning börjar alltid med en frågeställning och ofta en <strong>hypotes</strong> (en välgrundad gissning). För att undersökningen ska bli rättvis ('fair test') måste man ha koll på sina variabler. <strong>Oberoende variabel</strong> är den sak du ändrar på med flit. Man ska bara ändra en sak i taget. <strong>Beroende variabel</strong> är den sak du mäter för att se resultatet. <strong>Kontrollvariabler</strong> är allt annat som måste hållas lika för att inte förstöra resultatet.",
+           questions: [
+               {
+                   q: "Du ska undersöka hur pendelns längd påverkar svängningstiden. Vad är den oberoende variabeln i detta experiment?",
+                   options: [
+                       "Tyngden på pendeln",
+                       "Snörets längd",
+                       "Tiden det tar att svänga",
+                       "Färgen på snöret"
+                   ],
+                   correct: 1,
+                   explanation: "Den <strong>oberoende variabeln</strong> är det du ändrar för att se vad som händer. I detta fall ändrar du längden för att se hur tiden påverkas."
+               },
+               {
+                   q: "Varför är det viktigt att bara ändra en variabel i taget?",
+                   options: [
+                       "För att det annars blir svårt att veta vad som orsakade resultatet.",
+                       "För att spara tid under laborationen.",
+                       "För att mätinstrumenten inte klarar av flera variabler.",
+                       "För att hypotesen alltid måste vara sann."
+                   ],
+                   correct: 0,
+                   explanation: "Om du ändrar både längd och tyngd samtidigt vet du inte vilken av dem som gjorde att tiden ändrades. Detta kallas för en <strong>rättvis undersökning (fair test)</strong>."
+               },
+               {
+                   q: "Vad är en hypotes?",
+                   options: [
+                       "En gissning helt utan grund.",
+                       "Det slutgiltiga resultatet av undersökningen.",
+                       "Ett antagande om resultatet baserat på tidigare kunskaper.",
+                       "En lista på materiel man behöver."
+                   ],
+                   correct: 2,
+                   explanation: "En <strong>hypotes</strong> är inte bara en gissning ('jag tror X') utan innehåller ofta en motivering ('jag tror X därför att...')."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Genomförande och Mätningar",
+           icon: "📏",
+           text: "När du genomför laborationen är det viktigt att använda rätt mätinstrument. I fysiken mäter vi <strong>storheter</strong> (t.ex. kraft, tid) som har <strong>enheter</strong> (Newton, sekunder). För att minska risken för slarvfel eller tillfälliga fel är det bra att göra <strong>upprepade mätningar</strong>. Om du mäter samma sak tre gånger och får nästan samma svar kan du lita mer på ditt resultat.",
+           questions: [
+               {
+                   q: "Vilket instrument används för att mäta kraft?",
+                   options: [
+                       "Termometer",
+                       "Manometer",
+                       "Skjutmått",
+                       "Dynamometer"
+                   ],
+                   correct: 3,
+                   explanation: "En <strong>dynamometer</strong> mäter kraft (ofta i enheten Newton). Ett skjutmått mäter små längder noggrant."
+               },
+               {
+                   q: "Eleverna Maja och Li mäter hur långt en bil rullar. Första gången rullar den 1,25 m, andra gången 1,22 m och tredje gången 1,28 m. Vad bör de göra?",
+                   options: [
+                       "De räknar ut ett medelvärde av de tre mätningarna.",
+                       "De väljer det värde som stämmer bäst med deras hypotes.",
+                       "De kastar resultaten eftersom de är olika.",
+                       "De väljer det högsta värdet för att få 'bäst' resultat."
+                   ],
+                   correct: 0,
+                   explanation: "Genom att beräkna <strong>medelvärdet</strong> jämnar man ut små tillfälliga variationer och får ett mer tillförlitligt mätvärde."
+               },
+               {
+                   q: "Vad menas med att 'avläsa instrumentet vinkelrätt'?",
+                   options: [
+                       "Att man håller instrumentet upp och ner.",
+                       "Att man använder en vinkelhake när man mäter.",
+                       "Att man tittar rakt framifrån på skalan för att undvika felvärde.",
+                       "Att man alltid mäter i 90 graders temperatur."
+                   ],
+                   correct: 2,
+                   explanation: "Om man tittar snett på en visare eller vätskeyta ser värdet ut att vara högre eller lägre än det faktiskt är. Detta kallas <strong>parallaxfel</strong>."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Dokumentation och Bearbetning",
+           icon: "📊",
+           text: "Resultaten från en undersökning ska dokumenteras tydligt, ofta i en <strong>tabell</strong> och sedan i ett <strong>diagram</strong>. Tabeller ska ha tydliga rubriker där storhet och enhet står. Diagram gör det lättare att se samband. Den oberoende variabeln (den vi styrde) sätts oftast på <strong>x-axeln</strong> (vågrät), och den beroende variabeln (resultatet) på <strong>y-axeln</strong> (lodrät).",
+           questions: [
+               {
+                   q: "Du har undersökt hur vattnets temperatur sjunker med tiden. Vilken diagramtyp passar bäst för att visa förändringen över tid?",
+                   options: [
+                       "Cirkeldiagram",
+                       "Stapeldiagram",
+                       "Linjediagram",
+                       "Venndiagram"
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Linjediagram</strong> är bäst för att visa hur något förändras kontinuerligt, exempelvis temperatur över tid eller sträcka över tid."
+               },
+               {
+                   q: "I din tabell har du skrivit rubriken 'Sträcka'. Vad saknas?",
+                   options: [
+                       "Enheten (t.ex. meter eller cm).",
+                       "Vilket datum det är.",
+                       "Ditt namn.",
+                       "Resultatet."
+                   ],
+                   correct: 0,
+                   explanation: "En storhet (som sträcka) måste alltid ha en <strong>enhet</strong> för att siffrorna ska betyda något. '5' säger inget, men '5 meter' är tydligt."
+               },
+               {
+                   q: "Om punkterna i ditt diagram bildar en rät linje som går genom origo (0,0), vad säger det om sambandet?",
+                   options: [
+                       "Att det inte finns något samband.",
+                       "Att resultatet är felaktigt.",
+                       "Att mätningen gick baklänges.",
+                       "Att variablerna är proportionella."
+                   ],
+                   correct: 3,
+                   explanation: "En rät linje genom origo visar <strong>proportionalitet</strong>. Det betyder att om den ena variabeln ökar dubbelt, ökar den andra också dubbelt."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Slutsats och Utvärdering",
+           icon: "🔍",
+           text: "I <strong>slutsatsen</strong> svarar du på din frågeställning. I utvärderingen diskuterar man undersökningens kvalitet, <strong>tillförlitlighet</strong> och <strong>felkällor</strong>. Vi skiljer på slarvfel och <strong>systematiska fel</strong> (t.ex. att vågen alltid visar 5g för mycket). En viktig del är att kunna föreslå förbättringar av metoden.",
+           questions: [
+               {
+                   q: "Du mäter kokpunkten på vatten och får den till 98 °C istället för 100 °C. Vad är en rimlig felkälla att diskutera?",
+                   options: [
+                       "Jag var dålig på att mäta.",
+                       "Termometern kan vara felkalibrerad eller så påverkade lufttrycket.",
+                       "Vattnet kanske inte var gjort av atomer.",
+                       "Det finns inga felkällor i fysik."
+                   ],
+                   correct: 1,
+                   explanation: "Detta är en fysikalisk förklaring. Att bara säga 'jag mätte fel' är ingen bra analys av en <strong>felkälla</strong>."
+               },
+               {
+                   q: "Vad innebär det att kritiskt granska sin metod?",
+                   options: [
+                       "Att man säger att labben var tråkig.",
+                       "Att man skyller på sin lab-partner.",
+                       "Att man funderar på om man hade kunnat göra undersökningen noggrannare.",
+                       "Att man ändrar sina svar så de stämmer med facit."
+                   ],
+                   correct: 2,
+                   explanation: "En viktig del av betyget handlar om att kunna föreslå <strong>förbättringar</strong>, t.ex. 'Vi borde ha använt lock på bägaren'."
+               },
+               {
+                   q: "Vad skiljer ett systematiskt fel från ett slumpmässigt fel?",
+                   options: [
+                       "Systematiska fel gör att alla mätvärden blir fel åt samma håll (t.ex. för höga).",
+                       "Systematiska fel händer bara ibland.",
+                       "Slumpmässiga fel beror på att instrumentet är trasigt.",
+                       "Det är ingen skillnad."
+                   ],
+                   correct: 0,
+                   explanation: "Ett <strong>systematiskt fel</strong> (t.ex. felkalibrerad våg) påverkar alla mätningar lika mycket. Slumpmässiga fel varierar upp och ner."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Säkerhet och Modeller",
+           icon: "🥽",
+           text: "Systematiska undersökningar handlar också om <strong>säkerhet</strong> och att koppla resultatet till <strong>fysikaliska modeller</strong>. Om du undersöker friktion måste du kunna koppla dina resultat till teorin om ytors ojämnhet. Riskbedömning görs för att undvika skador innan man börjar.",
+           questions: [
+               {
+                   q: "Varför gör man en riskbedömning innan en laboration?",
+                   options: [
+                       "För att läraren säger det.",
+                       "För att resultatet ska bli bättre.",
+                       "För att spara materiel.",
+                       "För att identifiera vad som kan vara farligt och undvika skador."
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Säkerhet</strong> går alltid först. Det kan handla om varma plattor, glaskross, kemikalier eller elektricitet."
+               },
+               {
+                   q: "Du har undersökt densitet. Ditt resultat visar att en järnbit sjunker medan en träbit flyter. Vilken modell förklarar detta?",
+                   options: [
+                       "Ohms lag.",
+                       "Arkimedes princip och densitet.",
+                       "Newtons tredje lag.",
+                       "Atomernas rörelseenergi (värme)."
+                   ],
+                   correct: 1,
+                   explanation: "Om ett föremåls <strong>densitet</strong> är högre än vätskans sjunker det. <strong>Arkimedes princip</strong> förklarar lyftkraften."
+               },
+               {
+                   q: "Vad är det viktigaste syftet med en laborationsrapport?",
+                   options: [
+                       "Att visa att man har snygg handstil.",
+                       "Att skriva så många sidor som möjligt.",
+                       "Att någon annan ska kunna läsa den och göra om exakt samma undersökning.",
+                       "Att kopiera lärobokens text."
+                   ],
+                   correct: 2,
+                   explanation: "I vetenskaplig metod är <strong>repeterbarhet</strong> nyckeln. Om ingen kan upprepa ditt försök utifrån din rapport har den inte ett vetenskapligt värde."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: #2c3e50; font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+            setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
