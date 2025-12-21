@@ -365,253 +365,253 @@
 
 
 <script>
-   // --- DATA ---
-   const quizData = [
-       {
-           title: "Del 1: Historia och världsbilder",
-           icon: "🔭",
-           text: "Människan har i alla tider studerat himlakropparna. Den <strong>geocentriska världsbilden</strong>, utarbetad av bland annat Aristoteles, innebar att allt kretsade runt <strong>jorden</strong>. På 1500-talet etablerades den <strong>heliocentriska världsbilden</strong>, där solen är i centrum och planeterna rör sig runt den. Johannes Kepler upptäckte senare att planeterna rör sig i <strong>ellipser</strong>, inte i perfekta cirklar.",
-           questions: [
-               {
-                   q: "Vilken världsbild innebär att jorden är universums centrum?",
-                   options: [
-                       "Heliocentrisk världsbild",
-                       "Geocentrisk världsbild",
-                       "Acentrisk världsbild",
-                       "Elliptisk världsbild"
-                   ],
-                   correct: 1,
-                   explanation: "Den <strong>geocentriska världsbilden</strong> placerade jorden i centrum, en idé som dominerade fram till 1500-talet."
-               },
-               {
-                   q: "Vad upptäckte Johannes Kepler om planeternas rörelse runt solen?",
-                   options: [
-                       "De rör sig i perfekta cirklar.",
-                       "De rör sig i spiraler.",
-                       "De rör sig i ellipser.",
-                       "De rör sig fram och tillbaka."
-                   ],
-                   correct: 2,
-                   explanation: "Kepler använde mätdata för att bevisa att planeternas banor är <strong>elliptiska</strong>, vilket stämde bättre med observationer."
-               }
-           ]
-       },
-       {
-           title: "Del 2: Big Bang och universums utveckling",
-           icon: "🌌",
-           text: "Universum bildades för ungefär <strong>13,8 miljarder år sedan</strong> genom en händelse som kallas <strong>Big Bang</strong>. All materia var då samlad i en punkt, en singularitet. Idag vet vi att universum inte är statiskt utan <strong>expanderar</strong>, vilket innebär att galaxerna rör sig ifrån varandra med allt högre hastighet. Som ett 'eko' från Big Bang finns <strong>bakgrundsstrålning</strong> kvar i hela universum.",
-           questions: [
-               {
-                   q: "Vad kallas händelsen då universum bildades för ca 13,8 miljarder år sedan?",
-                   options: [
-                       "Supernovan",
-                       "Inflationsteorin",
-                       "Big Bang",
-                       "Singulariteten"
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Big Bang</strong> är namnet på teorin om universums födelse och den efterföljande expansionen."
-               },
-               {
-                   q: "Vad händer med universum idag enligt moderna observationer?",
-                   options: [
-                       "Det blir mindre och drar ihop sig.",
-                       "Det är helt oförändrat i storlek.",
-                       "Det expanderar och galaxer rör sig bort från varandra.",
-                       "Det står stilla men blir varmare."
-                   ],
-                   correct: 2,
-                   explanation: "Observationer visar att galaxerna accelererar bort från varandra och att universum därmed <strong>expanderar</strong>."
-               },
-               {
-                   q: "Vilka var de två första lätta grundämnena som bildades efter Big Bang?",
-                   options: [
-                       "Guld och silver",
-                       "Väte och helium",
-                       "Kol och syre",
-                       "Järn och kväve"
-                   ],
-                   correct: 1,
-                   explanation: "<strong>Väte</strong> och <strong>helium</strong> utgör än idag ca 99 % av den synliga materian i universum och bildades tidigt i universums historia."
-               }
-           ]
-       },
-       {
-           title: "Del 3: Stjärnornas liv och död",
-           icon: "⭐",
-           text: "En stjärna föds ur en <strong>nebulosa</strong>, vilket är ett enormt moln av damm och gas. Gravitationen drar ihop gasen så att trycket och temperaturen blir så höga att <strong>fusion</strong> startar. Vid fusion slås väteatomer samman till helium, och enorma mängder energi frigörs. När bränslet tar slut dör stjärnan; vår sol kommer att bli en <strong>röd jätte</strong> och till slut en <strong>vit dvärg</strong>. Mycket tunga stjärnor kan sluta som <strong>supernovor</strong> eller <strong>svarta hål</strong>.",
-           questions: [
-               {
-                   q: "Ur vilket av följande alternativ bildas en stjärna?",
-                   options: [
-                       "En komet",
-                       "Ett gasmoln (nebulosa)",
-                       "En asteroid",
-                       "En planet"
-                   ],
-                   correct: 1,
-                   explanation: "Stjärnor föds när gravitationen får materia i stora <strong>gasmoln</strong> (nebulosor) att packas tätare och tätare."
-               },
-               {
-                   q: "Vilken process skapar energi inuti en aktiv stjärna?",
-                   options: [
-                       "Förbränning av syre",
-                       "Kärnklyvning (fission)",
-                       "Fusion (atomkärnor slås samman)",
-                       "Kemisk energi från kol"
-                   ],
-                   correct: 2,
-                   explanation: "I stjärnor sker <strong>fusion</strong> där främst väte blir till helium, vilket frigör den energi som får stjärnan att lysa."
-               },
-               {
-                   q: "Vad krävs rent fysiskt för att fusion ska kunna starta i en stjärna?",
-                   options: [
-                       "Att det finns flytande vatten.",
-                       "Vakuum och nollgradig temperatur.",
-                       "Extremt högt tryck och hög temperatur.",
-                       "Att stjärnan befinner sig i en galax."
-                   ],
-                   correct: 2,
-                   explanation: "För att atomkärnor ska kunna slås samman krävs enormt hög energi, alltså <strong>högt tryck och hög temperatur</strong>."
-               },
-               {
-                   q: "Vad händer med en stjärna som är extremt stor när den dör?",
-                   options: [
-                       "Den blir en planet som jorden.",
-                       "Den slocknar och blir en vit dvärg direkt.",
-                       "Den kan kollapsa till ett svart hål efter en supernovaexplosion.",
-                       "Den förvandlas till en ny nebulosa på en sekund."
-                   ],
-                   correct: 2,
-                   explanation: "Riktigt stora stjärnor dör våldsamt i en supernova och kan lämna efter sig ett <strong>svart hål</strong> med extrem gravitation."
-               }
-           ]
-       },
-       {
-           title: "Del 4: Solsystemet och avstånd",
-           icon: "🪐",
-           text: "Vårt solsystem ligger i galaxen <strong>Vintergatan</strong>. Det består av solen samt åtta planeter. De inre planeterna (Merkurius, Venus, Jorden, Mars) är <strong>stenplaneter</strong>, medan de yttre (Jupiter, Saturnus, Uranus, Neptunus) är <strong>gasjättar</strong>. Eftersom avstånden i rymden är enorma används enheten <strong>ljusår</strong>, vilket är den sträcka ljuset färdas på ett år. Avståndet till solen är bara cirka <strong>8 ljusminuter</strong>.",
-           questions: [
-               {
-                   q: "Hur lång tid tar det för solens ljus att färdas till jorden?",
-                   options: [
-                       "8 sekunder",
-                       "8 minuter",
-                       "8 timmar",
-                       "8 år"
-                   ],
-                   correct: 1,
-                   explanation: "Solen ligger på ett avstånd av ca <strong>8 ljusminuter</strong>, vilket betyder att vi ser solen som den var för åtta minuter sedan."
-               },
-               {
-                   q: "Vilken av följande planeter är en gigantisk gasplanet?",
-                   options: [
-                       "Mars",
-                       "Venus",
-                       "Jorden",
-                       "Jupiter"
-                   ],
-                   correct: 3,
-                   explanation: "<strong>Jupiter</strong> är solsystemets största planet och är en så kallad gasjätte."
-               },
-               {
-                   q: "Vad är ett ljusår ett mått på?",
-                   options: [
-                       "Tid",
-                       "Ljusstyrka",
-                       "Avstånd",
-                       "Temperatur"
-                   ],
-                   correct: 2,
-                   explanation: "Ett <strong>ljusår</strong> är en <strong>avståndsenhet</strong> som motsvarar den sträcka ljuset hinner på ett år."
-               },
-               {
-                   q: "Vilket av följande objekt är störst?",
-                   options: [
-                       "Solen",
-                       "En galax",
-                       "Jorden",
-                       "En nebulosa"
-                   ],
-                   correct: 1,
-                   explanation: "En <strong>galax</strong> är en samling av miljarder stjärnor och är betydligt större än enskilda stjärnor eller nebulosor."
-               },
-               {
-                   q: "Rangordna följande objekt från minsta till största.",
-                   options: [
-                       "Jorden – Solen – Meteoroid – Galax",
-                       "Meteoroid – Jorden – Solen – Galax",
-                       "Galax – Solen – Jorden – Meteoroid",
-                       "Solen – Jorden – Galax – Meteoroid"
-                   ],
-                   correct: 1,
-                   explanation: "En meteoroid är smågrus, jorden är en planet, solen en stjärna och galaxen innehåller miljarder solar."
-               }
-           ]
-       },
-       {
-           title: "Del 5: Himlakroppar och framtiden",
-           icon: "☄️",
-           text: "I solsystemet finns även mindre kroppar som <strong>asteroider</strong> och <strong>kometer</strong>. En komet liknas ofta vid en 'smutsig snöboll' av is och grus. Mellan Mars och Jupiter finns ett stort <strong>asteroidbälte</strong>. När det gäller universums framtid finns teorier som <strong>'The Big Freeze'</strong>, där universum fortsätter expandera tills det blir mörkt och kallt, eller <strong>'The Big Crunch'</strong>, där gravitationen får allt att dras ihop igen.",
-           questions: [
-               {
-                   q: "Var i solsystemet finns det största asteroidbältet?",
-                   options: [
-                       "Mellan solen och Merkurius",
-                       "Mellan jorden och månen",
-                       "Mellan Mars och Jupiter",
-                       "Utanför Neptunus"
-                   ],
-                   correct: 2,
-                   explanation: "Det stora <strong>asteroidbältet</strong> ligger mellan stenplaneterna (Mars) och gasjättarna (Jupiter)."
-               },
-               {
-                   q: "Vad händer enligt teorin 'The Big Crunch'?",
-                   options: [
-                       "Universum slits sönder av mörk energi.",
-                       "Universum slutar växa och dras ihop till en enda punkt igen.",
-                       "Alla stjärnor exploderar samtidigt.",
-                       "Universum fryser fast i sin nuvarande storlek."
-                   ],
-                   correct: 1,
-                   explanation: "Teorin innebär att gravitationen till slut vinner över expansionen och <strong>drar tillbaka all materia</strong>."
-               },
-               {
-                   q: "Vilken himlakropp liknas vid en 'smutsig snöboll' och får en svans nära solen?",
-                   options: [
-                       "Asteroid",
-                       "Meteorit",
-                       "Komet",
-                       "Svart hål"
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Kometer</strong> består av is och grus; när de närmar sig solen förångas isen och bildar en svans."
-               },
-               {
-                   q: "Vad kallas de områden på solen som är kallare och ser ut som mörka fläckar?",
-                   options: [
-                       "Protuberanser",
-                       "Solstormar",
-                       "Solfläckar",
-                       "Norrsken"
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Solfläckar</strong> är ca 2000 grader kallare än resten av solytan och orsakas av solens magnetfält."
-               },
-               {
-                   q: "Vilken stjärna pekar alltid mot norr för att den ligger i linje med jordaxeln?",
-                   options: [
-                       "Proxima Centauri",
-                       "Polstjärnan",
-                       "Sirius",
-                       "Betelgeuse"
-                   ],
-                   correct: 1,
-                   explanation: "<strong>Polstjärnan</strong> är viktig för navigering eftersom dess position på himlen alltid är rakt i norr."
-               }
-           ]
-       }
-   ];
+// --- DATA ---
+const quizData = [
+{
+title: "Del 1: Historia och världsbilder",
+icon: "🔭",
+text: "Människan har i alla tider studerat himlakropparna. Den <strong>geocentriska världsbilden</strong>, utarbetad av bland annat Aristoteles, innebar att allt kretsade runt <strong>jorden</strong>. På 1500-talet etablerades den <strong>heliocentriska världsbilden</strong>, där solen är i centrum och planeterna rör sig runt den. Johannes Kepler upptäckte senare att planeterna rör sig i <strong>ellipser</strong>, inte i perfekta cirklar.",
+questions: [
+{
+q: "Vilken världsbild innebär att jorden är universums centrum?",
+options: [
+"Geocentrisk världsbild",
+"Heliocentrisk världsbild",
+"Acentrisk världsbild",
+"Elliptisk världsbild"
+],
+correct: 0,
+explanation: "Den <strong>geocentriska världsbilden</strong> placerade jorden i centrum, en idé som dominerade fram till 1500-talet."
+},
+{
+q: "Vad upptäckte Johannes Kepler om planeternas rörelse runt solen?",
+options: [
+"De rör sig i perfekta cirklar.",
+"De rör sig i spiraler.",
+"De rör sig fram och tillbaka.",
+"De rör sig i ellipser."
+],
+correct: 3,
+explanation: "Kepler använde mätdata för att bevisa att planeternas banor är <strong>elliptiska</strong>, vilket stämde bättre med observationer."
+}
+]
+},
+{
+title: "Del 2: Big Bang och universums utveckling",
+icon: "🌌",
+text: "Universum bildades för ungefär <strong>13,8 miljarder år sedan</strong> genom en händelse som kallas <strong>Big Bang</strong>. All materia var då samlad i en punkt, en singularitet. Idag vet vi att universum inte är statiskt utan <strong>expanderar</strong>, vilket innebär att galaxerna rör sig ifrån varandra med allt högre hastighet. Som ett 'eko' från Big Bang finns <strong>bakgrundsstrålning</strong> kvar i hela universum.",
+questions: [
+{
+q: "Vad kallas händelsen då universum bildades för ca 13,8 miljarder år sedan?",
+options: [
+"Supernovan",
+"Big Bang",
+"Inflationsteorin",
+"Singulariteten"
+],
+correct: 1,
+explanation: "<strong>Big Bang</strong> är namnet på teorin om universums födelse och den efterföljande expansionen."
+},
+{
+q: "Vad händer med universum idag enligt moderna observationer?",
+options: [
+"Det blir mindre och drar ihop sig.",
+"Det står stilla men blir varmare.",
+"Det expanderar och galaxer rör sig bort från varandra.",
+"Det är helt oförändrat i storlek."
+],
+correct: 2,
+explanation: "Observationer visar att galaxerna accelererar bort från varandra och att universum därmed <strong>expanderar</strong>."
+},
+{
+q: "Vilka var de två första lätta grundämnena som bildades efter Big Bang?",
+options: [
+"Väte och helium",
+"Guld och silver",
+"Kol och syre",
+"Järn och kväve"
+],
+correct: 0,
+explanation: "<strong>Väte</strong> och <strong>helium</strong> utgör än idag ca 99 % av den synliga materian i universum och bildades tidigt i universums historia."
+}
+]
+},
+{
+title: "Del 3: Stjärnornas liv och död",
+icon: "⭐",
+text: "En stjärna föds ur en <strong>nebulosa</strong>, vilket är ett enormt moln av damm och gas. Gravitationen drar ihop gasen så att trycket och temperaturen blir så höga att <strong>fusion</strong> startar. Vid fusion slås väteatomer samman till helium, och enorma mängder energi frigörs. När bränslet tar slut dör stjärnan; vår sol kommer att bli en <strong>röd jätte</strong> och till slut en <strong>vit dvärg</strong>. Mycket tunga stjärnor kan sluta som <strong>supernovor</strong> eller <strong>svarta hål</strong>.",
+questions: [
+{
+q: "Ur vilket av följande alternativ bildas en stjärna?",
+options: [
+"En komet",
+"En asteroid",
+"En planet",
+"Ett gasmoln (nebulosa)"
+],
+correct: 3,
+explanation: "Stjärnor föds när gravitationen får materia i stora <strong>gasmoln</strong> (nebulosor) att packas tätare och tätare."
+},
+{
+q: "Vilken process skapar energi inuti en aktiv stjärna?",
+options: [
+"Förbränning av syre",
+"Fusion (atomkärnor slås samman)",
+"Kärnklyvning (fission)",
+"Kemisk energi från kol"
+],
+correct: 1,
+explanation: "I stjärnor sker <strong>fusion</strong> där främst väte blir till helium, vilket frigör den energi som får stjärnan att lysa."
+},
+{
+q: "Vad krävs rent fysiskt för att fusion ska kunna starta i en stjärna?",
+options: [
+"Att det finns flytande vatten.",
+"Extremt högt tryck och hög temperatur.",
+"Vakuum och nollgradig temperatur.",
+"Att stjärnan befinner sig i en galax."
+],
+correct: 1,
+explanation: "För att atomkärnor ska kunna slås samman krävs enormt hög energi, alltså <strong>högt tryck och hög temperatur</strong>."
+},
+{
+q: "Vad händer med en stjärna som är extremt stor när den dör?",
+options: [
+"Den blir en planet som jorden.",
+"Den slocknar och blir en vit dvärg direkt.",
+"Den kan kollapsa till ett svart hål efter en supernovaexplosion.",
+"Den förvandlas till en ny nebulosa på en sekund."
+],
+correct: 2,
+explanation: "Riktigt stora stjärnor dör våldsamt i en supernova och kan lämna efter sig ett <strong>svart hål</strong> med extrem gravitation."
+}
+]
+},
+{
+title: "Del 4: Solsystemet och avstånd",
+icon: "🪐",
+text: "Vårt solsystem ligger i galaxen <strong>Vintergatan</strong>. Det består av solen samt åtta planeter. De inre planeterna (Merkurius, Venus, Jorden, Mars) är <strong>stenplaneter</strong>, medan de yttre (Jupiter, Saturnus, Uranus, Neptunus) är <strong>gasjättar</strong>. Eftersom avstånden i rymden är enorma används enheten <strong>ljusår</strong>, vilket är den sträcka ljuset färdas på ett år. Avståndet till solen är bara cirka <strong>8 ljusminuter</strong>.",
+questions: [
+{
+q: "Hur lång tid tar det för solens ljus att färdas till jorden?",
+options: [
+"8 sekunder",
+"8 minuter",
+"8 timmar",
+"8 år"
+],
+correct: 1,
+explanation: "Solen ligger på ett avstånd av ca <strong>8 ljusminuter</strong>, vilket betyder att vi ser solen som den var för åtta minuter sedan."
+},
+{
+q: "Vilken av följande planeter är en gigantisk gasplanet?",
+options: [
+"Jupiter",
+"Mars",
+"Venus",
+"Jorden"
+],
+correct: 0,
+explanation: "<strong>Jupiter</strong> är solsystemets största planet och är en så kallad gasjätte."
+},
+{
+q: "Vad är ett ljusår ett mått på?",
+options: [
+"Tid",
+"Ljusstyrka",
+"Temperatur",
+"Avstånd"
+],
+correct: 3,
+explanation: "Ett <strong>ljusår</strong> är en <strong>avståndsenhet</strong> som motsvarar den sträcka ljuset hinner på ett år."
+},
+{
+q: "Vilket av följande objekt är störst?",
+options: [
+"Solen",
+"Jorden",
+"En galax",
+"En nebulosa"
+],
+correct: 2,
+explanation: "En <strong>galax</strong> är en samling av miljarder stjärnor och är betydligt större än enskilda stjärnor eller nebulosor."
+},
+{
+q: "Rangordna följande objekt från minsta till största.",
+options: [
+"Jorden – Solen – Meteoroid – Galax",
+"Meteoroid – Jorden – Solen – Galax",
+"Galax – Solen – Jorden – Meteoroid",
+"Solen – Jorden – Galax – Meteoroid"
+],
+correct: 1,
+explanation: "En meteoroid är smågrus, jorden är en planet, solen en stjärna och galaxen innehåller miljarder solar."
+}
+]
+},
+{
+title: "Del 5: Himlakroppar och framtiden",
+icon: "☄️",
+text: "I solsystemet finns även mindre kroppar som <strong>asteroider</strong> och <strong>kometer</strong>. En komet liknas ofta vid en 'smutsig snöboll' av is och grus. Mellan Mars och Jupiter finns ett stort <strong>asteroidbälte</strong>. När det gäller universums framtid finns teorier som <strong>'The Big Freeze'</strong>, där universum fortsätter expandera tills det blir mörkt och kallt, eller <strong>'The Big Crunch'</strong>, där gravitationen får allt att dras ihop igen.",
+questions: [
+{
+q: "Var i solsystemet finns det största asteroidbältet?",
+options: [
+"Mellan solen och Merkurius",
+"Mellan Mars och Jupiter",
+"Mellan jorden och månen",
+"Utanför Neptunus"
+],
+correct: 1,
+explanation: "Det stora <strong>asteroidbältet</strong> ligger mellan stenplaneterna (Mars) och gasjättarna (Jupiter)."
+},
+{
+q: "Vad händer enligt teorin 'The Big Crunch'?",
+options: [
+"Universum slits sönder av mörk energi.",
+"Alla stjärnor exploderar samtidigt.",
+"Universum fryser fast i sin nuvarande storlek.",
+"Universum slutar växa och dras ihop till en enda punkt igen."
+],
+correct: 3,
+explanation: "Teorin innebär att gravitationen till slut vinner över expansionen och <strong>drar tillbaka all materia</strong>."
+},
+{
+q: "Vilken himlakropp liknas vid en 'smutsig snöboll' och får en svans nära solen?",
+options: [
+"Asteroid",
+"Meteorit",
+"Komet",
+"Svart hål"
+],
+correct: 2,
+explanation: "<strong>Kometer</strong> består av is och grus; när de närmar sig solen förångas isen och bildar en svans."
+},
+{
+q: "Vad kallas de områden på solen som är kallare och ser ut som mörka fläckar?",
+options: [
+"Protuberanser",
+"Solstormar",
+"Solfläckar",
+"Norrsken"
+],
+correct: 2,
+explanation: "<strong>Solfläckar</strong> är ca 2000 grader kallare än resten av solytan och orsakas av solens magnetfält."
+},
+{
+q: "Vilken stjärna pekar alltid mot norr för att den ligger i linje med jordaxeln?",
+options: [
+"Proxima Centauri",
+"Polstjärnan",
+"Sirius",
+"Betelgeuse"
+],
+correct: 1,
+explanation: "<strong>Polstjärnan</strong> är viktig för navigering eftersom dess position på himlen alltid är rakt i norr."
+}
+]
+}
+];
 
 
    // --- STATE MANAGEMENT ---

@@ -336,248 +336,248 @@
 
 <script>
     // --- DATA ---
-    const quizData = [
-        {
-            title: "Block 1: Statisk Elektricitet",
-            icon: "⚡",
-            text: "En atom består av negativt laddade <strong>elektroner</strong> och positivt laddade <strong>protoner</strong>. Normalt är atomen oladdad, men <strong>statisk elektricitet</strong> uppstår när man gnider bort negativa laddningar, vilket gör att atomen blir positivt laddad. Naturen strävar alltid efter att jämna ut skillnader, så atomen kommer förr eller senare att återfå sin negativa laddning. Ett exempel på statisk elektricitet är <strong>åska</strong>, där åskmolnen blir positivt laddade upptill och negativt laddade nertill, närmast jorden.",
-            questions: [
-                {
-                    q: "Vilken partikel i atomen är negativt laddad?",
-                    options: [
-                        "Protoner",
-                        "Neutroner",
-                        "Elektroner",
-                        "Nukleoner"
-                    ],
-                    correct: 2, 
-                    explanation: "<strong>Elektronerna</strong> är de negativt laddade partiklarna som finns i atomen. Neutroner är oladdade och protoner är positivt laddade."
-                },
-                {
-                    q: "Vad kallas det när en oladdad atom tappar negativa laddningar och blir positivt laddad?",
-                    options: [
-                        "Elektrisk potential",
-                        "Statisk elektricitet",
-                        "Induktion",
-                        "Kärnenergi"
-                    ],
-                    correct: 1,
-                    explanation: "När negativa laddningar (elektroner) gnids bort och den elektriska skillnaden uppstår, kallas det <strong>statisk elektricitet</strong>. Denna skillnad försöker naturen sedan jämna ut."
-                },
-                {
-                    q: "Vilken naturlig process är ett exempel på statisk elektricitet?",
-                    options: [
-                        "Värmeutvidgning",
-                        "Strålningsenergi",
-                        "Växelström",
-                        "Åska"
-                    ],
-                    correct: 3,
-                    explanation: "<strong>Åska</strong> är ett exempel på statisk elektricitet som uppstår när laddningsskillnaden i åskmoln jämnas ut som en blixt."
-                }
-            ]
-        },
-        {
-            title: "Block 2: Spänning och Ström",
-            icon: "🔌",
-            text: "Elektricitet är ett flöde av elektroner. <strong>Spänning</strong> (mäts i <strong>volt, V</strong>) är skillnaden i laddning (elektrisk potential) mellan plus- och minuspolen, och det är spänningen som får elektronerna att röra sig. <strong>Ström</strong> (mäts i <strong>Ampere, A</strong>) är flödet av elektroner i en ledning. Spänningen gör det möjligt för strömmen att existera, men det är strömmen som driver elektriska produkter.",
-            questions: [
-                {
-                    q: "Vilken enhet används för att mäta spänning?",
-                    options: [
-                        "Ampere (A)",
-                        "Volt (V)",
-                        "Ohm (Ω)",
-                        "Watt (W)"
-                    ],
-                    correct: 1,
-                    explanation: "Spänning är ett mått på elektrisk kraft och mäts i enheten <strong>volt (V)</strong>. Ström mäts i Ampere."
-                },
-                {
-                    q: "Vad driver elektriska produkter enligt källorna?",
-                    options: [
-                        "Spänningen (skillnaden mellan polerna)",
-                        "Elektrisk potential",
-                        "Strömmen",
-                        "Likström"
-                    ],
-                    correct: 2,
-                    explanation: "Det är <strong>strömmen</strong> som driver elektriska produkter, medan spänningen skapar möjligheten för strömmen att existera."
-                },
-                {
-                    q: "Vad är skillnaden mellan likström och växelström?",
-                    options: [
-                        "Likström finns i vägguttag, växelström i batterier.",
-                        "Växelström är starkare än likström.",
-                        "Likström åker alltid i samma riktning, medan växelström byter riktning",
-                        "Växelström mäts i Watt och likström i Ampere."
-                    ],
-                    correct: 2,
-                    explanation: "<strong>Likström</strong> (som i batterier) färdas alltid i en riktning, medan <strong>växelström</strong> (som i vägguttag) byter riktning 100 gånger per sekund."
-                }
-            ]
-        },
-        {
-            title: "Block 3: Resistans & Ohms lag",
-            icon: "💡",
-            text: "<strong>Elektrisk resistans</strong> (motstånd) påverkar strömmen i en ledare. En bra ledare, som <strong>koppar</strong>, har låg resistans, vilket tillåter fler elektroner att passera. Låg resistans uppnås genom <strong>låg temperatur</strong>, <strong>stor diameter</strong> och <strong>kort längd</strong> på ledaren. Sambandet mellan spänning (U), ström (I) och resistans (R) beskrivs av <strong>Ohms lag</strong>: U = R * I. När ström stöter på motstånd omvandlas elektrisk energi till värmeenergi.",
-            questions: [
-                {
-                    q: "Vilket uttalande om en ledares egenskaper ger den lägsta möjliga resistansen?",
-                    options: [
-                        "Hög temperatur och stor diameter.",
-                        "Låg temperatur och stor diameter.",
-                        "Kort längd och litet motstånd.",
-                        "Lång längd och låg temperatur."
-                    ],
-                    correct: 1,
-                    explanation: "Låg resistans uppnås när temperaturen är <strong>låg</strong>, diametern på ledaren är <strong>stor</strong> och längden är <strong>kort</strong>."
-                },
-                {
-                    q: "Vilken metall används vanligen i elledningar i Sverige eftersom den är en bra ledare?",
-                    options: [
-                        "Silver",
-                        "Guld",
-                        "Koppar",
-                        "Plast"
-                    ],
-                    correct: 2,
-                    explanation: "Silver, koppar och guld leder elektricitet bäst, men <strong>koppar</strong> används i vanliga elledningar. Plast är en isolator som inte leder ström."
-                },
-                {
-                    q: "Vilket samband beskriver Ohms lag?",
-                    options: [
-                        "Motstånd = Spänning / Ström (R = U/I)",
-                        "Ström = Motstånd / Spänning (I = R/U)",
-                        "Spänning = Ström * Motstånd (U = I*R)",
-                        "Effekt = Spänning * Ström (P = U*I)"
-                    ],
-                    correct: 2,
-                    explanation: "<strong>Ohms lag</strong> fastställer att spänningen (U) är lika med strömstyrkan (I) multiplicerat med resistansen (R)."
-                }
-            ]
-        },
-        {
-            title: "Block 4: Kopplingar & Effekt",
-            icon: "🔋",
-            text: "<strong>Elektrisk effekt</strong> (P, mäts i <strong>watt, W</strong>) mäter hur snabbt en apparat omvandlar elektrisk energi. För att mäta den totala energiförbrukningen multiplicerar man effekten med tiden, vilket mäts i <strong>watt-timmar (Wh)</strong> eller kilowatt-timmar (kWh). När komponenter kopplas i <strong>seriekoppling</strong> adderas spänningen om det är batterier, men om en komponent går sönder bryts kretsen. I en <strong>parallellkoppling</strong> har strömmen flera vägar, vilket gör att om en lampa går sönder fortsätter de andra att lysa.",
-            questions: [
-                {
-                    q: "Vad händer i en seriekoppling om en av lamporna går sönder?",
-                    options: [
-                        "Spänningen i kretsen ökar.",
-                        "De andra lamporna fortsätter att lysa.",
-                        "Strömmen i kretsen dubbleras.",
-                        "Alla lampor slocknar."
-                    ],
-                    correct: 3,
-                    explanation: "Om en lampa i en <strong>seriekoppling</strong> går sönder blir det inte en sluten krets, och strömmen kan då inte ta sig runt mellan minus- och pluspolen."
-                },
-                {
-                    q: "Hur förhåller sig spänningen i en parallellkoppling med flera lampor till batteriets spänning?",
-                    options: [
-                        "Spänningen halveras för varje lampa.",
-                        "Spänningen dubbleras.",
-                        "Spänningen över varje lampa är lika stor som batteriets spänning.",
-                        "Spänningen över lamporna minskar med antalet lampor."
-                    ],
-                    correct: 2,
-                    explanation: "I en <strong>parallellkoppling</strong> lyser alla lampor lika starkt eftersom spänningen över dem kommer att vara lika stor som batteriets spänning."
-                },
-                {
-                    q: "Vilken enhet används för att mäta elektrisk effekt?",
-                    options: [
-                        "Joule (J)",
-                        "Volt (V)",
-                        "Ampere (A)",
-                        "Watt (W)"
-                    ],
-                    correct: 3,
-                    explanation: "<strong>Elektrisk effekt</strong> (P) mäts i enheten <strong>watt (W)</strong>."
-                }
-            ]
-        },
-        {
-            title: "Block 5: Magnetism",
-            icon: "🧲",
-            text: "Magneter drar till sig magnetiska metaller som järn (Fe), nickel (Ni) och kobolt (Co). Runt varje magnet finns ett osynligt <strong>magnetfält</strong>. Lika magnetpoler stöter bort varandra (<strong>repellera</strong>), medan olika poler dras mot varandra (<strong>attrahera</strong>). Runt en strömförande ledare uppstår det alltid ett magnetfält. Detta utnyttjas i <strong>elektromagneter</strong>, vars styrka kan ökas genom att linda metalltråden som en <strong>spole</strong> (ju fler varv desto starkare) och använda en järnspik som kärna.",
-            questions: [
-                {
-                    q: "Vad händer med en kompass i närheten av en magnet?",
-                    options: [
-                        "Kompassen blir elektriskt laddad.",
-                        "Magneten avmagnetiserar kompassen.",
-                        "Kompassnålen börjar snurra på grund av magnetfältet.",
-                        "Magnetfältet skyddar kompassen från strålning."
-                    ],
-                    correct: 2,
-                    explanation: "Kring en magnet finns ett osynligt <strong>magnetfält</strong> som påverkar kompasser så att kompassnålen börjar snurra när den förs mot magneten."
-                },
-                {
-                    q: "Vad är det som skapar magnetfältet kring en elektromagnet?",
-                    options: [
-                        "Järnspiken eller metallstaven.",
-                        "Den statiska elektriciteten i spolen.",
-                        "Strömmen som går genom ledaren.",
-                        "Attraktionen mellan nord- och sydpolen."
-                    ],
-                    correct: 2,
-                    explanation: "Runt en sladd där det går <strong>ström</strong> (ledare) uppstår det alltid ett <strong>magnetfält</strong>."
-                },
-                {
-                    q: "Vilken regel gäller för magnetpoler?",
-                    options: [
-                        "En nordpol och en sydpol repellerar varandra.",
-                        "Två sydpoler attraherar varandra.",
-                        "Två nordpoler stöter bort varandra.",
-                        "En nordpol kan attrahera ett icke-magnetiskt föremål."
-                    ],
-                    correct: 2,
-                    explanation: "Två nordpoler eller två sydpoler vill stöta bort varandra (<strong>repellera</strong>)."
-                }
-            ]
-        },
-        {
-            title: "Block 6: Elmotor och Generator",
-            icon: "⚙️",
-            text: "Sambandet mellan elektricitet och magnetism har lett till uppfinningar som elmotorn och generatorn. En <strong>elmotor</strong> omvandlar <strong>elektrisk energi till rörelseenergi</strong>. Den fungerar genom att en elektromagnet roterar i ett magnetfält, där snabba riktningsbyten i strömmen får elektromagnetens magnetfält att växla, vilket driver rotationen. En <strong>generator</strong> är motsatsen till elmotorn; den omvandlar <strong>rörelseenergi till elektrisk energi</strong> genom <strong>induktion</strong>. Generatorer producerar nästan all elektricitet i Sverige och kan finnas i vattenkraftverk, vindkraftverk och kärnkraftverk.",
-            questions: [
-                {
-                    q: "Vad omvandlar en generator?",
-                    options: [
-                        "Rörelseenergi till elektrisk energi.",
-                        "Elektrisk energi till rörelseenergi.",
-                        "Värmeenergi till kemisk energi.",
-                        "Kemisk energi till elektrisk energi."
-                    ],
-                    correct: 0,
-                    explanation: "En <strong>generator</strong> är elmotorns motsats och omvandlar <strong>rörelseenergi till elektrisk energi</strong>, till exempel i vattenkraftverk."
-                },
-                {
-                    q: "Vad kallas det när en magnet snurrar inuti en spole och alstrar ström?",
-                    options: [
-                        "Spänning",
-                        "Induktion",
-                        "Ohms lag",
-                        "Resistans"
-                    ],
-                    correct: 1,
-                    explanation: "Elektriciteten uppkommer genom att en magnet snurrar snabbt inuti en spole, vilket är ett fenomen som kallas <strong>induktion</strong>."
-                },
-                {
-                    q: "Vad är den grundläggande funktionen hos en elmotor?",
-                    options: [
-                        "Att utjämna laddningsskillnader.",
-                        "Att mäta strömstyrka.",
-                        "Att reglera växelström.",
-                        "Att omvandla elektrisk energi till rörelseenergi."
-                    ],
-                    correct: 3,
-                    explanation: "<strong>Elmotorer</strong> används för att omvandla <strong>elektrisk energi till rörelseenergi</strong>, som i hushållsredskap och fordon."
-                }
-            ]
-        }
-    ];
+const quizData = [
+    {
+        title: "Block 1: Statisk Elektricitet",
+        icon: "⚡",
+        text: "En atom består av negativt laddade <strong>elektroner</strong> och positivt laddade <strong>protoner</strong>. Normalt är atomen oladdad, men <strong>statisk elektricitet</strong> uppstår när man gnider bort negativa laddningar, vilket gör att atomen blir positivt laddad. Naturen strävar alltid efter att jämna ut skillnader, så atomen kommer förr eller senare att återfå sin negativa laddning. Ett exempel på statisk elektricitet är <strong>åska</strong>, där åskmolnen blir positivt laddade upptill och negativt laddade nertill, närmast jorden.",
+        questions: [
+            {
+                q: "Vilken partikel i atomen är negativt laddad?",
+                options: [
+                    "Protoner",
+                    "Neutroner",
+                    "Elektroner",
+                    "Nukleoner"
+                ],
+                correct: 2, 
+                explanation: "<strong>Elektronerna</strong> är de negativt laddade partiklarna som finns i atomen. Neutroner är oladdade och protoner är positivt laddade."
+            },
+            {
+                q: "Vad kallas det när en oladdad atom tappar negativa laddningar och blir positivt laddad?",
+                options: [
+                    "Elektrisk potential",
+                    "Statisk elektricitet",
+                    "Induktion",
+                    "Kärnenergi"
+                ],
+                correct: 1,
+                explanation: "När negativa laddningar (elektroner) gnids bort och den elektriska skillnaden uppstår, kallas det <strong>statisk elektricitet</strong>. Denna skillnad försöker naturen sedan jämna ut."
+            },
+            {
+                q: "Vilken naturlig process är ett exempel på statisk elektricitet?",
+                options: [
+                    "Värmeutvidgning",
+                    "Strålningsenergi",
+                    "Växelström",
+                    "Åska"
+                ],
+                correct: 3,
+                explanation: "<strong>Åska</strong> är ett exempel på statisk elektricitet som uppstår när laddningsskillnaden i åskmoln jämnas ut som en blixt."
+            }
+        ]
+    },
+    {
+        title: "Block 2: Spänning och Ström",
+        icon: "🔌",
+        text: "Elektricitet är un flöde av elektroner. <strong>Spänning</strong> (mäts i <strong>volt, V</strong>) är skillnaden i laddning (elektrisk potential) mellan plus- och minuspolen, och det är spänningen som får elektronerna att röra sig. <strong>Ström</strong> (mäts i <strong>Ampere, A</strong>) är flödet av elektroner i en ledning. Spänningen gör det möjligt för strömmen att existera, men det är strömmen som driver elektriska produkter.",
+        questions: [
+            {
+                q: "Vilken enhet används för att mäta spänning?",
+                options: [
+                    "Ampere (A)",
+                    "Volt (V)",
+                    "Ohm (Ω)",
+                    "Watt (W)"
+                ],
+                correct: 1,
+                explanation: "Spänning är ett mått på elektrisk kraft och mäts i enheten <strong>volt (V)</strong>. Ström mäts i Ampere."
+            },
+            {
+                q: "Vad driver elektriska produkter enligt källorna?",
+                options: [
+                    "Spänningen (skillnaden mellan polerna)",
+                    "Elektrisk potential",
+                    "Strömmen",
+                    "Likström"
+                ],
+                correct: 2,
+                explanation: "Det är <strong>strömmen</strong> som driver elektriska produkter, medan spänningen skapar möjligheten för strömmen att existera."
+            },
+            {
+                q: "Vad är skillnaden mellan likström och växelström?",
+                options: [
+                    "Likström åker alltid i samma riktning, medan växelström byter riktning",
+                    "Växelström är starkare än likström.",
+                    "Likström finns i vägguttag, växelström i batterier.",
+                    "Växelström mäts i Watt och likström i Ampere."
+                ],
+                correct: 0,
+                explanation: "<strong>Likström</strong> (som i batterier) färdas alltid i en riktning, medan <strong>växelström</strong> (som i vägguttag) byter riktning 100 gånger per sekund."
+            }
+        ]
+    },
+    {
+        title: "Block 3: Resistans & Ohms lag",
+        icon: "💡",
+        text: "<strong>Elektrisk resistans</strong> (motstånd) påverkar strömmen i en ledare. En bra ledare, som <strong>koppar</strong>, har låg resistans, vilket tillåter fler elektroner att passera. Låg resistans uppnås genom <strong>låg temperatur</strong>, <strong>stor diameter</strong> och <strong>kort längd</strong> på ledaren. Sambandet mellan spänning (U), ström (I) och resistans (R) beskrivs av <strong>Ohms lag</strong>: U = R * I. När ström stöter på motstånd omvandlas elektrisk energi till värmeenergi.",
+        questions: [
+            {
+                q: "Vilket uttalande om en ledares egenskaper ger den lägsta möjliga resistansen?",
+                options: [
+                    "Hög temperatur och stor diameter.",
+                    "Låg temperatur och stor diameter.",
+                    "Kort längd och litet motstånd.",
+                    "Lång längd och låg temperatur."
+                ],
+                correct: 1,
+                explanation: "Låg resistans uppnås när temperaturen är <strong>låg</strong>, diametern på ledaren är <strong>stor</strong> och längden är <strong>kort</strong>."
+            },
+            {
+                q: "Vilken metall används vanligen i elledningar i Sverige eftersom den är en bra ledare?",
+                options: [
+                    "Silver",
+                    "Guld",
+                    "Koppar",
+                    "Plast"
+                ],
+                correct: 2,
+                explanation: "Silver, koppar och guld leder elektricitet bäst, men <strong>koppar</strong> används i vanliga elledningar. Plast är en isolator som inte leder ström."
+            },
+            {
+                q: "Vilket samband beskriver Ohms lag?",
+                options: [
+                    "Spänning = Ström * Motstånd (U = I*R)",
+                    "Ström = Motstånd / Spänning (I = R/U)",
+                    "Motstånd = Spänning / Ström (R = U/I)",
+                    "Effekt = Spänning * Ström (P = U*I)"
+                ],
+                correct: 0,
+                explanation: "<strong>Ohms lag</strong> fastställer att spänningen (U) är lika med strömstyrkan (I) multiplicerat med resistansen (R)."
+            }
+        ]
+    },
+    {
+        title: "Block 4: Kopplingar & Effekt",
+        icon: "🔋",
+        text: "<strong>Elektrisk effekt</strong> (P, mäts i <strong>watt, W</strong>) mäter hur snabbt en apparat omvandlar elektrisk energi. För att mäta den totala energiförbrukningen multiplicerar man effekten med tiden, vilket mäts i <strong>watt-timmar (Wh)</strong> eller kilowatt-timmar (kWh). När komponenter kopplas i <strong>seriekoppling</strong> adderas spänningen om det är batterier, men om en komponent går sönder bryts kretsen. I en <strong>parallellkoppling</strong> har strömmen flera vägar, vilket gör att om en lampa går sönder fortsätter de andra att lysa.",
+        questions: [
+            {
+                q: "Vad händer i en seriekoppling om en av lamporna går sönder?",
+                options: [
+                    "Spänningen i kretsen ökar.",
+                    "De andra lamporna fortsätter att lysa.",
+                    "Strömmen i kretsen dubbleras.",
+                    "Alla lampor slocknar."
+                ],
+                correct: 3,
+                explanation: "Om en lampa i en <strong>seriekoppling</strong> går sönder blir det inte en sluten krets, och strömmen kan då inte ta sig runt mellan minus- och pluspolen."
+            },
+            {
+                q: "Hur förhåller sig spänningen i en parallellkoppling med flera lampor till batteriets spänning?",
+                options: [
+                    "Spänningen halveras för varje lampa.",
+                    "Spänningen dubbleras.",
+                    "Spänningen över varje lampa är lika stor som batteriets spänning.",
+                    "Spänningen över lamporna minskar med antalet lampor."
+                ],
+                correct: 2,
+                explanation: "I en <strong>parallellkoppling</strong> lyser alla lampor lika starkt eftersom spänningen över dem kommer att vara lika stor som batteriets spänning."
+            },
+            {
+                q: "Vilken enhet används för att mäta elektrisk effekt?",
+                options: [
+                    "Watt (W)",
+                    "Volt (V)",
+                    "Ampere (A)",
+                    "Joule (J)"
+                ],
+                correct: 0,
+                explanation: "<strong>Elektrisk effekt</strong> (P) mäts i enheten <strong>watt (W)</strong>."
+            }
+        ]
+    },
+    {
+        title: "Block 5: Magnetism",
+        icon: "🧲",
+        text: "Magneter drar till sig magnetiska metaller som järn (Fe), nickel (Ni) och kobolt (Co). Runt varje magnet finns ett osynligt <strong>magnetfält</strong>. Lika magnetpoler stöter bort varandra (<strong>repellera</strong>), medan olika poler dras mot varandra (<strong>attrahera</strong>). Runt en strömförande ledare uppstår det alltid ett magnetfält. Detta utnyttjas i <strong>elektromagneter</strong>, vars styrka kan ökas genom att linda metalltråden som en <strong>spole</strong> (ju fler varv desto starkare) och använda en järnspik som kärna.",
+        questions: [
+            {
+                q: "Vad händer med en kompass i närheten av en magnet?",
+                options: [
+                    "Kompassen blir elektriskt laddad.",
+                    "Magneten avmagnetiserar kompassen.",
+                    "Kompassnålen börjar snurra på grund av magnetfältet.",
+                    "Magnetfältet skyddar kompassen från strålning."
+                ],
+                correct: 2,
+                explanation: "Kring en magnet finns ett osynligt <strong>magnetfält</strong> som påverkar kompasser så att kompassnålen börjar snurra när den förs mot magneten."
+            },
+            {
+                q: "Vad är det som skapar magnetfältet kring en elektromagnet?",
+                options: [
+                    "Järnspiken eller metallstaven.",
+                    "Den statiska elektriciteten i spolen.",
+                    "Strömmen som går genom ledaren.",
+                    "Attraktionen mellan nord- och sydpolen."
+                ],
+                correct: 2,
+                explanation: "Runt en sladd där det går <strong>ström</strong> (ledare) uppstår det alltid ett <strong>magnetfält</strong>."
+            },
+            {
+                q: "Vilken regel gäller för magnetpoler?",
+                options: [
+                    "En nordpol och en sydpol repellerar varandra.",
+                    "Två sydpoler attraherar varandra.",
+                    "Två nordpoler stöter bort varandra.",
+                    "En nordpol kan attrahera ett icke-magnetiskt föremål."
+                ],
+                correct: 2,
+                explanation: "Två nordpoler eller två sydpoler vill stöta bort varandra (<strong>repellera</strong>)."
+            }
+        ]
+    },
+    {
+        title: "Block 6: Elmotor och Generator",
+        icon: "⚙️",
+        text: "Sambandet mellan elektricitet och magnetism har lett till uppfinningar som elmotorn och generatorn. En <strong>elmotor</strong> omvandlar <strong>elektrisk energi till rörelseenergi</strong>. Den fungerar genom att en elektromagnet roterar i ett magnetfält, där snabba riktningsbyten i strömmen får elektromagnetens magnetfält att växla, vilket driver rotationen. En <strong>generator</strong> är motsatsen till elmotorn; den omvandlar <strong>rörelseenergi till elektrisk energi</strong> genom <strong>induktion</strong>. Generatorer producerar nästan all elektricitet i Sverige och kan finnas i vattenkraftverk, vindkraftverk och kärnkraftverk.",
+        questions: [
+            {
+                q: "Vad omvandlar en generator?",
+                options: [
+                    "Rörelseenergi till elektrisk energi.",
+                    "Elektrisk energi till rörelseenergi.",
+                    "Värmeenergi till kemisk energi.",
+                    "Kemisk energi till elektrisk energi."
+                ],
+                correct: 0,
+                explanation: "En <strong>generator</strong> är elmotorns motsats och omvandlar <strong>rörelseenergi till elektrisk energi</strong>, till exempel i vattenkraftverk."
+            },
+            {
+                q: "Vad kallas det när en magnet snurrar inuti en spole och alstrar ström?",
+                options: [
+                    "Spänning",
+                    "Induktion",
+                    "Ohms lag",
+                    "Resistans"
+                ],
+                correct: 1,
+                explanation: "Elektriciteten uppkommer genom att en magnet snurrar snabbt inuti en spole, vilket är ett fenomen som kallas <strong>induktion</strong>."
+            },
+            {
+                q: "Vad är den grundläggande funktionen hos en elmotor?",
+                options: [
+                    "Att utjämna laddningsskillnader.",
+                    "Att mäta strömstyrka.",
+                    "Att reglera växelström.",
+                    "Att omvandla elektrisk energi till rörelseenergi."
+                ],
+                correct: 3,
+                explanation: "<strong>Elmotorer</strong> används för att omvandla <strong>elektrisk energi till rörelseenergi</strong>, som i hushållsredskap och fordon."
+            }
+        ]
+    }
+];
 
     // --- STATE MANAGEMENT ---
     let currentSectionIndex = 0;

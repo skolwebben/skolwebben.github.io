@@ -365,249 +365,249 @@
 
 
 <script>
-   // --- DATA ---
-   const quizData = [
-       {
-           title: "Block 1: Kraft och Tyngdkraft",
-           icon: "🍏",
-           text: "<strong>Kraft</strong> är ett centralt begrepp inom fysiken som beskriver något som sätter föremål i rörelse eller ändrar deras form, och mäts i enheten <strong>Newton (N)</strong>. <strong>Tyngdkraft</strong> (gravitation) påverkar alla föremål och är riktad mot jordens mittpunkt. <strong>Tyngd</strong> beror på både föremålets <strong>massa</strong> och tyngdkraften, till skillnad från massa som bara är måttet på materian. Månens tyngdkraft är endast en sjättedel av Jordens.",
-           questions: [
-               {
-                   q: "Vilken enhet används för att mäta kraft?",
-                   options: [
-                       "Joule (J)",
-                       "Watt (W)",
-                       "Volt (V)",
-                       "Newton (N)"
-                   ],
-                   correct: 3,
-                   explanation: "Kraft är ett fysikaliskt begrepp som mäts med enheten <strong>Newton (N)</strong>."
-               },
-               {
-                   q: "Vad är Tyngd ett mått på?",
-                   options: [
-                       "Mängden materia i ett föremål.",
-                       "Produkten av ett föremåls massa och tyngdkraften.",
-                       "Föremålets tröghet.",
-                       "Den acceleration föremålet utsätts för."
-                   ],
-                   correct: 1,
-                   explanation: "<strong>Tyngd</strong> är något som beror på föremålets massa och den rådande tyngdkraften (gravitationen), till skillnad från massa som är ett mått i gram."
-               },
-               {
-                   q: "Hur förhåller sig Tyngdkraften på Månen till Tyngdkraften på Jorden?",
-                   options: [
-                       "Den är dubbelt så stor.",
-                       "Den är 10 gånger större.",
-                       "Den är densamma.",
-                       "Den är en sjättedel så stor."
-                   ],
-                   correct: 3,
-                   explanation: "Månens tyngdkraft, som avgör ett föremåls tyngd, är ungefär <strong>en sjättedel</strong> av jordens tyngdkraft."
-               }
-           ]
-       },
-       {
-           title: "Block 2: Rörelsebeskrivning",
-           icon: "🏎️",
-           text: "<strong>Likformig rörelse</strong> definieras som en rörelse i konstant hastighet. <strong>Hastighet</strong> beskriver både fart och riktning, och medelhastigheten beräknas som sträckan delat med tiden (v=S/t). <strong>Olikformig rörelse</strong> sker när farten ändras, alltså vid <strong>acceleration</strong> eller retardation. Vid fritt fall ökar hastigheten på grund av <strong>tyngdaccelerationen</strong> (g ≈ 10m/s²).",
-           questions: [
-               {
-                   q: "Vad måste ett föremål ha för att dess rörelse ska klassas som Likformig rörelse?",
-                   options: [
-                       "En acceleration på 10m/s².",
-                       "En hastighet som ökar linjärt.",
-                       "En konstant hastighet.",
-                       "En konstant friktion mot underlaget."
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Likformig rörelse</strong> är en rörelse där hastigheten hålls konstant."
-               },
-               {
-                   q: "Vad kallas det när ett föremåls hastighet ökar i ett fritt fall?",
-                   options: [
-                       "Gränshastighet.",
-                       "Centrifugalkraft.",
-                       "Accelerationstvång.",
-                       "Tyngdacceleration."
-                   ],
-                   correct: 3,
-                   explanation: "Den acceleration som uppstår i ett fritt fall på grund av tyngdkraften kallas <strong>tyngdacceleration</strong>."
-               },
-               {
-                   q: "Hur beräknas medelhastigheten (v)?",
-                   options: [
-                       "Sträcka multiplicerat med tid (S⋅t).",
-                       "Massa dividerat med acceleration (m/a).",
-                       "Sträcka dividerat med tid (S/t).",
-                       "Kraft dividerat med sträcka (F/S)."
-                   ],
-                   correct: 2,
-                   explanation: "För att beräkna hastigheten dividerar man den tillryggalagda <strong>sträckan med tiden</strong> det tog."
-               }
-           ]
-       },
-       {
-           title: "Block 3: Newtons Lagar",
-           icon: "⚖️",
-           text: "<strong>Newtons första lag</strong> (Tröghetslagen) säger att en kropp förblir i vila eller likformig rörelse om summan av alla krafter (<strong>resultanten</strong>) är noll. En kraft krävs alltid för att ändra hastighet eller riktning. <strong>Newtons tredje lag</strong> (Lagen om reaktion och motreaktion) säger att två kroppar alltid påverkar varandra med lika stora men motriktade krafter.",
-           questions: [
-               {
-                   q: "Vad måste gälla för resultantkraften på ett föremål enligt Tröghetslagen för att föremålet ska förbli i vila?",
-                   options: [
-                       "Den måste vara större än noll.",
-                       "Den måste vara lika stor som normalkraften.",
-                       "Den måste vara riktad mot föremålets tyngdpunkt.",
-                       "Den måste vara noll."
-                   ],
-                   correct: 3,
-                   explanation: "Enligt <strong>Tröghetslagen</strong> förblir en kropp i vila eller likformig rörelse om och endast om resultantkraften är noll."
-               },
-               {
-                   q: "Vilket begrepp beskriver bäst den kraft som är resultatet av att flera krafter verkar på ett föremål?",
-                   options: [
-                       "Normalkraft",
-                       "Gravitationskraft",
-                       "Impulskraft",
-                       "Resultant"
-                   ],
-                   correct: 3,
-                   explanation: "En kraft som är resultatet av att man har adderat flera ursprungliga krafter kallas <strong>resultant</strong>."
-               },
-               {
-                   q: "Vilken av Newtons lagar förklarar varför Jorden drar i en boll som kastas uppåt, och bollen drar i Jorden med samma kraft?",
-                   options: [
-                       "Den första (Tröghetslagen).",
-                       "Den andra (Accelerationslagen).",
-                       "Den tredje (Lagen om reaktion och motreaktion).",
-                       "Lagen om universell gravitation."
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Lagen om reaktion och motreaktion</strong> säger att kroppar alltid påverkar varandra med lika stora men motriktade krafter."
-               }
-           ]
-       },
-       {
-           title: "Block 4: Friktion och Normalkraft",
-           icon: "🛑",
-           text: "<strong>Friktionskraft</strong> är ett motstånd som uppstår när ytor dras mot varandra. Det är nödvändigt för att kunna gå eller köra bil. <strong>Normalkraften</strong> är den kraft som trycker uppåt från ett underlag och motverkar tyngdkraften; den är alltid vinkelrät mot ytan. Ett föremåls <strong>stabilitet</strong> beror på storleken på dess <strong>stödyta</strong> och var <strong>tyngdpunkten</strong> är placerad.",
-           questions: [
-               {
-                   q: "Vad är en nödvändig funktion av friktionskraften i vardagslivet?",
-                   options: [
-                       "Att öka föremåls hastighet.",
-                       "Att omvandla elektrisk energi till värme.",
-                       "Att möjliggöra rörelse (t.ex. att gå eller köra bil).",
-                       "Att minska massans inverkan på tyngden."
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Friktion</strong> mot underlaget är nödvändig för att bilar och människor ska kunna ta spjärn och röra sig framåt."
-               },
-               {
-                   q: "Vad kallas den kraft som uppstår när en yta trycker tillbaka mot ett föremål och som är vinkelrät mot ytan?",
-                   options: [
-                       "Resultant",
-                       "Tyngdkraft",
-                       "Centripetalkraft",
-                       "Normalkraft"
-                   ],
-                   correct: 3,
-                   explanation: "Den uppåtriktade kraften från underlaget, som alltid är vinkelrät mot underlaget, kallas <strong>normalkraft</strong>."
-               },
-               {
-                   q: "Vilka två faktorer bidrar till att ett föremål är så stabilt som möjligt?",
-                   options: [
-                       "Hög tyngdpunkt och liten stödyta.",
-                       "Hög lodlinje och hög tyngdpunkt.",
-                       "Låg tyngdpunkt och stor stödyta.",
-                       "Liten massa och hög tyngdpunkt."
-                   ],
-                   correct: 2,
-                   explanation: "För att ett föremål ska vara så stabilt som möjligt ska <strong>stödytan</strong> vara stor och <strong>tyngdpunkten</strong> låg."
-               }
-           ]
-       },
-       {
-           title: "Block 5: Arbete och Energi",
-           icon: "🏗️",
-           text: "<strong>Fysikaliskt arbete</strong> utförs när en kraft flyttar ett föremål en sträcka (Arbete = Kraft · Sträcka). Enheten är <strong>Newtonmeter (Nm)</strong> eller <strong>Joule (J)</strong>. Att bara hålla något stilla är inte arbete i fysikalisk mening. <strong>Lägesenergi</strong> (potentiell energi) beror på höjden, medan <strong>rörelseenergi</strong> finns hos allt som rör sig.",
-           questions: [
-               {
-                   q: "Vilken handling räknas som att utföra ett fysikaliskt arbete?",
-                   options: [
-                       "Att hålla en ryggsäck stilla i luften.",
-                       "Att gå med en tung låda på en plan yta.",
-                       "Att skjuta en låda på ett plant underlag mot friktionskraften.",
-                       "Att trycka mot en tung bil utan att den flyttas."
-                   ],
-                   correct: 2,
-                   explanation: "Att skjuta en låda mot friktionskraften är ett <strong>fysikaliskt arbete</strong> eftersom kraften leder till en förflyttning."
-               },
-               {
-                   q: "Vilken typ av energi är ett föremåls Lägesenergi?",
-                   options: [
-                       "Rörelseenergi",
-                       "Termisk energi",
-                       "Potentiell energi (förmåga att falla).",
-                       "Elastisk energi"
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Lägesenergi</strong> är en form av potentiell energi; föremålet har 'potential' att falla och få fart."
-               },
-               {
-                   q: "Vilken enhet används för att mäta både fysikaliskt arbete och energi?",
-                   options: [
-                       "Newtonmeter per sekund (Nm/s)",
-                       "Watt (W)",
-                       "Joule (J)",
-                       "Newton (N)"
-                   ],
-                   correct: 2,
-                   explanation: "Både energi och fysikaliskt arbete mäts i <strong>Joule (J)</strong> eller Newtonmeter (Nm)."
-               }
-           ]
-       },
-       {
-           title: "Block 6: Enkla Maskiner",
-           icon: "🔧",
-           text: "<strong>Enkla maskiner</strong> (t.ex. hävstång, lutande plan) ändrar kraftens riktning eller storlek. <strong>Mekanikens gyllene lag</strong> säger: 'Det du vinner i kraft förlorar du i väg'. I en <strong>hävstång</strong> avgör avståndet till <strong>vridningspunkten</strong> hur stor kraft som behövs; längre hävarm ger mer kraft.",
-           questions: [
-               {
-                   q: "Vad innebär mekanikens gyllene lag?",
-                   options: [
-                       "Energin kan varken skapas eller förstöras.",
-                       "Kraften är proportionell mot accelerationen.",
-                       "Det du vinner i kraft förlorar du i väg.",
-                       "Tyngdkraften måste övervinnas för att utföra arbete."
-                   ],
-                   correct: 2,
-                   explanation: "Den <strong>mekaniska gyllene lagen</strong> beskriver att om man vill vinna kraft, måste man dra eller trycka en längre sträcka."
-               },
-               {
-                   q: "Om en tung person ska balansera en lättare person på en gungbräda (hävstång), var måste den tyngre personen sitta?",
-                   options: [
-                       "Längre ut från mitten än den lätta personen.",
-                       "Det är omöjligt att uppnå balans.",
-                       "Längre in mot mitten (vridningspunkten) än den lätta personen.",
-                       "Exakt samma avstånd som den lätta personen."
-                   ],
-                   correct: 2,
-                   explanation: "För att uppnå jämvikt måste en större kraft ha en kortare <strong>hävarm</strong> (avstånd till vridningspunkten)."
-               },
-               {
-                   q: "Vilken av följande är ett exempel på en enkel maskin?",
-                   options: [
-                       "Generator",
-                       "Elmotor",
-                       "Lutande plan",
-                       "Badrumsvåg"
-                   ],
-                   correct: 2,
-                   explanation: "Det <strong>lutande planet</strong> är ett klassiskt exempel på en enkel maskin."
-               }
-           ]
-       }
-   ];
+  // --- DATA ---
+const quizData = [
+{
+title: "Block 1: Kraft och Tyngdkraft",
+icon: "🍏",
+text: "<strong>Kraft</strong> är ett centralt begrepp inom fysiken som beskriver något som sätter föremål i rörelse eller ändrar deras form, och mäts i enheten <strong>Newton (N)</strong>. <strong>Tyngdkraft</strong> (gravitation) påverkar alla föremål och är riktad mot jordens mittpunkt. <strong>Tyngd</strong> beror på både föremålets <strong>massa</strong> och tyngdkraften, till skillnad från massa som bara är måttet på materian. Månens tyngdkraft är endast en sjättedel av Jordens.",
+questions: [
+{
+q: "Vilken enhet används för att mäta kraft?",
+options: [
+"Newton (N)",
+"Joule (J)",
+"Watt (W)",
+"Volt (V)"
+],
+correct: 0,
+explanation: "Kraft är ett fysikaliskt begrepp som mäts med enheten <strong>Newton (N)</strong>."
+},
+{
+q: "Vad är Tyngd ett mått på?",
+options: [
+"Mängden materia i ett föremål.",
+"Produkten av ett föremåls massa och tyngdkraften.",
+"Föremålets tröghet.",
+"Den acceleration föremålet utsätts för."
+],
+correct: 1,
+explanation: "<strong>Tyngd</strong> är något som beror på föremålets massa och den rådande tyngdkraften (gravitationen), till skillnad från massa som är ett mått i gram."
+},
+{
+q: "Hur förhåller sig Tyngdkraften på Månen till Tyngdkraften på Jorden?",
+options: [
+"Den är dubbelt så stor.",
+"Den är 10 gånger större.",
+"Den är densamma.",
+"Den är en sjättedel så stor."
+],
+correct: 3,
+explanation: "Månens tyngdkraft, som avgör ett föremåls tyngd, är ungefär <strong>en sjättedel</strong> av jordens tyngdkraft."
+}
+]
+},
+{
+title: "Block 2: Rörelsebeskrivning",
+icon: "🏎️",
+text: "<strong>Likformig rörelse</strong> definieras som en rörelse i konstant hastighet. <strong>Hastighet</strong> beskriver både fart och riktning, och medelhastigheten beräknas som sträckan delat med tiden (v=S/t). <strong>Olikformig rörelse</strong> sker när farten ändras, alltså vid <strong>acceleration</strong> eller retardation. Vid fritt fall ökar hastigheten på grund av <strong>tyngdaccelerationen</strong> (g ≈ 10m/s²).",
+questions: [
+{
+q: "Vad måste ett föremål ha för att dess rörelse ska klassas som Likformig rörelse?",
+options: [
+"En acceleration på 10m/s².",
+"En hastighet som ökar linjärt.",
+"En konstant hastighet.",
+"En konstant friktion mot underlaget."
+],
+correct: 2,
+explanation: "<strong>Likformig rörelse</strong> är en rörelse där hastigheten hålls konstant."
+},
+{
+q: "Vad kallas det när ett föremåls hastighet ökar i ett fritt fall?",
+options: [
+"Gränshastighet.",
+"Centrifugalkraft.",
+"Accelerationstvång.",
+"Tyngdacceleration."
+],
+correct: 3,
+explanation: "Den acceleration som uppstår i ett fritt fall på grund av tyngdkraften kallas <strong>tyngdacceleration</strong>."
+},
+{
+q: "Hur beräknas medelhastigheten (v)?",
+options: [
+"Sträcka multiplicerat med tid (S⋅t).",
+"Massa dividerat med acceleration (m/a).",
+"Sträcka dividerat med tid (S/t).",
+"Kraft dividerat med sträcka (F/S)."
+],
+correct: 2,
+explanation: "För att beräkna hastigheten dividerar man den tillryggalagda <strong>sträckan med tiden</strong> det tog."
+}
+]
+},
+{
+title: "Block 3: Newtons Lagar",
+icon: "⚖️",
+text: "<strong>Newtons första lag</strong> (Tröghetslagen) säger att en kropp förblir i vila eller likformig rörelse om summan av alla krafter (<strong>resultanten</strong>) är noll. En kraft krävs alltid för att ändra hastighet eller riktning. <strong>Newtons tredje lag</strong> (Lagen om reaktion och motreaktion) säger att två kroppar alltid påverkar varandra med lika stora men motriktade krafter.",
+questions: [
+{
+q: "Vad måste gälla för resultantkraften på ett föremål enligt Tröghetslagen för att föremålet ska förbli i vila?",
+options: [
+"Den måste vara noll.",
+"Den måste vara större än noll.",
+"Den måste vara lika stor som normalkraften.",
+"Den måste vara riktad mot föremålets tyngdpunkt."
+],
+correct: 0,
+explanation: "Enligt <strong>Tröghetslagen</strong> förblir en kropp i vila eller likformig rörelse om och endast om resultantkraften är noll."
+},
+{
+q: "Vilket begrepp beskriver bäst den kraft som är resultatet av att flera krafter verkar på ett föremål?",
+options: [
+"Normalkraft",
+"Resultant",
+"Gravitationskraft",
+"Impulskraft"
+],
+correct: 1,
+explanation: "En kraft som är resultatet av att man har adderat flera ursprungliga krafter kallas <strong>resultant</strong>."
+},
+{
+q: "Vilken av Newtons lagar förklarar varför Jorden drar i en boll som kastas uppåt, och bollen drar i Jorden med samma kraft?",
+options: [
+"Den första (Tröghetslagen).",
+"Den andra (Accelerationslagen).",
+"Den tredje (Lagen om reaktion och motreaktion).",
+"Lagen om universell gravitation."
+],
+correct: 2,
+explanation: "<strong>Lagen om reaktion och motreaktion</strong> säger att kroppar alltid påverkar varandra med lika stora men motriktade krafter."
+}
+]
+},
+{
+title: "Block 4: Friktion och Normalkraft",
+icon: "🛑",
+text: "<strong>Friktionskraft</strong> är ett motstånd som uppstår när ytor dras mot varandra. Det är nödvändigt för att kunna gå eller köra bil. <strong>Normalkraften</strong> är den kraft som trycker uppåt från ett underlag och motverkar tyngdkraften; den är alltid vinkelrät mot ytan. Ett föremåls <strong>stabilitet</strong> beror på storleken på dess <strong>stödyta</strong> och var <strong>tyngdpunkten</strong> är placerad.",
+questions: [
+{
+q: "Vad är en nödvändig funktion av friktionskraften i vardagslivet?",
+options: [
+"Att öka föremåls hastighet.",
+"Att möjliggöra rörelse (t.ex. att gå eller köra bil).",
+"Att omvandla elektrisk energi till värme.",
+"Att minska massans inverkan på tyngden."
+],
+correct: 1,
+explanation: "<strong>Friktion</strong> mot underlaget är nödvändig för att bilar och människor ska kunna ta spjärn och röra sig framåt."
+},
+{
+q: "Vad kallas den kraft som uppstår när en yta trycker tillbaka mot ett föremål och som är vinkelrät mot ytan?",
+options: [
+"Resultant",
+"Tyngdkraft",
+"Centripetalkraft",
+"Normalkraft"
+],
+correct: 3,
+explanation: "Den uppåtriktade kraften från underlaget, som alltid är vinkelrät mot underlaget, kallas <strong>normalkraft</strong>."
+},
+{
+q: "Vilka två faktorer bidrar till att ett föremål är så stabilt som möjligt?",
+options: [
+"Låg tyngdpunkt och stor stödyta.",
+"Hög tyngdpunkt och liten stödyta.",
+"Hög lodlinje och hög tyngdpunkt.",
+"Liten massa och hög tyngdpunkt."
+],
+correct: 0,
+explanation: "För att ett föremål ska vara så stabilt som möjligt ska <strong>stödytan</strong> vara stor och <strong>tyngdpunkten</strong> låg."
+}
+]
+},
+{
+title: "Block 5: Arbete och Energi",
+icon: "🏗️",
+text: "<strong>Fysikaliskt arbete</strong> utförs när en kraft flyttar ett föremål en sträcka (Arbete = Kraft · Sträcka). Enheten är <strong>Newtonmeter (Nm)</strong> eller <strong>Joule (J)</strong>. Att bara hålla något stilla är inte arbete i fysikalisk mening. <strong>Lägesenergi</strong> (potentiell energi) beror på höjden, medan <strong>rörelseenergi</strong> finns hos allt som rör sig.",
+questions: [
+{
+q: "Vilken handling räknas som att utföra ett fysikaliskt arbete?",
+options: [
+"Att hålla en ryggsäck stilla i luften.",
+"Att gå med en tung låda på en plan yta.",
+"Att skjuta en låda på ett plant underlag mot friktionskraften.",
+"Att trycka mot en tung bil utan att den flyttas."
+],
+correct: 2,
+explanation: "Att skjuta en låda mot friktionskraften är ett <strong>fysikaliskt arbete</strong> eftersom kraften leder till en förflyttning."
+},
+{
+q: "Vilken typ av energi är ett föremåls Lägesenergi?",
+options: [
+"Rörelseenergi",
+"Termisk energi",
+"Potentiell energi (förmåga att falla).",
+"Elastisk energi"
+],
+correct: 2,
+explanation: "<strong>Lägesenergi</strong> är en form av potentiell energi; föremålet har 'potential' att falla och få fart."
+},
+{
+q: "Vilken enhet används för att mäta både fysikaliskt arbete och energi?",
+options: [
+"Newtonmeter per sekund (Nm/s)",
+"Joule (J)",
+"Watt (W)",
+"Newton (N)"
+],
+correct: 1,
+explanation: "Både energi och fysikaliskt arbete mäts i <strong>Joule (J)</strong> eller Newtonmeter (Nm)."
+}
+]
+},
+{
+title: "Block 6: Enkla Maskiner",
+icon: "🔧",
+text: "<strong>Enkla maskiner</strong> (t.ex. hävstång, lutande plan) ändrar kraftens riktning eller storlek. <strong>Mekanikens gyllene lag</strong> säger: 'Det du vinner i kraft förlorar du i väg'. I en <strong>hävstång</strong> avgör avståndet till <strong>vridningspunkten</strong> hur stor kraft som behövs; längre hävarm ger mer kraft.",
+questions: [
+{
+q: "Vad innebär mekanikens gyllene lag?",
+options: [
+"Energin kan varken skapas eller förstöras.",
+"Kraften är proportionell mot accelerationen.",
+"Det du vinner i kraft förlorar du i väg.",
+"Tyngdkraften måste övervinnas för att utföra arbete."
+],
+correct: 2,
+explanation: "Den <strong>mekaniska gyllene lagen</strong> beskriver att om man vill vinna kraft, måste man dra eller trycka en längre sträcka."
+},
+{
+q: "Om en tung person ska balansera en lättare person på en gungbräda (hävstång), var måste den tyngre personen sitta?",
+options: [
+"Längre in mot mitten (vridningspunkten) än den lätta personen.",
+"Längre ut från mitten än den lätta personen.",
+"Det är omöjligt att uppnå balans.",
+"Exakt samma avstånd som den lätta personen."
+],
+correct: 0,
+explanation: "För att uppnå jämvikt måste en större kraft ha en kortare <strong>hävarm</strong> (avstånd till vridningspunkten)."
+},
+{
+q: "Vilken av följande är ett exempel på en enkel maskin?",
+options: [
+"Generator",
+"Elmotor",
+"Lutande plan",
+"Badrumsvåg"
+],
+correct: 2,
+explanation: "Det <strong>lutande planet</strong> är ett klassiskt exempel på en enkel maskin."
+}
+]
+}
+];
 
 
    // --- STATE MANAGEMENT ---
