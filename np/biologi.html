@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>NP-Guiden | Biologi</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Plus Jakarta Sans', sans-serif;
+           background-color: #0b0f19; /* Darker Space Blue base */
+       }
+      
+       /* Custom Scrollbar - Green Theme */
+       ::-webkit-scrollbar {
+           width: 8px;
+       }
+       ::-webkit-scrollbar-track {
+           background: #0b0f19;
+       }
+       ::-webkit-scrollbar-thumb {
+           background: #059669; /* Emerald 600 */
+           border-radius: 4px;
+       }
+       ::-webkit-scrollbar-thumb:hover {
+           background: #10b981; /* Emerald 500 */
+       }
+
+
+       .glass {
+           background: rgba(19, 24, 40, 0.6);
+           backdrop-filter: blur(12px);
+           border: 1px solid rgba(255, 255, 255, 0.08);
+       }
+      
+       .glass-card {
+           background: linear-gradient(145deg, rgba(6, 78, 59, 0.4), rgba(19, 24, 40, 0.6));
+           backdrop-filter: blur(10px);
+           border: 1px solid rgba(16, 185, 129, 0.1); /* Subtle green border */
+           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+       }
+
+
+       .glass-card:hover {
+           transform: translateY(-4px);
+           border-color: rgba(52, 211, 153, 0.4);
+           background: linear-gradient(145deg, rgba(6, 95, 70, 0.5), rgba(6, 78, 59, 0.6));
+           box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.3);
+       }
+
+
+       .glass-card:hover img {
+           transform: scale(1.1);
+       }
+
+
+       .hero-gradient {
+           /* Green/Nature Theme */
+           background: radial-gradient(circle at top center, #065f46 0%, transparent 50%),
+                       radial-gradient(circle at bottom right, #65a30d 0%, transparent 40%);
+           background-attachment: fixed;
+       }
+
+
+       .image-box {
+           overflow: hidden;
+           border: 1px solid rgba(255, 255, 255, 0.1);
+       }
+   </style>
+</head>
+<body class="text-slate-200 antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+
+
+   <!-- Background Decoration -->
+   <div class="fixed inset-0 z-[-1] hero-gradient"></div>
+   <div class="fixed top-0 left-0 w-full h-full z-[-1] opacity-20" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%239C92AC\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+
+
+   <!-- Nav -->
+   <nav class="w-full px-6 py-4 flex justify-between items-center z-10 glass border-b-0 border-white/5">
+       <div class="text-xl font-extrabold tracking-tighter text-white flex items-center gap-2">
+           <span class="bg-emerald-600 w-8 h-8 rounded-lg flex items-center justify-center text-xs">NP</span>
+           <span>Guiden <span class="text-emerald-400">| Biologi</span></span>
+       </div>
+   </nav>
+
+
+   <!-- Main Content -->
+   <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+      
+       <!-- Header Section (Compact) -->
+       <header class="text-center mb-10">
+           <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
+               Inför <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400">Biologiprovet</span>
+           </h1>
+           <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mb-6">
+               Samlade övningar och genomgångar för alla centrala områden.
+           </p>
+       </header>
+
+
+       <!-- Compact Grid Layout -->
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+
+           <!-- 1. Ekologi & Hållbar utveckling (Bild 7: Solljus i skog) -->
+           <a href="ekologi" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=500&q=80" alt="Solljus genom träd" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">Ekologi & Hållbarhet</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Ekosystemets delar, näringsvävar, energiflöden och människans påverkan</p>
+               </div>
+               <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                   <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+               </div>
+           </a>
+
+
+           <!-- 2. Kroppens organ & Funktion (Behållen: Anatomi) -->
+           <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&w=500&q=80" alt="Anatomi illustration" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-red-300 transition-colors">Kropp & Organ</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Hur organsystem som cirkulation och andning samverkar</p>
+               </div>
+           </a>
+
+
+           <!-- 3. Hälsa & Sjukdom (Bild 5: Blodkroppar) -->
+           <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Red_Blood_Cell.jpg?width=500" alt="Blodkroppar mikroskop" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-teal-300 transition-colors">Hälsa & Sjukdom</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Immunförsvaret, vaccin, antibiotika, sömn, kost och droger</p>
+               </div>
+           </a>
+
+
+           <!-- 4. Sexualitet & Relationer (Ny: Befruktning) -->
+           <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sperm-egg.jpg?width=500" alt="Befruktning" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-pink-300 transition-colors">Sex & Relationer</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Pubertet, reproduktion, preventivmedel och könssjukdomar</p>
+               </div>
+           </a>
+
+
+           <!-- 5. Evolution & Anpassning (Ny: Fossil) -->
+           <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ammonite-Fossil.jpg?width=500" alt="Fossil" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">Evolution</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Naturligt urval, livets utveckling och anpassning till miljöer</p>
+               </div>
+           </a>
+
+
+           <!-- 6. Genetik & Bioteknik (Ny: DNA) -->
+           <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://commons.wikimedia.org/wiki/Special:FilePath/DNA_Double_Helix_by_NHGRI.jpg?width=500" alt="DNA spiral" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">Genetik & Bioteknik</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">DNA, genetiskt arv, korsningsscheman och genteknik</p>
+               </div>
+           </a>
+
+
+           <!-- 7. Naturvetenskapliga resonemang (Behållen: Miljö) -->
+           <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=500&q=80" alt="Miljö och samhälle" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-lime-300 transition-colors">Resonemang</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Ta ställning och motivera i frågor om miljö och hälsa</p>
+               </div>
+           </a>
+
+
+           <!-- 8. Källkritik (Behållen: Nyheter) -->
+           <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=500&q=80" alt="Nyheter och granskning" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">Källkritik</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Granska information och bedöma källors trovärdighet</p>
+               </div>
+           </a>
+
+
+            <!-- 9. Systematiska undersökningar (Bild 2: Provrör) -->
+            <a href="#" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden bg-emerald-900/20 border-emerald-500/30">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0 border-emerald-500/50">
+                   <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=500&q=80" alt="Provrör i labb" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-emerald-200 transition-colors">Undersökningar</h3>
+                   <p class="text-xs text-emerald-200/70 mt-1 leading-relaxed">Planera, genomföra och utvärdera experiment</p>
+               </div>
+           </a>
+
+
+       </div>
+   </main>
+
+
+   <footer class="text-center py-6 text-xs text-slate-600 border-t border-white/5 mt-auto">
+       <p>NP-Guiden Biologi</p>
+   </footer>
+
+
+</body>
+</html>
