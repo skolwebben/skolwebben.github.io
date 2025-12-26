@@ -1,0 +1,862 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Biologiquiz: Sex & Relationer (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Rött Tema (Kärlek/Hälsa) med Komplement */
+           --card-bg: #ffffff;
+          
+           --brand-color: #c62828; /* Djup röd */
+           --brand-gradient: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+          
+           --accent-color: #ef5350; /* Ljusare röd */
+          
+           /* Komplementfärg: Mörk Gråblå (Slate) */
+           --complement-color: #37474f;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121;
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Neutral bakgrund med varm ton */
+           background-image: linear-gradient(135deg, #fafafa 0%, #eceff1 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee;
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color); /* Komplementfärg på ikonen */
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(198, 40, 40, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(198, 40, 40, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color);
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #ffebee;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000;
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Röd gradient */
+           background: linear-gradient(90deg, #ef5350 0%, #c62828 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(229, 57, 53, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+           border: 1px solid #ef9a9a;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000;
+           font-weight: 700;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Biologiquiz: Sex & Relationer</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Pubertet & Hormoner",
+           icon: "🧬",
+           text: "Puberteten startar när <strong>hypofysen</strong> i hjärnan skickar signaler till kroppen att börja producera <strong>könshormoner</strong>. Hos pojkar produceras främst <strong>testosteron</strong> och hos flickor <strong>östrogen</strong>, vilket leder till att kroppen förändras både fysiskt och mentalt. Vanliga förändringar är att man växer på längden, får mer kroppsbehåring och att humöret kan svänga kraftigt.",
+           questions: [
+               {
+                   q: "Vilken del av kroppen ger signalen som startar produktionen av könshormoner?",
+                   options: [
+                       "Hypofysen i hjärnan",
+                       "Testiklarna i pungen",
+                       "Äggstockarna i magen",
+                       "Sköldkörteln i halsen"
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Hypofysen</strong> styr kroppens hormonsystem och sätter igång puberteten genom att skicka ut kemiska signaler."
+               },
+               {
+                   q: "Vilka hormoner är viktigast för utvecklingen av könsegenskaper under puberteten?",
+                   options: [
+                       "Adrenalin och insulin",
+                       "Testosteron och östrogen",
+                       "Dopamin och oxytocin",
+                       "Hemoglobin och galla"
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Testosteron</strong> driver pojkars utveckling medan <strong>östrogen</strong> styr flickors utveckling av könsorgan och kroppsform."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Befruktning & Graviditet",
+           icon: "👶",
+           text: "<strong>Befruktning</strong> sker när en spermie förenas med en äggcell. Detta sker oftast i <strong>äggledaren</strong> efter att äggstocken har släppt ett moget ägg vid <strong>ägglossningen</strong>. Om ägget befruktas fastnar det i livmoderns slemhinna och utvecklas till ett foster under cirka 40 veckor. <strong>Moderkakan</strong> fungerar som länken mellan fostret och mamman.",
+           questions: [
+               {
+                   q: "Var i kvinnans underliv förenas normalt ägget och spermien vid en befruktning?",
+                   options: [
+                       "I urinblåsan",
+                       "Inuti livmodern",
+                       "Ute i äggledaren",
+                       "Längst in i slidan"
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Äggledaren</strong> är den passage där ägget möter spermierna på sin väg från äggstocken till livmodern."
+               },
+               {
+                   q: "När i menstruationscykeln är chansen som störst att en kvinna blir gravid?",
+                   options: [
+                       "Sista dagen av mensen",
+                       "Precis innan mensen börjar",
+                       "Under de första mensdagarna",
+                       "Mitt mellan två menstruationer"
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Ägglossningen</strong> sker vanligtvis omkring dag 14 i en 28 dagar lång cykel, vilket är den mest fertila perioden."
+               },
+               {
+                   q: "Vilken är moderkakans främsta uppgift under en graviditet?",
+                   options: [
+                       "Att ge fostret syre och näring",
+                       "Att skydda fostret mot vibrationer",
+                       "Att bestämma barnets biologiska kön",
+                       "Att producera fostrets egna blodceller"
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Moderkakan</strong> fungerar som en länk till mammans blod för att transportera livsviktiga ämnen och ta bort avfall."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Identitet & Sexualitet",
+           icon: "🌈",
+           text: "Sexualitet handlar om vem man blir kär i, medan <strong>könsidentitet</strong> handlar om vilket kön man känner sig som. Begrepp som <strong>homosexuell</strong>, bisexuell och heterosexuell beskriver sexuell läggning. En person vars könsidentitet stämmer överens med det biologiska könet kallas <strong>cisperson</strong>, medan en person som inte känner så kan vara <strong>transperson</strong>. <strong>Queer</strong> är ett begrepp som ifrågasätter normer.",
+           questions: [
+               {
+                   q: "Vad innebär det att en person definierar sig som en cisperson?",
+                   options: [
+                       "Att man är intresserad av både män och kvinnor",
+                       "Att ens könsidentitet stämmer med biologiskt kön",
+                       "Att man inte känner någon sexuell attraktion alls",
+                       "Att man har opererat om sitt biologiska kön"
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Cispersoner</strong> känner sig som det kön de föddes till, till skillnad från transpersoner som har en annan identitet."
+               },
+               {
+                   q: "Vilket begrepp används för att bryta mot samhällets normer kring kön och sexualitet?",
+                   options: [
+                       "Intersexuell",
+                       "Heteronormativ",
+                       "Queer-identitet",
+                       "Könsdysfori"
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Queer</strong> används som ett samlingsbegrepp för att utmana traditionella uppfattningar om vad som anses 'normalt'."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Samtycke & Lagstiftning",
+           icon: "⚖️",
+           text: "Sedan 2018 bygger Sveriges lagstiftning om våldtäkt på <strong>frivillighet</strong>. Detta kallas <strong>samtyckeslagen</strong> och innebär att allt sex som inte är frivilligt är olagligt. Lagen införde även brottet <strong>oaktsam våldtäkt</strong>, vilket innebär att man kan dömas om man borde ha förstått att den andra personen inte ville delta.",
+           questions: [
+               {
+                   q: "Vad utgör grunden i den svenska samtyckeslagen som infördes år 2018?",
+                   options: [
+                       "Att man måste ha fyllt minst 18 år",
+                       "Att fysiskt våld måste ha förekommit",
+                       "Att parterna måste vara gifta med varandra",
+                       "Att sexuella handlingar ska vara frivilliga"
+                   ],
+                   correct: 3,
+                   explanation: "Lagen fokuserar numera på om deltagandet var <strong>frivilligt</strong> istället för om det fanns våld eller hot."
+               },
+               {
+                   q: "Vad menas juridiskt med begreppet 'oaktsam våldtäkt'?",
+                   options: [
+                       "Att man borde ha insett att den andre inte ville",
+                       "Att man råkade skada sin partner under samlaget",
+                       "Att man glömde använda ett säkert preventivmedel",
+                       "Att man ångrade sig direkt efter att sexet avslutats"
+                   ],
+                   correct: 0,
+                   explanation: "Man har ett ansvar att försäkra sig om att partnern vill, annars kan man dömas för <strong>oaktsamhet</strong>."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Preventivmedel",
+           icon: "💊",
+           text: "<strong>Preventivmedel</strong> används för att hindra oönskad graviditet. <strong>Kondom</strong> är det enda som skyddar mot både graviditet och <strong>sexuellt överförbara sjukdomar</strong> (STI). Hormonella metoder, som <strong>p-piller</strong>, förhindrar graviditet genom att påverka ägglossning och livmoderslemhinna, men ger inget skydd mot smitta.",
+           questions: [
+               {
+                   q: "Vilket skydd ger kondomen som p-piller helt saknar?",
+                   options: [
+                       "Skydd mot att fosterhinnorna spricker",
+                       "Skydd mot sexuellt överförbara sjukdomar",
+                       "Skydd mot hormonella svängningar i kroppen",
+                       "Skydd mot att ägget fastnar i livmoderväggen"
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Kondomen</strong> fungerar som en barriär som stoppar smittämnen i kroppsvätskor från att spridas."
+               },
+               {
+                   q: "Hur fungerar p-piller biologiskt för att förhindra graviditet?",
+                   options: [
+                       "De dödar spermier som kommer in i slidan",
+                       "De gör att slemhinnan i livmodern stöts bort",
+                       "De förhindrar ägglossning och gör sekretet segare",
+                       "De stänger av funktionen i kvinnans äggledare"
+                   ],
+                   correct: 2,
+                   explanation: "Hormonerna lurar kroppen att tro att en ägglossning redan skett (ingen ny <strong>ägglossning</strong>) och gör det svårare för spermier att komma fram."
+               }
+           ]
+       },
+       {
+           title: "Del 6: Könssjukdomar (STI)",
+           icon: "🏥",
+           text: "<strong>Könssjukdomar</strong> sprids vid sexuella kontakter. Sjukdomar som orsakas av <strong>bakterier</strong> (t.ex. <strong>klamydia</strong> och gonorré) kan botas med antibiotika. Sjukdomar som orsakas av <strong>virus</strong> (t.ex. herpes, <strong>HIV</strong> och <strong>HPV</strong>) kan inte botas med antibiotika, men vissa kan förebyggas med vaccin.",
+           questions: [
+               {
+                   q: "Vilken av följande sjukdomar kan botas med en kur antibiotika?",
+                   options: [
+                       "Könsherpes",
+                       "HIV/AIDS",
+                       "Kondylom",
+                       "Klamydia"
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Klamydia</strong> orsakas av en bakterie, medan de andra alternativen orsakas av virus som antibiotika inte biter på."
+               },
+               {
+                   q: "Vad är en möjlig långsiktig konsekvens av en obehandlad klamydiainfektion?",
+                   options: [
+                       "Det kan leda till sterilitet (infertilitet)",
+                       "Det orsakar kroniska sår på venusberget",
+                       "Det leder till att man får svårt att kissa",
+                       "Det gör att man aldrig mer får menstruation"
+                   ],
+                   correct: 0,
+                   explanation: "Infektionen kan orsaka inflammation i äggledarna vilket gör det svårt att <strong>få barn</strong> i framtiden."
+               },
+               {
+                   q: "Vilket påstående är sant om viruset HIV?",
+                   options: [
+                       "Det sprids främst via hudkontakt och kramar",
+                       "Det angriper och försvagar immunförsvaret",
+                       "Det kan botas helt om man får penicillin tidigt",
+                       "Det ger alltid tydliga blåsor direkt efter smitta"
+                   ],
+                   correct: 1,
+                   explanation: "HIV förstör vita blodkroppar, vilket gör att kroppen får svårt att <strong>försvara sig</strong> mot andra sjukdomar."
+               },
+               {
+                   q: "Varför vaccineras många ungdomar mot HPV (Human Papilloma Virus)?",
+                   options: [
+                       "För att förhindra att man får svamp i underlivet",
+                       "För att stoppa spridningen av bakteriell klamydia",
+                       "För att minska risken för cancer i livmoderhalsen",
+                       "För att öka fertiliteten och chansen att få barn"
+                   ],
+                   correct: 2,
+                   explanation: "Vissa typer av HPV kan orsaka cellförändringar som på sikt kan utvecklas till <strong>cancer</strong>."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+            setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
