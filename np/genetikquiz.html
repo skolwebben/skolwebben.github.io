@@ -1,0 +1,910 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Biologiquiz: Genetik & Bioteknik (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Grönt Tema (Biologi/Natur) */
+           --card-bg: #ffffff;
+          
+           --brand-color: #2e7d32; /* Mörkgrön */
+           --brand-gradient: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+          
+           --accent-color: #66bb6a; /* Ljusare grön */
+          
+           /* Komplementfärg: Terra Cotta / Bränd Orange */
+           --complement-color: #d84315;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121; /* Mörkare grå/svart för text */
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade (Silver/Metallic style) */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee; /* Neutral border */
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color); /* Komplementfärg på ikonen */
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(46, 125, 50, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color); /* Komplementfärg */
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #e8f5e9;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svarta fetstilade ord */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Cyan Gradient */
+           background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+           border: 1px solid #a5d6a7;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Biologiquiz: Genetik & Bioteknik</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: DNA och livets ritning",
+           icon: "🧬",
+           text: "Informationen om hur en organism ser ut och fungerar finns i <strong>cellkärnan</strong> i form av <strong>DNA-molekyler</strong>. DNA kan liknas vid en bruksanvisning där bokstäverna består av fyra kvävebaser: Adenin (A), Tymin (T), Cytosin (C) och Guanin (G). En <strong>gen</strong> är en specifik sträcka på DNA:t som kodar för ett visst protein, och hos människan är DNA:t uppdelat i 46 delar som kallas <strong>kromosomer</strong>.",
+           questions: [
+               {
+                   q: "Var i cellen finns den största delen av organismens genetiska information samlad?",
+                   options: [
+                       "Inuti cellkärnan där DNA-molekylerna förvaras.",
+                       "I ribosomerna där aminosyrorna kopplas samman.",
+                       "I cellmembranet som styr vilka ämnen som passerar.",
+                       "Inuti mitokondrierna där all cellandning äger rum."
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Cellkärnan</strong> fungerar som cellens kontrollcenter och innehåller nästan allt genetiskt material."
+               },
+               {
+                   q: "Hur parar sig kvävebaserna i DNA-molekylens 'stege'?",
+                   options: [
+                       "A parar sig med G, medan C alltid parar sig med T.",
+                       "A parar sig med T, medan C alltid parar sig med G.",
+                       "G parar sig med T, medan A alltid parar sig med C.",
+                       "C parar sig med A, medan G alltid parar sig med T."
+                   ],
+                   correct: 1,
+                   explanation: "Basparen är specifika; <strong>Adenin</strong> binder till <strong>Tymin</strong> och <strong>Cytosin</strong> binder till <strong>Guanin</strong>."
+               },
+               {
+                   q: "Vad är den biologiska definitionen av en gen?",
+                   options: [
+                       "En typ av protein som bygger upp muskler och vävnad.",
+                       "Hela den samlade mängden DNA som finns i en cell.",
+                       "En bestämd sträcka på DNA som kodar för ett protein.",
+                       "De sockerarter som bygger upp DNA-molekylens sidor."
+                   ],
+                   correct: 2,
+                   explanation: "En <strong>gen</strong> fungerar som en bruksanvisning för att tillverka ett specifikt protein eller styra en egenskap."
+               },
+               {
+                   q: "Hur många kromosomer har en människa normalt i sina vanliga kroppsceller?",
+                   options: [
+                       "23 stycken som ligger helt obundna till varandra.",
+                       "48 stycken som är uppdelade i 24 identiska par.",
+                       "44 stycken plus två extra i de röda blodkropparna.",
+                       "46 stycken som är uppdelade i 23 stycken olika par."
+                   ],
+                   correct: 3,
+                   explanation: "Vi ärver 23 kromosomer från pappan och 23 från mamman, vilket ger totalt <strong>46 stycken</strong>."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Celldelning och kön",
+           icon: "➗",
+           text: "Kroppsceller delar sig genom <strong>mitos</strong> (vanlig celldelning), där den nya cellen får exakt samma 46 kromosomer som ursprungscellen. Könsceller (ägg och spermier) bildas genom <strong>meios</strong> (reduktionsdelning), vilket resulterar i celler med endast 23 kromosomer. Vid befruktningen bestäms barnets biologiska kön av pappan; om spermien bär på en X-kromosom blir det en flicka (XX), och om den bär på en Y-kromosom blir det en pojke (XY).",
+           questions: [
+               {
+                   q: "Vad utmärker meios (reduktionsdelning) jämfört med mitos?",
+                   options: [
+                       "Antalet kromosomer halveras för att skapa könsceller.",
+                       "Cellerna blir exakta kopior av den ursprungliga cellen.",
+                       "Processen sker enbart för att reparera skadad hudvävnad.",
+                       "DNA-molekylen kopieras inte alls innan cellen delar sig."
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Meios</strong> skapar haploida celler med 23 kromosomer så att barnet får 46 vid befruktningen."
+               },
+               {
+                   q: "Vem bestämmer barnets biologiska kön enligt genetiken?",
+                   options: [
+                       "Mamman, eftersom hennes ägg kan innehålla både X och Y.",
+                       "Pappan, eftersom hans spermier bär på antingen X eller Y.",
+                       "Miljön, eftersom temperaturen i livmodern styr delningen.",
+                       "Slumpen, eftersom ägget väljer vilken kromosom det vill ha."
+                   ],
+                   correct: 1,
+                   explanation: "Ägget har alltid en X-kromosom, så det är <strong>spermien</strong> (X eller Y) som avgör könet."
+               },
+               {
+                   q: "Varför blir inte syskon exakta kopior trots att de har samma föräldrar?",
+                   options: [
+                       "Föräldrarnas gener ändras helt mellan varje graviditet.",
+                       "Dominanta anlag slutar fungera efter det första barnet.",
+                       "Kromosomparen blandas slumpmässigt genom överkorsning.",
+                       "Miljön i livmodern raderar hälften av alla ärvda anlag."
+                   ],
+                   correct: 2,
+                   explanation: "Vid bildandet av könsceller blandas generna (<strong>överkorsning</strong>), vilket gör varje könscell unik."
+               },
+               {
+                   q: "Vad kallas processen när DNA-molekylen kopierar sig själv inför en celldelning?",
+                   options: [
+                       "Mutation",
+                       "Transkription",
+                       "Translation",
+                       "Replikation"
+                   ],
+                   correct: 3,
+                   explanation: "Vid <strong>replikation</strong> öppnar sig DNA-strängen och nya baser fäster så att två identiska kopior bildas."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Arv, miljö och korsningsscheman",
+           icon: "🎲",
+           text: "Egenskaper styrs av anlag som kan vara <strong>dominanta</strong> (bestämmande) eller <strong>recessiva</strong> (vikande). En <strong>fenotyp</strong> är den egenskap som syns, medan en <strong>genotyp</strong> är de faktiska anlag man bär på. Många egenskaper är ett samspel mellan <strong>arv och miljö</strong> – till exempel kan du ha anlag för musikalitet (arv), men du måste öva för att bli bra (miljö).",
+           questions: [
+               {
+                   q: "Om båda föräldrarna är heterozygota för bruna ögon (Bb), hur stor är chansen att barnet får blå ögon (bb)?",
+                   options: [
+                       "25 % chans (1 av 4)",
+                       "50 % chans (2 av 4)",
+                       "75 % chans (3 av 4)",
+                       "100 % chans (4 av 4)"
+                   ],
+                   correct: 0,
+                   explanation: "Enligt <strong>korsningsschemat</strong> blir en av fyra kombinationer 'bb', vilket krävs för blå ögon (recessivt)."
+               },
+               {
+                   q: "Vad menas med begreppet fenotyp?",
+                   options: [
+                       "De dolda anlag som man bär på men som aldrig syns utåt.",
+                       "De egenskaper som faktiskt visar sig, t.ex. ögonfärg.",
+                       "En mutation som har skett i cellens energikraftverk.",
+                       "Det sockerämne som bygger upp sidorna på DNA-stegen."
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Fenotypen</strong> är det resultat vi ser av samspelet mellan gener och miljö."
+               },
+               {
+                   q: "Vilket begrepp beskriver en individ som har två likadana anlag för en egenskap (t.ex. RR eller rr)?",
+                   options: [
+                       "Heterozygot",
+                       "Intermediär",
+                       "Homozygot",
+                       "Diploid"
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Homozygot</strong> betyder att båda anlagen i ett kromosompar är identiska för den valda genen."
+               },
+               {
+                   q: "Varför kan enäggstvillingar ha olika stor muskelmassa som vuxna?",
+                   options: [
+                       "De har olika gener eftersom de kommer från två olika ägg.",
+                       "Dominanta anlag försvinner om man inte tränar tillräckligt.",
+                       "Det är genetiskt omöjligt för dem att ha olika muskelmassa.",
+                       "Miljöfaktorer som träning och kost påverkar hur de utvecklas."
+                   ],
+                   correct: 3,
+                   explanation: "Muskler påverkas kraftigt av <strong>miljön</strong> (träning), även om arvet är identiskt."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Genetisk variation och mutationer",
+           icon: "⚠️",
+           text: "<strong>Mutationer</strong> är slumpmässiga förändringar i DNA som kan uppstå vid celldelning. Om mutationen sker i en könscell kan den föras vidare till nästa generation och bidra till evolutionen. Vissa sjukdomar är <strong>könsbundna</strong>, vilket innebär att de sitter på X-kromosomen; eftersom pojkar bara har en X-kromosom drabbas de oftare av t.ex. färgblindhet.",
+           questions: [
+               {
+                   q: "Vilken av dessa egenskaper bestäms av en kombination av både arv och miljö?",
+                   options: [
+                       "Kroppslängd",
+                       "Blodgrupp",
+                       "Ögonfärg",
+                       "Skomakartumme"
+                   ],
+                   correct: 0,
+                   explanation: "Längd styrs av gener men påverkas också av <strong>miljöfaktorer</strong> som t.ex. näringsintag."
+               },
+               {
+                   q: "Varför är röd-grön färgblindhet vanligare hos pojkar än hos flickor?",
+                   options: [
+                       "Genen för färgblindhet är dominant hos pojkar men recessiv hos flickor.",
+                       "Pojkar har bara en X-kromosom och saknar ett extra skyddande anlag.",
+                       "Y-kromosomen innehåller speciella gener som förstör färgseendet.",
+                       "Flickors ögon utvecklas snabbare i puberteten på grund av östrogen."
+                   ],
+                   correct: 1,
+                   explanation: "Eftersom anlaget är recessivt på X-kromosomen räcker det med ett 'sjukt' anlag för pojkar (<strong>könsbundet arv</strong>)."
+               },
+               {
+                   q: "Vad kan öka risken för att mutationer uppstår i kroppens celler?",
+                   options: [
+                       "Att äta för mycket proteinrik mat som bönor och nötter.",
+                       "Att läsa böcker och träna minnet regelbundet i vardagen.",
+                       "Att utsätta huden för stark UV-strålning eller farliga gifter.",
+                       "Att vaccinera sig mot vanliga smittsamma virussjukdomar."
+                   ],
+                   correct: 2,
+                   explanation: "Strålning, rökning och gifter kan skada DNA:t och orsaka fel vid kopieringen (<strong>mutationer</strong>)."
+               },
+               {
+                   q: "Vilken betydelse har mutationer för livet på jorden på lång sikt?",
+                   options: [
+                       "De ser till att alla individer inom en art blir exakt likadana.",
+                       "De gör att alla recessiva anlag försvinner inom några år.",
+                       "De hindrar celler från att kunna dela sig genom vanlig mitos.",
+                       "De skapar den variation som krävs för att evolutionen ska ske."
+                   ],
+                   correct: 3,
+                   explanation: "Utan mutationer skulle inga nya egenskaper uppstå och arter skulle inte kunna anpassas (<strong>evolution</strong>)."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Bioteknik och genteknik",
+           icon: "💉",
+           text: "<strong>Bioteknik</strong> handlar om att använda levande celler för att t.ex. jäsa bröd eller göra medicin. <strong>Genteknik</strong> innebär att man klipper och klistrar i DNA. <strong>GMO</strong> (genmodifierade organismer) kan ge växter som tål kyla eller är mer näringsrika. Den nya metoden <strong>CRISPR</strong> fungerar som en biologisk sax som kan korrigera enstaka baspar.",
+           questions: [
+               {
+                   q: "Vilken medicinsk nytta har gentekniken gett diabetiker?",
+                   options: [
+                       "Bakterier har fått mänskliga gener för att tillverka billigt insulin.",
+                       "Man har lyckats klona fram nya bukspottskörtlar till alla sjuka.",
+                       "Genom att äta GMO-vete försvinner sjukdomen helt ur kroppen.",
+                       "Forskare har tagit bort alla sockergener ur människans DNA."
+                   ],
+                   correct: 0,
+                   explanation: "Hybrid-DNA-teknik används för att låta bakterier producera mänskligt <strong>insulin</strong> effektivt."
+               },
+               {
+                   q: "Vad är CRISPR (Cas9) för något inom modern bioteknik?",
+                   options: [
+                       "En metod för att klona utdöda djur som mammutar.",
+                       "En teknik för att mycket exakt byta ut delar av DNA.",
+                       "Ett sätt att mäta hur långt en person har sprungit.",
+                       "En maskin som läser av fingeravtryck hos polisen."
+                   ],
+                   correct: 1,
+                   explanation: "<strong>CRISPR</strong> fungerar som en gensax som kan stänga av eller byta ut specifika gener."
+               },
+               {
+                   q: "Vilken är en vanlig etisk eller miljömässig farhåga kring GMO-grödor?",
+                   options: [
+                       "Att växterna ska börja producera syre istället för koldioxid.",
+                       "Att GMO-mat innehåller för mycket näring för barn att äta.",
+                       "Att de nya generna sprids okontrollerat till vilda växter.",
+                       "Att bönder som använder GMO slutar använda maskiner."
+                   ],
+                   correct: 2,
+                   explanation: "Det finns en risk att ekosystem hamnar ur balans om modifierade egenskaper sprids i naturen."
+               },
+               {
+                   q: "Hur kan polisen använda genteknik för att lösa brott?",
+                   options: [
+                       "Genom att ändra brottslingens DNA så att hen blir snällare.",
+                       "Genom att använda gensaxen för att se vad någon tänker på.",
+                       "Genom att klona ögonvittnen så att de minns händelsen bättre.",
+                       "Genom att matcha DNA-spår från brottsplatsen mot register."
+                   ],
+                   correct: 3,
+                   explanation: "<strong>DNA-analys</strong> av t.ex. ett hårstrå kan med hög säkerhet identifiera en person."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+            setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>

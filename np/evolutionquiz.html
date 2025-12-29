@@ -1,0 +1,910 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Biologiquiz: Evolution (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Grönt Tema (Natur/Evolution) */
+           --card-bg: #ffffff;
+          
+           --brand-color: #2e7d32; /* Mörkgrön */
+           --brand-gradient: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+          
+           --accent-color: #66bb6a; /* Ljusare grön */
+          
+           /* Komplementfärg: Terra Cotta / Bränd Orange */
+           --complement-color: #d84315;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121; /* Mörkare grå/svart för text */
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade (Silver/Metallic style) - Samma som tidigare */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee; /* Ingen färgad kant, neutral border */
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color); /* Komplementfärg på ikonen */
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(46, 125, 50, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color); /* Komplementfärg */
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #e8f5e9;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svart text för fetstil */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Cyan Gradient som tidigare */
+           background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+           border: 1px solid #a5d6a7;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Biologiquiz: Evolution</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Livets uppkomst",
+           icon: "🌋",
+           text: "Livet uppstod för ca <strong>4000 miljoner år</strong> sedan, troligtvis som enkla <strong>bakterier</strong>. En avgörande händelse var utvecklingen av de blågröna bakteriernas <strong>fotosyntes</strong>, vilket ökade <strong>syrehalten</strong> i atmosfären. Senare bildades <strong>ozonlagret</strong> som skyddade mot solens <strong>UV-strålning</strong>, vilket var nödvändigt för att liv skulle kunna etableras på land.",
+           questions: [
+               {
+                   q: "Vilken tidsordning beskriver bäst livets tidiga utveckling på jorden?",
+                   options: [
+                       "Syrgas bildas → Liv på land → Fotosyntes utvecklas.",
+                       "Liv på land → Fotosyntes utvecklas → Syrgas bildas.",
+                       "Fotosyntes utvecklas → Syrgas bildas → Liv etableras på land.",
+                       "Syrgas bildas → Fotosyntes utvecklas → Liv etableras på land."
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Fotosyntesen</strong> producerade det syre som krävdes för att djur senare skulle kunna andas och leva på land."
+               },
+               {
+                   q: "Vilken var troligtvis den allra första formen av liv som bildades på jorden?",
+                   options: [
+                       "En flercellig alg som använde fotosyntes för att få energi.",
+                       "Någon typ av enkel bakterie som uppstod i havets djup.",
+                       "Små ryggradsdjur som liknade dagens fiskar och grodor.",
+                       "Enkla landväxter som spred sig med hjälp av sina sporer."
+                   ],
+                   correct: 1,
+                   explanation: "Vetenskapen räknar med att de första levande organismerna var mycket enkla encelliga <strong>bakterier</strong>."
+               },
+               {
+                   q: "Varför var bildandet av ozon (O₃) för ca 600 miljoner år sedan så viktigt?",
+                   options: [
+                       "Det gjorde att koldioxidhalten i luften minskade drastiskt.",
+                       "Det tillförde de mineraler som växterna behövde på land.",
+                       "Det värmde upp planeten så att istiderna kunde avslutas.",
+                       "Det skyddade organismer mot solens farliga UV-strålning."
+                   ],
+                   correct: 3,
+                   explanation: "Utan <strong>ozonlagrets</strong> skydd mot strålning hade livet på land haft mycket svårt att överleva och utvecklas."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Evolutionens mekanismer",
+           icon: "🧬",
+           text: "<strong>Charles Darwin</strong> presenterade teorin om att de mest livsdugliga organismerna överlever. Evolutionen bygger på: <strong>variation</strong> (individer är olika), <strong>urval</strong> (vissa egenskaper ger fördelar), <strong>arv</strong> (egenskaperna förs vidare) och <strong>tid</strong>. <strong>Mutationer</strong> är slumpmässiga förändringar i <strong>DNA</strong> som bidrar till variationen.",
+           questions: [
+               {
+                   q: "Vilka fyra nyckelbegrepp används för att förklara hur en art anpassas?",
+                   options: [
+                       "Konkurrens, revir, mutationer och naturlig utrotning.",
+                       "Bevis, fossil, DNA-teknik och historiska tidsåldrar.",
+                       "Miljöfaktorer, föda, temperatur och koldioxidbalans.",
+                       "Variation, naturligt urval, biologiskt arv och lång tid."
+                   ],
+                   correct: 3,
+                   explanation: "Dessa fyra faktorer samverkar för att driva evolutionen och anpassa arter till deras miljö."
+               },
+               {
+                   q: "Vad innebär begreppet naturligt urval i evolutionsteorin?",
+                   options: [
+                       "Individer med bäst anpassade egenskaper överlever oftare.",
+                       "Att naturen väljer ut vilka arter som ska dö ut helt slumpmässigt.",
+                       "Att djur väljer att ändra sina egenskaper för att passa in bättre.",
+                       "En process där människan väljer ut vilka djur som får para sig."
+                   ],
+                   correct: 0,
+                   explanation: "Individer som är bäst lämpade för sin miljö har störst chans att få ungar och föra sina <strong>gener</strong> vidare."
+               },
+               {
+                   q: "Varför har skogsharar i norra Sverige vit päls på vintern?",
+                   options: [
+                       "Vit päls ger kamouflage vilket minskar risken att bli äten.",
+                       "Den vita färgen gör att hararna lättare hittar varandra i snön.",
+                       "Vita hårstrån är tjockare och ger därför ett bättre skydd mot kyla.",
+                       "Hararna väljer att byta färg för att inte synas mot den vita snön."
+                   ],
+                   correct: 0,
+                   explanation: "Vit päls är en överlevnadsfördel i snöiga miljöer då rovdjur har svårare att upptäcka haren (<strong>kamouflage</strong>)."
+               },
+               {
+                   q: "Hur kan en groda ha utvecklat en lång och klibbig tunga genom evolution?",
+                   options: [
+                       "Grodan tränade upp sin tunga varje dag tills den blev längre.",
+                       "Genom att äta klibbiga insekter förändrades grodans eget DNA.",
+                       "Variation i generna gjorde att vissa fick bättre tungor och överlevde.",
+                       "En mutation skedde i alla grodor samtidigt när maten tog slut."
+                   ],
+                   correct: 2,
+                   explanation: "De individer som föddes med en bättre tunga fick mer mat, överlevde och förde sina gener vidare."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Bevis för evolutionen",
+           icon: "🦖",
+           text: "Det finns många bevis för evolution. <strong>Fossil</strong> visar hur organismer sett ut i olika tidsåldrar. <strong>Homologa organ</strong> (som framben hos olika däggdjur) visar på ett <strong>gemensamt ursprung</strong>. Vi delar också en stor del av vårt <strong>DNA</strong> med andra arter, vilket bevisar <strong>släktskap</strong>.",
+           questions: [
+               {
+                   q: "Var hittar man normalt sett de äldsta fossilen i sedimentära bergarter?",
+                   options: [
+                       "Utspridda helt slumpmässigt i alla lager av bergarten.",
+                       "Inuti de översta lagren som bildats under de senaste åren.",
+                       "I de mellersta lagren där trycket från berget är som högst.",
+                       "Längst ner i berget eftersom de lagren bildades allra först."
+                   ],
+                   correct: 3,
+                   explanation: "Nya lager läggs ovanpå gamla, vilket gör att man kan följa utvecklingen från äldre till yngre fossil."
+               },
+               {
+                   q: "Vad bevisar likheten i skelettet mellan en människas arm och en vals fena?",
+                   options: [
+                       "Att valar och människor lever i mycket liknande miljöer.",
+                       "Att arterna har utvecklats från en gemensam förfader.",
+                       "Att skelettet formas helt efter hur musklerna används.",
+                       "Att valar ursprungligen kunde gå på land med sina fenor."
+                   ],
+                   correct: 1,
+                   explanation: "Liknande uppbyggnad (homologi) visar att olika arter härstammar från samma grundritning."
+               },
+               {
+                   q: "Vad är ett exempel på ett 'spår från tidigare utvecklingsstadier' hos människan?",
+                   options: [
+                       "Svanskotan, som är en rest av en svans som inte längre behövs.",
+                       "Lillfingret, som sakta håller på att försvinna hos moderna människor.",
+                       "Tungan, som har blivit kortare eftersom vi har utvecklat ett talat språk.",
+                       "Naglarna, som tidigare användes som klor för att gräva efter rötter."
+                   ],
+                   correct: 0,
+                   explanation: "Kroppsdelar som förlorat sin ursprungliga funktion men finns kvar kallas för <strong>rudimentära organ</strong>."
+               },
+               {
+                   q: "Hur kan modern DNA-teknik användas för att bevisa evolutionen?",
+                   options: [
+                       "Man kan se att växter och djur har helt olika byggnadsritningar.",
+                       "Man ser att arter som liknar varandra också delar mycket DNA.",
+                       "DNA visar att alla arter skapades samtidigt för tusen år sedan.",
+                       "Man kan läsa av i generna exakt vilka djur som ska dö ut härnäst."
+                   ],
+                   correct: 1,
+                   explanation: "Genom att jämföra DNA-koden kan forskare se hur nära släkt olika organismer är med varandra."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Jordens epoker & massdöd",
+           icon: "☄️",
+           text: "Jorden har upplevt fem stora <strong>massutdöenden</strong>, ofta orsakade av <strong>vulkanutbrott</strong> eller <strong>meteoritnedslag</strong>. <strong>Forntiden</strong> började med liv i haven, medan <strong>medeltiden</strong> dominerades av <strong>dinosaurier</strong>. <strong>Nutiden</strong> är däggdjurens tidsålder.",
+           questions: [
+               {
+                   q: "I vilken tidsordning delas jordens historia in, från äldst till yngst?",
+                   options: [
+                       "Forntid → Nutid → Medeltid → Urtid.",
+                       "Nutid → Medeltid → Forntid → Urtid.",
+                       "Urtid → Forntid → Medeltid → Nutid.",
+                       "Medeltid → Forntid → Urtid → Nutid."
+                   ],
+                   correct: 2,
+                   explanation: "Urtiden är den absolut längsta perioden och sträcker sig från jordens födelse fram till forntiden."
+               },
+               {
+                   q: "I vilken ordning utvecklades dessa ryggradsdjursgrupper enligt fossila fynd?",
+                   options: [
+                       "Däggdjur → Fiskar → Groddjur.",
+                       "Groddjur → Fiskar → Däggdjur.",
+                       "Fiskar → Däggdjur → Groddjur.",
+                       "Fiskar → Groddjur → Däggdjur."
+                   ],
+                   correct: 3,
+                   explanation: "Livet började i vattnet med fiskar, sedan anpassades groddjur till landliv och långt senare kom däggdjuren."
+               },
+               {
+                   q: "Vad tror forskare var den främsta orsaken till att dinosaurierna dog ut?",
+                   options: [
+                       "De kunde inte simma när havsnivåerna steg över hela jorden.",
+                       "En smittsam sjukdom spreds mellan alla stora kräldjursarter.",
+                       "Ett meteoritnedslag täckte atmosfären med stoft som gav kyla.",
+                       "De blev utkonkurrerade av de första människorna som jagade dem."
+                   ],
+                   correct: 2,
+                   explanation: "Stoftet blockerade solljuset, vilket ledde till att växter dog och ekosystemen kollapsade."
+               },
+               {
+                   q: "Vilken art är människans närmaste nu levande släkting?",
+                   options: [
+                       "Gorillan, som har en kroppsbyggnad som liknar vår mest.",
+                       "Schimpansen, som vi delar ca 99 % av vårt DNA med.",
+                       "Orangutangen, som är den mest intelligenta av alla människoapor.",
+                       "Neanderthalaren, som lever kvar i vissa isolerade områden i Asien."
+                   ],
+                   correct: 1,
+                   explanation: "Schimpanser och människor har ett mycket nära genetiskt släktskap."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Människan",
+           icon: "👣",
+           text: "Människan tillhör gruppen <strong>primater</strong>. Vår utveckling har gått via arter som <strong>Australopithecus</strong> (Lucy), <strong>Homo habilis</strong> och <strong>Homo erectus</strong> (först med eld). <strong>Homo sapiens</strong> uppstod i Afrika för ca 300 000 år sedan och spred sig tack vare stor <strong>anpassningsförmåga</strong>.",
+           questions: [
+               {
+                   q: "Vad utmärkte arten Homo erectus jämfört med tidigare människoapor?",
+                   options: [
+                       "De var de första som använde eld och tillagade sin mat.",
+                       "De hade en hjärna som var precis lika stor som vår egen hjärna.",
+                       "De levde enbart i Afrika och spred sig aldrig till andra världsdelar.",
+                       "De gick fortfarande främst på alla fyra men kunde springa på två."
+                   ],
+                   correct: 0,
+                   explanation: "Elden gav värme, skydd och gjorde maten lättare att tugga och smälta."
+               },
+               {
+                   q: "Vad vet vi om släktskapet mellan moderna människor och Neanderthalare?",
+                   options: [
+                       "Neanderthalarna var en direkt förfader som vi utvecklades ifrån.",
+                       "Vi har aldrig levt samtidigt då de dog ut innan vi kom till Europa.",
+                       "Vi har levt samtidigt och det har skett korsningar mellan arterna.",
+                       "De var egentligen samma art som vi men med en annan typ av kost."
+                   ],
+                   correct: 2,
+                   explanation: "Analyser visar att moderna människor utanför Afrika bär på ca 4 % DNA från Neanderthalare."
+               },
+               {
+                   q: "Vad menas med en organisms 'ekologiska nisch'?",
+                   options: [
+                       "Den specifika plats där en individ sover och gömmer sina ungar.",
+                       "En kemisk reaktion som sker i cellen när den saknar tillgång till syre.",
+                       "Det område på jorden där en art först uppstod innan den spred sig.",
+                       "De speciella behov och levnadssätt som en art har specialiserat sig på."
+                   ],
+                   correct: 3,
+                   explanation: "Genom att ha olika nischer kan olika arter leva i samma miljö utan att konkurrera ut varandra."
+               },
+               {
+                   q: "Varför dör så många arter ut vid en massdöd orsakad av vulkanism?",
+                   options: [
+                       "Atmosfären fylls med aska som reflekterar bort solljuset och ger kyla.",
+                       "Lavaströmmen rinner ut i alla världshaven och kokar fiskarna levande.",
+                       "Allt syre i atmosfären brinner upp under de stora vulkanutbrotten.",
+                       "Markens alla närsalter försvinner så att inga växter kan växa längre."
+                   ],
+                   correct: 0,
+                   explanation: "När solljuset blockeras dör växterna (producenterna), vilket slår ut hela näringsväven."
+               },
+               {
+                   q: "Vad är huvudorsaken till att det finns en variation av egenskaper inom en art?",
+                   options: [
+                       "Att djuren lär sig nya saker under livet som de lär ut till sina ungar.",
+                       "Slumpmässiga mutationer i DNA och sexuell förökning som blandar gener.",
+                       "Att miljön tvingar fram exakt de egenskaper som individen behöver just då.",
+                       "Att alla individer föds med exakt samma gener men äter olika typer av mat."
+                   ],
+                   correct: 1,
+                   explanation: "Mutationer och blandningen av gener vid befruktning skapar de skillnader som evolutionen arbetar med."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+            setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
