@@ -1,0 +1,852 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Biologiquiz: Naturvetenskapliga Resonemang (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Grönt Tema (Natur/Miljö) */
+           --card-bg: #ffffff;
+          
+           --brand-color: #2e7d32; /* Mörkgrön */
+           --brand-gradient: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+          
+           --accent-color: #66bb6a; /* Ljusare grön */
+          
+           /* Komplementfärg: Terra Cotta / Bränd Orange */
+           --complement-color: #d84315;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121; /* Mörkare grå/svart för text */
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade (Silver/Metallic style) */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee; /* Neutral border */
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color); /* Komplementfärg på ikonen */
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(46, 125, 50, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color); /* Komplementfärg */
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #e8f5e9;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svarta fetstilade ord */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Cyan Gradient */
+           background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+           border: 1px solid #a5d6a7;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Biologiquiz: Naturvetenskapliga Resonemang</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Ekosystem och biologiska samband",
+           icon: "🕸️",
+           text: "När man resonerar i flera led i biologi handlar det om att visa på kopplingar mellan <strong>orsak och verkan</strong>, till exempel hur en förändring i ett led av en näringskedja påverkar flera andra led. Ett stabilt ekosystem kräver <strong>balans</strong> mellan producenter och konsumenter.",
+           questions: [
+               {
+                   q: "Hur leder minskat torskfiske till mindre algblomning i Östersjön?",
+                   options: [
+                       "Fler torskar äter mer skarpsill, vilket gör att mängden djurplankton ökar och äter upp fler alger.",
+                       "Fler torskar producerar mer koldioxid, vilket gör att algerna får för mycket näring och dör ut av sig själva.",
+                       "Torsken äter upp algerna direkt från havsbotten, vilket hindrar dem från att flyta upp till ytan och blomma.",
+                       "Färre fiskebåtar i rörelse minskar mängden närsalter som rörs upp, vilket svälter ut algerna i ytvattnet."
+                   ],
+                   correct: 0,
+                   explanation: "Resonemanget följer näringskedjan: fler <strong>predatorer</strong> (torsk) minskar antalet mellanfiskar (skarpsill), vilket gynnar djurplankton som i sin tur begränsar algerna."
+               },
+               {
+                   q: "Varför försvinner ca 90 % av energin mellan varje steg i en näringspyramid?",
+                   options: [
+                       "Energin lagras i marken när djuren dör och återgår till producenterna via rötterna som kemisk energi.",
+                       "Energin används till djurens rörelse och livsprocesser, samt försvinner som värmeenergi till omgivningen.",
+                       "Energin omvandlas till materia som bygger upp djurens skelett, vilket inte kan ätas av nästa djur i kedjan.",
+                       "Energin strålar tillbaka till solen på natten eftersom djur saknar klorofyll för att hålla kvar solenergin."
+                   ],
+                   correct: 1,
+                   explanation: "Endast en liten del av energin binds som biomassa; resten förbrukas för att hålla organismen vid liv och blir <strong>värme</strong>."
+               },
+               {
+                   q: "Vilket resonemang beskriver bäst anrikning av miljögifter?",
+                   options: [
+                       "Gifter bryts ner snabbare högt upp i näringskedjan eftersom rovdjur har mer effektiva reningsorgan än växter.",
+                       "Växter tar upp gifter som sedan dunstar bort via fotosyntesen, vilket gör att halten minskar för varje steg.",
+                       "Rovdjur äter många bytesdjur och får i sig allt gift de samlat på sig, så koncentrationen ökar ju högre upp man når.",
+                       "Gifter lagras i vattnet och påverkar bara de djur som lever nära botten, där tungmetaller sjunker ner och stannar."
+                   ],
+                   correct: 2,
+                   explanation: "Miljögifter som inte kan brytas ner lagras i fettvävnad och <strong>koncentreras</strong> hos toppkonsumenter som havsörn."
+               },
+               {
+                   q: "Hur påverkar införandet av vargar i en nationalpark mängden småfåglar?",
+                   options: [
+                       "Vargarna skrämmer bort alla fåglar till andra områden, vilket leder till att de hittar nya och säkrare boplatser.",
+                       "Vargar äter småfåglarnas fiender (t.ex. rävar), vilket gör att fågelungarna har större chans att överleva vintern.",
+                       "Vargarna gödslar marken med sina restprodukter, vilket gör att träden växer snabbare och producerar mer nektar.",
+                       "Vargar jagar hjortar, vilket gör att växtligheten återhämtar sig och ger småfåglarna fler boplatser och mer mat."
+                   ],
+                   correct: 3,
+                   explanation: "Detta är ett resonemang i flera led: rovdjur minskar <strong>betestrycket</strong> från växtätare, vilket gynnar växter och de djur som bor i dem."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Människan och hållbar utveckling",
+           icon: "🌍",
+           text: "Människans påverkan sker både lokalt, genom t.ex. skogsbruk, och globalt genom växthuseffekten. <strong>Hållbar utveckling</strong> innebär att vi använder naturresurser utan att förstöra för framtida generationer.",
+           questions: [
+               {
+                   q: "Varför bidrar etanol från växter till en mindre förstärkt växthuseffekt än bensin?",
+                   options: [
+                       "Växterna som blir etanol tar upp lika mycket koldioxid under sin tillväxt som sedan släpps ut vid förbränningen.",
+                       "Etanol innehåller ämnen som neutraliserar koldioxiden i avgaserna, vilket gör att luften blir renare bakom bilen.",
+                       "Bensinbilar släpper ut koldioxid som är tyngre än den från etanol, vilket gör att bensinens gaser stannar på jorden.",
+                       "Odling av etanolgrödor kyler ner planeten eftersom växterna skuggar marken mer än vad oljeborrning gör."
+                   ],
+                   correct: 0,
+                   explanation: "Etanol ingår i det <strong>snabba kretsloppet</strong> där koldioxiden cirkulerar, till skillnad från fossila bränslen som tillför 'nytt' kol till atmosfären."
+               },
+               {
+                   q: "Vilken är den största miljökonsekvensen av att regnskog ersätts med oljepalmsodlingar?",
+                   options: [
+                       "Koldioxidutsläppen minskar eftersom oljepalmer har en mycket snabbare fotosyntes än de träd som fanns där innan.",
+                       "Den biologiska mångfalden minskar kraftigt eftersom en monokultur inte kan erbjuda nischer för lika många arter.",
+                       "Markens pH-värde stiger så mycket att det börjar regna basiskt vatten, vilket skadar ekosystem i andra världsdelar.",
+                       "Oljepalmerna suger upp allt grundvatten så att närliggande hav blir saltare, vilket dödar korallreven i området."
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Monokulturer</strong> saknar den variation som krävs för ett stabilt ekosystem med många nischer."
+               },
+               {
+                   q: "Varför är det viktigt för miljön att minska mängden livsmedel som slängs?",
+                   options: [
+                       "Slängd mat som hamnar i skogen gör att vilda djur slutar jaga och istället blir beroende av människans avfall.",
+                       "Matavfall innehåller mycket plast som inte kan brytas ner, vilket leder till att mikroplaster sprids i våra sjöar.",
+                       "Det minskar onödig användning av vatten och fossila bränslen som krävts för att producera och transportera maten.",
+                       "Om vi slänger mindre mat kommer priserna att stiga så mycket att fattiga länder inte har råd att köpa sitt eget vete."
+                   ],
+                   correct: 2,
+                   explanation: "Livsmedelsproduktion kräver stora mängder <strong>naturresurser</strong>; att slänga mat är att slösa på dessa resurser i onödan."
+               },
+               {
+                   q: "Vilken är den främsta miljöfördelen med rötning av matavfall jämfört med kompostering?",
+                   options: [
+                       "Rötning sker i helt slutna kärl, vilket gör att inga bakterier eller virus kan slippa ut och smitta människor.",
+                       "Vid rötning bildas jord som innehåller mycket mer närsalter (kväve och fosfor) än vad vanlig kompostjord gör.",
+                       "Rötning tar mycket kortare tid eftersom man använder kemikalier som bryter ner maten på bara några få timmar.",
+                       "Vid rötning tillvaratas energin i matavfallet genom att bilda biogas som kan ersätta fossila drivmedel."
+                   ],
+                   correct: 3,
+                   explanation: "Rötning skapar både gödsel och förnybar energi (<strong>biogas</strong>), medan kompostering bara ger gödsel."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Individ, samhälle och resurser",
+           icon: "👣",
+           text: "Beslut på individnivå, som vad vi äter, har stor betydelse för det globala <strong>ekologiska fotavtrycket</strong>.",
+           questions: [
+               {
+                   q: "Varför krävs det mer markyta för att producera 1 kg nötkött än 1 kg baljväxter?",
+                   options: [
+                       "Kon behöver äta flera kilon växter för att bygga 1 kg muskelmassa, då energin försvinner i varje steg.",
+                       "Kor behöver enorma ytor att springa på för att deras kött ska bli tillräckligt mört för att säljas i butik.",
+                       "Baljväxter kan växa på höjden i stora torn, medan kor måste leva på plan mark för att inte skada sina klövar.",
+                       "Köttproduktionen kräver att man planterar träd på betesmarken för att skugga djuren, vilket tar upp extra plats."
+                   ],
+                   correct: 0,
+                   explanation: "Enligt <strong>energipyramiden</strong> krävs ca 10 kg producenter för att skapa 1 kg förstahandskonsument."
+               },
+               {
+                   q: "Vilken risk finns med att använda GMO-grödor som är resistenta mot ogräsmedel?",
+                   options: [
+                       "Växterna kan börja producera eget gift som gör att de människor som äter dem blir immuna mot antibiotika.",
+                       "Användningen av bekämpningsmedel kan öka, vilket kan skada andra organismer och läcka ut i vattendrag.",
+                       "Grödorna växer så snabbt att de tar upp all koldioxid i området, vilket leder till syrebrist för närliggande skogar.",
+                       "Generna för resistens gör att växterna inte längre kan genomföra fotosyntes, vilket gör dem beroende av konstgödsel."
+                   ],
+                   correct: 1,
+                   explanation: "Resistenta grödor gör det möjligt att spruta <strong>mer gift</strong>, vilket kan få negativa effekter på miljön runt åkern."
+               },
+               {
+                   q: "Hur kan man gynna biologisk mångfald inom skogsbruket?",
+                   options: [
+                       "Genom att hugga ner alla gamla träd så att unga och friska träd får mer plats och mer solljus för att växa.",
+                       "Genom att endast plantera ett enda trädslag (monokultur) så att man lättare kan kontrollera skadedjur i skogen.",
+                       "Genom att lämna kvar döda träd och spara gamla träd, då dessa fungerar som viktiga livsmiljöer för många arter.",
+                       "Genom att asfaltera små stigar genom skogen så att djuren lättare kan ta sig fram utan att fastna i snårig vegetation."
+                   ],
+                   correct: 2,
+                   explanation: "Många <strong>rödlistade arter</strong> är beroende av de speciella miljöer som finns i gamla och döda träd."
+               },
+               {
+                   q: "Vilken ekosystemtjänst hotas mest om antalet pollinerande insekter minskar kraftigt?",
+                   options: [
+                       "Naturens förmåga att rena vatten genom marklagren, eftersom insekterna inte längre gräver hål i jorden.",
+                       "Produktionen av syre via fotosyntes, då växterna slutar andas om de inte får besök av bin och humlor.",
+                       "Skogsindustrins tillgång till virke, eftersom granar och tallar kräver insekter för att kunna bilda nya kottar.",
+                       "Människans tillgång till mat, eftersom många av våra grödor, frukter och bär är beroende av pollinering för att ge skörd."
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Pollinering</strong> är en nödvändig tjänst för att växter ska kunna befruktas och bilda de frukter vi äter."
+               },
+               {
+                   q: "Vad innebär det att en person i Sverige ofta har ett stort 'ekologiskt fotavtryck'?",
+                   options: [
+                       "Vi konsumerar mycket resurser och orsakar utsläpp som kräver en stor landyta för att produceras och tas om hand.",
+                       "Vi bor i ett land med mycket skog, vilket gör att varje invånare har tillgång till en ovanligt stor yta att vandra på.",
+                       "Vi använder skor som är gjorda av material som lämnar tydliga spår efter sig i naturen, vilket skadar växternas rötter.",
+                       "Vi har en kultur där vi rör oss mycket utomhus, vilket gör att vi påverkar djurlivet mer än människor i stora städer."
+                   ],
+                   correct: 0,
+                   explanation: "Det <strong>ekologiska fotavtrycket</strong> mäter hur mycket av jordens yta som behövs för att stödja en persons livsstil."
+               },
+               {
+                   q: "Vilken roll spelar en 'invasiv art' i ett lokalt ekosystem?",
+                   options: [
+                       "Den fungerar som en extra resurs som ökar stabiliteten eftersom den alltid bidrar med ny energi till näringsväven.",
+                       "Den saknar ofta naturliga fiender och kan därför föröka sig så mycket att den tränger ut de arter som fanns där innan.",
+                       "Den hjälper lokala arter att anpassa sig snabbare till klimatförändringar genom att para sig med dem och blanda gener.",
+                       "Den stannar alltid nära hamnar och städer, vilket gör att den inte påverkar den riktiga vildmarken eller urskogen."
+                   ],
+                   correct: 1,
+                   explanation: "Invasiva arter kan rubba balansen i ett ekosystem eftersom de saknar <strong>naturliga begränsningar</strong>."
+               },
+               {
+                   q: "Varför leder övergödning ofta till syrebrist på havets botten?",
+                   options: [
+                       "Algerna tar upp allt syre ur vattnet när de växer, så att inget blir kvar till de fiskar som simmar djupare.",
+                       "Algerna bildar ett tätt lock på ytan som hindrar koldioxid från att komma ner till växterna på botten så att de dör.",
+                       "När de stora mängderna alger dör och sjunker, går det åt mycket syre när nedbrytarna ska bryta ner dem.",
+                       "Gödselmedlen reagerar kemiskt med saltvattnet och bildar tunga gaser som trycker bort syret från bottenvattnet."
+                   ],
+                   correct: 2,
+                   explanation: "Nedbrytningsprocessen är en form av <strong>cellandning</strong> som förbrukar syre; vid stora mängder dött material tar syret slut."
+               },
+               {
+                   q: "Hur påverkar den globala uppvärmningen korallreven genom haven?",
+                   options: [
+                       "Varmare vatten gör att korallerna växer snabbare, vilket leder till att de tar upp för mycket plats för fiskarna.",
+                       "Isar som smälter gör vattnet mindre salt, vilket får korallerna att svälla upp och spricka på grund av osmos.",
+                       "När det blir varmare i luften blåser det mindre, vilket gör att vattnet inte syresätts tillräckligt för korallernas celler.",
+                       "Ökad mängd koldioxid tas upp av haven och gör vattnet surare, vilket gör det svårt för korallerna att bygga sina skelett."
+                   ],
+                   correct: 3,
+                   explanation: "Koldioxid i atmosfären leder både till uppvärmning och till <strong>försurning</strong> av haven, vilket skadar känsliga rev."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+            setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
