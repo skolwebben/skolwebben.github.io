@@ -101,7 +101,7 @@
          <span class="bg-violet-600 w-8 h-8 rounded-lg flex items-center justify-center text-xs">NP</span>
          <span>Guiden <span class="text-violet-400">| Fysik</span></span>
      </div>
-     <a href="index.html" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+     <a href="fysik" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">
          Avsluta
      </a>
  </nav>
@@ -266,7 +266,7 @@
    // INITIALIZATION: Hämta JSON
    window.onload = async function() {
        try {
-           const response = await fetch('questions.json');
+           const response = await fetch('questions-fysik.json');
            if (!response.ok) {
                throw new Error('Kunde inte ladda json-filen');
            }
