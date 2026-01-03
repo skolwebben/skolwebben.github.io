@@ -1,0 +1,458 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>NP Ma9 Övning: Algebra & Samband</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+   <style>
+       body {
+           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           background-color: #f3f4f6;
+       }
+       .problem-card {
+           transition: all 0.2s ease;
+       }
+       .problem-card:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+       }
+       details > summary {
+           list-style: none;
+           cursor: pointer;
+           font-weight: 600;
+           color: #4b5563;
+           padding: 8px 0;
+           user-select: none;
+           display: flex;
+           align-items: center;
+       }
+       details > summary::-webkit-details-marker {
+           display: none;
+       }
+       details > summary::before {
+           content: '+';
+           display: inline-flex;
+           justify-content: center;
+           align-items: center;
+           width: 20px;
+           height: 20px;
+           margin-right: 8px;
+           border-radius: 50%;
+           background-color: #e5e7eb;
+           color: #374151;
+           font-size: 14px;
+           transition: transform 0.2s;
+       }
+       details[open] > summary::before {
+           content: '-';
+           background-color: #d1d5db;
+       }
+       details[open] > summary {
+           color: #111827;
+           border-bottom: 1px solid #e5e7eb;
+           margin-bottom: 10px;
+       }
+   </style>
+</head>
+<body class="text-gray-800 p-4 md:p-8">
+
+
+   <div class="max-w-4xl mx-auto">
+       <!-- Header -->
+       <header class="bg-white rounded-xl shadow-md p-6 mb-8 text-center border-t-4 border-indigo-600">
+           <h1 class="text-3xl font-bold text-gray-900 mb-2">Inför Nationella Provet Ma9</h1>
+           <h2 class="text-xl text-indigo-600 font-semibold mb-4">Delområde: Algebra och Samband</h2>
+           <p class="text-gray-600 max-w-2xl mx-auto">
+               Här är 9 övningsuppgifter som tränar din förmåga att tolka problem, ställa upp uttryck och lösa ekvationer med en variabel.
+           </p>
+       </header>
+
+
+       <!-- Problem List -->
+       <div class="space-y-6">
+
+
+           <!-- Uppgift 1 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">1. Biobiljetterna</h3>
+               </div>
+               <p class="mb-4">
+                   En familj går på bio. För 2 vuxna och 2 barn betalar de totalt 400 kr.
+                   En vuxenbiljett kostar 30 kr mer än en barnbiljett.
+                   <br><br>
+                   Ställ upp en ekvation och beräkna vad en barnbiljett kostar.
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Kalla priset för en barnbiljett för \(x\). <br>
+                           Då kostar en vuxenbiljett \(x + 30\). <br>
+                           Teckna ett uttryck för totalsumman.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p class="mb-2"><strong>Lösning:</strong></p>
+                           <p>Låt \(x\) = priset för en barnbiljett.</p>
+                           <p>Priset för en vuxenbiljett blir då \(x + 30\).</p>
+                           <p>Familjen köper 2 barnbiljetter och 2 vuxenbiljetter. Ekvationen blir:</p>
+                           <p>$$2x + 2(x + 30) = 400$$</p>
+                           <p>Förenkla parentesen:</p>
+                           <p>$$2x + 2x + 60 = 400$$</p>
+                           <p>$$4x + 60 = 400$$</p>
+                           <p>Subtrahera 60 från båda sidor:</p>
+                           <p>$$4x = 340$$</p>
+                           <p>$$x = \frac{340}{4} = 85$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: En barnbiljett kostar 85 kr.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 2 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">2. Mobilabonnemanget</h3>
+               </div>
+               <p class="mb-4">
+                   Du ska välja mellan två mobilabonnemang:<br>
+                   <strong>Abonnemang A:</strong> Fast avgift 99 kr/månad, kostar 0,50 kr per samtal.<br>
+                   <strong>Abonnemang B:</strong> Ingen fast avgift, kostar 1,50 kr per samtal.
+                   <br><br>
+                   Vid hur många samtal per månad kostar båda abonnemangen lika mycket?
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Sätt \(x\) = antal samtal. <br>
+                           Skriv ett uttryck för kostnaden för A och ett för B. <br>
+                           Sätt uttrycken lika med varandra.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Låt \(x\) vara antalet samtal.</p>
+                           <p>Kostnad A: \(99 + 0,5x\)</p>
+                           <p>Kostnad B: \(1,5x\)</p>
+                           <p>Vi söker när kostnaderna är lika:</p>
+                           <p>$$99 + 0,5x = 1,5x$$</p>
+                           <p>Subtrahera \(0,5x\) från båda sidor:</p>
+                           <p>$$99 = 1,0x$$</p>
+                           <p>$$x = 99$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: Vid 99 samtal kostar de lika mycket.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 3 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">3. Rektangelns sidor</h3>
+               </div>
+               <p class="mb-4">
+                   I en rektangel är den ena sidan 4 cm längre än den andra. Rektangelns omkrets är 36 cm.
+                   <br>
+                   Ställ upp en ekvation och beräkna rektangelns area.
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Rita en figur! <br>
+                           Kalla kortsidan \(x\) och långsidan \(x+4\). <br>
+                           Omkrets = \(2 \cdot \text{sida}_1 + 2 \cdot \text{sida}_2\). <br>
+                           Glöm inte att beräkna arean på slutet.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Låt kortsidan vara \(x\) cm.</p>
+                           <p>Då är långsidan \(x + 4\) cm.</p>
+                           <p>Omkretsen är summan av alla sidor:</p>
+                           <p>$$x + x + (x + 4) + (x + 4) = 36$$</p>
+                           <p>$$4x + 8 = 36$$</p>
+                           <p>$$4x = 28$$</p>
+                           <p>$$x = 7$$</p>
+                           <p>Kortsidan är 7 cm. Långsidan är \(7 + 4 = 11\) cm.</p>
+                           <p>Arean beräknas som basen gånger höjden:</p>
+                           <p>$$Area = 7 \cdot 11 = 77$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: Arean är 77 cm².</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 4 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">4. Syskonens ålder</h3>
+               </div>
+               <p class="mb-4">
+                   Erik är dubbelt så gammal som sin lillasyster Anna.
+                   Om 5 år kommer summan av deras åldrar att vara 34 år.
+                   <br><br>
+                   Hur gamla är de nu?
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Kalla Annas nuvarande ålder för \(x\). <br>
+                           Eriks nuvarande ålder är då \(2x\). <br>
+                           Om 5 år är Anna \(x+5\) och Erik \(2x+5\).
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p><strong>Nu:</strong><br>Anna = \(x\)<br>Erik = \(2x\)</p>
+                           <p><strong>Om 5 år:</strong><br>Anna = \(x + 5\)<br>Erik = \(2x + 5\)</p>
+                           <p>Summan ska bli 34:</p>
+                           <p>$$(x + 5) + (2x + 5) = 34$$</p>
+                           <p>$$3x + 10 = 34$$</p>
+                           <p>$$3x = 24$$</p>
+                           <p>$$x = 8$$</p>
+                           <p>Anna är 8 år. Erik är \(2 \cdot 8 = 16\) år.</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: Anna är 8 år och Erik är 16 år.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 5 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">5. Mönster och Formler</h3>
+               </div>
+               <p class="mb-4">
+                   Titta på talföljden: 5, 9, 13, 17...
+                   <br>
+                   a) Vad är differensen mellan talen?
+                   <br>
+                   b) Teckna en formel för det \(n\):te talet i talföljden.
+                   <br>
+                   c) Vilket nummer i ordningen har talet 201?
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           b) Formeln ser ofta ut som \( \text{tal} = dn + m \), där \(d\) är differensen. <br>
+                           c) Sätt din formel lika med 201 och lös ut \(n\).
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p><strong>a)</strong> Skillnaden mellan talen är \(9 - 5 = 4\). Differensen är 4.</p>
+                           <p><strong>b)</strong> Eftersom det ökar med 4 för varje steg innehåller formeln \(4n\). <br>
+                           För \(n=1\) blir \(4 \cdot 1 = 4\), men vi vill ha 5. Vi måste addera 1. <br>
+                           Formeln är \(4n + 1\).</p>
+                           <p><strong>c)</strong> Vi löser ekvationen:</p>
+                           <p>$$4n + 1 = 201$$</p>
+                           <p>$$4n = 200$$</p>
+                           <p>$$n = 50$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: a) 4, b) \(4n+1\), c) Det är det 50:e talet.</p>
+                       </div>
+                   </details>
+               </div>
+
+
+            <!-- Uppgift 6 -->
+            <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">6. Summan av tal</h3>
+               </div>
+               <p class="mb-4">
+                   Summan av tre på varandra följande heltal är 123.
+                   <br><br>
+                   Vilka är de tre talen?
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Om det första talet är \(x\), så är nästa tal \(x+1\) och talet efter det \(x+2\). <br>
+                           Addera dessa uttryck och sätt summan till 123.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Låt det minsta talet vara \(x\).</p>
+                           <p>De tre talen är då: \(x\), \(x+1\) och \(x+2\).</p>
+                           <p>Summan är:</p>
+                           <p>$$x + (x + 1) + (x + 2) = 123$$</p>
+                           <p>$$3x + 3 = 123$$</p>
+                           <p>Subtrahera 3 från båda sidor:</p>
+                           <p>$$3x = 120$$</p>
+                           <p>$$x = 40$$</p>
+                           <p>De tre talen är \(40\), \(41\) och \(42\).</p>
+                           <p>Kontroll: \(40 + 41 + 42 = 123\). Stämmer.</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: Talen är 40, 41 och 42.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 7 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">7. Hyrbilen</h3>
+               </div>
+               <p class="mb-4">
+                   En hyrbilsfirma har en grundavgift (startavgift) och sedan en kostnad per mil.
+                   Hyr man bilen och kör 10 mil kostar det totalt 800 kr.
+                   Hyr man bilen och kör 30 mil kostar det totalt 1400 kr.
+                   <br><br>
+                   Bestäm vad grundavgiften är och vad det kostar per mil.
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Titta på skillnaden i pris och skillnaden i mil. <br>
+                           Hur mycket dyrare blev det för de extra milen? <br>
+                           Använd detta för att räkna ut milkostnaden först.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Vi jämför de två fallen:</p>
+                           <p>Fall 1: 10 mil = 800 kr</p>
+                           <p>Fall 2: 30 mil = 1400 kr</p>
+                           <p><strong>Steg 1: Hitta milkostnaden</strong></p>
+                           <p>Skillnad i sträcka: \(30 - 10 = 20\) mil.</p>
+                           <p>Skillnad i pris: \(1400 - 800 = 600\) kr.</p>
+                           <p>De extra 20 milen kostar alltså 600 kr.</p>
+                           <p>Pris per mil = \(\frac{600}{20} = 30\) kr/mil.</p>
+                           <br>
+                           <p><strong>Steg 2: Hitta grundavgiften</strong></p>
+                           <p>Vi vet att 10 mil kostar 800 kr totalt.</p>
+                           <p>Kostnaden för bara milen är \(10 \cdot 30 = 300\) kr.</p>
+                           <p>Resten av kostnaden måste vara grundavgiften:</p>
+                           <p>\(800 - 300 = 500\) kr.</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: Grundavgiften är 500 kr och milkostnaden 30 kr/mil.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 8 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">8. Procentuell ändring</h3>
+               </div>
+               <p class="mb-4">
+                   Priset på en vara höjdes först med 20%. Sedan sänktes det nya priset med 20%.
+                   Är det slutliga priset högre, lägre eller samma som det ursprungliga priset?
+                   <br><br>
+                   Visa med algebra (kalla ursprungspriset för \(x\)) hur priset förändras.
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Använd förändringsfaktorer. <br>
+                           Höjning med 20% innebär multiplikation med 1,20. <br>
+                           Sänkning med 20% innebär multiplikation med 0,80.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Låt ursprungspriset vara \(x\).</p>
+                           <p>Efter höjningen är priset: \(1,20 \cdot x\).</p>
+                           <p>Detta nya pris sänks sedan med 20%. Förändringsfaktorn för sänkningen är 0,80.</p>
+                           <p>Slutpriset blir: \(0,80 \cdot (1,20 \cdot x)\)</p>
+                           <p>$$0,80 \cdot 1,20 = 0,96$$</p>
+                           <p>Slutpriset är \(0,96x\).</p>
+                           <p>Eftersom \(0,96x\) är mindre än \(1,00x\) har priset sänkts.</p>
+                           <p>Det har minskat med \(1,00 - 0,96 = 0,04\), alltså 4%.</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: Priset är lägre (minskat med 4%).</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 9 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">9. Triangelns vinklar</h3>
+               </div>
+               <p class="mb-4">
+                   I en triangel är vinkel \(A\) dubbelt så stor som vinkel \(B\).
+                   Vinkel \(C\) är 20 grader mindre än vinkel \(A\).
+                   <br><br>
+                   Bestäm triangelns vinklar.
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Vinkelsumman i en triangel är alltid 180°. <br>
+                           Utgå från den minsta vinkeln, kalla \(B\) för \(x\). <br>
+                           Uttryck \(A\) och \(C\) med hjälp av \(x\).
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Låt vinkel \(B = x\).</p>
+                           <p>Vinkel \(A\) är dubbelt så stor som \(B\), så \(A = 2x\).</p>
+                           <p>Vinkel \(C\) är 20 grader mindre än \(A\), så \(C = 2x - 20\).</p>
+                           <p>Summan ska bli 180°:</p>
+                           <p>$$x + 2x + (2x - 20) = 180$$</p>
+                           <p>$$5x - 20 = 180$$</p>
+                           <p>$$5x = 200$$</p>
+                           <p>$$x = 40$$</p>
+                           <p>Nu beräknar vi vinklarna:</p>
+                           <p>\(B = 40^\circ\)</p>
+                           <p>\(A = 2 \cdot 40 = 80^\circ\)</p>
+                           <p>\(C = 80 - 20 = 60^\circ\)</p>
+                           <p>Kontroll: \(40+80+60 = 180\). Stämmer.</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: Vinklarna är 80°, 40° och 60°.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+       </div>
+
+
+       <footer class="mt-12 text-center text-gray-500 text-sm">
+           <p>Lycka till med plugget!</p>
+       </footer>
+   </div>
+
+
+</body>
+</html>

@@ -1,0 +1,412 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>NP Ma9 Övning: Algebra Del 2</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+   <style>
+       body {
+           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           background-color: #f3f4f6;
+       }
+       .problem-card {
+           transition: all 0.2s ease;
+       }
+       .problem-card:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+       }
+       details > summary {
+           list-style: none;
+           cursor: pointer;
+           font-weight: 600;
+           color: #4b5563;
+           padding: 8px 0;
+           user-select: none;
+           display: flex;
+           align-items: center;
+       }
+       details > summary::-webkit-details-marker {
+           display: none;
+       }
+       details > summary::before {
+           content: '+';
+           display: inline-flex;
+           justify-content: center;
+           align-items: center;
+           width: 20px;
+           height: 20px;
+           margin-right: 8px;
+           border-radius: 50%;
+           background-color: #e5e7eb;
+           color: #374151;
+           font-size: 14px;
+           transition: transform 0.2s;
+       }
+       details[open] > summary::before {
+           content: '-';
+           background-color: #d1d5db;
+       }
+       details[open] > summary {
+           color: #111827;
+           border-bottom: 1px solid #e5e7eb;
+           margin-bottom: 10px;
+       }
+   </style>
+</head>
+<body class="text-gray-800 p-4 md:p-8">
+
+
+   <div class="max-w-4xl mx-auto">
+       <!-- Header -->
+       <header class="bg-white rounded-xl shadow-md p-6 mb-8 text-center border-t-4 border-indigo-600">
+           <h1 class="text-3xl font-bold text-gray-900 mb-2">Inför Nationella Provet Ma9</h1>
+           <h2 class="text-xl text-indigo-600 font-semibold mb-4">Del 2: Blandade algebrauppgifter</h2>
+           <p class="text-gray-600 max-w-2xl mx-auto">
+               Här är ytterligare 9 uppgifter som täcker allt från ekvationslösning och förenklingar till formler och mönster.
+           </p>
+       </header>
+
+
+       <!-- Problem List -->
+       <div class="space-y-6">
+
+
+           <!-- Uppgift 1 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">1. Linjär ekvation</h3>
+               </div>
+               <p class="mb-4">
+                   Lös ekvationen:
+                   $$25 - 5x = 10$$
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Försök att få termen med \(x\) ensam på ena sidan. <br>
+                           Subtrahera 25 från båda sidor först, eller flytta \(5x\) till höger sida så den blir positiv.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Vi utgår från:</p>
+                           <p>$$25 - 5x = 10$$</p>
+                           <p>Subtrahera 25 från båda sidor:</p>
+                           <p>$$-5x = 10 - 25$$</p>
+                           <p>$$-5x = -15$$</p>
+                           <p>Dela båda sidor med -5:</p>
+                           <p>$$x = \frac{-15}{-5}$$</p>
+                           <p>Minus delat med minus blir plus.</p>
+                           <p>$$x = 3$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: \(x = 3\)</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 2 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">2. Förenkla uttryck</h3>
+               </div>
+               <p class="mb-4">
+                   Förenkla uttrycket så långt som möjligt:
+                   $$\frac{6x + 3x}{6x - 3x}$$
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Förenkla täljaren (toppen) och nämnaren (botten) var för sig först.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Täljaren: \(6x + 3x = 9x\)</p>
+                           <p>Nämnaren: \(6x - 3x = 3x\)</p>
+                           <p>Uttrycket blir då:</p>
+                           <p>$$\frac{9x}{3x}$$</p>
+                           <p>Vi kan förkorta bort \(x\) (förutsatt att \(x \neq 0\)) och dividera siffrorna:</p>
+                           <p>$$\frac{9}{3} = 3$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: 3</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 3 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">3. Beräkna värdet</h3>
+               </div>
+               <p class="mb-4">
+                   Beräkna värdet av uttrycket \(m + \frac{1}{m}\) då \(m = 4\).
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Byt ut \(m\) mot siffran 4 i uttrycket och räkna ut summan.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Vi sätter in \(m = 4\):</p>
+                           <p>$$4 + \frac{1}{4}$$</p>
+                           <p>Vi vet att \(\frac{1}{4} = 0,25\).</p>
+                           <p>$$4 + 0,25 = 4,25$$</p>
+                           <p>Det går också bra att svara i bråkform: \(\frac{16}{4} + \frac{1}{4} = \frac{17}{4}\).</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: 4,25 (eller \(\frac{17}{4}\))</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 4 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">4. Mönster (Figur n)</h3>
+               </div>
+               <p class="mb-4">
+                   Här ser du arean (antal rutor) för de fyra första figurerna i ett mönster:
+                   <br><br>
+                   <strong>Figur 1:</strong> 3 rutor<br>
+                   <strong>Figur 2:</strong> 5 rutor<br>
+                   <strong>Figur 3:</strong> 7 rutor<br>
+                   <strong>Figur 4:</strong> 9 rutor
+                   <br><br>
+                   Skriv ett uttryck för arean till <strong>figur \(n\)</strong>.
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Hur mycket ökar antalet rutor för varje steg? Denna ökning hänger ihop med \(n\). <br>
+                           Jämför sedan din formel med Figur 1 för att se om du behöver plussa på eller dra bort något.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Vi ser hur mönstret ökar:</p>
+                           <p>3 till 5 = ökning med 2</p>
+                           <p>5 till 7 = ökning med 2</p>
+                           <p>Eftersom det ökar med 2 för varje steg, börjar formeln med \(2n\).</p>
+                           <p>Testa \(2n\) för figur 1 (\(n=1\)): \(2 \cdot 1 = 2\).</p>
+                           <p>Men Figur 1 ska ha 3 rutor. Det fattas 1.</p>
+                           <p>Vi måste lägga till 1.</p>
+                           <p>Formeln blir: \(2n + 1\)</p>
+                           <p>Kontroll för figur 3 (\(n=3\)): \(2 \cdot 3 + 1 = 7\). Det stämmer.</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: \(2n + 1\)</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 5 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">5. Tolka variabler</h3>
+               </div>
+               <p class="mb-4">
+                   En grupp betalade totalt 8 380 kr för en fest. Vuxna betalade 120 kr och barn 50 kr.
+                   En ekvation för situationen ställs upp:
+                   $$50 \cdot x + 120 \cdot (92 - x) = 8380$$
+                   Vad står \(x\) för i den här ekvationen?
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Titta på vad \(x\) multipliceras med. Vad kostar 50 kr?
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>I ekvationen multipliceras \(x\) med 50.</p>
+                           <p>I texten står det att "barn betalade 50 kr".</p>
+                           <p>Alltså är \(50 \cdot x\) den totala kostnaden för alla barn.</p>
+                           <p>Det betyder att \(x\) måste vara antalet barn.</p>
+                           <p>(Parentesen \(92 - x\) är då antalet vuxna, vilket innebär att det var 92 gäster totalt).</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: x är antalet barn.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 6 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">6. Skapa formel</h3>
+               </div>
+               <p class="mb-4">
+                   Ange en formel för kostnaden \(K\) för att hyra \(b\) stycken bord hos ett företag som tar en fast avgift på 500 kr och 30 kr per bord.
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Kostnaden består av en del som inte ändras (fast) och en del som beror på antalet bord (rörlig).
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Fast avgift = 500 kr (betalas en gång).</p>
+                           <p>Rörlig kostnad = 30 kr gånger antalet bord (\(b\)) = \(30b\).</p>
+                           <p>Totala kostnaden \(K\) är summan av dessa.</p>
+                           <p>$$K = 500 + 30b$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: \(K = 500 + 30b\)</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 7 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">7. Ekvation med parentes</h3>
+               </div>
+               <p class="mb-4">
+                   Lös ekvationen:
+                   $$2(x + 1) = 5 - 2x$$
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Börja med att multiplicera in 2:an i parentesen (distributiva lagen). Samla sedan alla x på en sida.
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Multiplicera in i parentesen:</p>
+                           <p>$$2x + 2 = 5 - 2x$$</p>
+                           <p>Addera \(2x\) till båda sidor för att samla x-termerna:</p>
+                           <p>$$4x + 2 = 5$$</p>
+                           <p>Subtrahera 2 från båda sidor:</p>
+                           <p>$$4x = 3$$</p>
+                           <p>Dela med 4:</p>
+                           <p>$$x = \frac{3}{4} = 0,75$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: \(x = 0,75\) (eller 3/4)</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 8 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">8. Samband från text</h3>
+               </div>
+               <p class="mb-4">
+                   I en fotbollsklubb finns det 3 gånger så många spelare som tränare.
+                   <br><br>
+                   Vilken formel visar sambandet mellan antalet spelare (\(s\)) och antalet tränare (\(t\))?
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Testa med siffror! Om det finns 2 tränare, hur många spelare finns det då? (3 gånger så många = 6). <br>
+                           Vilken formel stämmer om du sätter in \(t=2\) och \(s=6\)?
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p>Vi vet att antalet spelare är fler än antalet tränare.</p>
+                           <p>Antal spelare = 3 gånger Antal tränare.</p>
+                           <p>Med variabler:</p>
+                           <p>$$s = 3 \cdot t$$</p>
+                           <p class="font-bold text-green-700 mt-2">Svar: \(s = 3t\)</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+           <!-- Uppgift 9 -->
+           <div class="problem-card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+               <div class="flex justify-between items-start mb-4">
+                   <h3 class="text-lg font-bold">9. Antal lösningar</h3>
+               </div>
+               <p class="mb-4">
+                   Undersök om följande ekvationer saknar lösning, har <strong>en</strong> lösning eller har <strong>två</strong> lösningar:
+                   <br><br>
+                   A: \(3x + 2 = 3 + 2x\) <br>
+                   B: \(2x + 2 = 3x + 2\) <br>
+                   C: \(2x + 2 = 3 + 2x\) <br>
+                   D: \(x^2 - 1 = 3\)
+               </p>
+              
+               <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                   <details>
+                       <summary>Ledtråd</summary>
+                       <p class="text-gray-700 italic pl-8">
+                           Lös varje ekvation för sig. <br>
+                           Om du får något orimligt (t.ex. 2 = 3) saknas lösning. <br>
+                           Om du får \(x^2 = \text{positivt tal}\) finns det två lösningar (plus och minus).
+                       </p>
+                   </details>
+                   <details>
+                       <summary>Fullständig lösning</summary>
+                       <div class="pl-8 pt-2 text-gray-800">
+                           <p><strong>A:</strong> \(3x + 2 = 3 + 2x\) <br>
+                           Subtrahera \(2x\) från båda sidor: \(x + 2 = 3\) \(\Rightarrow x = 1\). <br>
+                           Svar: <strong>En lösning</strong>.</p>
+                           <br>
+                           <p><strong>B:</strong> \(2x + 2 = 3x + 2\) <br>
+                           Subtrahera 2 från båda sidor: \(2x = 3x\). Det enda talet som funkar är 0. <br>
+                           Svar: <strong>En lösning</strong> (\(x=0\)).</p>
+                           <br>
+                           <p><strong>C:</strong> \(2x + 2 = 3 + 2x\) <br>
+                           Subtrahera \(2x\) från båda sidor: \(2 = 3\). Detta är omöjligt. <br>
+                           Svar: <strong>Saknar lösning</strong>.</p>
+                           <br>
+                           <p><strong>D:</strong> \(x^2 - 1 = 3\) <br>
+                           Addera 1: \(x^2 = 4\). <br>
+                           Det finns två tal som blir 4 när man kvadrerar dem: 2 och -2. <br>
+                           Svar: <strong>Två lösningar</strong>.</p>
+                       </div>
+                   </details>
+               </div>
+           </div>
+
+
+       </div>
+
+
+       <footer class="mt-12 text-center text-gray-500 text-sm">
+           <p>Lycka till med plugget!</p>
+       </footer>
+   </div>
+
+
+</body>
+</html>

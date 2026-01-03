@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webbverkstaden - Koda din egen sida</title>
+    <style>
+        /* Grundinställningar och layout */
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-editor: #2d2d2d;
+            --text-color: #d4d4d4;
+            --accent: #007acc;
+            --success: #4caf50;
+            --error: #f44336;
+            --font-code: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #333;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+
+        h1 { font-size: 1.2rem; margin: 0; color: #fff; }
+
+        .btn {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover { background-color: #43a047; }
+
+        /* Huvudområdet med editor och preview */
+        .main-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 150px); /* Lämna plats för header och konsol */
+        }
+
+        .editor-container, .preview-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #444;
+        }
+
+        .panel-header {
+            background-color: #252526;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            border-bottom: 1px solid #333;
+        }
+
+        /* Kodfältet */
+        textarea#code-input {
+            flex: 1;
+            background-color: var(--bg-editor);
+            color: #dcdcdc;
+            border: none;
+            resize: none;
+            padding: 15px;
+            font-family: var(--font-code);
+            font-size: 14px;
+            line-height: 1.5;
+            outline: none;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+
+        /* Förhandsvisningen */
+        iframe#preview-frame {
+            flex: 1;
+            background-color: white;
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Konsolen för felmeddelanden */
+        .console-container {
+            height: 150px;
+            background-color: #111;
+            border-top: 1px solid #444;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .console-header {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            background-color: #222;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #console-output {
+            flex: 1;
+            padding: 10px;
+            font-family: var(--font-code);
+            font-size: 13px;
+            overflow-y: auto;
+            color: #ddd;
+        }
+
+        .log-error { color: var(--error); margin-bottom: 5px; }
+        .log-info { color: #888; margin-bottom: 5px; font-style: italic;}
+        .log-success { color: var(--success); margin-bottom: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Webbverkstaden <span style="font-size:0.8em; font-weight:normal; color:#888;">| HTML • CSS • JS</span></h1>
+        <button class="btn" onclick="runCode()">KÖR KODEN ▶</button>
+    </header>
+
+    <div class="main-container">
+        <!-- Vänster sida: Kod -->
+        <div class="editor-container">
+            <div class="panel-header">Din Kod</div>
+            <textarea id="code-input" spellcheck="false" placeholder="Skriv din kod här...">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Min sida</title>
+    <style>
+        /* CSS - Här bestämmer du utseendet */
+        body {
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTML - Innehållet på sidan -->
+    <h1>Hej Världen!</h1>
+    <p>Detta är min första webbsida.</p>
+    
+    <button onclick="bytFarg()">Klicka på mig!</button>
+
+    <script>
+        // JavaScript - Här bestämmer du vad som ska hända
+        function bytFarg() {
+            let rubrik = document.querySelector('h1');
+            rubrik.style.color = 'red';
+            rubrik.innerText = "Du klickade!";
+        }
+    </script>
+
+</body>
+</html>
+            

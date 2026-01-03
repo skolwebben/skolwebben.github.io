@@ -1,0 +1,1838 @@
+﻿[
+ {
+   "category": "Ekosystemets grunder",
+   "q": "Vad kallas de icke-levande delarna av ett ekosystem, såsom ljus, vind och temperatur?",
+   "options": [
+     "Abiotiska faktorer",
+     "Biotiska faktorer och levande ting",
+     "Ekosystemtjänster och resurser",
+     "Populationer av olika arter"
+   ],
+   "correct": 0,
+   "explanation": "Inom <strong>ekologin</strong> skiljer man på levande och icke-levande ting. <strong>Abiotiska faktorer</strong> är de fysikaliska förutsättningarna (t.ex. kyla, ljus) som påverkar livet. De levande delarna, som konkurrens och tillgång på mat, kallas däremot för <strong>biotiska faktorer</strong>."
+ },
+ {
+   "category": "Ekosystemets grunder",
+   "q": "Hur definieras begreppet population inom ekologin?",
+   "options": [
+     "Alla djur som äter växter i skogen",
+     "Alla individer av samma art inom ett område",
+     "Den totala vikten av allt levande på en plats",
+     "Samspelet mellan djur, växter och miljö"
+   ],
+   "correct": 1,
+   "explanation": "Ett <strong>ekosystem</strong> är ett avgränsat område där samspel sker. Alla individer av en och samma art som lever tillsammans inom detta område bildar en <strong>population</strong>."
+ },
+ {
+   "category": "Ekosystemets grunder",
+   "q": "Vilken tidsordning beskriver bäst livets tidiga utveckling på jorden?",
+   "options": [
+     "Syrgas bildas → Liv på land → Fotosyntes utvecklas",
+     "Liv på land → Fotosyntes utvecklas → Syrgas bildas",
+     "Fotosyntes utvecklas → Syrgas bildas → Liv etableras på land",
+     "Syrgas bildas → Fotosyntes utvecklas → Liv etableras på land"
+   ],
+   "correct": 2,
+   "explanation": "Livets utveckling krävde energi. <strong>Fotosyntesen</strong> utvecklades först (hos blågröna bakterier) och började producera syre. Detta syrelager var en förutsättning för att <strong>liv på land</strong> senare skulle kunna etableras och överleva."
+ },
+ {
+   "category": "Fotosyntes & Cellandning",
+   "q": "Vilka ämnen bildas som slutprodukt vid fotosyntesen?",
+   "options": [
+     "Koldioxid och vatten",
+     "Druvsocker och koldioxid",
+     "Vatten och syre",
+     "Syre och druvsocker"
+   ],
+   "correct": 3,
+   "explanation": "<strong>Fotosyntesen</strong> är grunden för nästan allt liv och sker i växternas gröna blad. Där omvandlas solenergi, vatten och koldioxid till energirikt <strong>druvsocker</strong> (glukos) samt <strong>syre</strong> som släpps ut i luften."
+ },
+ {
+   "category": "Fotosyntes & Cellandning",
+   "q": "Vad krävs för att cellandning (förbränning) ska kunna ske i en cell?",
+   "options": [
+     "Socker och syre",
+     "Solljus och vatten",
+     "Koldioxid och kemisk energi",
+     "Närsalter och klorofyll"
+   ],
+   "correct": 0,
+   "explanation": "<strong>Cellandning</strong> är i princip fotosyntesen baklänges och sker i alla levande celler. För att cellen ska kunna utvinna energi ur maten krävs bränsle i form av <strong>druvsocker</strong> samt <strong>syre</strong> för förbränningen."
+ },
+ {
+   "category": "Fotosyntes & Cellandning",
+   "q": "Vilket ämne i luften ökar i mängd vid cellandning men minskar vid fotosyntes?",
+   "options": [
+     "Syre",
+     "Koldioxid",
+     "Kväve",
+     "Vattenånga"
+   ],
+   "correct": 1,
+   "explanation": "Dessa två processer balanserar varandra i ett kretslopp. Fotosyntesen tar upp ('andas in') <strong>koldioxid</strong> från luften för att bygga biomassa, medan cellandningen bryter ner sockret och släpper ut koldioxiden igen som en restprodukt."
+ },
+ {
+   "category": "Energiflöden & Kretslopp",
+   "q": "Varför finns det oftast fler växtätare än rovdjur i ett stabilt ekosystem?",
+   "options": [
+     "Rovdjur lever mycket längre än växtätare",
+     "Växtätare hinner föröka sig långsammare",
+     "Endast 10 % av energin går vidare till nästa steg",
+     "Rovdjur väljer att bara äta växter i nödfall"
+   ],
+   "correct": 2,
+   "explanation": "Energi från solen flödar genom <strong>näringskedjan</strong>. I varje steg (trofinivå) förloras ca 90 % av energin som värme (rörelse/cellandning). Därför räcker energin till färre individer ju högre upp man kommer."
+ },
+ {
+   "category": "Energiflöden & Kretslopp",
+   "q": "Vad händer med kolet i ett träd som dör och förmultnar i skogen?",
+   "options": [
+     "Det försvinner helt och hållet från jorden",
+     "Det omvandlas direkt till ren värmeenergi",
+     "Det stannar kvar inuti träet för evigt",
+     "Det återgår till atmosfären som koldioxid"
+   ],
+   "correct": 3,
+   "explanation": "Till skillnad från energi som flödar, så cirkulerar materia i <strong>kretslopp</strong>. Nedbrytare (svampar/bakterier) förbränner det organiska materialet genom sin cellandning, vilket frigör <strong>kolet</strong> tillbaka till luften som koldioxid."
+ },
+ {
+   "category": "Energiflöden & Kretslopp",
+   "q": "Vad måste en näringskedja alltid börja med för att fungera?",
+   "options": [
+     "En producent (växt)",
+     "En toppkonsument (rovdjur)",
+     "En nedbrytare (svamp/mask)",
+     "En förstahandskonsument (växtätare)"
+   ],
+   "correct": 0,
+   "explanation": "En näringskedja visar vem som äter vem, men den måste starta med en <strong>producent</strong>. De är de enda som kan fånga in solenergi och binda den i kemiska föreningar (biomassa) som resten av ekosystemet lever av."
+ },
+ {
+   "category": "Populationer och Balans",
+   "q": "Vad händer i kedjan (Växtplankton → Djurplankton → Skarpsill → Torsk) om torsken minskar?",
+   "options": [
+     "Mängden växtplankton minskar drastiskt",
+     "Mängden skarpsill ökar kraftigt",
+     "Mängden djurplankton ökar kraftigt",
+     "Alla arter i kedjan minskar i antal"
+   ],
+   "correct": 1,
+   "explanation": "I ett stabilt <strong>ekosystem</strong> råder balans. Om rovdjuret (torsk) försvinner minskar trycket på bytesdjuren. Resultatet blir att populationen av <strong>skarpsill</strong> kan öka kraftigt eftersom ingen äter upp dem."
+ },
+ {
+   "category": "Populationer och Balans",
+   "q": "Vilken faktor kan begränsa hur stor en population av rådjur blir?",
+   "options": [
+     "En ökad mängd solljus på sommaren",
+     "Tillgången på närsalter nere i marken",
+     "Brist på mat, rovdjur och vinterklimat",
+     "Hur många träd som planteras i skogen"
+   ],
+   "correct": 2,
+   "explanation": "Ingen population kan växa för evigt. <strong>Begränsande faktorer</strong> sätter stopp. Det kan vara brist på resurser som mat och boplatser, eller yttre hot som rovdjur och sjukdomar, samt <strong>klimatet</strong>."
+ },
+ {
+   "category": "Populationer och Balans",
+   "q": "Vad menas med begreppet ekologisk nisch?",
+   "options": [
+     "Det specifika område där en art sover",
+     "När två olika arter samarbetar med varandra",
+     "Ett slutet kretslopp av viktiga närsalter",
+     "Det område och levnadssätt en art specialiserat sig på"
+   ],
+   "correct": 3,
+   "explanation": "För att undvika direkt <strong>konkurrens</strong> om exakt samma resurser har arter specialiserat sig. En arts specifika levnadssätt, 'yrke' och behov kallas dess <strong>ekologiska nisch</strong>."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Vilket ämne bidrar mest till algblomning och övergödning i Östersjön?",
+   "options": [
+     "Närsalter som kväve och fosfor",
+     "Koldioxid från bilar och industrier",
+     "Syre som släpps ut från vattenväxter",
+     "Saltvatten som strömmar in från Atlanten"
+   ],
+   "correct": 0,
+   "explanation": "Människans utsläpp av <strong>närsalter</strong> (främst kväve och fosfor) fungerar som gödning i havet. Detta leder till kraftig algblomning, så kallad <strong>övergödning</strong>, vilket senare orsakar syrebrist på bottnarna när algerna dör."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Vad är ett exempel på en ekosystemtjänst?",
+   "options": [
+     "Att vi bygger effektiva vindkraftverk",
+     "Att insekter pollinerar våra fruktträd",
+     "Att vi använder konstgödsel på åkrar",
+     "Att vi fiskar med stora, moderna trålare"
+   ],
+   "correct": 1,
+   "explanation": "Naturen bidrar med gratistjänster som är avgörande för vår välfärd, kallade <strong>ekosystemtjänster</strong>. Exempel är insekters pollinering, våtmarkers vattenrening och skogens fotosyntes."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Varför är stor biologisk mångfald viktig för ett ekosystem?",
+   "options": [
+     "Det gör att vi människor kan jaga fler djur",
+     "Det minskar risken för skadliga mutationer",
+     "Det gör ekosystemet mer stabilt och tåligt",
+     "Det gör att fotosyntesen går mycket snabbare"
+   ],
+   "correct": 2,
+   "explanation": "En stor <strong>biologisk mångfald</strong> fungerar som en försäkring. Det gör ekosystemet mer <strong>stabilt</strong> och motståndskraftigt, eftersom andra arter kan ta över funktioner om en art slås ut av sjukdom eller miljöförändringar."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Vilken mänsklig aktivitet har störst negativ påverkan på torskbeståndet?",
+   "options": [
+     "Plantering av ny skog",
+     "Användning av solenergi",
+     "Utsläpp av koldioxid",
+     "Överfiske och övergödning"
+   ],
+   "correct": 3,
+   "explanation": "Torsken är hotad av flera faktorer. <strong>Överfiske</strong> decimerar de vuxna bestånden, och övergödning leder till syrebrist på bottnarna vilket förstör torskens möjligheter att föröka sig (leka)."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Vad innebär begreppet 'ekologiskt fotavtryck'?",
+   "options": [
+     "Den yta som krävs för att producera allt en människa förbrukar",
+     "Ett mått på hur djur rör sig och sprider sig i ett ekosystem",
+     "Mängden koldioxid en växt tar upp under sin livstid",
+     "Hur djupt ner i jorden rötter växer för att nå vatten"
+   ],
+   "correct": 0,
+   "explanation": "Det <strong>ekologiska fotavtrycket</strong> mäter hur mycket av jordens resurser och yta vi använder. I västvärlden lever vi ofta över våra tillgångar, vilket inte är hållbart i längden."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Varför anses baljväxter ofta mer miljövänliga att odla än spannmål?",
+   "options": [
+     "De behöver mycket mer vatten än spannmål",
+     "De binder kväve från luften och kräver mindre gödsel",
+     "De växer snabbare i mörker än andra växter",
+     "De innehåller inget protein som behöver brytas ner"
+   ],
+   "correct": 1,
+   "explanation": "Baljväxter har unika bakterier i rötterna som kan <strong>binda kväve</strong> direkt från luften. Detta minskar behovet av konstgödsel, som annars kräver mycket energi att tillverka och bidrar till övergödning."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Vad kännetecknar en invasiv art?",
+   "options": [
+     "En art som håller på att dö ut",
+     "En art som alltid funnits i Sverige",
+     "En flyttad art som sprider sig okontrollerat",
+     "En art som endast äter kött"
+   ],
+   "correct": 2,
+   "explanation": "En <strong>invasiv art</strong> är en art som av människan flyttats till en ny miljö där den saknar naturliga fiender. Den kan då sprida sig okontrollerat och konkurrera ut de ursprungliga arterna."
+ },
+ {
+   "category": "Människan & Hållbarhet",
+   "q": "Vilket drivmedel ger minst nettotillskott av koldioxid till atmosfären?",
+   "options": [
+     "Diesel från olja",
+     "Naturgas",
+     "Stenkol",
+     "Etanol från växter"
+   ],
+   "correct": 3,
+   "explanation": "<strong>Etanol</strong> är ett biobränsle. Koldioxiden som släpps ut har nyligen tagits upp av växterna, till skillnad från fossila bränslen där kolet varit lagrat i marken i miljoner år."
+ },
+ {
+   "category": "Cellen och Stamceller",
+   "q": "Vilken del av cellen fungerar som dess 'energikraftverk' där cellandningen sker?",
+   "options": [
+     "Mitokondrierna",
+     "Cellkärnan och DNA",
+     "Ribosomerna",
+     "Cellmembranet"
+   ],
+   "correct": 0,
+   "explanation": "Cellen har organeller med olika uppgifter. I <strong>mitokondrierna</strong> sker förbränningen (cellandningen) där druvsocker omvandlas till energi som cellen kan använda för att leva och arbeta."
+ },
+ {
+   "category": "Cellen och Stamceller",
+   "q": "Vad är en tumör ur ett biologiskt perspektiv?",
+   "options": [
+     "En allvarlig virusinfektion i blodet",
+     "En cellklump av okontrollerad celldelning",
+     "En ansamling av döda vita blodkroppar",
+     "Ett organ som slutat fungera helt"
+   ],
+   "correct": 1,
+   "explanation": "Normalt styrs celldelningen noga. <strong>Cancer</strong> uppstår när cellens DNA förändras (mutation) så att 'bromsen' slutar fungera. Cellen delar sig då <strong>okontrollerat</strong> och bildar en tumör."
+ },
+ {
+   "category": "Cellen och Stamceller",
+   "q": "Vad är det som gör stamceller unika jämfört med andra celler?",
+   "options": [
+     "De saknar helt cellkärna",
+     "De kan bara leva i några sekunder",
+     "De kan utvecklas till olika specialiserade celltyper",
+     "De finns enbart i hjärnan hos vuxna"
+   ],
+   "correct": 2,
+   "explanation": "De flesta celler är specialiserade (t.ex. hudceller). <strong>Stamceller</strong> är däremot omogna och unika eftersom de kan dela sig och bli till olika specialiserade celltyper, vilket är viktigt för kroppens reparation."
+ },
+ {
+   "category": "Nervsystemet och Hjärnan",
+   "q": "Vilken funktion har myelinskidan som omger nervcellens långa utskott (axon)?",
+   "options": [
+     "Den tillverkar olika typer av signalsubstanser",
+     "Den fungerar som cellens energilager",
+     "Den saktar ner signalen för att undvika fel",
+     "Den isolerar och ökar signalens hastighet"
+   ],
+   "correct": 3,
+   "explanation": "<strong>Myelinet</strong> är en fettrik isolering runt nervtråden. Precis som plast runt en sladd hindrar det signalen från att läcka och gör att impulserna kan färdas extremt snabbt (upp till 150 m/s)."
+ },
+ {
+   "category": "Nervsystemet och Hjärnan",
+   "q": "Vad skiljer en reflex från en reaktion?",
+   "options": [
+     "Reflexen kopplas i ryggmärgen, reaktionen i hjärnan",
+     "Reflexen är alltid viljestyrd, reaktionen är automatisk",
+     "Reaktionen är oftast mycket snabbare än reflexen",
+     "Reflexer finns bara hos barn, reaktioner hos vuxna"
+   ],
+   "correct": 0,
+   "explanation": "<strong>Reflexer</strong> (t.ex. att dra bort handen från värme) är snabba och automatiska då signalen vänder i ryggmärgen. En <strong>reaktion</strong> är långsammare eftersom hjärnan måste tolka signalen först."
+ },
+ {
+   "category": "Nervsystemet och Hjärnan",
+   "q": "Vilken del av hjärnan styr icke-viljestyrda funktioner som andning och blodtryck?",
+   "options": [
+     "Pannloben",
+     "Hjärnstammen",
+     "Hjärnbalken",
+     "Tinningloben"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Hjärnstammen</strong> är den evolutionärt äldsta delen av hjärnan. Den styr grundläggande överlevnadsfunktioner som vi inte kan påverka med viljan (autonoma), t.ex. andning och hjärtrytm."
+ },
+ {
+   "category": "Nervsystemet och Hjärnan",
+   "q": "Vad händer i synapsen mellan två nervceller?",
+   "options": [
+     "DNA kopieras inför en celldelning",
+     "Muskeln drar ihop sig krampaktigt",
+     "Signalen överförs kemiskt med signalsubstanser",
+     "Blodet renas snabbt från gifter"
+   ],
+   "correct": 2,
+   "explanation": "Nervceller rör inte vid varandra. I klyftan mellan dem, <strong>synapsen</strong>, omvandlas den elektriska impulsen till en kemisk signal med hjälp av <strong>signalsubstanser</strong> som för budskapet vidare."
+ },
+ {
+   "category": "Nervsystemet och Hjärnan",
+   "q": "Vilken del av hjärnan ansvarar främst för balans och koordination?",
+   "options": [
+     "Storhjärnan",
+     "Hjärnstammen",
+     "Mellanhjärnan",
+     "Lillhjärnan"
+   ],
+   "correct": 3,
+   "explanation": "<strong>Lillhjärnan</strong> är viktig för motoriken. Den tar emot information från balansorgan och muskler för att finjustera (koordinera) våra rörelser och hålla balansen så att vi rör oss mjukt."
+ },
+ {
+   "category": "Hjärta, Blod och Andning",
+   "q": "Varför förbättras konditionen av att hjärtat blir starkare?",
+   "options": [
+     "Hjärtat pumpar mer blod per slag (slagvolym)",
+     "Hjärtat slår snabbare även när man vilar",
+     "Hjärtat börjar tillverka socker till musklerna",
+     "Det blir lättare att hålla andan under vatten"
+   ],
+   "correct": 0,
+   "explanation": "Vid träning blir hjärtmuskeln starkare. Ett starkt hjärta orkar pumpa ut mer syrerikt blod i varje slag (ökad slagvolym), vilket ger effektivare syresättning i <strong>kroppen</strong> utan att pulsen behöver vara lika hög."
+ },
+ {
+   "category": "Hjärta, Blod och Andning",
+   "q": "Vilket blodkärl leder syrerikt blod från hjärtat ut till kroppen?",
+   "options": [
+     "Venerna",
+     "Artärerna",
+     "Kapillärerna",
+     "Hålvenerna"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Artärer</strong> (t.ex. aortan) leder blod *bort* från hjärtat. I det stora kretsloppet innehåller dessa blodkärl syrerikt blod som ska ut till kroppens celler."
+ },
+ {
+   "category": "Hjärta, Blod och Andning",
+   "q": "Var i lungorna sker själva utbytet av syre och koldioxid?",
+   "options": [
+     "I luftstrupen",
+     "I de stora bronkerna",
+     "I lungblåsorna (alveolerna)",
+     "I den omgivande lungsäcken"
+   ],
+   "correct": 2,
+   "explanation": "Luftvägarna slutar i miljontals små <strong>alveoler</strong> (lungblåsor). De har extremt tunna väggar och omges av blodkärl, vilket möjliggör ett effektivt gasutbyte mellan luft och blod."
+ },
+ {
+   "category": "Hjärta, Blod och Andning",
+   "q": "Vilken uppgift har de röda blodkropparna?",
+   "options": [
+     "Att bilda sårskorpor vid skada",
+     "Att äta upp bakterier och virus",
+     "Att reglera kroppens temperatur",
+     "Att transportera syre med hemoglobin"
+   ],
+   "correct": 3,
+   "explanation": "De röda blodkropparna är transportörer. De innehåller proteinet <strong>hemoglobin</strong> (som innehåller järn), vilket binder syre i lungorna och släpper av det ute i kroppens celler."
+ },
+ {
+   "category": "Hjärta, Blod och Andning",
+   "q": "Vad händer med mellangärdet (diafragman) vid inandning?",
+   "options": [
+     "Den spänns och dras nedåt",
+     "Den slappnar av och trycks uppåt",
+     "Den står helt stilla",
+     "Den producerar slem"
+   ],
+   "correct": 0,
+   "explanation": "Andning styrs av muskler. När mellangärdet spänns och rör sig nedåt ökar lungornas volym. Detta skapar ett <strong>undertryck</strong> som suger in luft i lungorna."
+ },
+ {
+   "category": "Matspjälkning och Rening",
+   "q": "Vilket organ producerar galla för att hjälpa till att bryta ner fett?",
+   "options": [
+     "Magsäcken",
+     "Levern",
+     "Njuren",
+     "Tjocktarmen"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Levern</strong> är kroppens reningsverk som bryter ner gifter, men den producerar också galla. Gallan lagras i gallblåsan och portioneras ut i tarmen för att finfördela fett."
+ },
+ {
+   "category": "Matspjälkning och Rening",
+   "q": "Vilken är tjocktarmens absolut viktigaste uppgift?",
+   "options": [
+     "Att bryta ner proteiner till aminosyror",
+     "Att producera stora mängder magsyra",
+     "Att suga upp vatten och återföra till blodet",
+     "Att pumpa runt näring till kroppens celler"
+   ],
+   "correct": 2,
+   "explanation": "I <strong>tjocktarmen</strong> är näringen redan upptagen. Dess viktigaste uppgift är att återvinna vätska genom att suga upp vatten från tarminnehållet. Om detta inte fungerar får vi diarré."
+ },
+ {
+   "category": "Matspjälkning och Rening",
+   "q": "Hur påverkas njurarna av långvarig och hög alkoholkonsumtion?",
+   "options": [
+     "De börjar producera mer socker än normalt",
+     "De blir bättre på att lagra viktiga vitaminer",
+     "De slutar helt att tillverka galla",
+     "Deras förmåga att rena blodet försämras"
+   ],
+   "correct": 3,
+   "explanation": "Njurarna filtrerar blodet och bildar urin. Alkohol och gifter belastar detta system hårt och kan skada njurarnas <strong>filtreringsförmåga</strong>, vilket leder till att kroppen inte kan rena sig från avfall."
+ },
+ {
+   "category": "Matspjälkning och Rening",
+   "q": "Vilket enzym finns i saliven och börjar bryta ner kolhydrater?",
+   "options": [
+     "Amylas",
+     "Pepsin",
+     "Insulin",
+     "Galla"
+   ],
+   "correct": 0,
+   "explanation": "Matspjälkningen börjar redan i munnen. Saliven innehåller enzymet <strong>amylas</strong> som klipper sönder långa kolhydratkedjor (stärkelse) till mindre sockerarter innan maten ens nått magen."
+ },
+ {
+   "category": "Försvar och Hälsa",
+   "q": "Varför fungerar inte antibiotika (t.ex. penicillin) mot en vanlig förkylning?",
+   "options": [
+     "Antibiotika fungerar enbart mot virus",
+     "Förkylning är virus, antibiotika dödar bakterier",
+     "Antibiotika är för svagt för just förkylningsvirus",
+     "Förkylningar räknas inte som en sjukdom"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Antibiotika</strong> dödar bakterier genom att förstöra deras cellväggar eller ämnesomsättning. Virus saknar egen ämnesomsättning och påverkas därför inte alls av antibiotika."
+ },
+ {
+   "category": "Försvar och Hälsa",
+   "q": "Vilken del av immunförsvaret 'minns' en sjukdom så att du blir immun?",
+   "options": [
+     "Röda blodkroppar",
+     "Blodplättar",
+     "Minnesceller",
+     "Hudceller"
+   ],
+   "correct": 2,
+   "explanation": "Immunförsvaret lär sig av sina strider. Vissa vita blodkroppar omvandlas till <strong>minnesceller</strong>. De kan snabbt bilda mängder av <strong>antikroppar</strong> om samma smitta kommer tillbaka."
+ },
+ {
+   "category": "Försvar och Hälsa",
+   "q": "Vad är det huvudsakliga syftet med en vaccination?",
+   "options": [
+     "Att döda alla bakterier som redan finns i kroppen",
+     "Att ge kroppen extra energi i form av socker",
+     "Att bygga upp muskelmassan inför sjukdom",
+     "Att lära immunförsvaret känna igen ett smittämne"
+   ],
+   "correct": 3,
+   "explanation": "Vaccinet ger en ofarlig dos av smittan. Detta 'lurar' kroppen att bilda minnesceller och <strong>antikroppar</strong> i förväg, så att du är skyddad (immun) om du utsätts för den riktiga sjukdomen."
+ },
+ {
+   "category": "Infektioner & Smitta",
+   "q": "Vilken typ av organism orsakar de infektioner som behandlas med antibiotika?",
+   "options": [
+     "Bakterier",
+     "Virus",
+     "Svampar",
+     "Parasiter"
+   ],
+   "correct": 0,
+   "explanation": "Infektioner orsakas ofta av mikroorganismer. <strong>Antibiotika</strong> verkar genom att döda eller hämma tillväxten av just <strong>bakterier</strong>, men biter inte på virus."
+ },
+ {
+   "category": "Infektioner & Smitta",
+   "q": "Varför minskade dödligheten på militärsjukhuset när Florence Nightingale införde noggrann handtvätt?",
+   "options": [
+     "Patienterna kände sig mer välvårdade och pigga",
+     "Färre smittämnen spreds mellan patienter via händerna",
+     "Tvålen dödade alla virus som fanns i sjukhusluften",
+     "Personalens händer blev varmare vilket gynnade läkning"
+   ],
+   "correct": 1,
+   "explanation": "Smitta sprids ofta via kroppsvätskor eller kontakt. God <strong>handhygien</strong> avlägsnar de mikroorganismer som annars flyttas från en sjuk person till en frisk."
+ },
+ {
+   "category": "Infektioner & Smitta",
+   "q": "Vilket påstående beskriver bäst hur bakterier blir resistenta mot antibiotika?",
+   "options": [
+     "Bakterierna lär sig hur medicinen ser ut och gömmer sig",
+     "Människor blir immuna mot medicinen så den slutar verka",
+     "Känsliga bakterier dör medan de som tål medicinen överlever",
+     "Bakterierna väntar tills man slutar äta kuren och anfaller"
+   ],
+   "correct": 2,
+   "explanation": "Det sker ett <strong>naturligt urval</strong>. Om en kur avbryts för tidigt kan de mest motståndskraftiga bakterierna överleva, föröka sig och sprida sin resistens vidare."
+ },
+ {
+   "category": "Infektioner & Smitta",
+   "q": "Varför fungerar inte penicillin mot en vanlig förkylning eller influensa?",
+   "options": [
+     "Penicillin är för svagt för att bita på influensasymtom",
+     "Man måste ta sprutor istället för tabletter mot virus",
+     "Kroppen bryter ner penicillinet för snabbt vid feber",
+     "Penicillin biter bara på bakterier, inte på virussjukdomar"
+   ],
+   "correct": 3,
+   "explanation": "Förkylning och influensa orsakas av <strong>virus</strong>. Eftersom antibiotika (som penicillin) enbart attackerar bakterier, har det ingen effekt på dessa sjukdomar."
+ },
+ {
+   "category": "Immunförsvar",
+   "q": "Vad händer i kroppen när en vaccination ger immunitet mot en sjukdom?",
+   "options": [
+     "Immunförsvaret bildar antikroppar och minnesceller mot ämnet",
+     "Vaccinet lägger sig som ett skyddande lager runt alla friska celler",
+     "Vita blodkroppar dör för att ge plats åt nya och starkare celler",
+     "Blodet blir tjockare så att viruset inte kan simma runt i kroppen"
+   ],
+   "correct": 0,
+   "explanation": "Genom <strong>vaccination</strong> får kroppen en ofarlig dos av smittämnet. Detta tränar det <strong>specifika försvaret</strong> att bilda <strong>minnesceller</strong> så att det kan reagera blixtsnabbt i framtiden."
+ },
+ {
+   "category": "Immunförsvar",
+   "q": "Vilket av följande är ett exempel på kroppens medfödda, yttre försvar?",
+   "options": [
+     "Vita blodkroppar",
+     "Huden",
+     "Antikroppar",
+     "Lungorna"
+   ],
+   "correct": 1,
+   "explanation": "Kroppen har ett <strong>medfött immunförsvar</strong> som fungerar som en sköld. <strong>Huden</strong> är den viktigaste delen av detta yttre skydd som fysiskt hindrar smittämnen från att tränga in."
+ },
+ {
+   "category": "Immunförsvar",
+   "q": "Vad är 'antikroppar' för något i immunförsvaret?",
+   "options": [
+     "Små bakterier som äter upp farliga virus i blodet",
+     "Celler som bygger upp huden igen efter en skada",
+     "Proteiner som känner igen och oskadliggör smittämnen",
+     "En typ av medicin som man sväljer när man är sjuk"
+   ],
+   "correct": 2,
+   "explanation": "Vita blodkroppar (B-celler) i det specifika försvaret bildar <strong>antikroppar</strong>. Dessa fungerar som målsökande robotar som fäster på och markerar specifika inkräktare."
+ },
+ {
+   "category": "Immunförsvar",
+   "q": "Varför kan en inflammation kännas varm, röd och svullen?",
+   "options": [
+     "Det är viruset som kokar blodet för att föröka sig",
+     "Kroppen sparar på vatten för att skölja bort bakterier",
+     "Cellerna i området dör och släpper ut all sin värme",
+     "Blodtillförseln till det infekterade området ökar kraftigt"
+   ],
+   "correct": 3,
+   "explanation": "Vid en infektion ökar <strong>blodflödet</strong> till området. Detta gör att fler vita blodkroppar snabbt kan transporteras dit för att bekämpa inkräktarna."
+ },
+ {
+   "category": "Immunförsvar",
+   "q": "Vad händer i kroppen vid en allergisk reaktion?",
+   "options": [
+     "Immunförsvaret är för svagt för att känna igen farliga ämnen",
+     "Bakterier i magen börjar producera giftiga gaser efter måltiden",
+     "Kroppen slutar producera röda blodkroppar under en kort period",
+     "Immunförsvaret överreagerar på ämnen som egentligen är ofarliga"
+   ],
+   "correct": 3,
+   "explanation": "Allergi innebär att <strong>immunförsvaret</strong> felaktigt tolkar ofarliga ämnen (som pollen eller nötter) som farliga och startar en onödig försvarsreaktion."
+ },
+ {
+   "category": "Levnadsvanor",
+   "q": "Hur påverkas kroppen av sömnbrist under flera månaders tid?",
+   "options": [
+     "Immunförsvaret försämras så att man lättare blir sjuk",
+     "Musklerna växer snabbare eftersom de får vila mer",
+     "Kroppen slutar helt att producera vita blodkroppar",
+     "Man får lättare att koncentrera sig på svåra uppgifter"
+   ],
+   "correct": 0,
+   "explanation": "Långvarig <strong>sömnbrist</strong> stressar kroppen och hindrar viktig återhämtning, vilket leder till ett nedsatt <strong>immunförsvar</strong> och ökad risk för sjukdomar."
+ },
+ {
+   "category": "Levnadsvanor",
+   "q": "Varför förbättras konditionen av regelbunden motion?",
+   "options": [
+     "Lungorna blir mindre så att de får plats med mer luft",
+     "Hjärtat blir starkare och kan pumpa ut mer blod per slag",
+     "Blodet blir tunnare så att det rinner snabbare i ådrorna",
+     "Musklerna behöver inte längre något syre för att arbeta"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Motion</strong> tränar hjärtmuskeln. Ett starkare hjärta orkar pumpa ut mer blod (och därmed syre) till musklerna i varje slag, vilket ökar uthålligheten."
+ },
+ {
+   "category": "Levnadsvanor",
+   "q": "Vilket organ skadas ofta vid långvarigt drickande av alkohol?",
+   "options": [
+     "Lungorna",
+     "Skelettet",
+     "Levern",
+     "Huden"
+   ],
+   "correct": 2,
+   "explanation": "<strong>Levern</strong> är kroppens reningsverk som bryter ner gifter. <strong>Alkohol</strong> är ett gift som vid långvarigt bruk kan överbelasta levern och orsaka skador som skrumplever."
+ },
+ {
+   "category": "Levnadsvanor",
+   "q": "Vilket näringsämne i blodet behövs för att transportera syre?",
+   "options": [
+     "Socker i plasman",
+     "Vitamin C i serumet",
+     "Kalcium i plättarna",
+     "Järn i hemoglobinet"
+   ],
+   "correct": 3,
+   "explanation": "De röda blodkropparna innehåller proteinet <strong>hemoglobin</strong>. I mitten av detta protein finns <strong>järn</strong>, vilket är det ämne som fysiskt binder syret."
+ },
+ {
+   "category": "Levnadsvanor",
+   "q": "Hur kan enäggstvillingar få olika stora muskler trots att de har samma gener?",
+   "options": [
+     "Det är omöjligt eftersom generna styr allt i kroppen helt och hållet",
+     "Den ena tvillingen har ärvt fler dominanta anlag från pappan",
+     "Det beror på att de har helt olika blodgrupper i AB0-systemet",
+     "Miljöfaktorer som träning och kost påverkar hur musklerna utvecklas"
+   ],
+   "correct": 3,
+   "explanation": "Hälsa påverkas av både arv och miljö. Även med identiska gener (arv) kan <strong>livsstilen</strong> (miljö), t.ex. hur mycket man tränar, göra att kropparna utvecklas olika."
+ },
+ {
+   "category": "Psykisk hälsa & Beroende",
+   "q": "Vilket signalämne i hjärnan har en central roll vid beroendesjukdomar?",
+   "options": [
+     "Insulin",
+     "Dopamin",
+     "Hemoglobin",
+     "Adrenalin"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Dopamin</strong> är en nyckelspelare i hjärnans <strong>belöningssystem</strong>. Droger och beroenden 'kapar' detta system genom att frigöra onaturligt stora mängder dopamin."
+ },
+ {
+   "category": "Psykisk hälsa & Beroende",
+   "q": "Vad är sant gällande ätstörningar enligt informationen i texten?",
+   "options": [
+     "Det är viktigt att få hjälp i ett tidigt skede",
+     "Det är en fysisk sjukdom som inte är psykisk",
+     "Det går oftast över av sig självt utan stöd",
+     "Det är en ovanlig form av beroendesjukdom"
+   ],
+   "correct": 0,
+   "explanation": "<strong>Psykisk ohälsa</strong> kan yttra sig som ätstörningar. För att öka chansen till tillfrisknande betonas vikten av att söka och få <strong>hjälp tidigt</strong>."
+ },
+ {
+   "category": "Psykisk hälsa & Beroende",
+   "q": "Vilken del av hjärnan påverkas främst vid en beroendesjukdom?",
+   "options": [
+     "Hjärnans centrum för språkinlärning",
+     "Den del som styr kroppens balanssinne",
+     "Hjärnans centrala belöningssystem",
+     "Området som hanterar vårt mörkerseende"
+   ],
+   "correct": 2,
+   "explanation": "Beroende uppstår när hjärnans <strong>belöningssystem</strong> förändras och blir okänsligt för naturliga belöningar, samtidigt som suget efter drogen ökar."
+ },
+ {
+   "category": "Pubertet & Hormoner",
+   "q": "Vilken del av kroppen ger signalen som startar produktionen av könshormoner?",
+   "options": [
+     "Hypofysen i hjärnan",
+     "Testiklarna i pungen",
+     "Äggstockarna i magen",
+     "Sköldkörteln i halsen"
+   ],
+   "correct": 0,
+   "explanation": "Puberteten styrs från hjärnan. <strong>Hypofysen</strong> skickar ut hormonsignaler som beordrar testiklar och äggstockar att börja producera <strong>könshormoner</strong>."
+ },
+ {
+   "category": "Pubertet & Hormoner",
+   "q": "Vilka hormoner är viktigast för utvecklingen av könsegenskaper under puberteten?",
+   "options": [
+     "Adrenalin och insulin",
+     "Testosteron och östrogen",
+     "Dopamin och oxytocin",
+     "Hemoglobin och galla"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Testosteron</strong> är det manliga könshormonet som ger t.ex. skäggväxt, medan <strong>östrogen</strong> är det kvinnliga som styr utvecklingen av bröst och höfter."
+ },
+ {
+   "category": "Befruktning & Graviditet",
+   "q": "Var i kvinnans underliv förenas normalt ägget och spermien vid en befruktning?",
+   "options": [
+     "I urinblåsan",
+     "Inuti livmodern",
+     "Ute i äggledaren",
+     "Längst in i slidan"
+   ],
+   "correct": 2,
+   "explanation": "Vid <strong>ägglossningen</strong> fångas ägget upp av <strong>äggledaren</strong>. Det är här, på väg mot livmodern, som <strong>befruktningen</strong> oftast sker."
+ },
+ {
+   "category": "Befruktning & Graviditet",
+   "q": "När i menstruationscykeln är chansen som störst att en kvinna blir gravid?",
+   "options": [
+     "Sista dagen av mensen",
+     "Precis innan mensen börjar",
+     "Under de första mensdagarna",
+     "Mitt mellan två menstruationer"
+   ],
+   "correct": 3,
+   "explanation": "Chansen är störst vid <strong>ägglossningen</strong>, vilket vanligtvis sker cirka 14 dagar före nästa mens (i mitten av cykeln)."
+ },
+ {
+   "category": "Befruktning & Graviditet",
+   "q": "Vilken är moderkakans främsta uppgift under en graviditet?",
+   "options": [
+     "Att ge fostret syre och näring från mamman",
+     "Att skydda fostret mot vibrationer",
+     "Att bestämma barnets biologiska kön",
+     "Att producera fostrets egna blodceller"
+   ],
+   "correct": 0,
+   "explanation": "<strong>Moderkakan</strong> är livsviktig då den fungerar som länken mellan mamman och fostret för transport av syre och näring."
+ },
+ {
+   "category": "Identitet & Sexualitet",
+   "q": "Vad innebär det att en person definierar sig som en cisperson?",
+   "options": [
+     "Att man är intresserad av både män och kvinnor",
+     "Att ens könsidentitet stämmer med biologiskt kön",
+     "Att man inte känner någon sexuell attraktion alls",
+     "Att man har opererat om sitt biologiska kön"
+   ],
+   "correct": 1,
+   "explanation": "En <strong>cisperson</strong> känner att det biologiska könet stämmer överens med <strong>könsidentiteten</strong>, till skillnad från en transperson."
+ },
+ {
+   "category": "Identitet & Sexualitet",
+   "q": "Vilket begrepp används för att bryta mot samhällets normer kring kön och sexualitet?",
+   "options": [
+     "Intersexuell",
+     "Heteronormativ",
+     "Queer-identitet",
+     "Könsdysfori"
+   ],
+   "correct": 2,
+   "explanation": "<strong>Queer</strong> är ett brett begrepp som används av personer som vill ifrågasätta och bryta mot normer kring kön och kärlek."
+ },
+ {
+   "category": "Samtycke & Lagstiftning",
+   "q": "Vad utgör grunden i den svenska samtyckeslagen som infördes år 2018?",
+   "options": [
+     "Att man måste ha fyllt minst 18 år",
+     "Att fysiskt våld måste ha förekommit",
+     "Att parterna måste vara gifta med varandra",
+     "Att sexuella handlingar ska vara frivilliga"
+   ],
+   "correct": 3,
+   "explanation": "<strong>Samtyckeslagen</strong> innebär att sex alltid måste bygga på <strong>frivillighet</strong>. Om det inte är frivilligt är det olagligt, oavsett om våld förekommit eller ej."
+ },
+ {
+   "category": "Samtycke & Lagstiftning",
+   "q": "Vad menas juridiskt med begreppet 'oaktsam våldtäkt'?",
+   "options": [
+     "Att man borde ha insett att den andre inte ville",
+     "Att man råkade skada sin partner under samlaget",
+     "Att man glömde använda ett säkert preventivmedel",
+     "Att man ångrade sig direkt efter att sexet avslutats"
+   ],
+   "correct": 0,
+   "explanation": "Lagen ställer krav på att man försäkrar sig om samtycke. Om man inte gör det, och borde ha förstått att den andra inte ville, kan det dömas som <strong>oaktsam våldtäkt</strong>."
+ },
+ {
+   "category": "Preventivmedel",
+   "q": "Vilket skydd ger kondomen som p-piller helt saknar?",
+   "options": [
+     "Skydd mot att fosterhinnorna spricker",
+     "Skydd mot sexuellt överförbara sjukdomar",
+     "Skydd mot hormonella svängningar i kroppen",
+     "Skydd mot att ägget fastnar i livmoderväggen"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Preventivmedel</strong> som p-piller skyddar mot graviditet, men <strong>kondom</strong> är det enda som även stoppar smitta genom att fungera som en barriär."
+ },
+ {
+   "category": "Preventivmedel",
+   "q": "Hur fungerar p-piller biologiskt för att förhindra graviditet?",
+   "options": [
+     "De dödar spermier som kommer in i slidan",
+     "De gör att slemhinnan i livmodern stöts bort",
+     "De förhindrar ägglossning och gör sekretet segare",
+     "De stänger av funktionen i kvinnans äggledare"
+   ],
+   "correct": 2,
+   "explanation": "P-piller innehåller hormoner som lurar kroppen. De förhindrar <strong>ägglossning</strong> så att inget ägg kan befruktas, och gör slemhinnan i livmodern tunnare."
+ },
+ {
+   "category": "Könssjukdomar (STI)",
+   "q": "Vilken av följande sjukdomar kan botas med en kur antibiotika?",
+   "options": [
+     "Könsherpes",
+     "HIV/AIDS",
+     "Kondylom",
+     "Klamydia"
+   ],
+   "correct": 3,
+   "explanation": "<strong>Könssjukdomar</strong> orsakade av <strong>bakterier</strong>, som <strong>klamydia</strong>, kan botas med antibiotika. Virussjukdomar som herpes och HIV går inte att bota på samma sätt."
+ },
+ {
+   "category": "Könssjukdomar (STI)",
+   "q": "Vad är en möjlig långsiktig konsekvens av en obehandlad klamydiainfektion?",
+   "options": [
+     "Det kan leda till sterilitet (infertilitet)",
+     "Det orsakar kroniska sår på venusberget",
+     "Det leder till att man får svårt att kissa",
+     "Det gör att man aldrig mer får menstruation"
+   ],
+   "correct": 0,
+   "explanation": "Obehandlad klamydia kan leda till inflammation i äggledare eller bitestiklar, vilket kan göra det svårt eller omöjligt att <strong>få barn</strong> (infertilitet) i framtiden."
+ },
+ {
+   "category": "Könssjukdomar (STI)",
+   "q": "Vilket påstående är sant om viruset HIV?",
+   "options": [
+     "Det sprids främst via hudkontakt och kramar",
+     "Det angriper och försvagar immunförsvaret",
+     "Det kan botas helt om man får penicillin tidigt",
+     "Det ger alltid tydliga blåsor direkt efter smitta"
+   ],
+   "correct": 1,
+   "explanation": "<strong>HIV</strong> är ett virus som angriper kroppens egna vita blodkroppar, vilket på sikt bryter ner <strong>immunförsvaret</strong> (sjukdomen AIDS)."
+ },
+ {
+   "category": "Könssjukdomar (STI)",
+   "q": "Varför vaccineras många ungdomar mot HPV (Human Papilloma Virus)?",
+   "options": [
+     "För att förhindra att man får svamp i underlivet",
+     "För att stoppa spridningen av bakteriell klamydia",
+     "För att minska risken för cancer i livmoderhalsen",
+     "För att öka fertiliteten och chansen att få barn"
+   ],
+   "correct": 2,
+   "explanation": "<strong>HPV</strong> är ett mycket vanligt virus. Vissa varianter kan orsaka cellförändringar som på sikt kan leda till <strong>cancer</strong>, vilket vaccinet skyddar mot."
+ },
+ {
+   "category": "Livets uppkomst",
+   "q": "Vilken tidsordning beskriver bäst livets tidiga utveckling på jorden?",
+   "options": [
+     "Syrgas bildas → Liv på land → Fotosyntes utvecklas.",
+     "Liv på land → Fotosyntes utvecklas → Syrgas bildas.",
+     "Fotosyntes utvecklas → Syrgas bildas → Liv etableras på land.",
+     "Syrgas bildas → Fotosyntes utvecklas → Liv etableras på land."
+   ],
+   "correct": 2,
+   "explanation": "<strong>Fotosyntesen</strong> (hos blågröna bakterier) producerade det syre som krävdes för att ozonlagret skulle bildas, vilket senare gjorde det möjligt för liv att <strong>etableras på land</strong>."
+ },
+ {
+   "category": "Livets uppkomst",
+   "q": "Vilken var troligtvis den allra första formen av liv som bildades på jorden?",
+   "options": [
+     "En flercellig alg som använde fotosyntes för att få energi.",
+     "Någon typ av enkel bakterie som uppstod i havets djup.",
+     "Små ryggradsdjur som liknade dagens fiskar och grodor.",
+     "Enkla landväxter som spred sig med hjälp av sina sporer."
+   ],
+   "correct": 1,
+   "explanation": "Livet uppstod för ca <strong>4000 miljoner år</strong> sedan. Vetenskapen räknar med att de första organismerna var mycket enkla, encelliga <strong>bakterier</strong>."
+ },
+ {
+   "category": "Livets uppkomst",
+   "q": "Varför var bildandet av ozon (O₃) för ca 600 miljoner år sedan så viktigt?",
+   "options": [
+     "Det gjorde att koldioxidhalten i luften minskade drastiskt.",
+     "Det tillförde de mineraler som växterna behövde på land.",
+     "Det värmde upp planeten så att istiderna kunde avslutas.",
+     "Det skyddade organismer mot solens farliga UV-strålning."
+   ],
+   "correct": 3,
+   "explanation": "<strong>Ozonlagret</strong> fungerar som en sköld. Utan detta skydd mot solens skadliga <strong>UV-strålning</strong> hade livet på land haft mycket svårt att överleva."
+ },
+ {
+   "category": "Evolutionens mekanismer",
+   "q": "Vilka fyra nyckelbegrepp används för att förklara hur en art anpassas?",
+   "options": [
+     "Konkurrens, revir, mutationer och naturlig utrotning.",
+     "Bevis, fossil, DNA-teknik och historiska tidsåldrar.",
+     "Miljöfaktorer, föda, temperatur och koldioxidbalans.",
+     "Variation, naturligt urval, biologiskt arv och lång tid."
+   ],
+   "correct": 3,
+   "explanation": "Enligt <strong>Charles Darwin</strong> samverkar variation (olikheter), <strong>urval</strong> (bäst anpassad överlever), arv och tid för att driva evolutionen framåt."
+ },
+ {
+   "category": "Evolutionens mekanismer",
+   "q": "Vad innebär begreppet naturligt urval i evolutionsteorin?",
+   "options": [
+     "Individer med bäst anpassade egenskaper överlever oftare.",
+     "Att naturen väljer ut vilka arter som ska dö ut helt slumpmässigt.",
+     "Att djur väljer att ändra sina egenskaper för att passa in bättre.",
+     "En process där människan väljer ut vilka djur som får para sig."
+   ],
+   "correct": 0,
+   "explanation": "De mest <strong>livsdugliga</strong> individerna, de som har egenskaper som ger fördelar i miljön, har störst chans att överleva och föra sina <strong>gener</strong> vidare."
+ },
+ {
+   "category": "Evolutionens mekanismer",
+   "q": "Varför har skogsharar i norra Sverige vit päls på vintern?",
+   "options": [
+     "Vit päls ger kamouflage vilket minskar risken att bli äten.",
+     "Den vita färgen gör att hararna lättare hittar varandra i snön.",
+     "Vita hårstrån är tjockare och ger därför ett bättre skydd mot kyla.",
+     "Hararna väljer att byta färg för att inte synas mot den vita snön."
+   ],
+   "correct": 0,
+   "explanation": "Detta är ett resultat av <strong>naturligt urval</strong>. Vit päls ger <strong>kamouflage</strong> i snö, vilket ökar chansen att undkomma rovdjur och överleva vintern."
+ },
+ {
+   "category": "Evolutionens mekanismer",
+   "q": "Hur kan en groda ha utvecklat en lång och klibbig tunga genom evolution?",
+   "options": [
+     "Grodan tränade upp sin tunga varje dag tills den blev längre.",
+     "Genom att äta klibbiga insekter förändrades grodans eget DNA.",
+     "Variation i generna gjorde att vissa fick bättre tungor och överlevde.",
+     "En mutation skedde i alla grodor samtidigt när maten tog slut."
+   ],
+   "correct": 2,
+   "explanation": "<strong>Mutationer</strong> skapar variation. De grodor som råkade födas med en tunga som fångade fler insekter överlevde oftare och förde egenskapen vidare."
+ },
+ {
+   "category": "Bevis för evolutionen",
+   "q": "Var hittar man normalt sett de äldsta fossilen i sedimentära bergarter?",
+   "options": [
+     "Utspridda helt slumpmässigt i alla lager av bergarten.",
+     "Inuti de översta lagren som bildats under de senaste åren.",
+     "I de mellersta lagren där trycket från berget är som högst.",
+     "Längst ner i berget eftersom de lagren bildades allra först."
+   ],
+   "correct": 3,
+   "explanation": "<strong>Fossil</strong> bevaras i lager på lager. De understa lagren är äldst, vilket gör att man kan följa utvecklingen genom tidsåldrarna nerifrån och upp."
+ },
+ {
+   "category": "Bevis för evolutionen",
+   "q": "Vad bevisar likheten i skelettet mellan en människas arm och en vals fena?",
+   "options": [
+     "Att valar och människor lever i mycket liknande miljöer.",
+     "Att arterna har utvecklats från en gemensam förfader.",
+     "Att skelettet formas helt efter hur musklerna används.",
+     "Att valar ursprungligen kunde gå på land med sina fenor."
+   ],
+   "correct": 1,
+   "explanation": "Detta kallas <strong>homologa organ</strong>. Trots olika funktioner (gripa vs simma) visar den liknande byggnadsplanen på ett <strong>gemensamt ursprung</strong>."
+ },
+ {
+   "category": "Bevis för evolutionen",
+   "q": "Vad är ett exempel på ett 'spår från tidigare utvecklingsstadier' hos människan?",
+   "options": [
+     "Svanskotan, som är en rest av en svans som inte längre behövs.",
+     "Lillfingret, som sakta håller på att försvinna hos moderna människor.",
+     "Tungan, som har blivit kortare eftersom vi har utvecklat ett talat språk.",
+     "Naglarna, som tidigare användes som klor för att gräva efter rötter."
+   ],
+   "correct": 0,
+   "explanation": "Kroppsdelar som förlorat sin funktion kallas <strong>rudimentära organ</strong>. Svanskotan är ett tydligt bevis på att våra förfäder en gång hade svans."
+ },
+ {
+   "category": "Bevis för evolutionen",
+   "q": "Hur kan modern DNA-teknik användas för att bevisa evolutionen?",
+   "options": [
+     "Man kan se att växter och djur har helt olika byggnadsritningar.",
+     "Man ser att arter som liknar varandra också delar mycket DNA.",
+     "DNA visar att alla arter skapades samtidigt för tusen år sedan.",
+     "Man kan läsa av i generna exakt vilka djur som ska dö ut härnäst."
+   ],
+   "correct": 1,
+   "explanation": "Vi delar en stor del av vårt <strong>DNA</strong> med andra arter. Ju mer DNA två arter har gemensamt, desto närmare <strong>släkt</strong> är de."
+ },
+ {
+   "category": "Jordens epoker & massdöd",
+   "q": "I vilken tidsordning delas jordens historia in, från äldst till yngst?",
+   "options": [
+     "Forntid → Nutid → Medeltid → Urtid.",
+     "Nutid → Medeltid → Forntid → Urtid.",
+     "Urtid → Forntid → Medeltid → Nutid.",
+     "Medeltid → Forntid → Urtid → Nutid."
+   ],
+   "correct": 2,
+   "explanation": "Historien delas in i eror. <strong>Urtiden</strong> är den äldsta och längsta perioden, följt av forntid (liv i hav), medeltid (dinosaurier) och slutligen <strong>nutid</strong>."
+ },
+ {
+   "category": "Jordens epoker & massdöd",
+   "q": "I vilken ordning utvecklades dessa ryggradsdjursgrupper enligt fossila fynd?",
+   "options": [
+     "Däggdjur → Fiskar → Groddjur.",
+     "Groddjur → Fiskar → Däggdjur.",
+     "Fiskar → Däggdjur → Groddjur.",
+     "Fiskar → Groddjur → Däggdjur."
+   ],
+   "correct": 3,
+   "explanation": "Livet började i haven (<strong>fiskar</strong>). Vissa utvecklade lungor och ben (<strong>groddjur</strong>) för att klara landliv. Långt senare kom de jämnvarma <strong>däggdjuren</strong>."
+ },
+ {
+   "category": "Jordens epoker & massdöd",
+   "q": "Vad tror forskare var den främsta orsaken till att dinosaurierna dog ut?",
+   "options": [
+     "De kunde inte simma när havsnivåerna steg över hela jorden.",
+     "En smittsam sjukdom spreds mellan alla stora kräldjursarter.",
+     "Ett meteoritnedslag täckte atmosfären med stoft som gav kyla.",
+     "De blev utkonkurrerade av de första människorna som jagade dem."
+   ],
+   "correct": 2,
+   "explanation": "Detta var ett av jordens fem stora <strong>massutdöenden</strong>. Stoftet från nedslaget blockerade solen, vilket kollapsade näringskedjorna."
+ },
+ {
+   "category": "Jordens epoker & massdöd",
+   "q": "Vilken art är människans närmaste nu levande släkting?",
+   "options": [
+     "Gorillan, som har en kroppsbyggnad som liknar vår mest.",
+     "Schimpansen, som vi delar ca 99 % av vårt DNA med.",
+     "Orangutangen, som är den mest intelligenta av alla människoapor.",
+     "Neanderthalaren, som lever kvar i vissa isolerade områden i Asien."
+   ],
+   "correct": 1,
+   "explanation": "DNA-analyser visar att vi och <strong>schimpansen</strong> delar en gemensam förfader som levde för bara några miljoner år sedan."
+ },
+ {
+   "category": "Människan",
+   "q": "Vad utmärkte arten Homo erectus jämfört med tidigare människoapor?",
+   "options": [
+     "De var de första som använde eld och tillagade sin mat.",
+     "De hade en hjärna som var precis lika stor som vår egen hjärna.",
+     "De levde enbart i Afrika och spred sig aldrig till andra världsdelar.",
+     "De gick fortfarande främst på alla fyra men kunde springa på två."
+   ],
+   "correct": 0,
+   "explanation": "<strong>Homo erectus</strong> var en framgångsrik art som lärde sig hantera <strong>eld</strong>, vilket gav värme, skydd och möjlighet att tillaga mat."
+ },
+ {
+   "category": "Människan",
+   "q": "Vad vet vi om släktskapet mellan moderna människor och Neanderthalare?",
+   "options": [
+     "Neanderthalarna var en direkt förfader som vi utvecklades ifrån.",
+     "Vi har aldrig levt samtidigt då de dog ut innan vi kom till Europa.",
+     "Vi har levt samtidigt och det har skett korsningar mellan arterna.",
+     "De var egentligen samma art som vi men med en annan typ av kost."
+   ],
+   "correct": 2,
+   "explanation": "När <strong>Homo sapiens</strong> lämnade Afrika mötte de Neanderthalare i Europa. Vi bär idag på ca 2-4 % DNA från dem, vilket bevisar korsning."
+ },
+ {
+   "category": "Människan",
+   "q": "Vad menas med en organisms 'ekologiska nisch'?",
+   "options": [
+     "Den specifika plats där en individ sover och gömmer sina ungar.",
+     "En kemisk reaktion som sker i cellen när den saknar tillgång till syre.",
+     "Det område på jorden där en art först uppstod innan den spred sig.",
+     "De speciella behov och levnadssätt som en art har specialiserat sig på."
+   ],
+   "correct": 3,
+   "explanation": "Människan har en bred <strong>nisch</strong> tack vare sin anpassningsförmåga. En nisch beskriver artens unika roll och behov i ekosystemet."
+ },
+ {
+   "category": "Människan",
+   "q": "Varför dör så många arter ut vid en massdöd orsakad av vulkanism?",
+   "options": [
+     "Atmosfären fylls med aska som reflekterar bort solljuset och ger kyla.",
+     "Lavaströmmen rinner ut i alla världshaven och kokar fiskarna levande.",
+     "Allt syre i atmosfären brinner upp under de stora vulkanutbrotten.",
+     "Markens alla närsalter försvinner så att inga växter kan växa längre."
+   ],
+   "correct": 0,
+   "explanation": "Vid stora <strong>vulkanutbrott</strong> blockeras solen. Utan ljus dör växterna (producenterna), vilket leder till att djuren svälter och dör."
+ },
+ {
+   "category": "Människan",
+   "q": "Vad är huvudorsaken till att det finns en variation av egenskaper inom en art?",
+   "options": [
+     "Att djuren lär sig nya saker under livet som de lär ut till sina ungar.",
+     "Slumpmässiga mutationer i DNA och sexuell förökning som blandar gener.",
+     "Att miljön tvingar fram exakt de egenskaper som individen behöver just då.",
+     "Att alla individer föds med exakt samma gener men äter olika typer av mat."
+   ],
+   "correct": 1,
+   "explanation": "Evolutionen kräver <strong>variation</strong>. Denna uppstår genom slumpmässiga <strong>mutationer</strong> i DNA samt blandning av anlag när föräldrar får ungar."
+ },
+ {
+   "category": "DNA och livets ritning",
+   "q": "Var i cellen finns den största delen av organismens genetiska information samlad?",
+   "options": [
+     "Inuti cellkärnan där DNA-molekylerna förvaras.",
+     "I ribosomerna där aminosyrorna kopplas samman.",
+     "I cellmembranet som styr vilka ämnen som passerar.",
+     "Inuti mitokondrierna där all cellandning äger rum."
+   ],
+   "correct": 0,
+   "explanation": "<strong>Cellkärnan</strong> fungerar som cellens kontrollcenter. Här finns informationen om hur organismen ser ut och fungerar lagrad i form av <strong>DNA-molekyler</strong>."
+ },
+ {
+   "category": "DNA och livets ritning",
+   "q": "Hur parar sig kvävebaserna i DNA-molekylens 'stege'?",
+   "options": [
+     "A parar sig med G, medan C alltid parar sig med T.",
+     "A parar sig med T, medan C alltid parar sig med G.",
+     "G parar sig med T, medan A alltid parar sig med C.",
+     "C parar sig med A, medan G alltid parar sig med T."
+   ],
+   "correct": 1,
+   "explanation": "DNA liknas vid en bruksanvisning med fyra bokstäver. Basparen är specifika: <strong>Adenin</strong> (A) binder alltid till <strong>Tymin</strong> (T) och <strong>Cytosin</strong> (C) binder till <strong>Guanin</strong> (G)."
+ },
+ {
+   "category": "DNA och livets ritning",
+   "q": "Vad är den biologiska definitionen av en gen?",
+   "options": [
+     "En typ av protein som bygger upp muskler och vävnad.",
+     "Hela den samlade mängden DNA som finns i en cell.",
+     "En bestämd sträcka på DNA som kodar för ett protein.",
+     "De sockerarter som bygger upp DNA-molekylens sidor."
+   ],
+   "correct": 2,
+   "explanation": "En <strong>gen</strong> är en specifik sträcka på DNA-tråden som fungerar som en mall för att tillverka ett visst protein eller styra en egenskap."
+ },
+ {
+   "category": "DNA och livets ritning",
+   "q": "Hur många kromosomer har en människa normalt i sina vanliga kroppsceller?",
+   "options": [
+     "23 stycken som ligger helt obundna till varandra.",
+     "48 stycken som är uppdelade i 24 identiska par.",
+     "44 stycken plus två extra i de röda blodkropparna.",
+     "46 stycken som är uppdelade i 23 stycken olika par."
+   ],
+   "correct": 3,
+   "explanation": "DNA:t är uppdelat i <strong>kromosomer</strong>. Vi ärver 23 stycken från pappan och 23 från mamman, vilket ger totalt <strong>46 kromosomer</strong> i varje kroppscell."
+ },
+ {
+   "category": "Celldelning och kön",
+   "q": "Vad utmärker meios (reduktionsdelning) jämfört med mitos?",
+   "options": [
+     "Antalet kromosomer halveras för att skapa könsceller.",
+     "Cellerna blir exakta kopior av den ursprungliga cellen.",
+     "Processen sker enbart för att reparera skadad hudvävnad.",
+     "DNA-molekylen kopieras inte alls innan cellen delar sig."
+   ],
+   "correct": 0,
+   "explanation": "Vid <strong>meios</strong> bildas könsceller (ägg och spermier). Antalet kromosomer halveras till 23, så att barnet får korrekt antal (46) vid befruktningen."
+ },
+ {
+   "category": "Celldelning och kön",
+   "q": "Vem bestämmer barnets biologiska kön enligt genetiken?",
+   "options": [
+     "Mamman, eftersom hennes ägg kan innehålla både X och Y.",
+     "Pappan, eftersom hans spermier bär på antingen X eller Y.",
+     "Miljön, eftersom temperaturen i livmodern styr delningen.",
+     "Slumpen, eftersom ägget väljer vilken kromosom det vill ha."
+   ],
+   "correct": 1,
+   "explanation": "Ägget har alltid en X-kromosom. Om <strong>spermien</strong> bär på en X-kromosom blir det en flicka (XX), bär den på en Y-kromosom blir det en pojke (XY)."
+ },
+ {
+   "category": "Celldelning och kön",
+   "q": "Varför blir inte syskon exakta kopior trots att de har samma föräldrar?",
+   "options": [
+     "Föräldrarnas gener ändras helt mellan varje graviditet.",
+     "Dominanta anlag slutar fungera efter det första barnet.",
+     "Kromosomparen blandas slumpmässigt genom överkorsning.",
+     "Miljön i livmodern raderar hälften av alla ärvda anlag."
+   ],
+   "correct": 2,
+   "explanation": "Vid bildandet av könsceller sker en unik blandning av generna, kallad <strong>överkorsning</strong>. Detta gör att varje ägg och spermie bär på en unik genuppsättning."
+ },
+ {
+   "category": "Celldelning och kön",
+   "q": "Vad kallas processen när DNA-molekylen kopierar sig själv inför en celldelning?",
+   "options": [
+     "Mutation",
+     "Transkription",
+     "Translation",
+     "Replikation"
+   ],
+   "correct": 3,
+   "explanation": "Inför <strong>mitos</strong> (vanlig celldelning) måste cellen fördubbla sitt DNA. Detta kallas <strong>replikation</strong> och säkerställer att de nya cellerna får exakt samma arvsmassa."
+ },
+ {
+   "category": "Arv, miljö och korsningsscheman",
+   "q": "Om båda föräldrarna är heterozygota för bruna ögon (Bb), hur stor är chansen att barnet får blå ögon (bb)?",
+   "options": [
+     "25 % chans (1 av 4)",
+     "50 % chans (2 av 4)",
+     "75 % chans (3 av 4)",
+     "100 % chans (4 av 4)"
+   ],
+   "correct": 0,
+   "explanation": "Anlag kan vara <strong>dominanta</strong> eller <strong>recessiva</strong> (vikande). Enligt <strong>korsningsschemat</strong> blir en av fyra kombinationer 'bb', vilket krävs för att den recessiva egenskapen (blå ögon) ska synas."
+ },
+ {
+   "category": "Arv, miljö och korsningsscheman",
+   "q": "Vad menas med begreppet fenotyp?",
+   "options": [
+     "De dolda anlag som man bär på men som aldrig syns utåt.",
+     "De egenskaper som faktiskt visar sig, t.ex. ögonfärg.",
+     "En mutation som har skett i cellens energikraftverk.",
+     "Det sockerämne som bygger upp sidorna på DNA-stegen."
+   ],
+   "correct": 1,
+   "explanation": "<strong>Fenotypen</strong> är det vi ser, resultatet av samspelet mellan dina gener (genotyp) och miljön. Exempel är din faktiska ögonfärg eller din längd."
+ },
+ {
+   "category": "Arv, miljö och korsningsscheman",
+   "q": "Vilket begrepp beskriver en individ som har två likadana anlag för en egenskap (t.ex. RR eller rr)?",
+   "options": [
+     "Heterozygot",
+     "Intermediär",
+     "Homozygot",
+     "Diploid"
+   ],
+   "correct": 2,
+   "explanation": "<strong>Homozygot</strong> betyder att båda anlagen i ett kromosompar är identiska för den genen. Är de olika (t.ex. Rr) kallas det heterozygot."
+ },
+ {
+   "category": "Arv, miljö och korsningsscheman",
+   "q": "Varför kan enäggstvillingar ha olika stor muskelmassa som vuxna?",
+   "options": [
+     "De har olika gener eftersom de kommer från två olika ägg.",
+     "Dominanta anlag försvinner om man inte tränar tillräckligt.",
+     "Det är genetiskt omöjligt för dem att ha olika muskelmassa.",
+     "Miljöfaktorer som träning och kost påverkar hur de utvecklas."
+   ],
+   "correct": 3,
+   "explanation": "Egenskaper styrs ofta av ett samspel mellan <strong>arv och miljö</strong>. Även med identiskt DNA (arv) kan träning (miljö) göra stor skillnad för muskelmassan."
+ },
+ {
+   "category": "Genetisk variation och mutationer",
+   "q": "Vilken av dessa egenskaper bestäms av en kombination av både arv och miljö?",
+   "options": [
+     "Kroppslängd",
+     "Blodgrupp",
+     "Ögonfärg",
+     "Skomakartumme"
+   ],
+   "correct": 0,
+   "explanation": "Vissa egenskaper är rent genetiska, men <strong>kroppslängd</strong> påverkas både av dina gener och av <strong>miljöfaktorer</strong> som näring och hälsa under uppväxten."
+ },
+ {
+   "category": "Genetisk variation och mutationer",
+   "q": "Varför är röd-grön färgblindhet vanligare hos pojkar än hos flickor?",
+   "options": [
+     "Genen för färgblindhet är dominant hos pojkar men recessiv hos flickor.",
+     "Pojkar har bara en X-kromosom och saknar ett extra skyddande anlag.",
+     "Y-kromosomen innehåller speciella gener som förstör färgseendet.",
+     "Flickors ögon utvecklas snabbare i puberteten på grund av östrogen."
+   ],
+   "correct": 1,
+   "explanation": "Anlaget är <strong>könsbundet</strong> och sitter på X-kromosomen. Eftersom pojkar (XY) bara har en X-kromosom drabbas de om den enda de har bär på felet."
+ },
+ {
+   "category": "Genetisk variation och mutationer",
+   "q": "Vad kan öka risken för att mutationer uppstår i kroppens celler?",
+   "options": [
+     "Att äta för mycket proteinrik mat som bönor och nötter.",
+     "Att läsa böcker och träna minnet regelbundet i vardagen.",
+     "Att utsätta huden för stark UV-strålning eller farliga gifter.",
+     "Att vaccinera sig mot vanliga smittsamma virussjukdomar."
+   ],
+   "correct": 2,
+   "explanation": "<strong>Mutationer</strong> är slumpmässiga förändringar i DNA. Externa faktorer som strålning och kemikalier kan skada DNA-molekylen och öka antalet fel."
+ },
+ {
+   "category": "Genetisk variation och mutationer",
+   "q": "Vilken betydelse har mutationer för livet på jorden på lång sikt?",
+   "options": [
+     "De ser till att alla individer inom en art blir exakt likadana.",
+     "De gör att alla recessiva anlag försvinner inom några år.",
+     "De hindrar celler från att kunna dela sig genom vanlig mitos.",
+     "De skapar den variation som krävs för att evolutionen ska ske."
+   ],
+   "correct": 3,
+   "explanation": "Om en mutation sker i en könscell förs den vidare. Detta skapar ny genetisk variation, vilket är en förutsättning för <strong>evolution</strong> och anpassning."
+ },
+ {
+   "category": "Bioteknik och genteknik",
+   "q": "Vilken medicinsk nytta har gentekniken gett diabetiker?",
+   "options": [
+     "Bakterier har fått mänskliga gener för att tillverka billigt insulin.",
+     "Man har lyckats klona fram nya bukspottskörtlar till alla sjuka.",
+     "Genom att äta GMO-vete försvinner sjukdomen helt ur kroppen.",
+     "Forskare har tagit bort alla sockergener ur människans DNA."
+   ],
+   "correct": 0,
+   "explanation": "Genom <strong>genteknik</strong> har man klippt in genen för humant insulin i bakterier, som sedan fungerar som små fabriker för att producera medicinen."
+ },
+ {
+   "category": "Bioteknik och genteknik",
+   "q": "Vad är CRISPR (Cas9) för något inom modern bioteknik?",
+   "options": [
+     "En metod för att klona utdöda djur som mammutar.",
+     "En teknik för att mycket exakt byta ut delar av DNA.",
+     "Ett sätt att mäta hur långt en person har sprungit.",
+     "En maskin som läser av fingeravtryck hos polisen."
+   ],
+   "correct": 1,
+   "explanation": "<strong>CRISPR</strong> beskrivs ofta som en biologisk gensax. Den gör det möjligt att med hög precision korrigera enstaka baspar i <strong>DNA-koden</strong>."
+ },
+ {
+   "category": "Bioteknik och genteknik",
+   "q": "Vilken är en vanlig etisk eller miljömässig farhåga kring GMO-grödor?",
+   "options": [
+     "Att växterna ska börja producera syre istället för koldioxid.",
+     "Att GMO-mat innehåller för mycket näring för barn att äta.",
+     "Att de nya generna sprids okontrollerat till vilda växter.",
+     "Att bönder som använder GMO slutar använda maskiner."
+   ],
+   "correct": 2,
+   "explanation": "<strong>GMO</strong> (genmodifierade organismer) kan ha egenskaper som tålighet mot gift. En risk är att dessa gener sprider sig i naturen och rubbar balansen."
+ },
+ {
+   "category": "Bioteknik och genteknik",
+   "q": "Hur kan polisen använda genteknik för att lösa brott?",
+   "options": [
+     "Genom att ändra brottslingens DNA så att hen blir snällare.",
+     "Genom att använda gensaxen för att se vad någon tänker på.",
+     "Genom att klona ögonvittnen så att de minns händelsen bättre.",
+     "Genom att matcha DNA-spår från brottsplatsen mot register."
+   ],
+   "correct": 3,
+   "explanation": "Varje människas DNA är unikt (utom enäggstvillingars). <strong>DNA-analys</strong> av spår som hårstrån eller saliv kan därför binda en person till en plats."
+ },
+ {
+   "category": "Ekosystem och biologiska samband",
+   "q": "Hur leder minskat torskfiske till mindre algblomning i Östersjön?",
+   "options": [
+     "Fler torskar äter mer skarpsill, vilket gör att mängden djurplankton ökar och äter upp fler alger.",
+     "Fler torskar producerar mer koldioxid, vilket gör att algerna får för mycket näring och dör ut av sig själva.",
+     "Torsken äter upp algerna direkt från havsbotten, vilket hindrar dem från att flyta upp till ytan och blomma.",
+     "Färre fiskebåtar i rörelse minskar mängden närsalter som rörs upp, vilket svälter ut algerna i ytvattnet."
+   ],
+   "correct": 0,
+   "explanation": "I ekosystem hänger allt samman. Fler <strong>predatorer</strong> (torsk) minskar antalet mellanfiskar, vilket gynnar djurplankton som i sin tur håller algerna i schack."
+ },
+ {
+   "category": "Ekosystem och biologiska samband",
+   "q": "Varför försvinner ca 90 % av energin mellan varje steg i en näringspyramid?",
+   "options": [
+     "Energin lagras i marken när djuren dör och återgår till producenterna via rötterna som kemisk energi.",
+     "Energin används till djurens rörelse och livsprocesser, samt försvinner som värmeenergi till omgivningen.",
+     "Energin omvandlas till materia som bygger upp djurens skelett, vilket inte kan ätas av nästa djur i kedjan.",
+     "Energin strålar tillbaka till solen på natten eftersom djur saknar klorofyll för att hålla kvar solenergin."
+   ],
+   "correct": 1,
+   "explanation": "Endast en liten del av energin lagras som biomassa. Resten förbrukas för att hålla organismen vid liv och förloras som <strong>värme</strong>."
+ },
+ {
+   "category": "Ekosystem och biologiska samband",
+   "q": "Vilket resonemang beskriver bäst anrikning av miljögifter?",
+   "options": [
+     "Gifter bryts ner snabbare högt upp i näringskedjan eftersom rovdjur har mer effektiva reningsorgan än växter.",
+     "Växter tar upp gifter som sedan dunstar bort via fotosyntesen, vilket gör att halten minskar för varje steg.",
+     "Rovdjur äter många bytesdjur och får i sig allt gift de samlat på sig, så koncentrationen ökar ju högre upp man når.",
+     "Gifter lagras i vattnet och påverkar bara de djur som lever nära botten, där tungmetaller sjunker ner och stannar."
+   ],
+   "correct": 2,
+   "explanation": "Miljögifter som inte bryts ner lagras i fettvävnad. De <strong>koncentreras</strong> uppåt i kedjan och drabbar toppkonsumenter (som havsörn) hårdast."
+ },
+ {
+   "category": "Ekosystem och biologiska samband",
+   "q": "Hur påverkar införandet av vargar i en nationalpark mängden småfåglar?",
+   "options": [
+     "Vargarna skrämmer bort alla fåglar till andra områden, vilket leder till att de hittar nya och säkrare boplatser.",
+     "Vargar äter småfåglarnas fiender (t.ex. rävar), vilket gör att fågelungarna har större chans att överleva vintern.",
+     "Vargarna gödslar marken med sina restprodukter, vilket gör att träden växer snabbare och producerar mer nektar.",
+     "Vargar jagar hjortar, vilket gör att växtligheten återhämtar sig och ger småfåglarna fler boplatser och mer mat."
+   ],
+   "correct": 3,
+   "explanation": "Detta visar på <strong>orsak och verkan</strong> i flera led: Vargen minskar antalet hjortar (betestryck), vilket gynnar buskar och träd där fåglarna bor."
+ },
+ {
+   "category": "Människan och hållbar utveckling",
+   "q": "Varför bidrar etanol från växter till en mindre förstärkt växthuseffekt än bensin?",
+   "options": [
+     "Växterna som blir etanol tar upp lika mycket koldioxid under sin tillväxt som sedan släpps ut vid förbränningen.",
+     "Etanol innehåller ämnen som neutraliserar koldioxiden i avgaserna, vilket gör att luften blir renare bakom bilen.",
+     "Bensinbilar släpper ut koldioxid som är tyngre än den från etanol, vilket gör att bensinens gaser stannar på jorden.",
+     "Odling av etanolgrödor kyler ner planeten eftersom växterna skuggar marken mer än vad oljeborrning gör."
+   ],
+   "correct": 0,
+   "explanation": "Etanol ingår i det <strong>snabba kretsloppet</strong>. Koldioxiden cirkulerar bara, till skillnad från fossila bränslen som tillför 'nytt' kol till atmosfären."
+ },
+ {
+   "category": "Människan och hållbar utveckling",
+   "q": "Vilken är den största miljökonsekvensen av att regnskog ersätts med oljepalmsodlingar?",
+   "options": [
+     "Koldioxidutsläppen minskar eftersom oljepalmer har en mycket snabbare fotosyntes än de träd som fanns där innan.",
+     "Den biologiska mångfalden minskar kraftigt eftersom en monokultur inte kan erbjuda nischer för lika många arter.",
+     "Markens pH-värde stiger så mycket att det börjar regna basiskt vatten, vilket skadar ekosystem i andra världsdelar.",
+     "Oljepalmerna suger upp allt grundvatten så att närliggande hav blir saltare, vilket dödar korallreven i området."
+   ],
+   "correct": 1,
+   "explanation": "Att ersätta komplex regnskog med <strong>monokulturer</strong> (en enda art) förstör livsmiljön för tusentals arter och minskar drastiskt den biologiska mångfalden."
+ },
+ {
+   "category": "Människan och hållbar utveckling",
+   "q": "Varför är det viktigt för miljön att minska mängden livsmedel som slängs?",
+   "options": [
+     "Slängd mat som hamnar i skogen gör att vilda djur slutar jaga och istället blir beroende av människans avfall.",
+     "Matavfall innehåller mycket plast som inte kan brytas ner, vilket leder till att mikroplaster sprids i våra sjöar.",
+     "Det minskar onödig användning av vatten och fossila bränslen som krävts för att producera och transportera maten.",
+     "Om vi slänger mindre mat kommer priserna att stiga så mycket att fattiga länder inte har råd att köpa sitt eget vete."
+   ],
+   "correct": 2,
+   "explanation": "All matproduktion kräver <strong>naturresurser</strong>. Att slänga mat är att slösa på energin, vattnet och marken som krävdes för att producera den."
+ },
+ {
+   "category": "Människan och hållbar utveckling",
+   "q": "Vilken är den främsta miljöfördelen med rötning av matavfall jämfört med kompostering?",
+   "options": [
+     "Rötning sker i helt slutna kärl, vilket gör att inga bakterier eller virus kan slippa ut och smitta människor.",
+     "Vid rötning bildas jord som innehåller mycket mer närsalter (kväve och fosfor) än vad vanlig kompostjord gör.",
+     "Rötning tar mycket kortare tid eftersom man använder kemikalier som bryter ner maten på bara några få timmar.",
+     "Vid rötning tillvaratas energin i matavfallet genom att bilda biogas som kan ersätta fossila drivmedel."
+   ],
+   "correct": 3,
+   "explanation": "Både rötning och kompostering ger näring (gödsel), men rötning skapar dessutom <strong>biogas</strong>, en form av förnybar energi."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Varför krävs det mer markyta för att producera 1 kg nötkött än 1 kg baljväxter?",
+   "options": [
+     "Kon behöver äta flera kilon växter för att bygga 1 kg muskelmassa, då energin försvinner i varje steg.",
+     "Kor behöver enorma ytor att springa på för att deras kött ska bli tillräckligt mört för att säljas i butik.",
+     "Baljväxter kan växa på höjden i stora torn, medan kor måste leva på plan mark för att inte skada sina klövar.",
+     "Köttproduktionen kräver att man planterar träd på betesmarken för att skugga djuren, vilket tar upp extra plats."
+   ],
+   "correct": 0,
+   "explanation": "Detta beror på energiförlusten i näringskedjan. Det krävs ca 10 kg växtfoder för att producera 1 kg kött, vilket ökar det <strong>ekologiska fotavtrycket</strong>."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Vilken risk finns med att använda GMO-grödor som är resistenta mot ogräsmedel?",
+   "options": [
+     "Växterna kan börja producera eget gift som gör att de människor som äter dem blir immuna mot antibiotika.",
+     "Användningen av bekämpningsmedel kan öka, vilket kan skada andra organismer och läcka ut i vattendrag.",
+     "Grödorna växer så snabbt att de tar upp all koldioxid i området, vilket leder till syrebrist för närliggande skogar.",
+     "Generna för resistens gör att växterna inte längre kan genomföra fotosyntes, vilket gör dem beroende av konstgödsel."
+   ],
+   "correct": 1,
+   "explanation": "Om grödan tål giftet kan bonden spruta mer utan att skada skörden. Detta kan dock leda till att <strong>mer gift</strong> sprids i ekosystemet."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Hur kan man gynna biologisk mångfald inom skogsbruket?",
+   "options": [
+     "Genom att hugga ner alla gamla träd så att unga och friska träd får mer plats och mer solljus för att växa.",
+     "Genom att endast plantera ett enda trädslag (monokultur) så att man lättare kan kontrollera skadedjur i skogen.",
+     "Genom att lämna kvar döda träd och spara gamla träd, då dessa fungerar som viktiga livsmiljöer för många arter.",
+     "Genom att asfaltera små stigar genom skogen så att djuren lättare kan ta sig fram utan att fastna i snårig vegetation."
+   ],
+   "correct": 2,
+   "explanation": "Många hotade arter är beroende av död ved och gamla träd. Att spara dessa skapar viktiga <strong>nischer</strong> i skogen."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Vilken ekosystemtjänst hotas mest om antalet pollinerande insekter minskar kraftigt?",
+   "options": [
+     "Naturens förmåga att rena vatten genom marklagren, eftersom insekterna inte längre gräver hål i jorden.",
+     "Produktionen av syre via fotosyntes, då växterna slutar andas om de inte får besök av bin och humlor.",
+     "Skogsindustrins tillgång till virke, eftersom granar och tallar kräver insekter för att kunna bilda nya kottar.",
+     "Människans tillgång till mat, eftersom många av våra grödor, frukter och bär är beroende av pollinering för att ge skörd."
+   ],
+   "correct": 3,
+   "explanation": "<strong>Pollinering</strong> är en kritisk ekosystemtjänst. Utan den skulle skördarna av frukt, bär och många grödor minska drastiskt."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Vad innebär det att en person i Sverige ofta har ett stort 'ekologiskt fotavtryck'?",
+   "options": [
+     "Vi konsumerar mycket resurser och orsakar utsläpp som kräver en stor landyta för att produceras och tas om hand.",
+     "Vi bor i ett land med mycket skog, vilket gör att varje invånare har tillgång till en ovanligt stor yta att vandra på.",
+     "Vi använder skor som är gjorda av material som lämnar tydliga spår efter sig i naturen, vilket skadar växternas rötter.",
+     "Vi har en kultur där vi rör oss mycket utomhus, vilket gör att vi påverkar djurlivet mer än människor i stora städer."
+   ],
+   "correct": 0,
+   "explanation": "Det <strong>ekologiska fotavtrycket</strong> är ett mått på resursförbrukning. En livsstil med hög konsumtion kräver mer av jordens produktionsförmåga."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Vilken roll spelar en 'invasiv art' i ett lokalt ekosystem?",
+   "options": [
+     "Den fungerar som en extra resurs som ökar stabiliteten eftersom den alltid bidrar med ny energi till näringsväven.",
+     "Den saknar ofta naturliga fiender och kan därför föröka sig så mycket att den tränger ut de arter som fanns där innan.",
+     "Den hjälper lokala arter att anpassa sig snabbare till klimatförändringar genom att para sig med dem och blanda gener.",
+     "Den stannar alltid nära hamnar och städer, vilket gör att den inte påverkar den riktiga vildmarken eller urskogen."
+   ],
+   "correct": 1,
+   "explanation": "Invasiva arter kan rubba balansen helt eftersom de saknar <strong>naturliga begränsningar</strong> (som rovdjur) i den nya miljön."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Varför leder övergödning ofta till syrebrist på havets botten?",
+   "options": [
+     "Algerna tar upp allt syre ur vattnet när de växer, så att inget blir kvar till de fiskar som simmar djupare.",
+     "Algerna bildar ett tätt lock på ytan som hindrar koldioxid från att komma ner till växterna på botten så att de dör.",
+     "När de stora mängderna alger dör och sjunker, går det åt mycket syre när nedbrytarna ska bryta ner dem.",
+     "Gödselmedlen reagerar kemiskt med saltvattnet och bildar tunga gaser som trycker bort syret från bottenvattnet."
+   ],
+   "correct": 2,
+   "explanation": "Nedbrytning kräver syre. När stora mängder alger dör och sjunker till botten förbrukar nedbrytarna allt syre genom sin <strong>cellandning</strong>."
+ },
+ {
+   "category": "Individ, samhälle och resurser",
+   "q": "Hur påverkar den globala uppvärmningen korallreven genom haven?",
+   "options": [
+     "Varmare vatten gör att korallerna växer snabbare, vilket leder till att de tar upp för mycket plats för fiskarna.",
+     "Isar som smälter gör vattnet mindre salt, vilket får korallerna att svälla upp och spricka på grund av osmos.",
+     "När det blir varmare i luften blåser det mindre, vilket gör att vattnet inte syresätts tillräckligt för korallernas celler.",
+     "Ökad mängd koldioxid tas upp av haven och gör vattnet surare, vilket gör det svårt för korallerna att bygga sina skelett."
+   ],
+   "correct": 3,
+   "explanation": "Mer koldioxid i luften leder till <strong>havsförsurning</strong>. Surt vatten löser upp kalk, vilket skadar korallernas skelett och hotar hela revet."
+ },
+ {
+   "category": "Den vetenskapliga metoden",
+   "q": "Lisa vill testa om växter växer bäst med kaffe eller vatten. Hon häller kaffe på en kaktus i solen och vatten på en pelargon i skuggan. Vad är det största felet med hennes metod?",
+   "options": [
+     "Kaktusar växer generellt sett långsammare än pelargoner.",
+     "Hon ändrar flera variabler samtidigt (växt, vätska, ljus).",
+     "Hon borde ha använt te istället för kaffe i försöket.",
+     "Hon glömde att mäta hur mycket vätska hon hällde på."
+   ],
+   "correct": 1,
+   "explanation": "För att resultatet ska vara giltigt krävs <strong>variabelkontroll</strong>. Eftersom hon ändrade allt på samma gång (växtsort, placering och vätska) går det inte att veta vad som orsakade resultatet."
+ },
+ {
+   "category": "Den vetenskapliga metoden",
+   "q": "Varför väljer forskare ofta att ha med tusentals personer i en medicinsk studie istället för bara tio?",
+   "options": [
+     "För att minska risken att slumpen avgör resultatet.",
+     "För att det är billigare än att använda djurförsök.",
+     "För att det ser mer imponerande ut i tidningen.",
+     "För att läkarna behöver mycket att göra på dagarna."
+   ],
+   "correct": 0,
+   "explanation": "Om man har för få deltagare (ett <strong>litet urval</strong>) blir resultatet osäkert. En enda person som tillfrisknar av sig själv kan då få medicinen att verka bättre än den är."
+ },
+ {
+   "category": "Den vetenskapliga metoden",
+   "q": "Vad innebär det att ett experiment är 'reproducerbart'?",
+   "options": [
+     "Att resultatet är helt unikt och aldrig har hänt förut.",
+     "Att forskaren har skrivit ner resultatet i en rapport.",
+     "Att andra forskare kan göra om testet och få samma svar.",
+     "Att försöket måste filmas för att gälla som bevis."
+   ],
+   "correct": 2,
+   "explanation": "En vetenskaplig undersökning måste vara <strong>reproducerbar</strong>. Om resultatet bara händer en gång och ingen annan kan upprepa det, räknas det inte som vetenskaplig fakta."
+ },
+ {
+   "category": "Källkritik & Trovärdighet",
+   "q": "Du läser en artikel med rubriken 'Socker gör barn smartare'. Vem av följande författare bör du vara mest kritisk mot på grund av risk för jäv?",
+   "options": [
+     "En tandläkare anställd av Folktandvården.",
+     "En hjärnforskare vid Karolinska Institutet.",
+     "En journalist på tidningen Aftonbladet.",
+     "En representant från 'Sockerbolaget AB'."
+   ],
+   "correct": 3,
+   "explanation": "Detta är ett exempel på <strong>jäv</strong> (intressekonflikt). Sockerbolaget har ett starkt <strong>ekonomiskt intresse</strong> av att socker framställs som nyttigt för att öka sin vinst."
+ },
+ {
+   "category": "Källkritik & Trovärdighet",
+   "q": "Varför anses information från en statlig myndighet, som Livsmedelsverket, ofta ha hög trovärdighet?",
+   "options": [
+     "De har inget vinstintresse och arbetar på uppdrag av regeringen.",
+     "De har de snyggaste hemsidorna och de dyraste reklamfilmerna.",
+     "De bestämmer vilka matvaror som ska vara billiga i affären.",
+     "De anställer bara personer som har vunnit Nobelpriset."
+   ],
+   "correct": 0,
+   "explanation": "Oberoende myndigheter anses mer trovärdiga eftersom deras syfte är att informera medborgarna <strong>objektivt</strong>, inte att sälja en produkt för att tjäna pengar."
+ },
+ {
+   "category": "Källkritik & Trovärdighet",
+   "q": "Vad innebär begreppet 'Peer-review' (fackgranskning) inom forskarvärlden?",
+   "options": [
+     "Att forskaren läser igenom sin egen text noga innan publicering.",
+     "Att oberoende experter granskar studien för att hitta felaktigheter.",
+     "Att tidningar skriver artiklar om studien så att alla får veta.",
+     "Att allmänheten får rösta på internet om forskningen verkar bra."
+   ],
+   "correct": 1,
+   "explanation": "Innan studier publiceras i vetenskapliga tidskrifter genomgår de en <strong>Peer-review</strong>. Det är en kvalitetskontroll där experter stoppar dålig forskning eller fusk."
+ },
+ {
+   "category": "Orsakssamband & Bevis",
+   "q": "En studie visar att barn som spelar mycket datorspel oftare har glasögon. Vad är en rimlig vetenskaplig tolkning av detta samband?",
+   "options": [
+     "Strålningen från skärmen gör att ögat skadas omedelbart.",
+     "Det är bevisat att alla som spelar spel kommer få sämre syn.",
+     "Det finns en korrelation, men orsaken kan vara att de är inne mer.",
+     "Glasögonen gör att barnen blir duktigare på att spela spel."
+   ],
+   "correct": 2,
+   "explanation": "Bara för att två saker händer samtidigt (<strong>korrelation</strong>) betyder det inte att den ena orsakar den andra (<strong>kausalitet</strong>). Brist på dagsljus kan vara den verkliga orsaken."
+ },
+ {
+   "category": "Orsakssamband & Bevis",
+   "q": "Varför räcker det inte att säga 'Min farfar rökte hela livet och blev 95 år' för att bevisa att rökning är ofarligt?",
+   "options": [
+     "För att farfar kanske inte drog halsbloss på riktigt.",
+     "För att cigaretter var mycket nyttigare förr i tiden.",
+     "För att gamla människor oftast har starkare lungor.",
+     "För att det är en anekdot som inte motbevisar statistiken."
+   ],
+   "correct": 3,
+   "explanation": "Inom vetenskapen väger <strong>statistik</strong> tungt. Enskilda berättelser (<strong>anekdoter</strong>) kan vara sällsynta undantag och bevisar ingenting om riskerna för den stora massan."
+ },
+ {
+   "category": "Pseudovetenskap",
+   "q": "Vilket av följande påståenden är en tydlig varningsklocka för att något kan vara pseudovetenskap (bluff)?",
+   "options": [
+     "Denna hemliga metod botar alla dina sjukdomar.",
+     "Vi behöver mer forskning för att veta säkert.",
+     "Studien visar att risken minskar med cirka 5%.",
+     "Resultatet har publicerats i en vetenskaplig tidskrift."
+   ],
+   "correct": 0,
+   "explanation": "<strong>Pseudovetenskap</strong> lovar ofta mirakellösningar. Löften om att bota 'allt' och användandet av ord som 'hemlig' är klassiska tecken på att bevis saknas."
+ },
+ {
+   "category": "Pseudovetenskap",
+   "q": "Du ser en annons för ett armband som sägs ge 'balans i kroppens energier'. Hur bör du göra för att granska påståendet?",
+   "options": [
+     "Läsa kommentarerna i annonsen för att se vad folk tycker.",
+     "Köpa armbandet och känna efter om du blir piggare.",
+     "Söka efter oberoende studier utanför företagets hemsida.",
+     "Lita på det, det är olagligt att ljuga i reklam på nätet."
+   ],
+   "correct": 2,
+   "explanation": "Företaget vill sälja och visar bara positiva saker. För att kontrollera om något stämmer bör man söka efter <strong>oberoende källor</strong> som inte har något vinstintresse."
+ },
+ {
+   "category": "Frågeställningar & Hypoteser",
+   "q": "Vilken av dessa frågor lämpar sig bäst för en systematisk undersökning?",
+   "options": [
+     "Varför föredrar vissa människor att träna på morgonen istället för kvällen?",
+     "Är det mer miljövänligt att cykla till skolan än att åka buss i staden?",
+     "Vilket trädslag tycker svenska fåglar mest om att bygga sina bon i?",
+     "Hur påverkas mängden koldioxid i utandningsluften av fysisk träning?"
+   ],
+   "correct": 3,
+   "explanation": "En bra naturvetenskaplig fråga ska vara <strong>undersökningsbar</strong>. Denna fråga kan besvaras genom ett konkret experiment där man mäter koldioxidhalten."
+ },
+ {
+   "category": "Frågeställningar & Hypoteser",
+   "q": "Varför bör man undvika 'varför-frågor' i en planering av en undersökning?",
+   "options": [
+     "Det är helt omöjligt att svara på varför saker händer i naturen.",
+     "De kräver ofta mer teoretisk förklaring snarare än mätbara resultat.",
+     "Lärare ger alltid lägre poäng om man använder ordet varför i rubriken.",
+     "Det finns ingen utrustning i skolan som kan mäta en varför-fråga."
+   ],
+   "correct": 1,
+   "explanation": "Undersökningar fokuserar på vad som händer och hur det förändras genom <strong>mätningar</strong>. 'Varför' kräver ofta djupare teori än vad ett enkelt experiment kan visa."
+ },
+ {
+   "category": "Frågeställningar & Hypoteser",
+   "q": "Vad krävs för att en hypotes ska anses vara naturvetenskapligt underbyggd?",
+   "options": [
+     "Att den gissar på det mest ovanliga resultatet för att vara spännande.",
+     "Att den är skriven med minst tre meningar och innehåller en bild.",
+     "Att antagandet motiveras med hjälp av tidigare biologiska kunskaper.",
+     "Att man har frågat en expert på området innan man skriver ner den."
+   ],
+   "correct": 2,
+   "explanation": "En <strong>hypotes</strong> är inte bara en gissning. Det är ett antagande om resultatet som måste motiveras med hjälp av biologiska <strong>teorier och modeller</strong>."
+ },
+ {
+   "category": "Variabler & Genomförande",
+   "q": "Du ska undersöka hur ljus påverkar lövsprickning. Vad bör du göra med vatten och temperatur?",
+   "options": [
+     "Se till att både vattenmängd och temperatur är exakt lika för alla träd.",
+     "Ändra både mängden vatten och temperatur för att få ett snabbare svar.",
+     "Låta temperaturen variera men se till att alla träd får exakt lika mycket vatten.",
+     "Vattna olika mycket beroende på hur mycket ljus varje träd faktiskt får."
+   ],
+   "correct": 0,
+   "explanation": "Detta kallas <strong>variabelkontroll</strong>. Man ändrar bara en sak (ljuset) medan alla andra faktorer hålls konstanta för att veta vad som orsakar resultatet."
+ },
+ {
+   "category": "Variabler & Genomförande",
+   "q": "Vad kallas den faktor som man väljer att förändra i ett experiment?",
+   "options": [
+     "Konstant",
+     "Variabel",
+     "Felkälla",
+     "Hypotes"
+   ],
+   "correct": 1,
+   "explanation": "I en undersökning finns det saker man mäter och saker man ändrar. Den faktor man medvetet varierar för att se en effekt kallas för en <strong>variabel</strong>."
+ },
+ {
+   "category": "Variabler & Genomförande",
+   "q": "Varför är det viktigt att använda en kontrollgrupp, t.ex. sockerpiller i ett medicintest?",
+   "options": [
+     "För att deltagarna ska få energi så att de orkar genomföra hela testet.",
+     "För att sockerpiller är billigare att tillverka än den riktiga medicinen.",
+     "För att se om resultatet beror på medicinen eller på förväntningar.",
+     "För att man alltid ska dela ut något till alla som deltar i en studie."
+   ],
+   "correct": 2,
+   "explanation": "Kontrollgruppen visar om förändringen beror på den faktiska variabeln eller på <strong>slumpen/placeboeffekten</strong>. Utan den vet man inte om medicinen fungerade."
+ },
+ {
+   "category": "Dokumentation & Metod",
+   "q": "Vilket av följande är mest viktigt för att en instruktion ska vara av hög kvalitet?",
+   "options": [
+     "Att den innehåller färgglada bilder på allt material som används.",
+     "Att den är skriven på ett sätt så att bara experter kan förstå den.",
+     "Att den är mycket kortfattad för att spara tid under själva provet.",
+     "Att den beskriver steg för steg så att någon annan kan upprepa den."
+   ],
+   "correct": 3,
+   "explanation": "En instruktion måste vara så tydlig att experimentet blir <strong>reproducerbart</strong>. Någon annan ska kunna göra exakt samma sak och få samma resultat."
+ },
+ {
+   "category": "Dokumentation & Metod",
+   "q": "Vilket är det bästa sättet att dokumentera mätvärden under ett pågående experiment?",
+   "options": [
+     "Anteckna exakta värden i en tabell med jämna och bestämda tidsintervall.",
+     "Göra en kort sammanfattning av vad man tror att man har sett hända.",
+     "Rita en bild av hur utrustningen såg ut när experimentet startade.",
+     "Skriva ner tankar och känslor i en dagbok efter att testet är helt klart."
+   ],
+   "correct": 0,
+   "explanation": "Systematisk dokumentation med <strong>tabeller</strong> gör mätvärdena tydliga och minskar risken att man glömmer eller blandar ihop resultaten."
+ },
+ {
+   "category": "Dokumentation & Metod",
+   "q": "Varför bör man använda ett graderat mätglas istället för en vanlig bägare när man mäter vätska?",
+   "options": [
+     "Mätglas är gjorda av ett material som inte påverkar vätskans temperatur.",
+     "Det gör att mätningen blir mer exakt (högre precision) och tillförlitlig.",
+     "Det är lättare att hälla ur ett mätglas utan att spilla på bordet.",
+     "Skolans regler säger att man bara får använda mätglas i kemisalen."
+   ],
+   "correct": 1,
+   "explanation": "Att använda rätt utrustning ökar <strong>precisionen</strong>. En vanlig bägare ger bara en ungefärlig volym, medan mätglaset ger ett exakt värde."
+ },
+ {
+   "category": "Resultat & Slutsatser",
+   "q": "Vad innebär det att upprepa en undersökning (göra fler försök)?",
+   "options": [
+     "Att man byter variabel för att se om man får ett helt annat resultat.",
+     "Att man tränar på att använda utrustningen så att man blir snabbare.",
+     "Att man säkerställer att resultatet inte bara var en engångsföreteelse.",
+     "Att man får mer mätdata så att man kan skriva en längre rapport."
+   ],
+   "correct": 2,
+   "explanation": "Repetition är avgörande för tillförlitligheten. Det visar om resultatet är stabilt och minskar risken att <strong>slumpen</strong> påverkade just det första försöket."
+ },
+ {
+   "category": "Resultat & Slutsatser",
+   "q": "Vilken av följande är en vanlig metodfelkälla i en biologisk undersökning?",
+   "options": [
+     "Att hypotesen man skrev i början visade sig vara helt felaktig.",
+     "Att man använde en tabell istället för ett diagram för resultatet.",
+     "Att man valde att arbeta ensam istället för att samarbeta i par.",
+     "Att man inte lyckades hålla alla faktorer utom en helt konstanta."
+   ],
+   "correct": 3,
+   "explanation": "Värdering av resultat handlar om att hitta <strong>felkällor</strong>. Bristande variabelkontroll gör att man inte säkert kan lita på sin slutsats."
+ },
+ {
+   "category": "Resultat & Slutsatser",
+   "q": "Hur kan man förbättra en undersökning om hur salthalt påverkar potatisceller?",
+   "options": [
+     "Genom att torka av överflödigt vatten före varje vägning.",
+     "Genom att använda olika sorters potatisar i varje salthalt.",
+     "Genom att låta potatisarna ligga i olika lång tid i bägarna.",
+     "Genom att gissa vikten istället för att använda en digital våg."
+   ],
+   "correct": 0,
+   "explanation": "Att ta bort faktorer som påverkar mätningen men inte har med saken att göra (som vatten på ytan) ökar <strong>noggrannheten</strong> i resultatet."
+ },
+ {
+   "category": "Resonemang & Teori",
+   "q": "Vad är en korrekt slutsats om pulsen ökar efter löpning?",
+   "options": [
+     "Pulsen ökar för att man rör på benen och då blir blodet varmare.",
+     "Musklerna behöver mer syre till förbränningen, så hjärtat pumpar snabbare.",
+     "Man blir trött i lungorna och därför måste hjärtat vila efteråt.",
+     "Blodet rinner fortare i ådrorna för att man har druckit för lite vatten."
+   ],
+   "correct": 1,
+   "explanation": "Att dra en <strong>slutsats</strong> innebär att koppla mätvärden till teori. Här kopplas ökad puls till cellernas behov av syre för <strong>cellandning</strong>."
+ },
+ {
+   "category": "Resonemang & Teori",
+   "q": "Vilket av dessa exempel visar ett resonemang i flera led?",
+   "options": [
+     "Det är bra för miljön att återvinna plast eftersom det är hållbart.",
+     "Om man tränar mycket så får man bättre kondition och blir stark.",
+     "Fler vargar äter hjortar, vilket ger mer växter som småfåglar kan bo i.",
+     "Bakterier dör om man tvättar händerna med varmt vatten och tvål."
+   ],
+   "correct": 2,
+   "explanation": "Ett <strong>utvecklat resonemang</strong> visar samband: Vargen minskar antalet hjortar -> betestrycket minskar -> buskar växer upp -> fåglar får boplatser."
+ },
+ {
+   "category": "Resonemang & Teori",
+   "q": "Vad bör man göra om resultatet i en undersökning inte stämmer med ens hypotes?",
+   "options": [
+     "Ändra i hypotesen i efterhand så att den matchar det man fick fram.",
+     "Slänga resultatet och göra om undersökningen tills man får rätt svar.",
+     "Be läraren att skriva in de korrekta mätvärdena i tabellen istället.",
+     "Diskutera varför det blev så och leta efter möjliga felkällor i metoden."
+   ],
+   "correct": 3,
+   "explanation": "Inom vetenskap är <strong>oväntade resultat</strong> viktiga. Man ska inte fuska, utan istället analysera varför det blev så (t.ex. felkällor eller felaktig teori)."
+ }
+]
