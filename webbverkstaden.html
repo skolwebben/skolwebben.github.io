@@ -139,7 +139,8 @@
 
     <header>
         <h1>Webbverkstaden <span style="font-size:0.8em; font-weight:normal; color:#888;">| HTML • CSS • JS</span></h1>
-        <button class="btn" onclick="runCode()">KÖR KODEN ▶</button>
+        <!-- ÄNDRING: Tog bort inline onclick och lade till ett ID -->
+        <button id="runBtn" class="btn">KÖR KODEN ▶</button>
     </header>
 
     <div class="main-container">
@@ -195,4 +196,129 @@
 
 </body>
 </html>
+            </textarea>
+        </div>
+
+        <!-- Höger sida: Resultat -->
+        <div class="preview-container">
+            <div class="panel-header">Resultat (Webbläsare)</div>
+            <iframe id="preview-frame"></iframe>
+        </div>
+    </div>
+
+    <!-- Botten: Konsol -->
+    <div class="console-container">
+        <div class="console-header">
+            <span>Status & Felmeddelanden</span>
+            <span style="cursor:pointer; color:#fff;" onclick="clearConsole()">Rensa</span>
+        </div>
+        <div id="console-output">
+            <div class="log-info">Klicka på "KÖR KODEN" för att uppdatera resultatet...</div>
+        </div>
+    </div>
+
+    <script>
+        const codeInput = document.getElementById('code-input');
+        const previewFrame = document.getElementById('preview-frame');
+        const consoleOutput = document.getElementById('console-output');
+        // ÄNDRING: Hämta knappen via ID
+        const runBtn = document.getElementById('runBtn');
+
+        // Funktion för att köra koden
+        function runCode() {
+            clearConsole();
+            let userCode = codeInput.value;
             
+            // Enkel hack för att fixa escapade tecken om de kopierades in fel i ediorn
+            if (userCode.includes("<")) {
+                const txt = document.createElement("textarea");
+                txt.innerHTML = userCode;
+                userCode = txt.value;
+                codeInput.value = userCode;
+            }
+
+            // Vi injicerar ett script som fångar fel inuti iFrame
+            // OBS: backslash-escaped slutar-tagg för script är viktigt här!
+            const errorHandlingScript = `
+                <script>
+                    window.onerror = function(message, source, lineno, colno, error) {
+                        window.parent.postMessage({
+                            type: 'error',
+                            message: message,
+                            line: lineno
+                        }, '*');
+                        return true;
+                    };
+                    
+                    const originalLog = console.log;
+                    console.log = function(...args) {
+                        window.parent.postMessage({
+                            type: 'log',
+                            message: args.join(' ')
+                        }, '*');
+                        originalLog.apply(console, args);
+                    };
+                <\/script>
+            `;
+
+            const finalCode = errorHandlingScript + userCode;
+            
+            try {
+                previewFrame.srcdoc = finalCode;
+                logToConsole("Sidan laddades!", "success");
+            } catch (e) {
+                logToConsole("Kunde inte ladda koden: " + e.message, "error");
+            }
+        }
+
+        // Lyssna på meddelanden från iFrame
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'error') {
+                let friendlyMsg = event.data.message;
+                if(friendlyMsg.includes("is not defined")) friendlyMsg = "Programmet förstår inte ordet (Variabeln finns inte). Har du stavat rätt?";
+                if(friendlyMsg.includes("Unexpected token")) friendlyMsg = "Det saknas ett tecken eller är något tecken för mycket (t.ex. } eller ;).";
+                if(friendlyMsg.includes("null is not an object")) friendlyMsg = "Du försöker ändra något som inte finns på sidan.";
+
+                logToConsole("⚠️ FEL: " + friendlyMsg, "error");
+            } else if (event.data.type === 'log') {
+                logToConsole("> " + event.data.message, "info");
+            }
+        });
+
+        function logToConsole(msg, type) {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            if (type === 'error') div.className = 'log-error';
+            if (type === 'success') div.className = 'log-success';
+            if (type === 'info') div.className = 'log-info';
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        function clearConsole() {
+            consoleOutput.innerHTML = '';
+        }
+
+        // ÄNDRING: Använd addEventListener istället för inline onclick
+        runBtn.addEventListener('click', runCode);
+
+        // Kör koden automatiskt vid start
+        runCode();
+
+        // Tillåt tab i textarea
+        codeInput.addEventListener('keydown', function(e) {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+
+                this.value = this.value.substring(0, start) +
+                    "\t" + this.value.substring(end);
+
+                this.selectionStart = this.selectionEnd = start + 1;
+            }
+        });
+    </script>
+</body>
+</html>
+    
