@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Bildbank Helskärm</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Plus Jakarta Sans', sans-serif;
+           background-color: #000000;
+           overflow: hidden;
+           margin: 0;
+           padding: 0;
+       }
+
+
+       /* Dölj scrollbar */
+       .no-scrollbar::-webkit-scrollbar { display: none; }
+       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+
+       /* Mjukare knapp-design för helskärm */
+       .nav-btn {
+           background: rgba(0, 0, 0, 0.3);
+           backdrop-filter: blur(4px);
+           border: 1px solid rgba(255, 255, 255, 0.1);
+           transition: all 0.2s ease;
+       }
+       .nav-btn:hover {
+           background: rgba(255, 255, 255, 0.2);
+       }
+
+
+       /* Animation för bildbyte */
+       .fade-in { animation: fadeIn 0.4s ease-out; }
+       @keyframes fadeIn {
+           from { opacity: 0; transform: scale(0.99); }
+           to { opacity: 1; transform: scale(1); }
+       }
+   </style>
+</head>
+<body class="h-screen w-screen bg-black flex items-center justify-center relative">
+
+
+   <!-- Loading State -->
+   <div id="loader" class="absolute inset-0 flex items-center justify-center z-0">
+       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+   </div>
+
+
+   <!-- Error State -->
+   <div id="error-state" class="hidden absolute inset-0 flex flex-col items-center justify-center z-10 text-center p-6 bg-black">
+       <p class="text-white text-xl font-bold">Bild saknas</p>
+       <p class="text-gray-500 mt-2 font-mono" id="missing-filename">filename.png</p>
+   </div>
+
+
+   <!-- Main Image Container -->
+   <!-- h-screen/w-screen tvingar full storlek. object-contain ser till att hela bilden syns. -->
+   <img id="main-image" src="" alt="Presentation" class="absolute inset-0 w-full h-full object-contain z-10 transition-opacity duration-300 opacity-0">
+
+
+   <!-- Navigationsknappar -->
+   <!-- Vänster -->
+   <button onclick="changeImage(-1)" class="nav-btn absolute left-4 top-1/2 -translate-y-1/2 z-50 w-14 h-14 rounded-full flex items-center justify-center text-white focus:outline-none group">
+       <svg class="w-8 h-8 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+   </button>
+
+
+   <!-- Höger -->
+   <button onclick="changeImage(1)" class="nav-btn absolute right-4 top-1/2 -translate-y-1/2 z-50 w-14 h-14 rounded-full flex items-center justify-center text-white focus:outline-none group">
+       <svg class="w-8 h-8 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+   </button>
+
+
+   <!-- Diskret sidräknare nere i hörnet (valfritt, kan tas bort) -->
+   <div class="absolute bottom-4 right-6 z-50 bg-black/50 px-3 py-1 rounded text-white/50 font-mono text-sm pointer-events-none backdrop-blur-sm">
+       <span id="counter">1 / 12</span>
+   </div>
+
+
+   <script>
+       // Samma bildlista som innan
+       const images = [
+           { file: 'materia.png', title: 'Materia & Värme' },
+           { file: 'kraft.png', title: 'Krafter & Rörelse' },
+           { file: 'el1.png', title: 'Elektricitet Del 1' },
+           { file: 'el2.png', title: 'Elektricitet Del 2' },
+           { file: 'ljud.png', title: 'Ljudvågor & Akustik' },
+           { file: 'ljus.png', title: 'Ljus & Optik' },
+           { file: 'astronomi.png', title: 'Astronomi' },
+           { file: 'energi1.png', title: 'Energi Del 1' },
+           { file: 'energi2.png', title: 'Energi Del 2' },
+           { file: 'atomfysik.png', title: 'Atomfysik' },
+           { file: 'kallkritik.png', title: 'Källkritik' },
+           { file: 'undersokningar.png', title: 'Undersökningar' }
+       ];
+
+
+       let currentIndex = 0;
+      
+       const imgElement = document.getElementById('main-image');
+       const counterElement = document.getElementById('counter');
+       const loaderElement = document.getElementById('loader');
+       const errorElement = document.getElementById('error-state');
+       const missingFilenameElement = document.getElementById('missing-filename');
+
+
+       function loadImage() {
+           // Reset states
+           imgElement.style.opacity = '0'; // Göm bild medan vi laddar
+           loaderElement.style.display = 'flex';
+           errorElement.classList.add('hidden');
+          
+           const currentImg = images[currentIndex];
+
+
+           // Uppdatera räknare
+           counterElement.innerText = `${currentIndex + 1} / ${images.length}`;
+
+
+           // Sätt bildkälla
+           imgElement.src = currentImg.file;
+          
+           // Error hantering
+           imgElement.onerror = function() {
+               loaderElement.style.display = 'none';
+               errorElement.classList.remove('hidden');
+               missingFilenameElement.innerText = currentImg.file;
+           };
+
+
+           // När bilden laddats
+           imgElement.onload = function() {
+               loaderElement.style.display = 'none';
+               // Liten delay för snyggare fade
+               setTimeout(() => {
+                   imgElement.style.opacity = '1';
+                   imgElement.classList.add('fade-in');
+                   setTimeout(() => imgElement.classList.remove('fade-in'), 400);
+               }, 50);
+           };
+       }
+
+
+       function changeImage(direction) {
+           currentIndex += direction;
+          
+           // Loopa runt
+           if (currentIndex >= images.length) currentIndex = 0;
+           if (currentIndex < 0) currentIndex = images.length - 1;
+
+
+           loadImage();
+       }
+
+
+       // Tangentbordsstyrning
+       document.addEventListener('keydown', (e) => {
+           if (e.key === 'ArrowRight' || e.key === 'Space') changeImage(1);
+           if (e.key === 'ArrowLeft') changeImage(-1);
+       });
+
+
+       // Touch Swipe
+       let touchStartX = 0;
+       let touchEndX = 0;
+
+
+       document.addEventListener('touchstart', e => {
+           touchStartX = e.changedTouches[0].screenX;
+       }, {passive: true});
+
+
+       document.addEventListener('touchend', e => {
+           touchEndX = e.changedTouches[0].screenX;
+           handleSwipe();
+       }, {passive: true});
+
+
+       function handleSwipe() {
+           if (touchEndX < touchStartX - 50) changeImage(1);
+           if (touchEndX > touchStartX + 50) changeImage(-1);
+       }
+
+
+       // Starta
+       loadImage();
+   </script>
+</body>
+</html>
