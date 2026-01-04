@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>NP-Guiden | Kemi</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Plus Jakarta Sans', sans-serif;
+           background-color: #0f172a; /* Dark Slate Blue Base */
+       }
+      
+       /* Custom Scrollbar - Blue Theme */
+       ::-webkit-scrollbar {
+           width: 8px;
+       }
+       ::-webkit-scrollbar-track {
+           background: #0f172a;
+       }
+       ::-webkit-scrollbar-thumb {
+           background: #2563eb; /* Blue 600 */
+           border-radius: 4px;
+       }
+       ::-webkit-scrollbar-thumb:hover {
+           background: #3b82f6; /* Blue 500 */
+       }
+
+
+       .glass {
+           background: rgba(30, 41, 59, 0.6);
+           backdrop-filter: blur(12px);
+           border: 1px solid rgba(255, 255, 255, 0.08);
+       }
+      
+       .glass-card {
+           background: linear-gradient(145deg, rgba(30, 58, 138, 0.4), rgba(15, 23, 42, 0.6)); /* Blue tint */
+           backdrop-filter: blur(10px);
+           border: 1px solid rgba(59, 130, 246, 0.1);
+           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+       }
+
+
+       .glass-card:hover {
+           transform: translateY(-4px);
+           border-color: rgba(96, 165, 250, 0.4);
+           background: linear-gradient(145deg, rgba(30, 64, 175, 0.5), rgba(30, 58, 138, 0.6));
+           box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.3);
+       }
+
+
+       .glass-card:hover img, .glass-card:hover svg {
+           transform: scale(1.1);
+       }
+
+
+       .hero-gradient {
+           /* Chemistry Theme (Blue/Cyan/Indigo) */
+           background: radial-gradient(circle at top center, #1e40af 0%, transparent 50%),
+                       radial-gradient(circle at bottom right, #0891b2 0%, transparent 40%);
+           background-attachment: fixed;
+       }
+
+
+       .image-box {
+           overflow: hidden;
+           border: 1px solid rgba(255, 255, 255, 0.1);
+           background: #000;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+       }
+   </style>
+</head>
+<body class="text-slate-200 antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+
+
+   <!-- Bakgrundsdekoration -->
+   <div class="fixed inset-0 z-[-1] hero-gradient"></div>
+   <div class="fixed top-0 left-0 w-full h-full z-[-1] opacity-20" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%239C92AC\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+
+
+   <!-- Navigering -->
+   <nav class="w-full px-6 py-4 flex justify-between items-center z-10 glass border-b-0 border-white/5">
+       <div class="text-xl font-extrabold tracking-tighter text-white flex items-center gap-2">
+           <span class="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center text-xs">NP</span>
+           <span>Guiden <span class="text-blue-400">| Kemi</span></span>
+       </div>
+   </nav>
+
+
+   <!-- Huvudinnehåll -->
+   <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+      
+       <!-- Header -->
+       <header class="text-center mb-10">
+           <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
+               Inför <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Kemiprovet</span>
+           </h1>
+           <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mb-6">
+               Samlade övningar och genomgångar för alla centrala områden.
+           </p>
+       </header>
+
+
+       <!-- Grid Layout (Ämnesområden) -->
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+
+
+           <!-- 1. Atomen och grundämnen -->
+           <a href="atomen.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Stylised_atom_with_three_Bohr_model_orbits_and_stylised_nucleus.png?width=300" alt="Atommodell" class="w-full h-full object-contain transition-transform duration-500 p-1">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-blue-300 transition-colors">Atomen & Grundämnen</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Uppbyggnad, perioder, grupper och valenselektroner</p>
+               </div>
+           </a>
+
+
+           <!-- 2. Materia, blandningar och separation -->
+           <a href="blandningar.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?auto=format&fit=crop&w=300&q=80" alt="Laboratorieutrustning" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">Materia & Separation</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Fasövergångar, densitet och separationsmetoder</p>
+               </div>
+           </a>
+
+
+           <!-- 3. Reaktioner, bindningar och gaser (VALD: Abstrakt rök) -->
+           <a href="reaktioner.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=300&q=80" alt="Abstrakt rök" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-sky-300 transition-colors">Reaktioner & Gaser</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Formler, bindningstyper och förbränning</p>
+               </div>
+           </a>
+
+
+           <!-- 4. Organisk kemi och näringslära -->
+           <a href="organisk.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Methane-3D-balls.png?width=300" alt="Molekylmodell" class="w-full h-full object-contain transition-transform duration-500 p-1">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">Organisk Kemi</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Kolväten, alkoholer, syror, fetter och proteiner</p>
+               </div>
+           </a>
+
+
+           <!-- 5. Syror och baser (VALD: Blandad korg) -->
+           <a href="syror_baser.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=300&q=80" alt="Blandad citruskorg" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-yellow-300 transition-colors">Syror & Baser</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">pH-skalan, batterier, korrosion och elektrolys</p>
+               </div>
+           </a>
+
+
+           <!-- 6. Miljö & Kretslopp (VALD: Skog/Natur) -->
+           <a href="miljo_kemi.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=300&q=80" alt="Skog och natur" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">Miljö & Kretslopp</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Kolets kretslopp, hållbarhet och livscykelanalys</p>
+               </div>
+           </a>
+
+
+           <!-- 7. Naturvetenskapliga resonemang (VALD: Tavla med formler) -->
+           <a href="resonemang_kemi.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=500&q=80" alt="Tavla med formler" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">Vetenskapliga resonemang</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Förklara samband och konsekvenser i flera led</p>
+               </div>
+           </a>
+
+
+           <!-- 8. Källkritisk granskning -->
+           <a href="kallkritik_kemi.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0">
+                   <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=300&q=80" alt="Nyheter" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">Källkritik</h3>
+                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">Värdera informationens trovärdighet och relevans</p>
+               </div>
+           </a>
+
+
+           <!-- 9. Systematiska undersökningar (Uppdaterad bild: Titrering) -->
+           <a href="undersokningar_kemi.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden bg-blue-900/20 border-blue-500/30">
+               <div class="image-box w-16 h-16 rounded-xl shrink-0 border-blue-500/50">
+                   <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=300&q=80" alt="Titrering och laboration" class="w-full h-full object-cover transition-transform duration-500">
+               </div>
+               <div class="flex-1 min-w-0">
+                   <h3 class="text-lg font-bold text-white group-hover:text-blue-200 transition-colors">Systematiska undersökningar</h3>
+                   <p class="text-xs text-blue-200/70 mt-1 leading-relaxed">Hypoteser, genomförande, felkällor och utvärdering</p>
+               </div>
+           </a>
+
+
+       </div>
+
+
+       <!-- Repetition & Bildbank -->
+       <div class="border-t border-white/10 pt-8 mt-12">
+           <h2 class="text-2xl font-bold text-white mb-6 px-2 flex items-center gap-2">
+               <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+               Repetition
+           </h2>
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              
+               <!-- Knapp 1: Alla bilder -->
+               <a href="bildvisare-kemi.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden bg-blue-900/10 hover:bg-blue-900/20">
+                   <div class="image-box w-14 h-14 rounded-xl shrink-0 bg-blue-500/10 border-blue-400/20">
+                       <svg class="w-7 h-7 text-blue-300 transition-transform duration-500 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                       </svg>
+                   </div>
+                   <div class="flex-1 min-w-0">
+                       <h3 class="text-lg font-bold text-white group-hover:text-blue-300 transition-colors">Alla bilder</h3>
+                       <p class="text-xs text-slate-400 mt-1">Informationsgrafik</p>
+                   </div>
+               </a>
+
+
+               <!-- Knapp 2: Blandade frågor (E) -->
+               <a href="mix-e-kemi.html" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden bg-green-900/10 hover:bg-green-900/20">
+                   <div class="image-box w-14 h-14 rounded-xl shrink-0 bg-green-500/10 border-green-400/20">
+                       <svg class="w-7 h-7 text-green-300 transition-transform duration-500 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                       </svg>
+                   </div>
+                   <div class="flex-1 min-w-0">
+                       <h3 class="text-lg font-bold text-white group-hover:text-green-300 transition-colors">Blandade frågor</h3>
+                       <p class="text-xs text-green-400 mt-1 font-semibold tracking-wide">NIVÅ E</p>
+                   </div>
+               </a>
+
+
+               <!-- Knapp 3: Blandade frågor (C-A) -->
+               <a href="blandat-kemi.pdf" class="glass-card group p-4 rounded-2xl flex items-center gap-4 relative overflow-hidden bg-orange-900/10 hover:bg-orange-900/20">
+                   <div class="image-box w-14 h-14 rounded-xl shrink-0 bg-orange-500/10 border-orange-400/20">
+                       <svg class="w-7 h-7 text-orange-300 transition-transform duration-500 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                       </svg>
+                   </div>
+                   <div class="flex-1 min-w-0">
+                       <h3 class="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">Blandade frågor</h3>
+                       <p class="text-xs text-orange-400 mt-1 font-semibold tracking-wide">NIVÅ C-A</p>
+                   </div>
+               </a>
+
+
+           </div>
+       </div>
+
+
+   </main>
+
+
+   <footer class="text-center py-6 text-xs text-slate-600 border-t border-white/5 mt-auto">
+       <p>NP-Guiden Kemi</p>
+   </footer>
+
+
+</body>
+</html>
