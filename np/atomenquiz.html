@@ -1,0 +1,924 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Kemiquiz: Atomen & Periodiska Systemet (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Orange Tema med Blå Accent */
+           --card-bg: #ffffff;
+          
+           --brand-color: #ef6c00; /* Mörk orange */
+           --brand-gradient: linear-gradient(135deg, #ef6c00 0%, #ff9800 100%);
+          
+           --accent-color: #ffb74d; /* Ljusare orange */
+          
+           /* Komplementfärg: Blå för kontrast */
+           --complement-color: #1565c0;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121; /* Mörkare grå/svart för text */
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade (Silver/Metallic style) */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee; /* Neutral border */
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color); /* Blå färg på ikonen */
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(239, 108, 0, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(239, 108, 0, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color); /* Blå färg */
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #fff3e0;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svarta fetstilade ord */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Cyan Gradient */
+           background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+           border: 1px solid #ffcc80;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #e65100 0%, #fb8c00 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Kemiquiz: Atomen & Periodiska Systemet</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Atomens uppbyggnad",
+           icon: "⚛️",
+           text: "All materia runt omkring oss är uppbyggt av atomer. En atom består av en <strong>atomkärna</strong> i mitten och <strong>elektronskal</strong> som omger kärnan. Inuti kärnan finns <strong>protoner</strong>, som är positivt laddade (+), och <strong>neutroner</strong>, som är neutralt laddade (0). Runt kärnan cirkulerar <strong>elektroner</strong>, som är negativt laddade (-). Det är antalet protoner i kärnan som bestämmer vilket <strong>grundämne</strong> det är.",
+           questions: [
+               {
+                   q: "Vilken partikel i atomen bestämmer vilket specifikt grundämne det rör sig om?",
+                   options: [
+                       "Neutronen",
+                       "Elektronen",
+                       "Protonen",
+                       "Valenselektronen"
+                   ],
+                   correct: 2,
+                   explanation: "Protonernas antal är unikt för varje grundämne och kallas för <strong>atomnummer</strong>."
+               },
+               {
+                   q: "Vad kännetecknar atomens kärna när det gäller elektrisk laddning?",
+                   options: [
+                       "Den är negativt laddad eftersom den drar till sig elektroner.",
+                       "Den är positivt laddad på grund av innehållet av protoner.",
+                       "Den är helt neutral eftersom neutronerna tar ut protonernas laddning.",
+                       "Laddningen varierar beroende på vilket skal elektronerna befinner sig i."
+                   ],
+                   correct: 1,
+                   explanation: "Kärnan innehåller <strong>positiva protoner</strong> och neutrala neutroner, vilket ger kärnan en total positiv laddning."
+               },
+               {
+                   q: "Vad består en atom till största delen av?",
+                   options: [
+                       "Protoner och neutroner som fyller ut hela utrymmet.",
+                       "Tätpackade elektroner som cirkulerar i banor.",
+                       "Ingenting (tomrum) mellan kärnan och skalet.",
+                       "En blandning av olika energirika gaser."
+                   ],
+                   correct: 2,
+                   explanation: "En atom är extremt liten och består till största delen av <strong>ingenting</strong> (tomrum) mellan kärnan och elektronerna."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Elektronskal & valenselektroner",
+           icon: "🪐",
+           text: "Elektronerna rör sig i olika energinivåer som kallas <strong>elektronskal</strong>. Dessa namnges med bokstäver där det innersta skalet kallas <strong>K-skalet</strong> och rymmer max två elektroner. Elektronerna i det yttersta skalet kallas <strong>valenselektroner</strong>. Det är dessa som bestämmer grundämnets <strong>kemiska egenskaper</strong>. Atomer strävar efter att få ett fullt yttersta skal, vilket kallas <strong>ädelgasstruktur</strong>.",
+           questions: [
+               {
+                   q: "Hur många elektroner får det maximalt plats i atomens innersta skal (K-skalet)?",
+                   options: [
+                       "8 stycken",
+                       "1 styck",
+                       "4 stycken",
+                       "2 stycken"
+                   ],
+                   correct: 3,
+                   explanation: "Det innersta skalet är mycket litet och har bara plats för <strong>två elektroner</strong>."
+               },
+               {
+                   q: "Varför är valenselektronerna så viktiga inom kemin?",
+                   options: [
+                       "De bestämmer hur atomen reagerar med andra atomer.",
+                       "De utgör den största delen av atomens totala massa.",
+                       "De håller ihop protonerna och neutronerna i kärnan.",
+                       "De avgör om en atom är radioaktiv eller inte."
+                   ],
+                   correct: 0,
+                   explanation: "Det är endast elektronerna i det yttersta skalet som berörs vid kemiska reaktioner och avgör <strong>egenskaperna</strong>."
+               },
+               {
+                   q: "Vad innebär det att en atom har uppnått 'ädelgasstruktur'?",
+                   options: [
+                       "Atomen har blivit en radioaktiv isotop av en gas.",
+                       "Atomen har fått sitt yttersta elektronskal helt fyllt.",
+                       "Atomen har lika många neutroner som den har protoner.",
+                       "Atomen har förlorat alla sina elektroner och blivit en kärna."
+                   ],
+                   correct: 1,
+                   explanation: "Ädelgasstruktur innebär att det yttersta skalet är <strong>fullt</strong> (oftast 8 elektroner), vilket gör atomen stabil."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Grundämnen och isotoper",
+           icon: "⚖️",
+           text: "Ett <strong>grundämne</strong> består av endast en sorts atomer. Även om alla atomer i ett grundämne har samma antal protoner, kan antalet neutroner variera. Dessa varianter kallas <strong>isotoper</strong>. Isotoper av samma grundämne har samma kemiska egenskaper men kan väga olika och vissa kan vara <strong>radioaktiva</strong>.",
+           questions: [
+               {
+                   q: "Vad är det som skiljer två olika isotoper av samma grundämne åt?",
+                   options: [
+                       "Antalet elektroner i de yttre skalen.",
+                       "Den elektriska laddningen på protonerna.",
+                       "Antalet neutroner i atomkärnan.",
+                       "Vilken grupp de tillhör i systemet."
+                   ],
+                   correct: 2,
+                   explanation: "Isotoper har alltid samma antal protoner men olika antal <strong>neutroner</strong>, vilket påverkar massan."
+               },
+               {
+                   q: "Vad kallas summan av antalet protoner och neutroner i en atomkärna?",
+                   options: [
+                       "Atomnummer",
+                       "Valensnummer",
+                       "Isotoptal",
+                       "Masstal"
+                   ],
+                   correct: 3,
+                   explanation: "Protonerna och neutronerna utgör tillsammans atomens massa, vilket kallas <strong>masstal</strong>."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Periodiska systemet",
+           icon: "📊",
+           text: "Det <strong>periodiska systemet</strong> är en tabell där alla grundämnen är sorterade. En vågrät rad kallas för en <strong>period</strong> och alla ämnen där har samma antal elektronskal. En lodrät kolumn kallas för en <strong>grupp</strong>. Ämnen i samma grupp har samma antal valenselektroner och liknande egenskaper (<strong>grundämnesfamiljer</strong>).",
+           questions: [
+               {
+                   q: "Om två grundämnen tillhör samma lodräta kolumn (grupp), vad har de då gemensamt?",
+                   options: [
+                       "De har liknande kemiska egenskaper.",
+                       "De har exakt samma antal elektronskal.",
+                       "De har alltid samma totala atommassa.",
+                       "De är alla gaser vid normal rumstemperatur."
+                   ],
+                   correct: 0,
+                   explanation: "Ämnen i samma grupp har lika många valenselektroner, vilket ger dem <strong>liknande egenskaper</strong>."
+               },
+               {
+                   q: "Vad kan man veta om alla grundämnen som ligger i samma vågräta rad (period)?",
+                   options: [
+                       "De har alla samma antal valenselektroner.",
+                       "De har samma antal elektronskal totalt.",
+                       "De har samma antal neutroner i kärnan.",
+                       "De är alla metaller med hög densitet."
+                   ],
+                   correct: 1,
+                   explanation: "Periodnumret talar om hur många <strong>elektronskal</strong> som används."
+               },
+               {
+                   q: "Var i det periodiska systemet hittar man de flesta ickemetallerna (förutom väte)?",
+                   options: [
+                       "Längst ner i de sista raderna.",
+                       "Längst till vänster i tabellen.",
+                       "Till höger i det periodiska systemet.",
+                       "Spridda jämnt över hela tabellen."
+                   ],
+                   correct: 2,
+                   explanation: "De flesta grundämnena är metaller (vänster/mitten), medan <strong>ickemetallerna</strong> finns till höger."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Grundämnesfamiljer",
+           icon: "👨‍👩‍👧‍👦",
+           text: "Några kända familjer är <strong>Alkalimetaller</strong> (Grupp 1, mycket reaktiva), <strong>Halogener</strong> (Grupp 17, 'saltbildare') och <strong>Ädelgaser</strong> (Grupp 18, stabila). Alkalimetaller reagerar kraftigt med vatten.",
+           questions: [
+               {
+                   q: "Varför förvaras alkalimetaller, som natrium och kalium, ofta i fotogen?",
+                   options: [
+                       "För att de inte ska reagera med luftens syre eller fukt.",
+                       "För att de annars skulle avdunsta och bli till gasform.",
+                       "För att fotogenet ger dem deras typiska metallglans.",
+                       "För att de behöver dra åt sig neutroner från vätskan."
+                   ],
+                   correct: 0,
+                   explanation: "Alkalimetaller är extremt reaktiva och reagerar omedelbart med <strong>luft eller vatten</strong>."
+               },
+               {
+                   q: "Vilken egenskap gör ädelgaserna lämpliga att ha inuti glödlampor?",
+                   options: [
+                       "De är mycket lätta och får lampan att väga mindre.",
+                       "De är ovilliga att reagera med andra ämnen.",
+                       "De kan bilda salter som lyser när de blir varma.",
+                       "De har sju valenselektroner som leder ström bra."
+                   ],
+                   correct: 1,
+                   explanation: "Eftersom ädelgaser har fulla skal <strong>reagerar de inte</strong> med glödtråden."
+               },
+               {
+                   q: "Vilken grupp i periodiska systemet kallas för 'saltbildare'?",
+                   options: [
+                       "Alkalimetaller",
+                       "Halogener",
+                       "Ädelgaser",
+                       "Halvmetaller"
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Halogenerna</strong> i grupp 17 reagerar lätt med metaller och bildar då salter."
+               }
+           ]
+       },
+       {
+           title: "Del 6: Joner och laddning",
+           icon: "🔋",
+           text: "En <strong>jon</strong> bildas när en atom ger bort eller tar upp elektroner för att få fullt skal. Om en atom förlorar elektroner blir den en <strong>positiv jon</strong>. Om den tar upp elektroner blir den en <strong>negativ jon</strong>.",
+           questions: [
+               {
+                   q: "Vad beskriver bäst en jon jämfört med en vanlig atom?",
+                   options: [
+                       "En jon har alltid fler neutroner än protoner.",
+                       "En jon har lika många elektroner som protoner.",
+                       "En jon består av flera olika sorters grundämnen.",
+                       "En jon har olika många elektroner och protoner."
+                   ],
+                   correct: 3,
+                   explanation: "En jon har en <strong>elektrisk laddning</strong> för att antalet elektroner inte matchar antalet protoner."
+               },
+               {
+                   q: "Vad händer när en atom i grupp 1 (alkalimetall) blir en jon?",
+                   options: [
+                       "Den avger en elektron och blir en positiv jon (1+).",
+                       "Den tar upp sju elektroner för att fylla sitt skal.",
+                       "Den avger en proton och blir en negativ jon (1-).",
+                       "Den delar en elektron med en annan atom i en molekyl."
+                   ],
+                   correct: 0,
+                   explanation: "Det är lättare att ge bort <strong>en elektron</strong> än att ta upp sju. Resultatet blir en positiv laddning."
+               },
+               {
+                   q: "Vilken laddning får oftast joner av grundämnen i grupp 17 (halogener)?",
+                   options: [
+                       "De får laddningen 1+ eftersom de har sju elektroner.",
+                       "De får laddningen 1- eftersom de tar upp en elektron.",
+                       "De förblir neutrala eftersom de redan är nästan fulla.",
+                       "De får laddningen 7- för att matcha sina valenselektroner."
+                   ],
+                   correct: 1,
+                   explanation: "Halogener behöver ta upp <strong>en elektron</strong> för att få fullt skal, vilket ger laddningen 1-."
+               }
+           ]
+       },
+       {
+           title: "Del 7: Atommodellernas historia",
+           icon: "📜",
+           text: "Bilden av atomen har förändrats. <strong>Demokritos</strong> myntade ordet atomos. <strong>Thomson</strong> hittade elektronen. <strong>Rutherford</strong> upptäckte kärnan. <strong>Niels Bohr</strong> utvecklade skalmodellen som förklarar kemiska reaktioner.",
+           questions: [
+               {
+                   q: "Vilken viktig upptäckt gjorde Rutherford som förändrade Thomsons atommodell?",
+                   options: [
+                       "Han upptäckte att elektroner finns i olika skal.",
+                       "Han upptäckte att atomen var helt massiv och odelbar.",
+                       "Han upptäckte att atomen har en positivt laddad kärna.",
+                       "Han bevisade att neutroner inte har någon laddning."
+                   ],
+                   correct: 2,
+                   explanation: "Rutherford visade att atomen inte var en jämn massa, utan hade en liten <strong>positiv kärna</strong> i mitten."
+               },
+               {
+                   q: "Vilken fördel har Bohrs atommodell när vi studerar kemi?",
+                   options: [
+                       "Den visar exakt hur neutronerna rör sig i kärnan.",
+                       "Den förklarar varför atomer väger olika mycket.",
+                       "Den visar varför ädelgaser är så reaktiva och farliga.",
+                       "Den gör det lätt att se hur elektroner kan flyttas."
+                   ],
+                   correct: 3,
+                   explanation: "Bohrs skalmodell gör det enkelt att förstå hur <strong>valenselektroner</strong> flyttas vid kemiska reaktioner."
+               },
+               {
+                   q: "Vad menade Demokritos med ordet 'atomos' (atom)?",
+                   options: [
+                       "Att allt var uppbyggt av de fyra elementen.",
+                       "Att materien bestod av små laddade partiklar.",
+                       "Att universum bestod av små odelbara bitar.",
+                       "Att materia kunde omvandlas till ren energi."
+                   ],
+                   correct: 2,
+                   explanation: "Ordet atom betyder just <strong>odelbar</strong>."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+            setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
