@@ -1,0 +1,931 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Kemiquiz: Organisk Kemi (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Lila Tema med Turkos Accent */
+           --card-bg: #ffffff;
+          
+           --brand-color: #6a1b9a; /* Djup lila */
+           --brand-gradient: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%);
+          
+           --accent-color: #ab47bc; /* Ljusare lila */
+          
+           /* Komplementfärg: Turkos (Teal) för kontrast */
+           --complement-color: #009688;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121; /* Mörkare grå/svart för text */
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade (Silver/Metallic style) */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #e1bee7 100%); /* Lätt lila ton i fadern */
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee; /* Neutral border */
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color); /* Turkos färg på ikonen */
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(106, 27, 154, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(106, 27, 154, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color); /* Turkos färg */
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #f3e5f5;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svarta fetstilade ord */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Lila Gradient för att matcha temat */
+           background: linear-gradient(90deg, #ab47bc 0%, #6a1b9a 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+           border: 1px solid #ce93d8;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Kemiquiz: Organisk Kemi</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Det unika kolet",
+           icon: "💎",
+           text: "Kolets kemi kallas <strong>organisk kemi</strong>. Det som gör <strong>kolatomen</strong> unik är att den har fyra valenselektroner, vilket gör att den kan binda till fyra andra atomer samtidigt och bilda långa kedjor eller ringar. Rent kol finns i flera former: i <strong>diamant</strong> sitter atomerna i ett hårt nätverk, i <strong>grafit</strong> ligger de i skikt som lätt glider av, och i <strong>grafen</strong> består det av ett enda tunt skikt.",
+           questions: [
+               {
+                   q: "Vad är den främsta anledningen till att kolatomen kan bilda så enormt många olika sorters molekyler?",
+                   options: [
+                       "Kolatomen är det lättaste grundämnet och kan därför röra sig mycket snabbt.",
+                       "Den kan bilda jonbindningar med nästan alla metaller i det periodiska systemet.",
+                       "Den har fyra valenselektroner och kan binda till fyra andra atomer samtidigt.",
+                       "Den innehåller fler neutroner än andra grundämnen, vilket gör kedjorna stabila."
+                   ],
+                   correct: 2,
+                   explanation: "Tack vare sina fyra bindningsmöjligheter kan kolatomen bygga komplexa strukturer som raka kedjor, grenade kedjor och ringar, vilket är grunden för <strong>allt liv</strong>."
+               },
+               {
+                   q: "Vilken form av rent kol beskrivs som ett material som är 200 gånger starkare än stål men mycket lätt och genomskinligt?",
+                   options: [
+                       "Grafen",
+                       "Amorft kol",
+                       "Grafit",
+                       "Diamant"
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Grafen</strong> består av ett enda skikt kolatomer. Det är extremt starkt, leder elektricitet och är så tunt att det är genomskinligt."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Kolväten & metanserien",
+           icon: "⛽",
+           text: "De enklaste organiska föreningarna är <strong>kolväten</strong>, som bara består av kol och väte. De sorteras i metanserien efter storlek: metan, etan, propan, butan o.s.v. Om ett kolväte bara har enkelbindningar kallas det <strong>mättat</strong> (alkaner). Om det har dubbel- eller trippelbindningar är det <strong>omättat</strong> (alkener/alkyner).",
+           questions: [
+               {
+                   q: "Vad kännetecknar en kemisk förening som tillhör gruppen alkaner?",
+                   options: [
+                       "Den innehåller alltid minst en syreatom som är bunden med en dubbelbindning.",
+                       "Den består av kol och väte med enbart enkelbindningar mellan kolatomerna.",
+                       "Den är en metallisk legering som har smälts samman under mycket högt tryck.",
+                       "Den har en funktionell grupp som kallas för hydroxylgrupp (en OH-grupp)."
+                   ],
+                   correct: 1,
+                   explanation: "Alkaner är <strong>mättade kolväten</strong>. Det innebär att de bara har enkelbindningar och binder så många väteatomer som det är fysiskt möjligt."
+               },
+               {
+                   q: "Vad kallas det när två molekyler har samma molekylformel (lika många atomer) men olika strukturformel (atomerna sitter olika)?",
+                   options: [
+                       "Polymerer",
+                       "Alkyner",
+                       "Estrar",
+                       "Isomerer"
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Isomerer</strong> har samma antal atomer av varje slag, men eftersom de är sammansatta på olika sätt får de olika egenskaper, t.ex. olika kokpunkt."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Alkoholer, syror & estrar",
+           icon: "🧪",
+           text: "<strong>Alkoholer</strong> kännetecknas av att de har en OH-grupp. Vanliga alkoholer är metanol (giftig), etanol (i drycker) och glycerol. <strong>Organiska syror</strong> har gruppen -COOH. När en alkohol och en syra reagerar bildas en <strong>ester</strong>. Estrar ger ofta smak och doft till frukter och godis.",
+           questions: [
+               {
+                   q: "Varför är det viktigt att veta skillnaden mellan metanol och etanol, trots att de luktar likt?",
+                   options: [
+                       "Metanol är mycket giftigt och kan leda till blindhet eller död vid förtäring.",
+                       "Etanol har mycket högre energiinnehåll och används därför enbart som raketbränsle.",
+                       "Metanol bildas naturligt vid fotosyntesen medan etanol bara kan skapas i laboratorium.",
+                       "Etanol reagerar explosivt med vattenånga medan metanol används för att släcka bränder."
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Metanol</strong> (träsprit) är livsfarligt eftersom kroppen omvandlar det till ämnen som angriper synnerverna och inre organ."
+               },
+               {
+                   q: "Vilken funktionell grupp måste finnas i en molekyl för att den ska räknas som en karboxylsyra (organisk syra)?",
+                   options: [
+                       "En OH-grupp",
+                       "En kolatom bunden till en kväveatom",
+                       "En -COOH-grupp",
+                       "En dubbelbindning mellan två kolatomer"
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Karboxylgruppen</strong> (-COOH) är det som gör ämnet till en syra. Exempel är citronsyra och ättiksyra."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Kolhydrater",
+           icon: "🍞",
+           text: "<strong>Kolhydrater</strong> är uppbyggda av sockerarter. De delas in i monosackarider (enkla, t.ex. druvsocker), disackarider (två ringar, t.ex. vanligt socker) och polysackarider (långa kedjor, t.ex. <strong>stärkelse</strong> och <strong>cellulosa</strong>). Kroppen bryter ner kolhydrater till druvsocker för att få energi.",
+           questions: [
+               {
+                   q: "Vilken är den största nyttan med att äta livsmedel som innehåller mycket cellulosa (kostfibrer)?",
+                   options: [
+                       "Det ger kroppen en snabb energikick eftersom cellulosa tas upp direkt i blodet.",
+                       "Det underlättar matspjälkningen och fungerar som en 'tandborste' för tarmarna.",
+                       "Det omvandlas till viktiga mineraler som järn och kalcium inuti magsäcken.",
+                       "Det är den enda källan till protein för människor som inte äter kött eller fisk."
+                   ],
+                   correct: 1,
+                   explanation: "Människokroppen kan inte bryta ner <strong>cellulosa</strong> för energi, men fibrerna behövs för att tarmarna ska fungera bra."
+               },
+               {
+                   q: "Vad händer med energin i fotosyntesen när växter bildar druvsocker?",
+                   options: [
+                       "Energin försvinner ut i atmosfären som värmeenergi.",
+                       "Den omvandlas till elektrisk energi i växtens rötter.",
+                       "Den lagras som rörelseenergi i växtens gröna blad.",
+                       "Solenergi omvandlas och lagras som kemisk energi i molekylen."
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Fotosyntesen</strong> är en process där växter fångar solljus och lagrar energin i de kemiska bindningarna i druvsockret."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Fetter",
+           icon: "🧈",
+           text: "<strong>Fett</strong> består av alkoholen glycerol och tre fettsyror. Fett fungerar som kroppens energireserv och skydd. Vi skiljer på <strong>mättat fett</strong> (enkelbindningar, ofta fast) och <strong>omättat fett</strong> (dubbelbindningar, ofta flytande).",
+           questions: [
+               {
+                   q: "Vilka två delar är en fettmolekyl uppbyggd av?",
+                   options: [
+                       "Alkoholen glycerol och olika fettsyror.",
+                       "Druvsockermolekyler och långa proteinkedjor.",
+                       "Aminosyror och mineraler som kalcium och järn.",
+                       "Vattenmolekyler och mättade kolväteatomer."
+                   ],
+                   correct: 0,
+                   explanation: "Fett är kemiskt sett en ester bildad av den trevärda alkoholen <strong>glycerol</strong> och tre <strong>fettsyror</strong>."
+               },
+               {
+                   q: "Varför anses det ofta vara nyttigare att äta mer omättat fett än mättat fett?",
+                   options: [
+                       "Omättat fett innehåller inga kolatomer och kan därför inte lagras i kroppen.",
+                       "Mättat fett blockerar kroppens förmåga att ta upp viktiga vattenlösliga vitaminer.",
+                       "Omättat fett är lättare för kroppen att förbränna och minskar risken för sjukdomar.",
+                       "Omättat fett innehåller essentiella fettsyror som kroppen inte kan tillverka själv."
+                   ],
+                   correct: 3,
+                   explanation: "Fleromättade fetter som <strong>Omega 3</strong> är livsnödvändiga och måste komma via kosten."
+               }
+           ]
+       },
+       {
+           title: "Del 6: Proteiner",
+           icon: "💪",
+           text: "<strong>Proteiner</strong> bygger upp muskler och fungerar som enzymer. De är långa kedjor av <strong>aminosyror</strong>. Det finns 20 olika aminosyror; 9 av dem är essentiella och måste komma via maten. Proteiner är känsliga för värme.",
+           questions: [
+               {
+                   q: "Vad händer med proteiner om de värms upp till över 40–50 grader Celsius?",
+                   options: [
+                       "De omvandlas till enkla sockerarter som ger kroppen snabb energi.",
+                       "De börjar föröka sig snabbare och bildar nya muskler automatiskt.",
+                       "De ändrar färg och blir mer flytande för att lättare transporteras i blodet.",
+                       "De koagulerar (stelnar) och tappar sin form och livsviktiga funktion."
+                   ],
+                   correct: 3,
+                   explanation: "När proteiner värms upp för mycket förstörs deras form (koagulering), vilket är varför hög <strong>feber</strong> är farligt."
+               },
+               {
+                   q: "Vilken är enzymernas viktigaste uppgift i människokroppen?",
+                   options: [
+                       "Att fungera som ett extra lager av fett för att skydda organen mot kyla.",
+                       "Att transportera syrgas från lungorna ut till alla muskelceller i armarna.",
+                       "Att påskynda kemiska reaktioner i cellerna utan att själva förbrukas.",
+                       "Att lagra all strålningsenergi från solen så att vi kan se i mörker."
+                   ],
+                   correct: 2,
+                   explanation: "Enzymer är <strong>biologiska katalysatorer</strong>. De behövs till exempel för att spjälka maten vi äter."
+               }
+           ]
+       },
+       {
+           title: "Del 7: Vitaminer och mineraler",
+           icon: "💊",
+           text: "<strong>Vitaminer</strong> är organiska molekyler (t.ex. C, D, E) som behövs i små mängder. <strong>Mineraler</strong> (spårämnen) är oorganiska grundämnen, som järn och kalcium, som också är livsviktiga för kroppens funktioner.",
+           questions: [
+               {
+                   q: "Varför behöver kroppen få i sig grundämnet järn via kosten?",
+                   options: [
+                       "Järn behövs för att bygga upp ett starkt emaljlager på våra tänder.",
+                       "Järn fungerar som ett bränsle som bränns upp direkt i hjärnans celler.",
+                       "Järn behövs i blodet för att kunna transportera syre till alla celler.",
+                       "Järn gör att vi kan producera klorofyll så att vi kan utföra fotosyntes."
+                   ],
+                   correct: 2,
+                   explanation: "Järn ingår i proteinet <strong>hemoglobin</strong> i de röda blodkropparna som bär syre."
+               },
+               {
+                   q: "Vilken skillnad är det på vitaminer och mineraler ur ett kemiskt perspektiv?",
+                   options: [
+                       "Vitaminer är metaller medan mineraler är ickemetaller i gasform.",
+                       "Mineraler är stora polymerer medan vitaminer är enkla atomer.",
+                       "Vitaminer ger energi (kalorier) medan mineraler bara ger värme.",
+                       "Vitaminer är organiska kolföreningar medan mineraler är oorganiska ämnen."
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Vitaminer</strong> är komplexa molekyler med kol, medan <strong>mineraler</strong> är enklare grundämnen."
+               }
+           ]
+       },
+       {
+           title: "Del 8: Näring och miljö",
+           icon: "🌍",
+           text: "Här samlar vi kunskaper om <strong>näringslära</strong> och miljöpåverkan. <strong>Cellandning</strong> är kroppens sätt att frigöra energi. Vi lär oss om hur <strong>kvävgas</strong> skyddar mat, hur <strong>proteiner</strong> bygger upp kroppen och hur <strong>biogas</strong> kan framställas ur matavfall.",
+           questions: [
+               {
+                   q: "Vad bildas alltid när vi förbränner maten i våra celler (cellandning)?",
+                   options: [
+                       "Koldioxid, vatten och energi.",
+                       "Druvsocker, syre och solljus.",
+                       "Aminosyror, järn och fett.",
+                       "Kolmonoxid, sot och värme."
+                   ],
+                   correct: 0,
+                   explanation: "Cellandningen är en förbränning där kroppen använder syre för att bryta ner druvsocker till <strong>energi, koldioxid och vatten</strong>."
+               },
+               {
+                   q: "Varför förvaras ofta livsmedel i en atmosfär av ren kvävgas (N₂)?",
+                   options: [
+                       "Kvävgas gör att maten smakar sötare och ser mer aptitlig ut för kunden.",
+                       "Kvävgas reagerar ogärna med maten, vilket hindrar den från att härskna.",
+                       "Kvävgasen dödar alla virus genom att höja pH-värdet till extremt basiskt.",
+                       "Kvävgasen fungerar som en hårdplast och skyddar förpackningen mot stötar."
+                   ],
+                   correct: 1,
+                   explanation: "Genom att byta ut syret (som är reaktivt) mot <strong>kväve</strong> (som är reaktionströgt) håller maten sig fräsch längre."
+               },
+               {
+                   q: "Vilket näringsämne är kroppens viktigaste byggmaterial för att laga celler och bygga muskler?",
+                   options: [
+                       "Kolhydrater",
+                       "Fetter",
+                       "Proteiner",
+                       "Vitaminer"
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Proteiner</strong> kallas ofta för kroppens byggstenar. De används för att bygga upp och underhålla vävnader."
+               },
+               {
+                   q: "Vad är 'rötning' av matavfall, och vad kan produkten användas till?",
+                   options: [
+                       "Det är när mat torkas i solen för att sedan spridas som mineralrikt damm.",
+                       "Det är en kemisk reaktion där man gör plast av gamla grönsaker och frukter.",
+                       "Det är när bakterier bryter ner avfall utan syre och bildar biobränsle.",
+                       "Det är när man blandar matrester med saltvatten för att framställa saltsyra."
+                   ],
+                   correct: 2,
+                   explanation: "Vid rötning bildas <strong>biogas</strong> (metan) som kan användas som drivmedel, samt biogödsel."
+               },
+               {
+                   q: "Vilken av följande modeller visar en organisk förening?",
+                   options: [
+                       "En modell med en syreatom och två väteatomer (vatten).",
+                       "En modell med en kväveatom och tre väteatomer (ammoniak).",
+                       "En modell med kolatomer som är bundna till väteatomer (t.ex. metan).",
+                       "En modell med en svavelatom och fyra syreatomer (sulfatjon)."
+                   ],
+                   correct: 2,
+                   explanation: "Definitionen av en organisk förening är att den innehåller grundämnet <strong>kol</strong> (ofta bundet till väte)."
+               },
+               {
+                   q: "Vad är fördelen med 'långsamma' kolhydrater jämfört med 'snabba'?",
+                   options: [
+                       "De innehåller mycket mer energi per gram än vad snabba kolhydrater gör.",
+                       "De tas upp direkt i munnen och ger energi till hjärnan på bara några sekunder.",
+                       "De ger en jämnare blodsockernivå eftersom det tar tid för kroppen att bryta ner dem.",
+                       "De är helt gjorda av metaller och stärker därför skelettet mer än socker gör."
+                   ],
+                   correct: 2,
+                   explanation: "Långsamma kolhydrater består av långa kedjor som måste klippas isär, vilket gör att energin räcker längre och ger <strong>jämnare blodsocker</strong>."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+            setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
