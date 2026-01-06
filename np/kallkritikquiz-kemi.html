@@ -1,0 +1,854 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz: Källkritik i Naturvetenskap</title>
+  <!-- Importerar moderna fonter från Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+ 
+  <style>
+      :root {
+          /* Färgpalett - Lila Tema (Samma som kemiquizet) */
+          --card-bg: #ffffff;
+         
+          --brand-color: #6a1b9a; /* Djup lila */
+          --brand-gradient: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%);
+         
+          --accent-color: #ab47bc; /* Ljusare lila */
+         
+          /* Komplementfärg: Turkos (Teal) för kontrast */
+          --complement-color: #009688;
+
+
+          --success-color: #2e7d32;
+          --success-bg: #e8f5e9;
+         
+          --error-color: #c62828;
+          --error-bg: #ffebee;
+         
+          --text-main: #212121;
+          --text-muted: #616161;
+         
+          --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+          --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+         
+          --radius-main: 16px;
+      }
+
+
+      body {
+          font-family: 'Open Sans', sans-serif;
+          background-image: linear-gradient(135deg, #f5f7fa 0%, #e1bee7 100%);
+          color: var(--text-main);
+          margin: 0;
+          padding: 15px;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          min-height: 100vh;
+      }
+
+
+      .container {
+          background-color: var(--card-bg);
+          width: 100%;
+          max-width: 680px;
+          border-radius: var(--radius-main);
+          box-shadow: var(--shadow-card);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          margin-top: 3vh;
+          margin-bottom: 3vh;
+      }
+
+
+      header {
+          background: var(--brand-gradient);
+          color: white;
+          padding: 20px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+      }
+
+
+      h1 {
+          font-family: 'Poppins', sans-serif;
+          margin: 0;
+          font-size: 1.5rem;
+          font-weight: 700;
+          letter-spacing: -0.3px;
+      }
+
+
+      .content-area {
+          padding: 25px 30px;
+          flex-grow: 1;
+      }
+
+
+      h2 {
+          font-family: 'Poppins', sans-serif;
+          color: var(--text-main);
+          margin-top: 0;
+          font-size: 1.3rem;
+          margin-bottom: 0.8rem;
+          line-height: 1.3;
+      }
+
+
+      /* Fact Section Styles */
+      .fact-box {
+          background: #ffffff;
+          border: 1px solid #eeeeee;
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 20px;
+          display: flex;
+          gap: 15px;
+          align-items: flex-start;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      }
+     
+      .fact-icon {
+          font-size: 2rem;
+          display: block;
+          margin-top: -5px;
+          color: var(--complement-color);
+      }
+     
+      .fact-content {
+          flex: 1;
+      }
+
+
+      .btn {
+          background: var(--brand-gradient);
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1rem;
+          font-weight: 600;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: block;
+          width: 100%;
+          margin-top: 20px;
+          box-shadow: 0 4px 10px rgba(106, 27, 154, 0.2);
+      }
+
+
+      .btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 14px rgba(106, 27, 154, 0.3);
+          opacity: 0.95;
+      }
+
+
+      /* Question Styles */
+      .question-meta {
+          display: inline-block;
+          color: var(--complement-color);
+          font-size: 0.85rem;
+          margin-bottom: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+      }
+
+
+      .options-grid {
+          display: grid;
+          gap: 12px;
+          margin-top: 20px;
+      }
+
+
+      .option-btn {
+          background-color: #fff;
+          border: 2px solid #f5f5f5;
+          padding: 15px 20px;
+          text-align: left;
+          border-radius: 10px;
+          cursor: pointer;
+          font-family: 'Open Sans', sans-serif;
+          font-size: 0.95rem;
+          font-weight: 500;
+          transition: all 0.15s ease;
+          color: var(--text-main);
+          position: relative;
+      }
+
+
+      .option-btn:hover:not(:disabled) {
+          border-color: var(--accent-color);
+          background-color: #f3e5f5;
+          transform: translateX(3px);
+          box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      }
+     
+      /* Status states for options */
+      .option-btn.correct {
+          background-color: var(--success-bg);
+          border-color: var(--success-color);
+          color: #1b5e20;
+          font-weight: 600;
+      }
+     
+      .option-btn.correct::after {
+          content: "✓";
+          position: absolute;
+          right: 15px;
+          font-weight: bold;
+      }
+
+
+      .option-btn.incorrect {
+          background-color: var(--error-bg);
+          border-color: var(--error-color);
+          color: #b71c1c;
+          opacity: 0.8;
+      }
+
+
+      .option-btn:disabled {
+          cursor: default;
+      }
+
+
+      /* Feedback Box */
+      .feedback-box {
+          margin-top: 20px;
+          padding: 20px 25px;
+          border-radius: 12px;
+          background-color: #f9f9f9;
+          color: var(--text-main);
+          border: 1px solid #e0e0e0;
+          display: none;
+          animation: fadeIn 0.3s ease;
+      }
+     
+      .feedback-box h3 {
+          margin-top: 0;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+      }
+
+
+      .feedback-box.success h3 {
+          color: var(--success-color);
+      }
+     
+      .feedback-box.error h3 {
+          color: var(--error-color);
+      }
+
+
+      .feedback-box strong {
+          color: #000;
+          font-weight: 700;
+      }
+
+
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+
+      /* Progress Bar Styles */
+      .progress-bar-container {
+          height: 6px;
+          background-color: #eeeeee;
+          width: 100%;
+          position: relative;
+          z-index: 10;
+      }
+
+
+      .progress-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #ab47bc 0%, #6a1b9a 100%);
+          width: 0%;
+          transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+          border-radius: 0 4px 4px 0;
+          box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
+      }
+
+
+      /* Summary Styles */
+      .summary-stats {
+          text-align: center;
+          background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+          border: 1px solid #ce93d8;
+          padding: 30px 20px;
+          border-radius: 12px;
+          margin-bottom: 20px;
+      }
+
+
+      .summary-score {
+          font-size: 3.5rem;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          display: block;
+          margin: 5px 0;
+          line-height: 1;
+          background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+      }
+     
+      .summary-list {
+          max-height: 400px;
+          overflow-y: auto;
+          padding-right: 10px;
+      }
+     
+      .summary-item {
+          background: white;
+          border-bottom: 1px solid #eeeeee;
+          padding: 12px 0;
+      }
+     
+      .summary-item:last-child {
+          border-bottom: none;
+      }
+
+
+      .summary-question {
+          font-weight: 600;
+          margin-bottom: 4px;
+          display: block;
+          font-size: 0.95rem;
+      }
+     
+      .summary-answer-row {
+          font-size: 0.9rem;
+      }
+
+
+      .summary-correct-text { color: var(--success-color); font-weight: 600; }
+      .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+      .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+      /* Helpers */
+      strong {
+          color: #000;
+          font-weight: 700;
+      }
+
+
+      .fade-in {
+          animation: fadeIn 0.4s ease-out;
+      }
+
+
+  </style>
+</head>
+<body>
+
+
+<div class="container">
+  <header>
+      <h1 id="header-title">Källkritik i Naturvetenskap</h1>
+  </header>
+  <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+
+  <div class="content-area" id="app">
+      <!-- Content will be injected here by JavaScript -->
+  </div>
+</div>
+
+
+<script>
+  // --- DATA ---
+  const quizData = [
+      {
+          title: "Del 1: Den vetenskapliga metoden",
+          icon: "🔬",
+          text: "Inom naturvetenskapen måste en undersökning vara <strong>reproducerbar</strong>, vilket innebär att andra forskare ska kunna göra om experimentet och få samma resultat. För att resultatet ska vara pålitligt krävs <strong>variabelkontroll</strong>, där man bara ändrar en sak i taget. Om urvalet är för litet (t.ex. att man bara testar en enda reaktion en gång) ökar risken att <strong>slumpen</strong> avgör resultatet.",
+          questions: [
+              {
+                  q: "En elev vill undersöka vilken temperatur som krävs för att lösa upp en tablett snabbast. Hen lägger en hel tablett i 20-gradigt vatten och en krossad tablett i 40-gradigt vatten. Vad är det största felet i undersökningen?",
+                  options: [
+                      "Eleven ändrar två variabler (både temperatur och finfördelning) samtidigt.",
+                      "Vattnet borde ha varit exakt 37 grader för att efterlikna kroppens miljö.",
+                      "Hen använder inte en digital pH-mätare för att kontrollera lösningens surhet.",
+                      "Tabletten borde ha vägts med en precisionsvåg före och efter experimentet."
+                  ],
+                  correct: 0,
+                  explanation: "Rätt svar: <strong>Eleven ändrar två variabler samtidigt.</strong> För att veta vad som påverkar resultatet får man bara ändra en faktor åt gången. Här går det inte att avgöra om det var värmen eller krossandet som gjorde att tabletten löstes snabbare."
+              },
+              {
+                  q: "Varför är det viktigt att en kemisk studie om ett nytt läkemedel omfattar tusentals personer istället för bara fem?",
+                  options: [
+                      "För att det ser mer vetenskapligt ut om tabellerna i rapporten innehåller mycket data.",
+                      "För att minska risken att enstaka personers unika kroppskemi (slumpen) styr resultatet.",
+                      "För att kemiska reaktioner i celler kräver stora mängder biomassa för att kunna mätas.",
+                      "För att läkemedelsföretagen ska kunna tjäna mer pengar på att sälja testexemplar."
+                  ],
+                  correct: 1,
+                  explanation: "Rätt svar: <strong>För att minska risken för slumpfel.</strong> Med ett litet urval kan slumpmässiga faktorer få för stor betydelse. Stora grupper krävs för att säkerställa att effekten av det kemiska ämnet gäller för de flesta människor."
+              },
+              {
+                  q: "Vad menas med att ett kemiskt experiment är 'reproducerbart'?",
+                  options: [
+                      "Att forskaren har fotograferat alla steg i experimentet för att bevisa att det har hänt.",
+                      "Att ämnena som bildas vid reaktionen kan användas som råvaror i en ny kemisk process.",
+                      "Att andra forskare kan följa instruktionen, utföra samma test och få samma resultat.",
+                      "Att kemikalierna som används är biologiskt nedbrytbara och ingår i naturens kretslopp."
+                  ],
+                  correct: 2,
+                  explanation: "Rätt svar: <strong>Att andra kan få samma resultat.</strong> Vetenskaplig fakta bygger på att resultat inte är engångsföreteelser. Om ingen annan kan upprepa experimentet med samma utfall kan man inte lita på slutsatsen."
+              }
+          ]
+      },
+      {
+          title: "Del 2: Trovärdighet och Jäv",
+          icon: "⚖️",
+          text: "När man läser om kemiska produkter eller miljöfrågor måste man granska avsändaren. Om en studie är betald av ett företag som tjänar pengar på produkten finns risk för <strong>jäv</strong> (intressekonflikt). Information från <strong>oberoende myndigheter</strong>, som Kemikalieinspektionen, anses ofta mer trovärdig eftersom de inte har något vinstintresse. Innan en seriös artikel publiceras genomgår den en <strong>Peer-review</strong> (fackgranskning) av andra experter.",
+          questions: [
+              {
+                  q: "Du läser en text om att ett visst plastmaterial är helt ofarligt för miljön. Vem av följande avsändare bör du vara mest kritisk mot?",
+                  options: [
+                      "En professor i miljökemi vid ett oberoende statligt universitet.",
+                      "En expert på Kemikalieinspektionen som arbetar med lagstiftning.",
+                      "En miljöjournalist som har skrivit en artikel i en dagstidning.",
+                      "En talesperson för organisationen 'Plasttillverkarna i Sverige'."
+                  ],
+                  correct: 3,
+                  explanation: "Rätt svar: <strong>Talespersonen för industrin.</strong> Plasttillverkarna har ett ekonomiskt intresse av att deras produkter framställs som miljövänliga. Detta kallas för <strong>jäv</strong>, vilket kan leda till att negativa forskningsresultat döljs."
+              },
+              {
+                  q: "Vad innebär det att en vetenskaplig studie om t.ex. grafen har genomgått 'Peer-review'?",
+                  options: [
+                      "Att studien har blivit granskad av oberoende experter inom samma forskningsområde.",
+                      "Att allmänheten har fått rösta på internet om de tror på resultatet eller inte.",
+                      "Att författaren har läst igenom sin egen text en extra gång för att hitta stavfel.",
+                      "Att resultaten har visats i en populär dokumentärfilm på TV för att nå många."
+                  ],
+                  correct: 0,
+                  explanation: "Rätt svar: <strong>Att den granskats av experter.</strong> Peer-review är vetenskapens kvalitetskontroll. Det säkerställer att metoderna är korrekta och att slutsatserna faktiskt stöds av de kemiska experimenten."
+              }
+          ]
+      },
+      {
+          title: "Del 3: Orsakssamband och Bevis",
+          icon: "🔗",
+          text: "Bara för att två saker händer samtidigt (<strong>korrelation</strong>) betyder det inte att det finns ett kemiskt samband (<strong>kausalitet</strong>). Inom vetenskapen väger <strong>statistik</strong> tungt, medan enstaka berättelser, så kallade <strong>anekdoter</strong>, inte bevisar någonting eftersom de kan vara sällsynta undantag.",
+          questions: [
+              {
+                  q: "En studie visar att personer som använder mycket parfym oftare har huvudvärk. Vilken tolkning är mest rimlig ur ett källkritiskt perspektiv?",
+                  options: [
+                      "Det är bevisat att doftmolekylerna i parfym orsakar en kemisk skada i hjärnan.",
+                      "Det finns ett samband, men det kan finnas en bakomliggande orsak till båda sakerna.",
+                      "Eftersom båda sakerna händer samtidigt måste parfymen vara den direkta orsaken.",
+                      "Studien är falsk eftersom det inte finns några kemiska kopplingar mellan näsa och huvud."
+                  ],
+                  correct: 1,
+                  explanation: "Rätt svar: <strong>Korrelation är inte samma sak som orsak.</strong> Det kan vara så att stressade personer använder mer parfym och att det är stressen, inte parfymen, som ger huvudvärk."
+              },
+              {
+                  q: "En person säger: 'Min farfar jobbade med asbest i 40 år och han blev aldrig sjuk, så asbest är nog ofarligt.' Varför är detta inte ett giltigt vetenskapligt bevis?",
+                  options: [
+                      "För att farfar troligen använde en modernare sorts asbest som inte var lika dammig.",
+                      "För att farfars lungor kan ha varit unikt starka på grund av en speciell diet.",
+                      "För att det är en anekdot som inte motbevisar statistiken om asbestens risker.",
+                      "För att personen som berättar historien troligen har glömt bort att farfar rökte."
+                  ],
+                  correct: 2,
+                  explanation: "Rätt svar: <strong>Anekdoter är inte bevis.</strong> Enstaka berättelser kan vara undantag. Vetenskapen bygger på vad som händer för den stora massan, och där visar statistiken att asbest är mycket farligt."
+              }
+          ]
+      },
+      {
+          title: "Del 4: Pseudovetenskap och Granskning",
+          icon: "🔮",
+          text: "<strong>Pseudovetenskap</strong> är påståenden som låter vetenskapliga men som saknar bevis. Varningstecken är ofta löften om mirakellösningar eller användande av komplicerade ord på ett felaktigt sätt. För att kontrollera ett påstående bör man söka efter <strong>oberoende källor</strong>.",
+          questions: [
+              {
+                  q: "Du ser en annons för en 'magisk tvättboll' som sägs rena kläder med hjälp av 'kvant-jonisering' utan tvättmedel. Vilket varningstecken tyder på pseudovetenskap?",
+                  options: [
+                      "Att bollens plastmaterial sägs vara återvinningsbart enligt en livscykelanalys.",
+                      "Att annonsen förklarar hur vattenmolekyler fungerar som ett polärt lösningsmedel.",
+                      "Att tillverkaren rekommenderar att man ändå använder varmt vatten vid tvättningen.",
+                      "Att man använder svåra ord som 'kvant-jonisering' för att låta märkvärdig utan bevis."
+                  ],
+                  correct: 3,
+                  explanation: "Rätt svar: <strong>Användning av svåra ord utan innehåll.</strong> Pseudovetenskap använder ofta vetenskapliga termer felaktigt för att luras. Att lova mirakulös rening utan att förklara de faktiska kemiska reaktionerna är en tydlig varningsklocka."
+              },
+              {
+                  q: "En hemsida påstår att 'kemikalier i kranvatten döljer sanningen om universum'. Sidan saknar källhänvisningar men har många kommentarer från folk som håller med. Hur bör du göra för att granska detta?",
+                  options: [
+                      "Söka efter information från oberoende källor som universitet eller myndigheter.",
+                      "Lita på informationen eftersom det är så många personer som har kommenterat.",
+                      "Sluta dricka kranvatten direkt för att vara på den säkra sidan om det stämmer.",
+                      "Skriva en egen kommentar och fråga om de har några bilder som bevisar sanningen."
+                  ],
+                  correct: 0,
+                  explanation: "Rätt svar: <strong>Sök oberoende källor.</strong> Man bör söka efter källor som inte försöker sälja en idé eller produkt. Många kommentarer är inte ett bevis på att informationen är vetenskapligt korrekt."
+              }
+          ]
+      },
+      {
+          title: "Del 5: Argumentation och Perspektiv",
+          icon: "🗣️",
+          text: "När man för resonemang om kemi, hälsa och miljö är det viktigt att skilja på <strong>fakta</strong> (vad som har bevisats) och <strong>värderingar</strong> (vad man tycker är viktigast). En utvecklad text bör innehålla resonemang i flera led och belysa både möjligheter och risker.",
+          questions: [
+              {
+                  q: "Vid en diskussion om biobränslen säger en elev: 'Vi måste genast sluta med bensin och bara använda etanol för att rädda miljön.' Vilket perspektiv saknas i elevens resonemang?",
+                  options: [
+                      "En förklaring av hur kolatomer i fossila bränslen förstärker den naturliga växthuseffekten.",
+                      "Ett led om att produktion av etanol kan kräva stora odlingsytor och påverka matpriser.",
+                      "En beskrivning av hur koldioxidmolekyler tas upp av växternas blad genom fotosyntes.",
+                      "Fakta om att bensinmolekyler innehåller mer energi per gram än vad etanolmolekyler gör."
+                  ],
+                  correct: 1,
+                  explanation: "Rätt svar: <strong>Konsekvensanalys av nackdelar.</strong> Ett välutvecklat resonemang ska belysa både fördelar och nackdelar. Att bara se en sida av saken är inte ett balanserat naturvetenskapligt ställningstagande."
+              },
+              {
+                  q: "I en debattartikel påstås att 'all kemi är farlig och naturliga ämnen är alltid bättre'. Varför är detta ett ovetenskapligt argument?",
+                  options: [
+                      "Eftersom naturliga ämnen inte går att studera i ett laboratorium med modern nanoteknik.",
+                      "Eftersom naturliga ämnen inte innehåller några atomer, till skillnad från tillverkade kemikalier.",
+                      "Eftersom även naturliga ämnen består av kemiska föreningar och kan vara extremt giftiga.",
+                      "Eftersom kemiska tecken bara används för att beskriva ämnen som människan har tillverkat."
+                  ],
+                  correct: 2,
+                  explanation: "Rätt svar: <strong>All materia är kemi.</strong> Många av de farligaste miljögifterna, som arsenik och kvicksilver, förekommer naturligt i berggrunden. Att ett ämne är naturligt betyder inte automatiskt att det är ofarligt."
+              },
+              {
+                  q: "Du läser en rapport om nanoteknik i solskyddskrämer. Vilken information ökar textens trovärdighet mest?",
+                  options: [
+                      "Att texten innehåller många bilder på glada människor som solar säkert på en strand.",
+                      "Att författaren påstår att metoden är en 'hemlighet' som ingen annan känner till än.",
+                      "Att produkten som beskrivs i rapporten har vunnit ett pris för sin snygga förpackning.",
+                      "Att rapporten hänvisar till flera olika oberoende forskningsstudier och expertkällor."
+                  ],
+                  correct: 3,
+                  explanation: "Rätt svar: <strong>Källhänvisningar.</strong> Hänvisning till andra källor och oberoende forskning är ett tecken på hög trovärdighet. Det visar att resultaten har granskats av fler än bara tillverkaren."
+              }
+          ]
+      },
+      {
+          title: "Del 6: Blandade källkritiska frågor",
+          icon: "🧩",
+          text: "Här testar vi din förmåga att tillämpa källkritik i olika vardagliga situationer kopplade till hälsa, miljö och vetenskap. Kom ihåg att alltid leta efter <strong>bakomliggande syften</strong> och kontrollera om påståenden strider mot grundläggande <strong>naturvetenskapliga lagar</strong>.",
+          questions: [
+              {
+                  q: "En bloggare påstår att man kan 'rensa kroppen från gifter' genom att dricka en dyr juice i tre dagar. Bloggaren visar bilder på sig själv före och efter. Vad är den mest sannolika förklaringen?",
+                  options: [
+                      "Juicen innehåller en speciell sorts katalysatorer som förstör alla tunga metallatomer.",
+                      "Bloggaren har fått betalt för att göra reklam och bilderna bevisar ingen kemisk rening.",
+                      "Kroppens enzymer fungerar bara om man tillsätter de sockerarter som finns i juicen.",
+                      "Juicen har ett så lågt pH-värde att den neutraliserar alla basiska miljögifter i blodet."
+                  ],
+                  correct: 1,
+                  explanation: "Rätt svar: <strong>Ekonomiskt intresse (Reklam).</strong> Reklam för 'detox' är ofta pseudovetenskap. Kroppen renar sig själv med hjälp av levern och njurarna, oavsett vilka juicer man dricker."
+              },
+              {
+                  q: "Varför bör man vara skeptisk till en rubrik som säger: 'Ny upptäckt: Vatten kan brinna!'?",
+                  options: [
+                      "För att vattenmolekyler redan är resultatet av en förbränning och inte kan brinna igen.",
+                      "För att vatten har en för hög densitet för att syreatomer ska kunna krocka med väteatomer.",
+                      "För att koldioxidhalten i atmosfären är för låg för att stödja en sådan kemisk reaktion.",
+                      "För att vätejoner i vattenlösningar alltid är neutrala och därför aldrig kan avge värme."
+                  ],
+                  correct: 0,
+                  explanation: "Rätt svar: <strong>Det strider mot kemiska lagar.</strong> Vatten (H<sub>2</sub>O) bildas när väte brinner (oxideras). Att påstå att vatten kan brinna är kemiskt sett som att säga att aska kan brinna igen."
+              },
+              {
+                  q: "Du hittar två olika källor om mikroplaster. Källa A är från en miljöorganisation och Källa B är från ett universitet. Båda säger olika saker. Vad är bäst att göra?",
+                  options: [
+                      "Lita på den källa som har de mest dramatiska siffrorna för att vara på den säkra sidan.",
+                      "Sluta använda plast helt och hållet eftersom man tydligen inte kan veta vad som är sant.",
+                      "Jämföra källornas metoder och se vilken som bygger på bäst vetenskaplig kontroll.",
+                      "Utgå ifrån att den källa som är nyast alltid har mest rätt oavsett vem som skrivit den."
+                  ],
+                  correct: 2,
+                  explanation: "Rätt svar: <strong>Granska metoderna.</strong> Man måste titta på hur studierna är gjorda (urval, variabler) och om det finns risk för jäv. Universitetet är ofta en mer objektiv källa än en intresseorganisation."
+              }
+          ]
+      }
+  ];
+
+
+  // --- STATE MANAGEMENT ---
+  let currentSectionIndex = 0;
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let userAnswers = [];
+  let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+  // --- DOM ELEMENTS ---
+  const app = document.getElementById('app');
+  const headerTitle = document.getElementById('header-title');
+  const progressBar = document.getElementById('progress-bar');
+
+
+  // --- MAIN RENDER FUNCTION ---
+  function render() {
+      if (state === 'summary') {
+          renderSummary();
+          return;
+      }
+
+
+      const section = quizData[currentSectionIndex];
+
+
+      // Update Header with smooth fade
+      headerTitle.style.opacity = '0';
+      setTimeout(() => {
+          headerTitle.innerText = section.title;
+          headerTitle.style.transition = 'opacity 0.2s';
+          headerTitle.style.opacity = '1';
+      }, 150);
+
+
+      // Calculate total progress
+      let totalQuestions = 0;
+      let answeredQuestions = 0;
+     
+      quizData.forEach((sec, idx) => {
+          totalQuestions += sec.questions.length;
+          if (idx < currentSectionIndex) {
+              answeredQuestions += sec.questions.length;
+          } else if (idx === currentSectionIndex && state === 'question') {
+              answeredQuestions += currentQuestionIndex;
+          }
+      });
+      const pct = totalQuestions === 0 ? 0 : (answeredQuestions / totalQuestions) * 100;
+      progressBar.style.width = `${pct}%`;
+
+
+      if (state === 'intro') {
+          renderSectionIntro(section);
+      } else if (state === 'question') {
+          renderQuestion(section.questions[currentQuestionIndex]);
+      }
+  }
+
+
+  // --- RENDER SECTION TEXT ---
+  function renderSectionIntro(section) {
+      app.classList.remove('fade-in');
+      void app.offsetWidth;
+      app.classList.add('fade-in');
+
+
+      app.innerHTML = `
+          <div class="fact-box">
+              <span class="fact-icon">${section.icon}</span>
+              <div class="fact-content">
+                  <h2>Fakta</h2>
+                  <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+              </div>
+          </div>
+          <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+      `;
+  }
+
+
+  // --- RENDER QUESTION ---
+  function renderQuestion(q) {
+      const totalInCurrent = quizData[currentSectionIndex].questions.length;
+     
+      app.innerHTML = `
+          <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+          <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+          <div class="options-grid">
+              ${q.options.map((opt, idx) => `
+                  <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+              `).join('')}
+          </div>
+          <div id="feedback" class="feedback-box">
+              <h3 id="feedback-title"></h3>
+              <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+              <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+          </div>
+      `;
+  }
+
+
+  // --- RENDER SUMMARY ---
+  function renderSummary() {
+      headerTitle.innerText = "Sammanfattning";
+      progressBar.style.width = '100%';
+     
+      let totalQ = 0;
+      quizData.forEach(s => totalQ += s.questions.length);
+     
+      let correctCount = userAnswers.filter(a => a.isCorrect).length;
+      let pct = Math.round((correctCount / totalQ) * 100);
+     
+      let gradeTitle = "";
+     
+      if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+      else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+      else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+      else { gradeTitle = "Bra kämpat! 💪"; }
+
+
+      let html = `
+          <div class="summary-stats">
+              <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+              <span class="summary-score">${correctCount}/${totalQ}</span>
+              <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+              <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+          </div>
+          <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+          <div class="summary-list">
+      `;
+
+
+      userAnswers.forEach((ans, idx) => {
+          const isCorrect = ans.isCorrect;
+          // Find the text of the correct answer for display
+          // Note: In summary we stored strings, but we need the correct string if wrong
+         
+          html += `
+              <div class="summary-item">
+                  <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                  <div class="summary-answer-row">
+                      ${isCorrect
+                          ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                          : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                      }
+                  </div>
+              </div>
+          `;
+      });
+
+
+      html += `</div>`;
+      app.innerHTML = html;
+  }
+
+
+  // --- LOGIC FUNCTIONS ---
+  window.startQuestions = function() {
+      state = 'question';
+      currentQuestionIndex = 0;
+      render();
+  };
+
+
+  window.handleAnswer = function(selectedIndex) {
+      const buttons = document.querySelectorAll('.option-btn');
+      buttons.forEach(b => b.disabled = true);
+
+
+      const section = quizData[currentSectionIndex];
+      const currentQ = section.questions[currentQuestionIndex];
+      const isCorrect = selectedIndex === currentQ.correct;
+
+
+      const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+      const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+      if (isCorrect) {
+          selectedBtn.classList.add('correct');
+      } else {
+          selectedBtn.classList.add('incorrect');
+          correctBtn.classList.add('correct');
+      }
+
+
+      const feedbackBox = document.getElementById('feedback');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackText = document.getElementById('feedback-text');
+      const nextBtn = document.getElementById('next-btn');
+
+
+      feedbackBox.style.display = 'block';
+     
+      if (isCorrect) {
+          feedbackBox.className = "feedback-box success";
+          feedbackTitle.innerHTML = "Rätt svar!";
+      } else {
+          feedbackBox.className = "feedback-box error";
+          feedbackTitle.innerHTML = "Inte riktigt...";
+      }
+     
+      feedbackText.innerHTML = currentQ.explanation;
+
+
+      const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+     
+      if(isLastQuestionOverall) {
+          nextBtn.innerText = "Se resultat 🏁";
+      } else if (currentQuestionIndex === section.questions.length - 1) {
+          nextBtn.innerText = "Nästa del ➔";
+      }
+
+
+      const rect = feedbackBox.getBoundingClientRect();
+      const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+      if (!isVisible) {
+          setTimeout(() => {
+              feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 100);
+      }
+
+
+      userAnswers.push({
+          question: currentQ.q,
+          userAnswer: currentQ.options[selectedIndex],
+          correctAnswer: currentQ.options[currentQ.correct],
+          isCorrect: isCorrect
+      });
+  };
+
+
+  window.nextStep = function() {
+      const section = quizData[currentSectionIndex];
+     
+      const feedbackBox = document.getElementById('feedback');
+      if(feedbackBox) {
+          feedbackBox.style.display = 'none';
+      }
+
+
+      if (currentQuestionIndex < section.questions.length - 1) {
+          currentQuestionIndex++;
+          render();
+      } else {
+          if (currentSectionIndex < quizData.length - 1) {
+              currentSectionIndex++;
+              state = 'intro';
+              render();
+          } else {
+              state = 'summary';
+              render();
+          }
+      }
+  };
+
+
+  render();
+
+
+</script>
+
+
+</body>
+</html>
