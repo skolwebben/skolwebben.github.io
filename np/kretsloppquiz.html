@@ -1,0 +1,945 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Kemiquiz: Miljö & Kretslopp (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Blågrönt Naturtema */
+           --card-bg: #ffffff;
+          
+           --brand-color: #00796b; /* Mörk turkos/teal */
+           --brand-gradient: linear-gradient(135deg, #004d40 0%, #00796b 100%);
+          
+           --accent-color: #26a69a; /* Ljusare teal */
+          
+           /* Komplementfärg: Bärnsten/Orange för kontrast */
+           --complement-color: #ff6f00;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121;
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+          
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Ljus blågrön fade */
+           background-image: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee;
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color);
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(0, 77, 64, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(0, 77, 64, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color);
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #e0f2f1;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svarta fetstilade ord */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Blågrön Gradient för att matcha temat */
+           background: linear-gradient(90deg, #26a69a 0%, #00796b 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(0, 121, 107, 0.3);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+           border: 1px solid #80cbc4;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #004d40 0%, #00796b 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+       /* Fade transitions for content switching */
+       .fade-in {
+           animation: fadeIn 0.4s ease-out;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Kemiquiz: Miljö & Kretslopp</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Atomen och materiens oförstörbarhet",
+           icon: "♻️",
+           text: "Naturens byggstenar kallas atomer. Alla grundämnen som finns på jorden har funnits här sedan solsystemet skapades; <strong>inga nya atomer tillverkas och inga försvinner</strong>. Naturen använder samma atomer om och om igen i olika kombinationer, vilket är grunden för alla <strong>kretslopp</strong>. En atom består av protoner, neutroner och elektroner, där antalet protoner bestämmer vilket grundämne det rör sig om.",
+           questions: [
+               {
+                   q: "Vad menas med \"materiens oförstörbarhet\" i ett miljöperspektiv?",
+                   options: [
+                       "Atomer kan förstöras om de utsätts för miljögifter eller extrema temperaturer.",
+                       "Naturen skapar ständigt helt nya sorters atomer för att ersätta de som förbrukas.",
+                       "Atomer försvinner aldrig utan byter bara plats och ingår i ständiga kretslopp.",
+                       "Grundämnen som vi använder i industrin kan aldrig mer återgå till naturens form."
+                   ],
+                   correct: 2,
+                   explanation: "Enligt kemins lagar kan materia inte förstöras, bara omvandlas. Det innebär att ämnen vi släpper ut, som <strong>koldioxid</strong> eller <strong>miljögifter</strong>, finns kvar i vårt system och cirkulerar mellan luft, mark och vatten."
+               },
+               {
+                   q: "Vilket begrepp beskriver bäst att människor ska kunna leva av jordens resurser utan att förbruka dem för framtida generationer?",
+                   options: [
+                       "Cirkulär ekonomi",
+                       "Hållbar utveckling",
+                       "Livscykelanalys",
+                       "Ekosystemtjänst"
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Hållbar utveckling</strong> innebär att vi tillgodose dagens behov utan att äventyra nästa generations möjligheter att leva på jorden under samma förutsättningar. Det delas in i tre delar: <strong>ekologisk</strong>, <strong>social</strong> och <strong>ekonomisk</strong> hållbarhet."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Kolets och kvävets kretslopp",
+           icon: "🍃",
+           text: "Kolet rör sig i olika kretslopp där <strong>fotosyntes</strong> och <strong>förbränning</strong> är centrala delar. Växter binder koldioxid från luften genom fotosyntes, och kolet återgår till atmosfären när organismer andas (<strong>cellandning</strong>) eller när material brinner. Kvävgas utgör 78 % av luften, men växter kan bara ta upp det om det omvandlas till <strong>kväveföreningar</strong> av bakterier i marken eller genom blixtnedslag.",
+           questions: [
+               {
+                   q: "Hur får ett lamm i sig de kolatomer som bygger upp dess kropp?",
+                   options: [
+                       "Genom att lammet andas in koldioxid direkt från luften som sedan lagras i musklerna.",
+                       "Genom att dricka vatten där kolatomer har lösts upp i form av kolsyra från regnet.",
+                       "Genom att bakterier på lammets hud omvandlar luftens kolatomer till organiskt fett.",
+                       "Genom att äta växter som i sin tur har bundit koldioxid från luften via fotosyntesen."
+                   ],
+                   correct: 3,
+                   explanation: "Växter tar upp koldioxid från luften och bygger in kolet i socker och cellulosa. När djuret äter växten förs kolet vidare i <strong>näringskedjan</strong> och blir en del av djurets kropp."
+               },
+               {
+                   q: "På vilket sätt blir luftens kvävemolekyler (N<sub>2</sub>) tillgängliga för de flesta växter?",
+                   options: [
+                       "Bakterier i marken omvandlar kvävgasen till föreningar som tas upp via rötterna.",
+                       "Kvävemolekylerna tränger in genom porerna i bladen när det är hög luftfuktighet.",
+                       "Solljuset slår sönder kvävemolekylerna till atomer som växterna suger upp ur luften.",
+                       "Växterna tillverkar själva sitt kväve genom en kemisk reaktion i klorofyllet."
+                   ],
+                   correct: 0,
+                   explanation: "Trots att det finns mycket kväve i luften kan växter inte använda det i gasform. De är beroende av <strong>kvävefixerande bakterier</strong> eller gödsel som innehåller lösta kväveföreningar."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Övergödning och fosforbrist",
+           icon: "🚜",
+           text: "<strong>Övergödning</strong> uppstår när för mycket näringsämnen, främst <strong>kväve</strong> och <strong>fosfor</strong> (NPK), läcker ut i vattendrag från jordbruk, avlopp och trafik. Detta leder till kraftig algblomning. När algerna dör sjunker de till botten där nedbrytare (bakterier) använder upp allt syre, vilket leder till <strong>bottendöd</strong>. Fosfor är en <strong>ändlig resurs</strong> som bryts i gruvor, och det finns en risk för framtida brist om vi inte blir bättre på att återföra det till kretsloppet via t.ex. kompostering.",
+           questions: [
+               {
+                   q: "Varför kan övergödning i en sjö leda till syrebrist och döda bottnar?",
+                   options: [
+                       "Algridomen gör att solljuset inte når botten, vilket stoppar syreproduktionen i vattnet.",
+                       "Algerna andas in allt syre i vattnet under natten så att fiskarna till slut kvävs.",
+                       "När stora mängder alger dör och bryts ner av bakterier förbrukas syret vid botten.",
+                       "Näringsämnena reagerar kemiskt med syret och bildar giftiga oxider som sjunker."
+                   ],
+                   correct: 2,
+                   explanation: "Överskottet av näring skapar en onaturligt stor mängd organiskt material. När detta ska brytas ner av <strong>nedbrytare</strong> krävs stora mängder syre, vilket gör att syret tar slut för andra organismer."
+               },
+               {
+                   q: "Varför finns det en risk att det blir brist på fosfatföreningar till konstgödsel i framtiden?",
+                   options: [
+                       "För att fosforatomer bryts ner till andra grundämnen när de används på åkrarna.",
+                       "För att fosfor är en gas som stiger upp i atmosfären och försvinner ut i rymden.",
+                       "För att vi bryter fosfor ur gruvor men är dåliga på att återföra det till kretsloppet.",
+                       "För att växter förbrukar fosforatomerna helt så att de inte kan användas igen."
+                   ],
+                   correct: 2,
+                   explanation: "Fosfor är en <strong>ändlig resurs</strong> som läcker ur kretsloppet när vi inte återvinner matavfall och gödsel effektivt. När fosforn hamnar i havet är den mycket svår att få tillbaka till land."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Växthuseffekten och försurning",
+           icon: "🌍",
+           text: "Människans utsläpp av växthusgaser som <strong>koldioxid (CO<sub>2</sub>)</strong> och <strong>metan</strong> förstärker den naturliga växthuseffekten, vilket leder till global uppvärmning. En stor del av koldioxiden löser sig även i haven. Där reagerar den med vatten och bildar kolsyra, vilket sänker pH-värdet och gör haven surare. <strong>Surt regn</strong> bildas främst av svavel- och kväveoxider från förbränning av fossila bränslen.",
+           questions: [
+               {
+                   q: "Vad händer med pH-värdet i världshaven när halten koldioxid i atmosfären ökar?",
+                   options: [
+                       "pH-värdet stiger eftersom koldioxiden neutraliserar gamla miljögifter i vattnet.",
+                       "pH-värdet påverkas inte alls eftersom haven är för stora för att ändra sin kemi.",
+                       "pH-värdet sjunker eftersom koldioxiden löser sig i vattnet och bildar kolsyra.",
+                       "pH-värdet pendlar kraftigt eftersom koldioxidmolekylerna drar till sig joner."
+                   ],
+                   correct: 2,
+                   explanation: "Haven fungerar som en sänka för koldioxid. När gasen löser sig i vatten sker en kemisk reaktion som frigör <strong>vätejoner</strong>, vilket gör vattnet surare (försurning)."
+               },
+               {
+                   q: "Varför väger koldioxiden som bildas vid bilkörning mer än bensinen som förbrukas?",
+                   options: [
+                       "För att koldioxidmolekyler har en högre densitet än flytande bensinmolekyler.",
+                       "För att energin som frigörs vid förbränningen omvandlas till tunga atomer.",
+                       "För att kolatomer från bränslet binder till sig tunga syreatomer från luften.",
+                       "För att bensinen innehåller vattenånga som expanderar kraftigt i motorn."
+                   ],
+                   correct: 2,
+                   explanation: "Vid <strong>förbränning</strong> reagerar kol i bränslet med syre från luften. Eftersom varje kolatom binder till två syreatomer, som tas utifrån, blir massan hos den bildade gasen större än det ursprungliga bränslet."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Miljögifter och anrikning",
+           icon: "☠️",
+           text: "Ett <strong>miljögift</strong> är ett ämne som är skadligt, långlivat och ofta fettlösligt. Tungmetaller som <strong>bly</strong> och <strong>kvicksilver</strong> kan inte brytas ner av naturen. Gifterna <strong>anrikas</strong> i näringskedjan, vilket innebär att koncentrationen ökar ju högre upp man kommer eftersom rovdjur äter många individer som alla bär på en liten mängd gift.",
+           questions: [
+               {
+                   q: "Varför är det extra farligt att äta fisk som befinner sig högt upp i näringskedjan?",
+                   options: [
+                       "För att de största fiskarna har flest elektroner som kan reagera med våra celler.",
+                       "För att dessa fiskar producerar egna kemikalier för att försvara sig mot miljögifter.",
+                       "För att gifter koncentreras i kroppen när fisken äter många mindre djur.",
+                       "För att stora fiskar lever i vatten med lägre pH-värde där metaller löser sig lättare."
+                   ],
+                   correct: 2,
+                   explanation: "Detta kallas <strong>anrikning</strong>. Fettlösliga gifter lagras i kroppen och förs vidare, vilket gör att toppkonsumenter (som gädda eller människor) får i sig de högsta doserna."
+               },
+               {
+                   q: "Varför ska man aldrig spola ner gamla läkemedel i toaletten?",
+                   options: [
+                       "Tabletterna kan reagera med klor i reningsverket och bilda explosiva gaser.",
+                       "Läkemedlen löses upp och reningsverken kan ofta inte fånga upp alla ämnen.",
+                       "Kemikalierna i medicinen fräter sönder rören och orsakar läckage av avloppsvatten.",
+                       "Mediciner innehåller bakterier som förstör den biologiska reningen i verket."
+                   ],
+                   correct: 1,
+                   explanation: "Många läkemedel är vattenlösliga och passerar genom reningsverkens filter. De hamnar sedan i naturen där de kan påverka t.ex. fiskars <strong>hormonsystem</strong>."
+               }
+           ]
+       },
+       {
+           title: "Del 6: Materialens livscykel (LCA)",
+           icon: "🔄",
+           text: "En <strong>livscykelanalys (LCA)</strong> mäter en produkts totala miljöpåverkan från råvaruuttag till tillverkning, användning och slutligen avfall. Man jämför ofta olika material, till exempel papper (förnybart), plast (ofta fossil olja) och aluminium (extremt energikrävande men lätt att återvinna).",
+           questions: [
+               {
+                   q: "Vad är den största miljöfördelen med att använda återvunnet aluminium jämfört med nytt?",
+                   options: [
+                       "Återvunnet aluminium har en mycket högre densitet och håller därför längre.",
+                       "Man sparar cirka 95 % av energin jämfört med att framställa det ur bauxit.",
+                       "Återvunnet aluminium reagerar inte med syre och kan därför aldrig börja korrodera.",
+                       "Man slipper transportera bauxitmalm med flygplan från svenska gruvor."
+                   ],
+                   correct: 1,
+                   explanation: "Att framställa aluminium genom <strong>smältelektrolys</strong> kräver enorma mängder el. Vid återvinning behövs bara energi för att smälta ner metallen, vilket sparar ca 95 % energi."
+               },
+               {
+                   q: "Vilken är en nackdel med papper som förpackningsmaterial enligt en livscykelanalys?",
+                   options: [
+                       "Papper tillverkas av en ändlig resurs som kommer att ta slut inom kort.",
+                       "Förbränning av papper bidrar kraftigt till den ökade växthuseffekten.",
+                       "Kvaliteten försämras vid varje återvinning så att nya fibrer måste tillsättas.",
+                       "Papper kan aldrig brytas ner biologiskt om det hamnar ute i naturen."
+                   ],
+                   correct: 2,
+                   explanation: "Cellulosafibrerna i papper slits ner varje gång de återvinns. Efter 5–7 gånger är de för korta och produkten måste bli t.ex. toalettpapper eller eldas upp."
+               }
+           ]
+       },
+       {
+           title: "Del 7: Vattenrening och resurser",
+           icon: "💧",
+           text: "Vatten renas i flera steg. <strong>Mekanisk rening</strong> tar bort stora föremål. <strong>Kemisk rening</strong> använder flockningsmedel för att få små partiklar (t.ex. fosfor) att klumpa ihop sig och sjunka till botten (sedimentering). <strong>Biologisk rening</strong> använder bakterier för att bryta ner bajs och matrester.",
+           questions: [
+               {
+                   q: "Vilken process i ett reningsverk används för att få bort små, osynliga partiklar av lera eller fosfor?",
+                   options: [
+                       "Destillation",
+                       "Flockning",
+                       "Centrifugering",
+                       "Fraktionering"
+                   ],
+                   correct: 1,
+                   explanation: "Genom att tillsätta kemikalier klumpas smutsen ihop till större bitar som kallas <strong>flockar</strong>. Dessa är tyngre än vatten och sjunker till botten så att de kan tas bort."
+               },
+               {
+                   q: "Varför är rötning av matavfall en viktig del i en cirkulär ekonomi?",
+                   options: [
+                       "Det gör att vi kan framställa nya plastförpackningar direkt från gamla fruktskal.",
+                       "Det renar avfallet från tungmetaller så att det kan användas som dricksvatten.",
+                       "Bakterier bryter ner avfallet till biogas som kan användas som drivmedel.",
+                       "Rötningen gör att alla kolatomer försvinner så att de inte bidrar till växthuseffekten."
+                   ],
+                   correct: 2,
+                   explanation: "Rötning sker utan syre och producerar <strong>metangas (biogas)</strong>. Denna gas kan ersätta fossila bränslen i bilar och bussar, vilket sluter kretsloppet."
+               }
+           ]
+       },
+       {
+           title: "Del 8: Plast, miljö och hälsa",
+           icon: "🥡",
+           text: "Plaster tillverkas oftast av råolja. Plaster bryts inte ner biologiskt utan mals bara ner till mindre bitar, <strong>mikroplaster</strong>. Mjukgörare i plast, som bisfenol A, kan läcka ut och vara hormonstörande. <strong>Bioplaster</strong> görs av växter (förnybart) men har ofta samma problem med nedbrytning i naturen som vanlig plast.",
+           questions: [
+               {
+                   q: "Från vilken källa kommer de största utsläppen av mikroplaster i Sverige?",
+                   options: [
+                       "Från kosmetika och hudkrämer med små skrubbande plastkulor.",
+                       "Från nedskräpning av plastpåsar och engångsmuggar i stadsmiljön.",
+                       "Från slitage av däck från bilar och andra fordon på våra vägar.",
+                       "Från tvätt av syntetkläder som fleece i våra tvättmaskiner."
+                   ],
+                   correct: 2,
+                   explanation: "Även om tvätt och kosmetika är källor, står <strong>däckslitaget</strong> för den absolut största mängden mikroplaster som sprids. Partiklarna sköljs ut med regnvattnet till sjöar och hav."
+               },
+               {
+                   q: "Vad är den främsta miljöfördelen med en plastpåse gjord av cellulosa (bioplast) jämfört med en vanlig plastpåse?",
+                   options: [
+                       "Den kan återvinnas oändligt många gånger utan att kvaliteten försämras.",
+                       "Den tillverkas av en förnybar råvara istället för fossil olja.",
+                       "Den är helt giftfri och kan ätas av djur utan att orsaka skador.",
+                       "Den väger betydligt mindre vilket minskar bränsleförbrukningen vid transport."
+                   ],
+                   correct: 1,
+                   explanation: "Vanlig plast görs av råolja, som är en ändlig resurs. Bioplast ingår i det naturliga kretsloppet eftersom koldioxiden som frigörs vid förbränning nyss har tagits upp av träden."
+               }
+           ]
+       },
+       {
+           title: "Del 9: Blandade miljöfrågor",
+           icon: "🌡️",
+           text: "Här kommer några blandade frågor för att testa dina kunskaper om allt från ozonskiktet till gruvbrytningens miljöpåverkan.",
+           questions: [
+               {
+                   q: "Varför är det olämpligt att odla mat på marken nära en gammal gruva?",
+                   options: [
+                       "Gruvdammet gör att jorden blir för hårt packad för att rötter ska kunna växa.",
+                       "Giftiga metalljoner kan lösas i vatten, transporteras och lagras i växterna.",
+                       "Maskinerna i gruvan har tagit bort allt kväve från luften i närområdet.",
+                       "Markens pH-värde blir så högt att alla växter dör av den basiska miljön."
+                   ],
+                   correct: 1,
+                   explanation: "Regnvatten löser upp metaller från avfallshögarna. Vattnet transporterar jonerna till odlingsmarken där växterna tar upp dem, vilket gör maten giftig."
+               },
+               {
+                   q: "Vilken gas bildas vid ofullständig förbränning och är mycket giftig för människor?",
+                   options: [
+                       "Koldioxid",
+                       "Kvävgas",
+                       "Kolmonoxid",
+                       "Vattenånga"
+                   ],
+                   correct: 2,
+                   explanation: "Vid brist på syre bildas <strong>kolmonoxid (CO)</strong> istället för koldioxid. Gasen tar syrets plats i blodet och kan leda till kvävning."
+               },
+               {
+                   q: "Vilken funktion har ozonskiktet högt upp i atmosfären?",
+                   options: [
+                       "Det fungerar som ett lock som håller kvar värmen på jorden.",
+                       "Det skyddar livet på jorden mot solens ultravioletta (UV) strålning.",
+                       "Det producerar syre som vi kan använda för att andas på höga höjder.",
+                       "Det neutraliserar surt regn innan det hinner falla ner till marken."
+                   ],
+                   correct: 1,
+                   explanation: "Ozon (O<sub>3</sub>) absorberar skadligt UV-ljus. Utan ozonskiktet skulle risken för t.ex. hudcancer öka dramatiskt."
+               },
+               {
+                   q: "Vilket av följande är ett exempel på en ekosystemtjänst?",
+                   options: [
+                       "Att tillverka bilar av återvunnet stål för att spara energi.",
+                       "Att rena avloppsvatten i ett modernt reningsverk med kemikalier.",
+                       "Att insekter pollinerar växter så att vi kan få frukt och bär.",
+                       "Att bryta malm i gruvor för att kunna bygga starka hus."
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Ekosystemtjänster</strong> är händelser i naturen som bidrar till människans välbefinnande helt gratis, som pollinering, vattenreglering och fotosyntes."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = totalQuestions === 0 ? 0 : (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+           setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>

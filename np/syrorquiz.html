@@ -1,0 +1,938 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Kemiquiz: Syror, Baser & Elektrokemi (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Lila Tema med Turkos Accent */
+           --card-bg: #ffffff;
+          
+           --brand-color: #6a1b9a; /* Djup lila */
+           --brand-gradient: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%);
+          
+           --accent-color: #ab47bc; /* Ljusare lila */
+          
+           /* Komplementfärg: Turkos (Teal) för kontrast */
+           --complement-color: #009688;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121; /* Mörkare grå/svart för text */
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+          
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade (Silver/Metallic style) */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #e1bee7 100%); /* Lätt lila ton i fadern */
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee; /* Neutral border */
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color); /* Turkos färg på ikonen */
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(106, 27, 154, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(106, 27, 154, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color); /* Turkos färg */
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #f3e5f5;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svarta fetstilade ord */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Lila Gradient för att matcha temat */
+           background: linear-gradient(90deg, #ab47bc 0%, #6a1b9a 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+           border: 1px solid #ce93d8;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+       /* Fade transitions for content switching */
+       .fade-in {
+           animation: fadeIn 0.4s ease-out;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Kemiquiz: Syror & Elektrokemi</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Atomer, joner och lösningar",
+           icon: "⚛️",
+           text: "All materia består av atomer med en <strong>positiv kärna</strong> och <strong>negativa elektroner</strong>. En <strong>jon</strong> bildas när en atom antingen ger bort eller tar upp elektroner för att få ett fullt yttersta skal. I rent vatten sitter atomerna ihop i molekyler, men när salter, syror eller baser löses i vatten bildas en <strong>jonlösning</strong>. Eftersom joner är elektriskt laddade partiklar som kan röra sig fritt i vätskan, kan en sådan lösning <strong>leda elektrisk ström</strong>.",
+           questions: [
+               {
+                   q: "Vilket av följande alternativ beskriver bäst vad som utmärker en jon jämfört med en atom?",
+                   options: [
+                       "En jon är en partikel som har olika många elektroner och protoner.",
+                       "En jon är en atom som har fått extra många neutroner i sin kärna.",
+                       "En jon är en atom som har smält samman med en annan atomkärna.",
+                       "En jon är en partikel som alltid saknar elektronskal runt sin kärna."
+                   ],
+                   correct: 0,
+                   explanation: "En atom är neutral eftersom den har lika många positiva protoner som negativa elektroner. En <strong>jon</strong> bildas när detta antal ändras, vilket ger partikeln en <strong>elektrisk laddning</strong>."
+               },
+               {
+                   q: "Varför kan en lösning med salt eller syra leda elektricitet, till skillnad från destillerat vatten?",
+                   options: [
+                       "För att molekylerna i saltet rör sig mycket snabbare än vattenmolekyler.",
+                       "För att lösningen innehåller fria joner som kan transportera laddningar.",
+                       "För att protonerna i atomernas kärnor lossnar och flyter runt i vätskan.",
+                       "För att syret i vattnet reagerar med saltet och skapar nya elektroner."
+                   ],
+                   correct: 1,
+                   explanation: "Elektricitet i vätskor kräver <strong>rörliga laddade partiklar</strong>. När ämnen bildar joner i vatten kan dessa vandra genom lösningen och därmed leda ström."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Syror, baser och pH-skalan",
+           icon: "🧪",
+           text: "Det som gör en lösning sur är närvaron av <strong>vätejoner (H<sup>+</sup>)</strong>. En vätejon är i praktiken en väteatom som förlorat sin enda elektron och blivit en ensam proton. Ju fler vätejoner det finns, desto lägre är pH-värdet. Basiska lösningar innehåller istället <strong>hydroxidjoner (OH<sup>−</sup>)</strong>. pH-skalan sträcker sig från 0 till 14, där 7 är neutralt. Varje steg på skalan innebär en förändring av surheten med <strong>10 gånger</strong>.",
+           questions: [
+               {
+                   q: "Vad är det rent kemiskt som avgör om en vattenlösning blir sur?",
+                   options: [
+                       "Att lösningen innehåller en hög koncentration av oladdade väteatomer.",
+                       "Att det finns gott om elektroner som simmar fritt omkring i vätskan.",
+                       "Att det finns vätejoner som har frigjorts när en syra blandats i.",
+                       "Att antalet neutroner i atomernas kärnor har minskat dramatiskt."
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Vätejonen (H<sup>+</sup>)</strong> är det som skapar surhet. När en syra löses i vatten släpper den ifrån sig dessa joner, vilket sänker pH-värdet."
+               },
+               {
+                   q: "Hur stor är skillnaden i surhet mellan en lösning med pH 2 och en lösning med pH 4?",
+                   options: [
+                       "Lösningen med pH 2 är exakt dubbelt så sur som den med pH 4.",
+                       "Lösningen med pH 4 är tio gånger surare än lösningen med pH 2.",
+                       "Det är ingen egentlig skillnad i surhet eftersom båda är mycket sura.",
+                       "Lösningen med pH 2 är hundra gånger surare än den med pH 4."
+                   ],
+                   correct: 3,
+                   explanation: "pH-skalan är <strong>logaritmisk</strong>, vilket betyder att varje steg är en faktor 10. Två steg innebär därför 10 × 10 = <strong>100 gånger skillnad</strong> i koncentration av vätejoner."
+               },
+               {
+                   q: "Vad kännetecknar en stark syra jämfört med en svag syra när de hamnar i vatten?",
+                   options: [
+                       "I en stark syra delas alla syramolekyler upp i joner i kontakt med vatten.",
+                       "En stark syra innehåller tunga metalljoner som ökar lösningens densitet.",
+                       "En stark syra kan bara existera i fast form innan den späds ut med vatten.",
+                       "Svaga syror leder ström bättre eftersom de har kvar alla sina elektroner."
+                   ],
+                   correct: 0,
+                   explanation: "Styrkan hos en syra handlar om hur stor andel av molekylerna som lämnar ifrån sig sina vätejoner. Hos <strong>starka syror</strong> delas nästan alla molekyler upp (protolys), medan svaga syror bara släpper en del."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Neutralisation och miljö",
+           icon: "🌲",
+           text: "När en syra och en bas blandas sker en <strong>neutralisation</strong>. Vätejonerna (H<sup>+</sup>) från syran reagerar med hydroxidjonerna (OH<sup>−</sup>) från basen och bildar vanligt vatten (H<sub>2</sub>O). Samtidigt bildas ett salt. Denna kunskap används för att rädda försurade sjöar genom att tillsätta <strong>kalk</strong>, som fungerar som en bas och höjer pH-värdet.",
+           questions: [
+               {
+                   q: "Vilka ämnen bildas när man blandar saltsyra med den starka basen natriumhydroxid?",
+                   options: [
+                       "Det bildas en ny, mycket starkare syra som kallas för kungsvatten.",
+                       "Det bildas helt vanligt vatten och ett salt (natriumklorid).",
+                       "Det bildas vätgas och klorgas som bubblar upp ur bägaren.",
+                       "Det bildas en emulsion av metalliska partiklar och flytande fett."
+                   ],
+                   correct: 1,
+                   explanation: "Vid <strong>neutralisation</strong> tar syrans och basens joner ut varandra och bildar <strong>vatten</strong>. De resterande jonerna bildar ett <strong>salt</strong> som löser sig i vattnet."
+               },
+               {
+                   q: "Varför sprider man ofta ut kalk i svenska sjöar och skogsområden?",
+                   options: [
+                       "För att kalken binder syre från luften och förhindrar farlig algblomning.",
+                       "För att kalken är ett viktigt näringsämne som får fiskar att växa snabbare.",
+                       "För att neutralisera syror som har kommit ner via surt regn.",
+                       "För att göra vattnet grumligt så att bottenväxter skyddas mot solljus."
+                   ],
+                   correct: 2,
+                   explanation: "Många sjöar i Sverige har drabbats av försurning på grund av förbränning av fossila bränslen. Genom att tillsätta <strong>kalk</strong>, som är basiskt, kan man höja pH-värdet och rädda ekosystemet."
+               },
+               {
+                   q: "Vilken färg får indikatorn BTB om du droppar den i en helt neutral lösning?",
+                   options: [
+                       "Den blir starkt röd för att visa att lösningen inte längre är farlig.",
+                       "Den blir blå eftersom neutrala lösningar liknar de basiska i färgen.",
+                       "Den förblir helt genomskinlig och färglös som vanligt kranvatten.",
+                       "Den blir grön för att visa att lösningen varken är sur eller basisk."
+                   ],
+                   correct: 3,
+                   explanation: "BTB är gul i surt, blå i basiskt och <strong>grön</strong> när lösningen är neutral (pH 7). Det gör det enkelt att se när en neutralisation är färdig."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Spänningsserien och oxidation",
+           icon: "⚡",
+           text: "Metaller delas in i ädla och oädla metaller. <strong>Oädla metaller</strong> (som magnesium och zink) bildar gärna joner genom att ge bort elektroner, medan <strong>ädla metaller</strong> (som guld och silver) helst förblir i atomform. Denna rangordning kallas <strong>spänningsserien</strong>. När en atom avger elektroner kallas det <strong>oxidation</strong>, och när den tar upp elektroner kallas det reduktion.",
+           questions: [
+               {
+                   q: "Vad är den främsta skillnaden mellan en ädelmetall och en oädel metall?",
+                   options: [
+                       "Oädla metaller bildar lätt joner medan ädla metaller helst är atomer.",
+                       "Ädla metaller leder alltid ström mycket sämre än vad oädla metaller gör.",
+                       "Oädla metaller är tyngre och har därför alltid en mycket högre densitet.",
+                       "Ädla metaller finns bara som joner i naturen och aldrig i ren metallform."
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Oädla metaller</strong> är reaktiva och vill gärna bli av med sina valenselektroner för att få fulla skal. <strong>Ädla metaller</strong> är stabila och reagerar ogärna med andra ämnen."
+               },
+               {
+                   q: "Vad händer om du lägger en bit av den oädla metallen magnesium i en stark syra?",
+                   options: [
+                       "Ingenting händer eftersom magnesium är en mycket beständig ädelmetall.",
+                       "Magnesiumet löses upp, bildar joner och det bildas bubblor av vätgas.",
+                       "Syran förvandlas till en bas eftersom magnesiumatomer drar åt sig protoner.",
+                       "Metallen får en vacker grön beläggning av oxid som skyddar mot frätning."
+                   ],
+                   correct: 1,
+                   explanation: "Oädla metaller står till vänster om väte i spänningsserien. Det betyder att syrans vätejoner kan \"stjäla\" elektroner från metallen så att <strong>vätgas</strong> bildas och metallen blir joner."
+               },
+               {
+                   q: "Du placerar en järnspik i en blå lösning av kopparjoner. Vad sker vid spiken?",
+                   options: [
+                       "Ingenting sker eftersom järn och koppar är lika ädla i spänningsserien.",
+                       "Spiken börjar brinna eftersom reaktionen mellan metaller är mycket exoterm.",
+                       "Järnet oxideras till joner och det bildas en beläggning av koppar på spiken.",
+                       "Kopparjonerna flyter upp till ytan och bildar en hinna av flytande metall."
+                   ],
+                   correct: 2,
+                   explanation: "Koppar är ädlare än järn. Kopparjonerna tar därför elektroner från järnatomerna (<strong>reduktion</strong>), vilket gör att kopparjoner blir kopparatomer medan järnatomer blir järnjoner (<strong>oxidation</strong>)."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Galvaniska element och batterier",
+           icon: "🔋",
+           text: "I ett <strong>galvaniskt element</strong> (batteri) omvandlas kemisk energi till elektrisk energi. Genom att använda två olika metaller i en jonlösning (elektrolyt) tvingas elektroner att vandra genom en ledning från den oädla metallen till den ädlare. Minnesregeln <strong>PKNA</strong> betyder: Positiv pol = Katod, Negativ pol = Anod.",
+           questions: [
+               {
+                   q: "Vilken energiomvandling sker i ett fungerande batteri som är kopplat till en lampa?",
+                   options: [
+                       "Elektrisk energi i jonlösningen skapar ny materia genom en reaktion.",
+                       "Strålningsenergi från omgivningen sugs upp och blir till elektricitet.",
+                       "Rörelseenergi hos atomerna sänker temperaturen så att ström kan flöda.",
+                       "Kemisk energi omvandlas till elektrisk energi via en redox-reaktion."
+                   ],
+                   correct: 3,
+                   explanation: "Batterier utnyttjar metallers olika förmåga att avge elektroner. Denna <strong>kemiska spänning</strong> driver runt elektroner i en krets, vilket vi kallar elektrisk ström."
+               },
+               {
+                   q: "Vilken metall fungerar som negativ pol i ett enkelt batteri med zink, koppar och en elektrolyt?",
+                   options: [
+                       "Zink, eftersom den är oädlast och gärna vill ge ifrån sig sina elektroner.",
+                       "Koppar, eftersom den drar till sig joner som har en positiv laddning.",
+                       "Båda metallerna är negativa tills man kopplar in en lampa i kretsen.",
+                       "Elektrolyten, eftersom det är där som alla vätejonerna befinner sig."
+                   ],
+                   correct: 0,
+                   explanation: "Den <strong>oädla metallen</strong> oxideras och lämnar ifrån sig elektroner. Eftersom det är där elektronerna kommer ifrån blir den metallen batteriets <strong>negativa pol</strong> (anoden)."
+               },
+               {
+                   q: "Varför är det viktigt att lämna in gamla batterier till en miljöstation?",
+                   options: [
+                       "För att batterierna annars kan börja brinna spontant efter några år i soporna.",
+                       "De innehåller miljöfarliga tungmetaller som kvicksilver, kadmium eller bly.",
+                       "För att syran i batterierna kan reagera med plastpåsar och bilda klorgas.",
+                       "De kan explodera om de kommer i kontakt med vanligt hushållsavfall."
+                   ],
+                   correct: 1,
+                   explanation: "Många batterityper innehåller metaller som är <strong>mycket giftiga</strong> för både människor och miljö. Om dessa hamnar i naturen kan de anrikas i näringskedjan."
+               }
+           ]
+       },
+       {
+           title: "Del 6: Oxidation och reduktion (Redox)",
+           icon: "🔄",
+           text: "Elektroner byter plats i kemiska reaktioner. <strong>Oxidation</strong> innebär att ett ämne avger elektroner. <strong>Reduktion</strong> innebär att ett ämne tar upp elektroner. Dessa två sker alltid samtidigt och kallas tillsammans för en <strong>redox-reaktion</strong>.",
+           questions: [
+               {
+                   q: "Vad innebär det rent kemiskt att en atom oxideras?",
+                   options: [
+                       "Atomen tar upp syre och blir därmed tyngre i en kemisk förening.",
+                       "Atomen får fler neutroner och blir en tyngre isotop av sig själv.",
+                       "Atomen avger en eller flera elektroner till ett annat ämne.",
+                       "Atomen delar sina valenselektroner med en annan likadan atom."
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Oxidation</strong> definieras som att <strong>elektroner avges</strong>. Namnet kommer från att syre ofta är det ämne som tar emot elektronerna, men termen används för alla reaktioner där elektroner lämnas bort."
+               },
+               {
+                   q: "Vad kallas det när en jon, till exempel en kopparjon (Cu<sup>2+</sup>), tar upp elektroner och blir en atom igen?",
+                   options: [
+                       "Oxidation",
+                       "Neutralisation",
+                       "Elektrolys",
+                       "Reduktion"
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Reduktion</strong> innebär att ett ämne <strong>tar upp elektroner</strong>. När den positiva jonen får tillbaka sina negativa elektroner minskar (reduceras) dess laddning tills den blir en neutral atom."
+               }
+           ]
+       },
+       {
+           title: "Del 7: Elektrolys",
+           icon: "🔌",
+           text: "<strong>Elektrolys</strong> innebär att man använder elektrisk ström för att driva en kemisk reaktion som inte sker spontant. Det används för att framställa rena metaller (som aluminium) eller för att lägga ett tunt lager av en metall på ett annat föremål, vilket kallas <strong>galvanisering</strong>. Minnesregeln är <strong>PANK</strong>: Positiv Anod, Negativ Katod.",
+           questions: [
+               {
+                   q: "Vilken metall framställs i stora mängder med hjälp av elektrolys eftersom den är så hårt bunden i sin malm?",
+                   options: [
+                       "Aluminium",
+                       "Järn",
+                       "Guld",
+                       "Silver"
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Aluminiumjoner</strong> sitter mycket hårt bundna till syrejoner i malmen bauxit. Det krävs därför enorma mängder elektrisk energi för att genom elektrolys tvinga isär dem till ren metall."
+               },
+               {
+                   q: "Vad är syftet med att utföra en galvanisering genom elektrolys?",
+                   options: [
+                       "Att göra föremålet tyngre så att det får en högre densitet och sjunker.",
+                       "Att skydda en metall mot korrosion genom att lägga på ett ytskikt.",
+                       "Att förvandla en oädel metall till en ädel metall genom att byta ut dess kärna.",
+                       "Att rena föremålet från bakterier med hjälp av den elektriska strömmen."
+                   ],
+                   correct: 1,
+                   explanation: "Genom att lägga på ett lager av en annan metall, till exempel zink på en järnspik, kan man <strong>förhindra att föremålet börjar rosta</strong>."
+               }
+           ]
+       },
+       {
+           title: "Del 8: Korrosion och skydd",
+           icon: "🛡️",
+           text: "<strong>Korrosion</strong> är när en metall löses upp genom en reaktion med omgivningen, oftast syre och vatten. Järn rostar och bildar porös järnoxid som gör att metallen faller sönder. Man kan skydda metaller genom att måla dem, galvanisera dem eller använda en <strong>offeranod</strong> av en oädlare metall.",
+           questions: [
+               {
+                   q: "Hur fungerar en offeranod av magnesium på en båt med stålskrov?",
+                   options: [
+                       "Magnesiumet suger upp allt salt i vattnet så att skrovet förblir torrt.",
+                       "Magnesiumet reagerar med vattnet och bildar en seg hinna av plast runt båten.",
+                       "Magnesiumet är oädlare än järn och korroderar därför istället för skrovet.",
+                       "Magnesiumet fungerar som en magnet som stöter bort alla negativa syrejoner."
+                   ],
+                   correct: 2,
+                   explanation: "Eftersom magnesium är <strong>oädlare</strong> än järn kommer det att avge sina elektroner först. Det innebär att magnesiumet löses upp (offras) medan järnet i skrovet förblir intakt."
+               },
+               {
+                   q: "Varför klarar sig aluminiumburkar mycket bättre mot korrosion i naturen än föremål av järn?",
+                   options: [
+                       "Aluminium innehåller inga atomer som kan reagera med syret i luften.",
+                       "Aluminium är en ädelmetall som står längst till höger i spänningsserien.",
+                       "Aluminiumburkar är täckta av ett tjockt lager vax som skyddar mot fukt.",
+                       "Det bildas en tät hinna av aluminiumoxid som skyddar metallen under."
+                   ],
+                   correct: 3,
+                   explanation: "När aluminium reagerar med syre bildas omedelbart ett tunt och hårt lager av <strong>aluminiumoxid</strong>. Till skillnad från järnrost, som är porös, är detta lager så tätt att syre inte kan tränga igenom och fortsätta förstöra metallen."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = totalQuestions === 0 ? 0 : (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+           setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
