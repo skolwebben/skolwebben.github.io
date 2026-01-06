@@ -1,0 +1,931 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Kemiquiz: Systematiska Undersökningar (Åk 9)</title>
+   <!-- Importerar moderna fonter från Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  
+   <style>
+       :root {
+           /* Färgpalett - Lila Tema (Originaltemat) */
+           --card-bg: #ffffff;
+          
+           --brand-color: #6a1b9a; /* Djup lila */
+           --brand-gradient: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%);
+          
+           --accent-color: #ab47bc; /* Ljusare lila */
+          
+           /* Komplementfärg: Turkos (Teal) för kontrast */
+           --complement-color: #009688;
+
+
+           --success-color: #2e7d32;
+           --success-bg: #e8f5e9;
+          
+           --error-color: #c62828;
+           --error-bg: #ffebee;
+          
+           --text-main: #212121;
+           --text-muted: #616161;
+          
+           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+          
+           --radius-main: 16px;
+       }
+
+
+       body {
+           font-family: 'Open Sans', sans-serif;
+           /* Gråaktig fade med lila ton */
+           background-image: linear-gradient(135deg, #f5f7fa 0%, #e1bee7 100%);
+           color: var(--text-main);
+           margin: 0;
+           padding: 15px;
+           display: flex;
+           justify-content: center;
+           align-items: flex-start;
+           min-height: 100vh;
+       }
+
+
+       .container {
+           background-color: var(--card-bg);
+           width: 100%;
+           max-width: 680px;
+           border-radius: var(--radius-main);
+           box-shadow: var(--shadow-card);
+           overflow: hidden;
+           display: flex;
+           flex-direction: column;
+           position: relative;
+           margin-top: 3vh;
+           margin-bottom: 3vh;
+       }
+
+
+       header {
+           background: var(--brand-gradient);
+           color: white;
+           padding: 20px;
+           text-align: center;
+           position: relative;
+           overflow: hidden;
+       }
+
+
+       h1 {
+           font-family: 'Poppins', sans-serif;
+           margin: 0;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: -0.3px;
+       }
+
+
+       .content-area {
+           padding: 25px 30px;
+           flex-grow: 1;
+       }
+
+
+       h2 {
+           font-family: 'Poppins', sans-serif;
+           color: var(--text-main);
+           margin-top: 0;
+           font-size: 1.3rem;
+           margin-bottom: 0.8rem;
+           line-height: 1.3;
+       }
+
+
+       /* Fact Section Styles */
+       .fact-box {
+           background: #ffffff;
+           border: 1px solid #eeeeee;
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+           display: flex;
+           gap: 15px;
+           align-items: flex-start;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+       }
+      
+       .fact-icon {
+           font-size: 2rem;
+           display: block;
+           margin-top: -5px;
+           color: var(--complement-color);
+       }
+      
+       .fact-content {
+           flex: 1;
+       }
+
+
+       .btn {
+           background: var(--brand-gradient);
+           color: white;
+           border: none;
+           padding: 12px 24px;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1rem;
+           font-weight: 600;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: all 0.2s ease;
+           display: block;
+           width: 100%;
+           margin-top: 20px;
+           box-shadow: 0 4px 10px rgba(106, 27, 154, 0.2);
+       }
+
+
+       .btn:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 6px 14px rgba(106, 27, 154, 0.3);
+           opacity: 0.95;
+       }
+
+
+       /* Question Styles */
+       .question-meta {
+           display: inline-block;
+           color: var(--complement-color);
+           font-size: 0.85rem;
+           margin-bottom: 10px;
+           font-weight: 700;
+           text-transform: uppercase;
+           letter-spacing: 0.5px;
+       }
+
+
+       .options-grid {
+           display: grid;
+           gap: 12px;
+           margin-top: 20px;
+       }
+
+
+       .option-btn {
+           background-color: #fff;
+           border: 2px solid #f5f5f5;
+           padding: 15px 20px;
+           text-align: left;
+           border-radius: 10px;
+           cursor: pointer;
+           font-family: 'Open Sans', sans-serif;
+           font-size: 0.95rem;
+           font-weight: 500;
+           transition: all 0.15s ease;
+           color: var(--text-main);
+           position: relative;
+       }
+
+
+       .option-btn:hover:not(:disabled) {
+           border-color: var(--accent-color);
+           background-color: #f3e5f5;
+           transform: translateX(3px);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+       }
+      
+       /* Status states for options */
+       .option-btn.correct {
+           background-color: var(--success-bg);
+           border-color: var(--success-color);
+           color: #1b5e20;
+           font-weight: 600;
+       }
+      
+       .option-btn.correct::after {
+           content: "✓";
+           position: absolute;
+           right: 15px;
+           font-weight: bold;
+       }
+
+
+       .option-btn.incorrect {
+           background-color: var(--error-bg);
+           border-color: var(--error-color);
+           color: #b71c1c;
+           opacity: 0.8;
+       }
+
+
+       .option-btn:disabled {
+           cursor: default;
+       }
+
+
+       /* Feedback Box */
+       .feedback-box {
+           margin-top: 20px;
+           padding: 20px 25px;
+           border-radius: 12px;
+           background-color: #f9f9f9;
+           color: var(--text-main);
+           border: 1px solid #e0e0e0;
+           display: none;
+           animation: fadeIn 0.3s ease;
+       }
+      
+       .feedback-box h3 {
+           margin-top: 0;
+           font-family: 'Poppins', sans-serif;
+           font-size: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           margin-bottom: 8px;
+       }
+
+
+       .feedback-box.success h3 {
+           color: var(--success-color);
+       }
+      
+       .feedback-box.error h3 {
+           color: var(--error-color);
+       }
+
+
+       .feedback-box strong {
+           color: #000; /* Svarta fetstilade ord */
+       }
+
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(5px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+
+       /* Progress Bar Styles */
+       .progress-bar-container {
+           height: 6px;
+           background-color: #eeeeee;
+           width: 100%;
+           position: relative;
+           z-index: 10;
+       }
+
+
+       .progress-bar {
+           height: 100%;
+           /* Lila Gradient för att matcha temat */
+           background: linear-gradient(90deg, #ab47bc 0%, #6a1b9a 100%);
+           width: 0%;
+           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+           border-radius: 0 4px 4px 0;
+           box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
+       }
+
+
+       /* Summary Styles */
+       .summary-stats {
+           text-align: center;
+           background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+           border: 1px solid #ce93d8;
+           padding: 30px 20px;
+           border-radius: 12px;
+           margin-bottom: 20px;
+       }
+
+
+       .summary-score {
+           font-size: 3.5rem;
+           font-family: 'Poppins', sans-serif;
+           font-weight: 700;
+           display: block;
+           margin: 5px 0;
+           line-height: 1;
+           background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+       }
+      
+       .summary-list {
+           max-height: 400px;
+           overflow-y: auto;
+           padding-right: 10px;
+       }
+      
+       .summary-item {
+           background: white;
+           border-bottom: 1px solid #eeeeee;
+           padding: 12px 0;
+       }
+      
+       .summary-item:last-child {
+           border-bottom: none;
+       }
+
+
+       .summary-question {
+           font-weight: 600;
+           margin-bottom: 4px;
+           display: block;
+           font-size: 0.95rem;
+       }
+      
+       .summary-answer-row {
+           font-size: 0.9rem;
+       }
+
+
+       .summary-correct-text { color: var(--success-color); font-weight: 600; }
+       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+
+
+       /* Helpers */
+       strong {
+           color: #000; /* Svarta fetstilade ord */
+           font-weight: 700;
+       }
+
+
+       /* Fade transitions for content switching */
+       .fade-in {
+           animation: fadeIn 0.4s ease-out;
+       }
+
+
+   </style>
+</head>
+<body>
+
+
+<div class="container">
+   <header>
+       <h1 id="header-title">Kemiquiz: Systematiska Undersökningar</h1>
+   </header>
+   <div class="progress-bar-container">
+       <div class="progress-bar" id="progress-bar"></div>
+   </div>
+
+
+   <div class="content-area" id="app">
+       <!-- Content will be injected here by JavaScript -->
+   </div>
+</div>
+
+
+<script>
+   // --- DATA ---
+   const quizData = [
+       {
+           title: "Del 1: Frågeställningar och hypoteser",
+           icon: "❓",
+           text: "En bra kemisk fråga ska vara <strong>undersökningsbar</strong>, vilket innebär att den kan besvaras genom att mäta eller observera förändringar. Frågor som börjar med \"varför\" kräver ofta mer teori, medan undersökningar fokuserar på \"hur mycket\" eller \"hur snabbt\" något sker. En <strong>hypotes</strong> är ett antagande om resultatet som motiveras med kemiska kunskaper, till exempel hur partiklar rör sig vid olika temperaturer.",
+           questions: [
+               {
+                   q: "Vilken av följande frågor lämpar sig bäst för en systematisk undersökning i kemisalen?",
+                   options: [
+                       "Varför tycker vissa att det luktar illa när man laborerar med svavel?",
+                       "Är det viktigt att kemister har på sig skyddsutrustning vid experiment?",
+                       "Hur påverkas lösligheten av socker i vatten om vattnets temperatur ökar?",
+                       "Varför finns det olika typer av indikatorer för att mäta pH-värden i vatten?"
+                   ],
+                   correct: 2,
+                   explanation: "Frågan är <strong>mätbar</strong> och <strong>undersökningsbar</strong> eftersom man kan variera temperaturen och mäta exakt hur mycket socker som löser sig."
+               },
+               {
+                   q: "Vad krävs för att en hypotes ska anses vara naturvetenskapligt underbyggd?",
+                   options: [
+                       "Att den gissar på ett resultat som är så oväntat och spännande som möjligt.",
+                       "Att antagandet motiveras med hjälp av kemiska begrepp, modeller eller teorier.",
+                       "Att man utför undersökningen minst tio gånger innan man skriver ner den.",
+                       "Att den innehåller en utförlig lista på allt material som krävs för försöket."
+                   ],
+                   correct: 1,
+                   explanation: "En <strong>hypotes</strong> ska inte bara vara en gissning, utan bygga på vetenskapliga förklaringsmodeller, till exempel <strong>partikelmodellen</strong>."
+               }
+           ]
+       },
+       {
+           title: "Del 2: Variabler och variabelkontroll",
+           icon: "⚖️",
+           text: "I en systematisk undersökning är det avgörande att bara förändra <strong>en variabel</strong> i taget. De faktorer man inte undersöker måste hållas <strong>konstanta</strong>. Vanliga variabler att mäta eller förändra är mängd, temperatur, tid eller tryck.",
+           questions: [
+               {
+                   q: "Du ska undersöka hur snabbt ett magnesiumband löses upp i olika koncentrationer av saltsyra. Vad måste du hålla konstant?",
+                   options: [
+                       "Saltsyrekoncentrationen i de olika bägarna.",
+                       "Hur mycket vätgas som bildas under försöket.",
+                       "Tiden det tar för metallen att helt försvinna.",
+                       "Magnesiumbandets storlek och syrans temperatur."
+                   ],
+                   correct: 3,
+                   explanation: "För att veta att det är just koncentrationen som påverkar resultatet måste allt annat, som <strong>temperatur</strong> och <strong>mängden metall</strong>, vara exakt lika."
+               },
+               {
+                   q: "Vad kallas den faktor som du medvetet väljer att förändra i din undersökning?",
+                   options: [
+                       "Variabel",
+                       "Konstant",
+                       "Felkälla",
+                       "Reagens"
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Variabeln</strong> är den del av undersökningen som förändras för att se om den ger en mätbar effekt på resultatet."
+               },
+               {
+                   q: "Du vill undersöka om mängden salt påverkar hur snabbt is smälter. Vad är den beroende variabeln (det du mäter)?",
+                   options: [
+                       "Mängden is du startar med.",
+                       "Hur många teskedar salt du tillsätter.",
+                       "Vilken typ av salt som används vid testet.",
+                       "Mängden vatten som smälter under en viss tid."
+                   ],
+                   correct: 3,
+                   explanation: "Den <strong>oberoende variabeln</strong> är saltmängden (det du ändrar), och den <strong>beroende variabeln</strong> är smälthastigheten (det du mäter)."
+               }
+           ]
+       },
+       {
+           title: "Del 3: Utförande och säkerhet",
+           icon: "🥽",
+           text: "Instruktionen i en planering ska vara så utförlig att någon annan kan följa den steg för steg. Innan man börjar laborera i en NO-sal måste man känna till <strong>säkerhetsregler</strong>, som att aldrig smaka på kemikalier och att använda skyddsutrustning.",
+           questions: [
+               {
+                   q: "Vilken beskrivning av en undersökningsmetod håller högst kvalitet?",
+                   options: [
+                       "En steg-för-steg-instruktion så att en annan person kan göra om försöket.",
+                       "En kort text som fokuserar på att förklara varför ämnena reagerar med varandra.",
+                       "En lista där man skriver upp namnen på alla kemikalier som man tänker använda.",
+                       "En personlig dagbok om vad man kände och tyckte var roligt under laborationens gång."
+                   ],
+                   correct: 0,
+                   explanation: "För att en undersökning ska vara vetenskaplig måste den vara <strong>reproducerbar</strong>, vilket kräver en tydlig metodbeskrivning."
+               },
+               {
+                   q: "Vilken säkerhetsregel är viktigast när du ska späda en stark syra med vatten?",
+                   options: [
+                       "Att man alltid använder en glastermometer för att se till att vattnet inte kokar.",
+                       "Att man följer SIV-regeln: Syra I Vatten, för att undvika att det stänker syra.",
+                       "Att man smakar på lösningen för att kontrollera om den har blivit tillräckligt svag.",
+                       "Att man håller bägaren så nära ansiktet som möjligt för att se när de blandas."
+                   ],
+                   correct: 1,
+                   explanation: "Syra ska hällas i vatten (<strong>SIV</strong>) eftersom reaktionen kan bli mycket varm; om man gör tvärtom kan det börja koka och skvätta frätande syra."
+               },
+               {
+                   q: "Vad är det viktigaste att göra efter att en laboration är avslutad i kemisalen?",
+                   options: [
+                       "Låta alla bägare stå kvar på bordet så att läraren kan se att man är klar.",
+                       "Hälla tillbaka alla överblivna kemikalier i deras originalflaskor för att spara pengar.",
+                       "Diska utrustningen ordentligt, torka bänken och tvätta händerna noga.",
+                       "Lämna salen så snabbt som möjligt."
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Städning</strong> och <strong>hygien</strong> är en del av säkerheten för att nästa grupp inte ska drabbas av dolda kemikalierester."
+               }
+           ]
+       },
+       {
+           title: "Del 4: Precision och utrustning",
+           icon: "📏",
+           text: "Att använda rätt utrustning ökar <strong>precisionen</strong> och minskar risken för <strong>mätfel</strong>. I kemi är det ofta viktigt att mäta exakta volymer eller pH-värden för att kunna dra korrekta slutsatser.",
+           questions: [
+               {
+                   q: "Varför bör man använda ett graderat mätglas istället för en vanlig mugg när man mäter vätska?",
+                   options: [
+                       "Det ger en mer exakt mätning av volymen, vilket gör resultatet mer tillförlitligt.",
+                       "Ett mätglas är gjort av plast som gör att syror inte kan fräta hål i botten.",
+                       "Mätglaset väger mindre än en mugg och påverkar därför inte vågens slutresultat.",
+                       "Man kan inte se färgen på en pH-indikator lika tydligt om man använder en mugg."
+                   ],
+                   correct: 0,
+                   explanation: "<strong>Precision</strong> i mätutrustningen minskar osäkerheten och risken för <strong>felkällor</strong> i mätdata."
+               },
+               {
+                   q: "Du ska jämföra pH-värdet i tre olika sjöar. Vilket mätverktyg ger det mest exakta värdet?",
+                   options: [
+                       "BTB-lösning som ändrar färg till gult, grönt eller blått.",
+                       "En digital pH-meter som visar värdet med minst en decimal.",
+                       "Ett universalindikatorpapper som jämförs med en färgskala på förpackningen.",
+                       "Att titta på vattnets klarhet och se om det finns mycket fisk i sjön."
+                   ],
+                   correct: 1,
+                   explanation: "Elektriska apparater (<strong>pH-metrar</strong>) ger exakta siffervärden, medan indikatorer ofta kräver att man tolkar en färg."
+               },
+               {
+                   q: "Vid ett experiment ska du väga upp exakt 5,0 gram salt. Vad bör du göra för att få ett så bra värde som möjligt?",
+                   options: [
+                       "Använda en vanlig matsked eftersom en sådan alltid rymmer exakt fem gram.",
+                       "Mäta upp saltet i en bägare med vatten och sedan räkna ut hur mycket det väger.",
+                       "Nollställa vågen med en tom behållare på innan du häller på saltet.",
+                       "Gissa mängden först och sedan kontrollera om vågen visar ungefär samma siffra."
+                   ],
+                   correct: 2,
+                   explanation: "Genom att <strong>nollställa vågen</strong> (tarera) tar man bort vikten av behållaren så att endast saltets massa mäts."
+               }
+           ]
+       },
+       {
+           title: "Del 5: Dokumentation och resultat",
+           icon: "📊",
+           text: "Resultat ska dokumenteras systematiskt, ofta i <strong>tabeller</strong> och <strong>diagram</strong>. Detta gör det lättare att upptäcka mönster och samband mellan variablerna.",
+           questions: [
+               {
+                   q: "Vilket är det bästa sättet att dokumentera mätvärden under ett pågående kemiexperiment?",
+                   options: [
+                       "Att vänta tills hela experimentet är slut och sedan skriva ner vad man minns.",
+                       "Att rita en teckning av hur lösningen ser ut precis när den börjar bubbla.",
+                       "Att skriva ner alla mätvärden på ett löst papper som man kan kasta efteråt.",
+                       "Att anteckna exakta värden i en tabell vid bestämda tidsintervall."
+                   ],
+                   correct: 3,
+                   explanation: "En <strong>tabell</strong> med jämna intervall ger en strukturerad bild av hur en process förändras över tid."
+               },
+               {
+                   q: "Vad är huvudsyftet med att skapa ett diagram efter en undersökning?",
+                   options: [
+                       "För att det ser mer proffsigt ut i rapporten och ger läraren en bättre bild.",
+                       "För att tydligare kunna se mönster och samband mellan de olika mätvärdena.",
+                       "För att man ska slippa förklara resultatet med ord i slutet av sin rapport.",
+                       "För att visa att man har använt alla de kemikalier som fanns med i planeringen."
+                   ],
+                   correct: 1,
+                   explanation: "Ett <strong>diagram</strong> gör det enklare att visualisera hur en variabel (t.ex. temperatur) påverkar en annan (t.ex. reaktionshastighet)."
+               }
+           ]
+       },
+       {
+           title: "Del 6: Utvärdering och felkällor",
+           icon: "🔍",
+           text: "Värdering av resultat handlar om att bedöma hur rimliga de är i relation till <strong>felkällor</strong>. En felkälla kan vara brister i utrustningen eller att man misslyckats med att hålla variabler konstanta. För att öka tillförlitligheten bör undersökningen <strong>upprepas</strong>.",
+           questions: [
+               {
+                   q: "Varför är det viktigt att genomföra samma undersökning flera gånger (upprepa försöket)?",
+                   options: [
+                       "För att visa att man har tillräckligt med tålamod för att bli en bra naturvetare.",
+                       "För att man ska få använda upp alla kemikalier som man har hämtat till sin bänk.",
+                       "För att säkerställa att resultatet inte bara var en tillfällighet eller en engångsföreteelse.",
+                       "För att man ska kunna skriva en mycket längre rapport med fler tabeller och diagram."
+                   ],
+                   correct: 2,
+                   explanation: "<strong>Repetition</strong> minskar risken för att slumpmässiga fel eller enstaka misstag ska styra slutsatserna."
+               },
+               {
+                   q: "Vilken av följande är en vanlig metodfelkälla i en kemisk undersökning?",
+                   options: [
+                       "Att man råkade använda samma glasstav för att röra om i olika bägare.",
+                       "Att man råkade skriva fel datum på sin rapport innan man lämnade in den.",
+                       "Att ens hypotes visade sig vara helt felaktig efter att försöket var klart.",
+                       "Att man använde en digital våg istället för att bara uppskatta vikten själv."
+                   ],
+                   correct: 0,
+                   explanation: "Att använda samma stav kan förorena lösningarna (<strong>korskontaminering</strong>), vilket är ett fel i metoden som gör resultatet osäkert."
+               },
+               {
+                   q: "Vad bör du göra om resultatet i din undersökning inte stämmer med din hypotes?",
+                   options: [
+                       "Radera din hypotes och skriv en ny som passar bättre med det resultat du faktiskt fick.",
+                       "Slänga bort dina mätvärden och göra om försöket tills du får det svar du förväntade dig.",
+                       "Diskutera varför det blev som det blev och leta efter möjliga felkällor i din metod.",
+                       "Fråga en annan grupp vad de fick för resultat och kopiera deras värden till din rapport."
+                   ],
+                   correct: 2,
+                   explanation: "Inom vetenskapen är <strong>oväntade resultat</strong> värdefulla; man analyserar varför det hände och om metoden var bristfällig."
+               }
+           ]
+       },
+       {
+           title: "Del 7: Slutsatser och resonemang",
+           icon: "🧠",
+           text: "Att dra en <strong>slutsats</strong> innebär att koppla mätvärdena till kemiska förklaringsmodeller. Ett utvecklat <strong>resonemang</strong> visar samband i flera led, till exempel hur en förändring i en faktor leder till en specifik kemisk effekt.",
+           questions: [
+               {
+                   q: "Vad är en korrekt kemisk slutsats om ett magnesiumband försvinner snabbare i en stark syra än i en svag?",
+                   options: [
+                       "Ju högre koncentration av vätejoner, desto fler krockar med metallen sker per sekund.",
+                       "Den starka syran väger mycket mer och trycker därmed sönder metallens atomer snabbare.",
+                       "Metallen magnesium tycker inte om sura miljöer och försöker därför avdunsta till gas.",
+                       "Bubblorna som bildas är syrgas som lyfter upp metallen till ytan så att den försvinner."
+                   ],
+                   correct: 0,
+                   explanation: "Slutsatsen kopplar resultatet (snabbare reaktion) till kemisk teori (<strong>koncentration</strong> och <strong>krockar mellan partiklar</strong>)."
+               },
+               {
+                   q: "Vilket av dessa exempel visar ett resonemang i flera led om försurning?",
+                   options: [
+                       "Surt regn är dåligt för naturen eftersom det gör att växter och djur dör i skogen.",
+                       "Koldioxid i atmosfären gör att det blir varmare på jorden genom växthuseffekten.",
+                       "Koldioxid löser sig i havet och bildar kolsyra, vilket sänker pH och skadar koraller.",
+                       "Vi bör kalka sjöar för att höja pH-värdet så att fiskarna kan simma bättre där igen."
+                   ],
+                   correct: 2,
+                   explanation: "Detta visar en kedja: koldioxid → kolsyra → lägre pH → konsekvens för organismer."
+               },
+               {
+                   q: "Vilket av följande är ett exempel på rimlighetsbedömning av ett resultat?",
+                   options: [
+                       "Man kollar om diagrammet har fina färger som matchar resten av laborationsrapporten.",
+                       "Man jämför sitt värde med känd fakta för att se om resultatet verkar logiskt.",
+                       "Man frågar läraren om man kommer att få ett bra betyg på sin undersökning.",
+                       "Man räknar hur många ord man har skrivit i sin sammanfattning av försöket."
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Rimlighetsbedömning</strong> handlar om att kritiskt granska om ens data stämmer överens med kemiska lagar och teorier."
+               },
+               {
+                   q: "Du har mätt pH i tre vätskor: 2, 7 och 11. Vilken slutsats om vätskorna är korrekt?",
+                   options: [
+                       "Vätskan med pH 2 har flest hydroxidjoner och är därför den starkaste basen.",
+                       "Vätskan med pH 7 är surare än den med pH 11 eftersom siffran sju är lägre.",
+                       "Vätskorna är alla neutrala eftersom de befinner sig på den normala pH-skalan.",
+                       "Vätskan med pH 2 är sur, pH 7 är neutral och pH 11 är en basisk lösning."
+                   ],
+                   correct: 3,
+                   explanation: "pH-skalan definierar <strong>surt</strong> under 7, <strong>neutralt</strong> vid 7 och <strong>basiskt</strong> över 7."
+               }
+           ]
+       }
+   ];
+
+
+   // --- STATE MANAGEMENT ---
+   let currentSectionIndex = 0;
+   let currentQuestionIndex = 0; // Relative to current section
+   let score = 0;
+   let userAnswers = [];
+   let state = 'intro'; // 'intro', 'question', 'summary'
+
+
+   // --- DOM ELEMENTS ---
+   const app = document.getElementById('app');
+   const headerTitle = document.getElementById('header-title');
+   const progressBar = document.getElementById('progress-bar');
+
+
+   // --- MAIN RENDER FUNCTION ---
+   function render() {
+       if (state === 'summary') {
+           renderSummary();
+           return;
+       }
+
+
+       const section = quizData[currentSectionIndex];
+
+
+       // Update Header with smooth fade
+       headerTitle.style.opacity = '0';
+       setTimeout(() => {
+           headerTitle.innerText = section.title;
+           headerTitle.style.transition = 'opacity 0.2s';
+           headerTitle.style.opacity = '1';
+       }, 150);
+
+
+       // Calculate total progress
+       let totalQuestions = 0;
+       let answeredQuestions = 0;
+      
+       quizData.forEach((sec, idx) => {
+           totalQuestions += sec.questions.length;
+           if (idx < currentSectionIndex) {
+               answeredQuestions += sec.questions.length;
+           } else if (idx === currentSectionIndex && state === 'question') {
+               answeredQuestions += currentQuestionIndex;
+           }
+       });
+       const pct = totalQuestions === 0 ? 0 : (answeredQuestions / totalQuestions) * 100;
+       progressBar.style.width = `${pct}%`;
+
+
+       if (state === 'intro') {
+           renderSectionIntro(section);
+       } else if (state === 'question') {
+           renderQuestion(section.questions[currentQuestionIndex]);
+       }
+   }
+
+
+   // --- RENDER SECTION TEXT ---
+   function renderSectionIntro(section) {
+       // Simple animation class reset
+       app.classList.remove('fade-in');
+       void app.offsetWidth; // trigger reflow
+       app.classList.add('fade-in');
+
+
+       app.innerHTML = `
+           <div class="fact-box">
+               <span class="fact-icon">${section.icon}</span>
+               <div class="fact-content">
+                   <h2>Fakta</h2>
+                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+               </div>
+           </div>
+           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+       `;
+   }
+
+
+   // --- RENDER QUESTION ---
+   function renderQuestion(q) {
+       const totalInCurrent = quizData[currentSectionIndex].questions.length;
+      
+       // Render with reset styles for feedback box
+       app.innerHTML = `
+           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+           <div class="options-grid">
+               ${q.options.map((opt, idx) => `
+                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+               `).join('')}
+           </div>
+           <div id="feedback" class="feedback-box">
+               <h3 id="feedback-title"></h3>
+               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+           </div>
+       `;
+   }
+
+
+   // --- RENDER SUMMARY ---
+   function renderSummary() {
+       headerTitle.innerText = "Sammanfattning";
+       progressBar.style.width = '100%';
+      
+       let totalQ = 0;
+       quizData.forEach(s => totalQ += s.questions.length);
+      
+       // Calculate score
+       let correctCount = userAnswers.filter(a => a.isCorrect).length;
+       let pct = Math.round((correctCount / totalQ) * 100);
+      
+       let gradeTitle = "";
+      
+       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+
+
+       let html = `
+           <div class="summary-stats">
+               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+               <span class="summary-score">${correctCount}/${totalQ}</span>
+               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+           </div>
+           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+           <div class="summary-list">
+       `;
+
+
+       userAnswers.forEach((ans, idx) => {
+           const isCorrect = ans.isCorrect;
+          
+           html += `
+               <div class="summary-item">
+                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
+                   <div class="summary-answer-row">
+                       ${isCorrect
+                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+                       }
+                   </div>
+               </div>
+           `;
+       });
+
+
+       html += `</div>`;
+       app.innerHTML = html;
+   }
+
+
+   // --- LOGIC FUNCTIONS ---
+   window.startQuestions = function() {
+       state = 'question';
+       currentQuestionIndex = 0;
+       render();
+   };
+
+
+   window.handleAnswer = function(selectedIndex) {
+       // Disable all buttons
+       const buttons = document.querySelectorAll('.option-btn');
+       buttons.forEach(b => b.disabled = true);
+
+
+       const section = quizData[currentSectionIndex];
+       const currentQ = section.questions[currentQuestionIndex];
+       const isCorrect = selectedIndex === currentQ.correct;
+
+
+       // Visual feedback on buttons
+       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+
+
+       if (isCorrect) {
+           selectedBtn.classList.add('correct');
+       } else {
+           selectedBtn.classList.add('incorrect');
+           correctBtn.classList.add('correct'); // Show which one was right
+       }
+
+
+       // Show feedback box
+       const feedbackBox = document.getElementById('feedback');
+       const feedbackTitle = document.getElementById('feedback-title');
+       const feedbackText = document.getElementById('feedback-text');
+       const nextBtn = document.getElementById('next-btn');
+
+
+       feedbackBox.style.display = 'block';
+      
+       // Add class for success/error styling
+       if (isCorrect) {
+           feedbackBox.className = "feedback-box success";
+           feedbackTitle.innerHTML = "Rätt svar!";
+       } else {
+           feedbackBox.className = "feedback-box error";
+           feedbackTitle.innerHTML = "Inte riktigt...";
+       }
+      
+       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+
+
+       // Check if last question of entire quiz
+       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+      
+       if(isLastQuestionOverall) {
+           nextBtn.innerText = "Se resultat 🏁";
+       } else if (currentQuestionIndex === section.questions.length - 1) {
+           nextBtn.innerText = "Nästa del ➔";
+       }
+
+
+       // Scroll to feedback if needed on mobile, but gently
+       const rect = feedbackBox.getBoundingClientRect();
+       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+       if (!isVisible) {
+           setTimeout(() => {
+               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+           }, 100);
+       }
+
+
+       // Save data
+       userAnswers.push({
+           question: currentQ.q,
+           userAnswer: currentQ.options[selectedIndex],
+           correctAnswer: currentQ.options[currentQ.correct],
+           isCorrect: isCorrect
+       });
+   };
+
+
+   window.nextStep = function() {
+       const section = quizData[currentSectionIndex];
+      
+       // Reset feedback styles for next render
+       const feedbackBox = document.getElementById('feedback');
+       if(feedbackBox) {
+           feedbackBox.style.display = 'none';
+       }
+
+
+       // Check if there are more questions in this section
+       if (currentQuestionIndex < section.questions.length - 1) {
+           currentQuestionIndex++;
+           render();
+       } else {
+           // End of section, move to next section
+           if (currentSectionIndex < quizData.length - 1) {
+               currentSectionIndex++;
+               state = 'intro';
+               render();
+           } else {
+               // End of quiz
+               state = 'summary';
+               render();
+           }
+       }
+   };
+
+
+   // --- INIT ---
+   render();
+
+
+</script>
+
+
+</body>
+</html>
