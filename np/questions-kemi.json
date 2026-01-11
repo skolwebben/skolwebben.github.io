@@ -1,0 +1,2006 @@
+﻿[
+ {
+   "category": "Atomens uppbyggnad",
+   "q": "Vilken partikel i atomen är det som avgör vilket specifikt grundämne det rör sig om?",
+   "options": [
+     "Neutronen",
+     "Elektronen",
+     "Protonen",
+     "Valenselektronen"
+   ],
+   "correct": 2,
+   "explanation": "Det är antalet <strong>protoner</strong> i kärnan som bestämmer vilket grundämne atomen är. Detta antal kallas för atomnummer och avgör ämnets plats i det periodiska systemet. Om antalet protoner ändras får man ett helt annat grundämne."
+ },
+ {
+   "category": "Atomens uppbyggnad",
+   "q": "Vad kännetecknar atomens kärna när det gäller elektrisk laddning?",
+   "options": [
+     "Den är negativt laddad eftersom den drar till sig elektroner.",
+     "Den är positivt laddad på grund av innehållet av protoner.",
+     "Den är helt neutral eftersom neutronerna tar ut protonernas laddning.",
+     "Laddningen varierar beroende på vilket skal elektronerna befinner sig i."
+   ],
+   "correct": 1,
+   "explanation": "Kärnan innehåller <strong>positiva protoner</strong> och neutrala neutroner. Eftersom neutronerna saknar laddning och protonerna är positiva, blir kärnans totala laddning alltid positiv. Det är denna laddning som håller kvar elektronerna runt kärnan."
+ },
+ {
+   "category": "Atomens uppbyggnad",
+   "q": "Vad består en atom till allra största delen av?",
+   "options": [
+     "Protoner och neutroner som fyller ut hela utrymmet.",
+     "Tätpackade elektroner som cirkulerar i banor.",
+     "En blandning av olika energirika gaser.",
+     "Ingenting (tomrum) mellan kärnan och skalet."
+   ],
+   "correct": 3,
+   "explanation": "En atom är extremt liten och består till största delen av <strong>ingenting</strong> (tomrum). Om kärnan vore stor som en ärta i mitten av en fotbollsarena, skulle elektronerna cirkulera längst ute på läktarna – resten är bara tomrum."
+ },
+ {
+   "category": "Elektronskal",
+   "q": "Hur många elektroner får det maximalt plats i atomens innersta skal (K-skalet)?",
+   "options": [
+     "8 stycken",
+     "1 styck",
+     "4 stycken",
+     "2 stycken"
+   ],
+   "correct": 3,
+   "explanation": "Elektronerna rör sig i olika energinivåer eller skal. Det innersta skalet (K-skalet) ligger närmast kärnan och är minst till ytan; därför rymmer det max <strong>två elektroner</strong>. Nästa skal (L-skalet) rymmer upp till åtta."
+ },
+ {
+   "category": "Elektronskal",
+   "q": "Varför är valenselektronerna så viktiga inom kemin?",
+   "options": [
+     "De bestämmer hur atomen reagerar med andra atomer.",
+     "De utgör den största delen av atomens totala massa.",
+     "De håller ihop protonerna och neutronerna i kärnan.",
+     "De avgör om en atom är radioaktiv eller inte."
+   ],
+   "correct": 0,
+   "explanation": "Valenselektronerna sitter i det yttersta skalet och är atomens 'ansikte utåt'. Det är dessa som avgör atomens <strong>kemiska egenskaper</strong> eftersom det är de som flyttas eller delas när atomer krockar och reagerar med varandra."
+ },
+ {
+   "category": "Elektronskal",
+   "q": "Vad innebär det att en atom har uppnått 'ädelgasstruktur'?",
+   "options": [
+     "Atomen har blivit en radioaktiv isotop av en gas.",
+     "Atomen har fått sitt yttersta elektronskal helt fyllt.",
+     "Atomen har lika många neutroner som den har protoner.",
+     "Atomen har förlorat alla sina elektroner och blivit en kärna."
+   ],
+   "correct": 1,
+   "explanation": "Alla atomer strävar efter stabilitet, vilket de får när det yttersta skalet är <strong>fullt</strong> (oftast 8 elektroner). Detta kallas ädelgasstruktur eftersom ädelgaserna redan har detta naturligt och därför sällan reagerar med andra ämnen."
+ },
+ {
+   "category": "Isotoper",
+   "q": "Vad är det som skiljer två olika isotoper av samma grundämne åt?",
+   "options": [
+     "Antalet elektroner i de yttre skalen.",
+     "Den elektriska laddningen på protonerna.",
+     "Antalet neutroner i atomkärnan.",
+     "Vilken grupp de tillhör i systemet."
+   ],
+   "correct": 2,
+   "explanation": "Isotoper av samma grundämne har alltid samma antal protoner (annars vore det ett annat ämne) och därmed samma kemiska egenskaper. Däremot har de olika antal <strong>neutroner</strong>, vilket gör att de väger olika mycket och vissa kan vara radioaktiva."
+ },
+ {
+   "category": "Isotoper",
+   "q": "Vad kallas summan av antalet protoner och neutroner i en atomkärna?",
+   "options": [
+     "Atomnummer",
+     "Valensnummer",
+     "Isotoptal",
+     "Masstal"
+   ],
+   "correct": 3,
+   "explanation": "Eftersom elektroner väger försvinnande lite jämfört med kärnpartiklarna, utgörs atomens massa nästan helt av protonerna och neutronerna. Summan av dessa kallas därför för <strong>masstal</strong>."
+ },
+ {
+   "category": "Periodiska systemet",
+   "q": "Om två grundämnen tillhör samma lodräta kolumn (grupp), vad har de då gemensamt?",
+   "options": [
+     "De har liknande kemiska egenskaper.",
+     "De har exakt samma antal elektronskal.",
+     "De har alltid samma totala atommassa.",
+     "De är alla gaser vid normal rumstemperatur."
+   ],
+   "correct": 0,
+   "explanation": "Ämnen i samma grupp (lodrät kolumn) har lika många valenselektroner. Eftersom valenselektronerna styr hur ämnet reagerar, får ämnen i samma grupp <strong>liknande egenskaper</strong> och bildar så kallade grundämnesfamiljer."
+ },
+ {
+   "category": "Periodiska systemet",
+   "q": "Vad kan man veta om alla grundämnen som ligger i samma vågräta rad (period)?",
+   "options": [
+     "De har alla samma antal valenselektroner.",
+     "De har samma antal elektronskal totalt.",
+     "De har samma antal neutroner i kärnan.",
+     "De är alla metaller med hög densitet."
+   ],
+   "correct": 1,
+   "explanation": "Det periodiska systemet är sorterat i rader som kallas perioder. Periodnumret talar om hur många <strong>elektronskal</strong> atomerna har. Alla ämnen i period 3 har alltså tre skal (K, L och M)."
+ },
+ {
+   "category": "Periodiska systemet",
+   "q": "Var i det periodiska systemet hittar man de flesta ickemetallerna (förutom väte)?",
+   "options": [
+     "Längst ner i de sista raderna.",
+     "Längst till vänster i tabellen.",
+     "Till höger i det periodiska systemet.",
+     "Spridda jämnt över hela tabellen."
+   ],
+   "correct": 2,
+   "explanation": "De flesta grundämnena är metaller och dominerar vänstra sidan och mitten. <strong>Ickemetallerna</strong>, som syre, kväve och klor, hittar man samlade uppe till höger i tabellen."
+ },
+ {
+   "category": "Grundämnesfamiljer",
+   "q": "Varför förvaras alkalimetaller, som natrium och kalium, ofta i fotogen?",
+   "options": [
+     "För att de inte ska reagera med luftens syre eller fukt.",
+     "För att de annars skulle avdunsta och bli till gasform.",
+     "För att fotogenet ger dem deras typiska metallglans.",
+     "För att de behöver dra åt sig neutroner från vätskan."
+   ],
+   "correct": 0,
+   "explanation": "Alkalimetaller (Grupp 1) har bara en valenselektron som de väldigt gärna vill bli av med. Det gör dem extremt reaktiva vid kontakt med <strong>luft eller vatten</strong>, så de måste skyddas av en vätska de inte reagerar med, som fotogen."
+ },
+ {
+   "category": "Grundämnesfamiljer",
+   "q": "Vilken egenskap gör ädelgaserna lämpliga att ha inuti glödlampor?",
+   "options": [
+     "De är mycket lätta och får lampan att väga mindre.",
+     "De är ovilliga att reagera med andra ämnen.",
+     "De kan bilda salter som lyser när de blir varma.",
+     "De har sju valenselektroner som leder ström bra."
+   ],
+   "correct": 1,
+   "explanation": "Ädelgaser (Grupp 18) har fulla valensskal och är därför kemiskt nöjda. De <strong>reagerar inte</strong> med den heta glödtråden i lampan, vilket syre skulle ha gjort (tråden hade brunnit av)."
+ },
+ {
+   "category": "Grundämnesfamiljer",
+   "q": "Vilken grupp i periodiska systemet kallas för 'saltbildare'?",
+   "options": [
+     "Halogener",
+     "Ädelgaser",
+     "Alkalimetaller",
+     "Halvmetaller"
+   ],
+   "correct": 0,
+   "explanation": "<strong>Halogenerna</strong> i grupp 17 saknar en enda elektron för att få fullt skal. De reagerar därför aggressivt med metaller (som gärna ger bort elektroner) och bildar då salter, exempelvis natriumklorid (koksalt)."
+ },
+ {
+   "category": "Joner",
+   "q": "Vad beskriver bäst en jon jämfört med en vanlig atom?",
+   "options": [
+     "En jon har alltid fler neutroner än protoner.",
+     "En jon har lika många elektroner som protoner.",
+     "En jon består av flera olika sorters grundämnen.",
+     "En jon har olika många elektroner och protoner."
+   ],
+   "correct": 3,
+   "explanation": "En atom är neutral eftersom plus- och minusladdningarna tar ut varandra. En jon har däremot en <strong>elektrisk laddning</strong> (positiv eller negativ) eftersom den har gett bort eller tagit upp elektroner, så balansen är rubbad."
+ },
+ {
+   "category": "Joner",
+   "q": "Vad händer oftast när en atom i grupp 1 (alkalimetall) blir en jon?",
+   "options": [
+     "Den avger en elektron och blir en positiv jon (1+).",
+     "Den tar upp sju elektroner för att fylla sitt skal.",
+     "Den avger en proton och blir en negativ jon (1-).",
+     "Den delar en elektron med en annan atom i en molekyl."
+   ],
+   "correct": 0,
+   "explanation": "Alkalimetaller har en enda valenselektron. Det är mycket lättare energimässigt att ge bort <strong>en elektron</strong> än att hitta sju nya. När den negativa elektronen försvinner får jonen ett överskott av positiv laddning (1+)."
+ },
+ {
+   "category": "Joner",
+   "q": "Vilken laddning får oftast joner av grundämnen i grupp 17 (halogener)?",
+   "options": [
+     "De får laddningen 1+ eftersom de har sju elektroner.",
+     "De får laddningen 1- eftersom de tar upp en elektron.",
+     "De förblir neutrala eftersom de redan är nästan fulla.",
+     "De får laddningen 7- för att matcha sina valenselektroner."
+   ],
+   "correct": 1,
+   "explanation": "Halogener har sju valenselektroner och behöver bara en till för att få fullt skal och uppnå ädelgasstruktur. Den extra elektronen de tar upp ger jonen en total laddning på <strong>1-</strong>."
+ },
+ {
+   "category": "Historia",
+   "q": "Vilken viktig upptäckt gjorde Rutherford som förändrade Thomsons atommodell?",
+   "options": [
+     "Han upptäckte att elektroner finns i olika skal.",
+     "Han upptäckte att atomen var helt massiv och odelbar.",
+     "Han upptäckte att atomen har en positivt laddad kärna.",
+     "Han bevisade att neutroner inte har någon laddning."
+   ],
+   "correct": 2,
+   "explanation": "Innan Rutherford trodde man att atomen var en jämn smet. Genom att skjuta partiklar mot guldfolie visade han att atomen mest är tomrum men har en liten, kompakt <strong>positiv kärna</strong> i mitten som partiklarna studsade mot."
+ },
+ {
+   "category": "Historia",
+   "q": "Vilken fördel har Niels Bohrs atommodell när vi studerar kemi?",
+   "options": [
+     "Den visar exakt hur neutronerna rör sig i kärnan.",
+     "Den förklarar varför atomer väger olika mycket.",
+     "Den visar varför ädelgaser är så reaktiva och farliga.",
+     "Den gör det lätt att se hur elektroner kan flyttas."
+   ],
+   "correct": 3,
+   "explanation": "Bohr förfinade modellen genom att placera elektronerna i bestämda skal (energinivåer). Detta gjorde det möjligt att förstå kemi: hur <strong>valenselektroner</strong> i det yttersta skalet flyttas eller delas för att skapa bindningar."
+ },
+ {
+   "category": "Historia",
+   "q": "Vad menade den grekiske filosofen Demokritos med ordet 'atomos'?",
+   "options": [
+     "Att allt var uppbyggt av de fyra elementen.",
+     "Att materien bestod av små laddade partiklar.",
+     "Att materien bestod av odelbara små byggstenar.",
+     "Att materia kunde omvandlas till ren energi."
+   ],
+   "correct": 2,
+   "explanation": "Demokritos levde i antikens Grekland och var den förste att föreslå att materien inte kunde delas i all oändlighet. Han kallade den minsta tänkbara byggstenen för 'atomos', som betyder just <strong>odelbar</strong>."
+ },
+ {
+   "category": "Materia & Partiklar",
+   "q": "Vad händer egentligen med partiklarna i ett ämne när temperaturen ökar?",
+   "options": [
+     "De rör sig mer och tar därmed oftast större plats (volym).",
+     "De blir tyngre och sjunker till botten av behållaren.",
+     "Partiklarna förvandlas till nya sorters atomer genom reaktioner.",
+     "De slutar röra sig helt eftersom de når en kritisk punkt."
+   ],
+   "correct": 0,
+   "explanation": "Enligt <strong>partikelmodellen</strong> är temperatur ett mått på atomernas rörelse. När det blir varmare får partiklarna mer rörelseenergi, krockar oftare och kräver mer utrymme, vilket gör att ämnet expanderar."
+ },
+ {
+   "category": "Materia & Partiklar",
+   "q": "Vilket av följande är ett tydligt exempel på en kemisk reaktion?",
+   "options": [
+     "En sockerbit som långsamt löses upp i en kopp varmt te.",
+     "En bit järnull som brinner och bildar en mörk oxid.",
+     "Vattenånga som kondenserar till droppar på en kall spegel.",
+     "En metallstång som blir längre när den värms upp i solen."
+   ],
+   "correct": 1,
+   "explanation": "Vid <strong>fysikaliska förändringar</strong> (som att smälta eller lösa upp) är ämnet detsamma. Men när järn brinner reagerar det med syre och bildar ett helt nytt ämne, <strong>järnoxid</strong>, vilket är en kemisk reaktion."
+ },
+ {
+   "category": "Materia & Partiklar",
+   "q": "Vad innebär lagen om 'massans bevarande' vid en kemisk reaktion?",
+   "options": [
+     "Att energin alltid försvinner ut i atmosfären som värme.",
+     "Att ämnen i gasform alltid väger mer än de i fast form.",
+     "Att vikten före och efter en reaktion i ett slutet rum är lika stor.",
+     "Att antalet molekyler alltid måste vara exakt samma efteråt."
+   ],
+   "correct": 2,
+   "explanation": "Inga atomer kan försvinna eller nybildas, de kan bara byta plats och bilda nya molekyler. Därför är den <strong>totala massan</strong> alltid densamma före och efter reaktionen."
+ },
+ {
+   "category": "Fasövergångar",
+   "q": "Varför bildas det ofta vattendroppar på utsidan av en kallvattenledning i ett varmt badrum?",
+   "options": [
+     "För att ledningen läcker små mängder vatten genom metallens porer.",
+     "För att partiklarna i röret rör sig snabbare än de i luften utanför.",
+     "För att vattnet i röret reagerar kemiskt med syret i badrumsluften.",
+     "För att vattenånga kyls ner och vattenmolekylerna rör sig långsammare."
+   ],
+   "correct": 3,
+   "explanation": "Detta kallas <strong>kondensation</strong>. När varm vattenånga i luften träffar det kalla röret förlorar partiklarna rörelseenergi, bromsar in och går ihop till flytande form."
+ },
+ {
+   "category": "Fasövergångar",
+   "q": "Vad skiljer koldioxidmolekylerna i en gastub (flytande form) från de som släppts ut i luften (gasform)?",
+   "options": [
+     "Molekylerna i luften är längre ifrån varandra och rör sig fritt.",
+     "Molekylerna i tuben är mycket tyngre än de som finns i gasen.",
+     "Varje enskild molekyl blir betydligt mindre när den blir till gas.",
+     "Partiklarna i gasform slutar helt att ha bindningar till varandra."
+   ],
+   "correct": 0,
+   "explanation": "I en vätska håller partiklarna ihop men kan glida runt varandra. I <strong>gasform</strong> har de så mycket energi att de släpper taget helt och sprider ut sig i hela det tillgängliga utrymmet."
+ },
+ {
+   "category": "Fasövergångar",
+   "q": "Vilken fasövergång sker när du kokar en blandning av vätskor med olika kokpunkter?",
+   "options": [
+     "Sublimering",
+     "Förångning",
+     "Stelning",
+     "Sedimentering"
+   ],
+   "correct": 1,
+   "explanation": "När en vätska kokas tillförs energi så att partiklarna lämnar vätskan och blir gas. Denna process kallas <strong>förångning</strong> (eller kokning) och används t.ex. vid destillation."
+ },
+ {
+   "category": "Densitet",
+   "q": "Du har två kuber som är exakt lika stora. Kub A är gjord av bly och Kub B av aluminium. Varför väger de olika mycket?",
+   "options": [
+     "För att Kub A har fler elektronskal än vad Kub B har.",
+     "För att Kub B har en lägre smältpunkt än vad Kub A har.",
+     "För att de har olika densitet (partiklarna sitter olika tätt).",
+     "För att gravitationen påverkar olika metaller på olika sätt."
+   ],
+   "correct": 2,
+   "explanation": "<strong>Densitet</strong> beskriver hur kompakt ett ämne är. I bly sitter atomerna tätare och är tyngre än i aluminium, vilket ger högre massa på samma volym."
+ },
+ {
+   "category": "Densitet",
+   "q": "Hur kan man enklast separera små plastflingor av olika sorter i ett återvinningsverk?",
+   "options": [
+     "Genom att använda starka magneter som drar till sig plasten.",
+     "Genom att tillsätta enzymer som klipper sönder de tyngsta bitarna.",
+     "Genom att koka dem tills de alla förångas vid olika temperaturer.",
+     "Genom att lägga dem i vattenbad där de flyter eller sjunker."
+   ],
+   "correct": 3,
+   "explanation": "Olika plaster har olika <strong>densitet</strong>. Genom att lägga dem i vätska kan man sortera dem, eftersom plast med lägre densitet än vätskan flyter, medan plast med högre densitet sjunker."
+ },
+ {
+   "category": "Blandningar",
+   "q": "Vad kallas det när du skakar olja och vatten så att oljan bildar små droppar i vattnet, men sedan lägger sig i ett lager på toppen igen?",
+   "options": [
+     "Emulsion",
+     "Legering",
+     "Aerosol",
+     "Lösning"
+   ],
+   "correct": 0,
+   "explanation": "En blandning av två vätskor som normalt inte löser sig i varandra kallas <strong>emulsion</strong>. Exempel är dressing eller mjölk (fett i vatten)."
+ },
+ {
+   "category": "Blandningar",
+   "q": "Vad kännetecknar en mättad sockerlösning?",
+   "options": [
+     "Allt socker har förvandlats till flytande koldioxid och vatten.",
+     "Det går inte att lösa mer socker i den aktuella temperaturen.",
+     "Lösningen leder nu ström på grund av de fria sockerjonerna.",
+     "Sockermolekylerna har reagerat och bildat en mörk fällning."
+   ],
+   "correct": 1,
+   "explanation": "I en lösning är partiklarna helt uppdelade. När lösningen är <strong>mättad</strong> är 'utrymmet' mellan vätskepartiklarna fullt, och inget mer fast ämne kan lösas upp utan lägger sig på botten."
+ },
+ {
+   "category": "Blandningar",
+   "q": "Vilken typ av blandning är svenska mynt, som t.ex. består av koppar, aluminium och zink?",
+   "options": [
+     "Emulsioner",
+     "Uppslamningar",
+     "Legeringar",
+     "Aerosoler"
+   ],
+   "correct": 2,
+   "explanation": "En blandning av metaller kallas för en <strong>legering</strong>. Genom att smälta samman metaller får man ett material med nya, ofta starkare egenskaper än de rena metallerna."
+ },
+ {
+   "category": "Blandningar",
+   "q": "Vad är rök eller dimma ett exempel på för typ av blandning?",
+   "options": [
+     "Socker löst i varmt te.",
+     "Matolja och vinäger.",
+     "Brons (koppar och tenn).",
+     "Aerosol (partiklar i gas)."
+   ],
+   "correct": 3,
+   "explanation": "En <strong>aerosol</strong> är små fasta partiklar (rök) eller vätskedroppar (dimma) som svävar i en gas. Det är alltså gasen som är lösningsmedlet."
+ },
+ {
+   "category": "Kemi & Polaritet",
+   "q": "Varför kan man inte tvätta bort en oljebaserad färgfläck med bara vanligt kranvatten?",
+   "options": [
+     "För att färgen är opolär och vatten är polärt, och de blandar sig inte.",
+     "För att vattenmolekyler är för små för att bära bort färgpartiklar.",
+     "För att vattnet reagerar med färgen och bildar ett hårdare lager.",
+     "För att densiteten hos vatten är för låg för att tränga in i fläcken."
+   ],
+   "correct": 0,
+   "explanation": "Vatten är en <strong>polär</strong> molekyl (har + och - sida) medan olja är <strong>opolär</strong>. Enligt regeln 'lika löser lika' krävs ett opolärt lösningsmedel (t.ex. lacknafta) för att lösa oljan."
+ },
+ {
+   "category": "Kemi & Polaritet",
+   "q": "Om en morot lämnar en orange fläck på en skärbräda, varför går den fläcken ofta lättare bort om man gnider med lite matolja?",
+   "options": [
+     "För att matoljan fräter bort det översta lagret av skärbrädan.",
+     "För att färgämnet i moroten är opolärt och löser sig i fett.",
+     "För att oljans höga densitet trycker ut färgämnet ur träet.",
+     "För att oljan kokar bort färgämnet genom en endoterm reaktion."
+   ],
+   "correct": 1,
+   "explanation": "Färgämnet i morötter (karoten) är fettlösligt, alltså <strong>opolärt</strong>. Eftersom matolja också är opolärt fungerar det utmärkt att lösa upp fläcken med ('lika löser lika')."
+ },
+ {
+   "category": "Kemi & Polaritet",
+   "q": "Vad innebär det att en vattenmolekyl är polär?",
+   "options": [
+     "Att den bara kan existera vid jordens nordpol eller sydpol.",
+     "Att den har en jämn fördelning av elektrisk laddning i hela molekylen.",
+     "Att molekylen har en positiv sida och en negativ sida.",
+     "Att den alltid dras till metaller genom metallbindningar."
+   ],
+   "correct": 2,
+   "explanation": "Vattenmolekylen är vinklad, vilket gör att syresidan blir lite negativ och vätesidan lite positiv. Denna ojämnhet gör molekylen <strong>polär</strong>, vilket är avgörande för dess egenskaper som lösningsmedel."
+ },
+ {
+   "category": "Separation",
+   "q": "Vilken metod är bäst om du vill få fram rent dricksvatten ur saltvatten och vill spara både saltet och vattnet?",
+   "options": [
+     "Filtrering genom papper.",
+     "Sedimentering i bägare.",
+     "Indunstning i solen.",
+     "Destillation genom kokning."
+   ],
+   "correct": 3,
+   "explanation": "Vid <strong>destillation</strong> kokar man vattnet så det blir ånga (saltet stannar kvar). Sedan kyler man ångan så den blir vatten igen. Då har man separerat ämnena helt."
+ },
+ {
+   "category": "Separation",
+   "q": "Vad kallas det när man häller av vätskan försiktigt efter att fasta partiklar sjunkit till botten i en bägare?",
+   "options": [
+     "Dekantering",
+     "Destillering",
+     "Kondensering",
+     "Polymerisering"
+   ],
+   "correct": 0,
+   "explanation": "Att <strong>dekantera</strong> är en enkel metod där man utnyttjar att de fasta partiklarna sedimenterat (sjunkit). Man häller helt enkelt av vätskan utan att virvla upp bottensatsen."
+ },
+ {
+   "category": "Separation",
+   "q": "Hur kan man få bort grumlig lera från ett vattenprov för att göra det klart, men inte nödvändigtvis drickbart?",
+   "options": [
+     "Genom att tillsätta socker som binder leran.",
+     "Genom att låta vattnet rinna genom ett filter.",
+     "Genom att använda kolsyra som löser upp leran.",
+     "Genom att frysa vattnet så att leran fastnar i isen."
+   ],
+   "correct": 1,
+   "explanation": "<strong>Filtrering</strong> fungerar som en sil. Filterpappret har små porer som släpper igenom vattenmolekylerna men stoppar de större lerpartiklarna."
+ },
+ {
+   "category": "Separation",
+   "q": "När används metoden indunstning i vardagen?",
+   "options": [
+     "När man separerar grädde från mjölk i en stor roterande trumma.",
+     "När man blandar saftkoncentrat med vatten för att få rätt smak.",
+     "När man torkar tvätt eller låter havsvatten torka för att få salt.",
+     "När man kokar kaffe och låter bönorna ligga kvar i filtret."
+   ],
+   "correct": 2,
+   "explanation": "<strong>Indunstning</strong> innebär att man låter vätskan (vattnet) långsamt övergå till gasform utan att koka det, så att de fasta ämnena (t.ex. saltet) blir kvar."
+ },
+ {
+   "category": "Separation",
+   "q": "Varför används centrifugering vid t.ex. blodprov?",
+   "options": [
+     "För att döda farliga bakterier med hjälp av hög värme.",
+     "För att blanda ut blodet med syre så att det ändrar färg.",
+     "För att balansera pH-värdet så att provet blir neutralt.",
+     "För att skilja tunga och lätta delar genom snabb rotation."
+   ],
+   "correct": 3,
+   "explanation": "En <strong>centrifug</strong> roterar väldigt snabbt. Krafterna pressar de tyngsta cellerna (högst densitet) mot botten av röret mycket snabbare än vad vanlig gravitation gör."
+ },
+ {
+   "category": "Atomens partiklar",
+   "q": "Vilken av atomens partiklar avgör vilket specifikt grundämne det är?",
+   "options": [
+     "Neutronerna i atomkärnan.",
+     "Elektronerna i de yttre skalen.",
+     "Protonerna i atomkärnan.",
+     "Valenselektronerna i det yttersta skalet."
+   ],
+   "correct": 2,
+   "explanation": "Enligt atommodellen består kärnan av protoner och neutroner. Det är antalet <strong>protoner</strong> som är unikt för varje grundämne (atomnumret). Om antalet protoner ändras, blir det ett annat ämne."
+ },
+ {
+   "category": "Atomens partiklar",
+   "q": "Vad består ett grundämne av enligt kemins definition?",
+   "options": [
+     "Endast en sorts atomer.",
+     "En blandning av olika molekyler.",
+     "Atomer som reagerat till joner.",
+     "Flera olika sorters atomer som sitter ihop."
+   ],
+   "correct": 0,
+   "explanation": "Ett <strong>grundämne</strong> definieras av att det enbart innehåller en unik atomsort (samma antal protoner). Det kan alltså inte delas upp i andra ämnen genom vanliga kemiska reaktioner."
+ },
+ {
+   "category": "Atomens partiklar",
+   "q": "Varför är ädelgaser, som till exempel helium och argon, oftast ovilliga att reagera med andra ämnen?",
+   "options": [
+     "De har en för liten atomkärna för att kunna binda till andra ämnen.",
+     "De saknar helt elektroner i sina yttersta skal och kan därför inte bilda bindningar.",
+     "De har en positiv laddning som stöter bort andra atomer i deras närhet.",
+     "Deras yttersta elektronskal är redan helt fyllda med elektroner."
+   ],
+   "correct": 3,
+   "explanation": "Alla atomer strävar efter stabilitet, så kallad <strong>ädelgasstruktur</strong>. Eftersom ädelgaserna redan har sitt yttersta skal helt fyllt (oftast 8 elektroner) har de ingen anledning att reagera med andra."
+ },
+ {
+   "category": "Joner & Bindningar",
+   "q": "Vilket av följande alternativ beskriver bäst vad en jon är?",
+   "options": [
+     "En atom med fler neutroner än protoner.",
+     "En atom som har olika många elektroner och protoner.",
+     "En atom som har delat sina elektroner med en annan atom.",
+     "En atom där antalet elektroner och protoner är exakt lika många."
+   ],
+   "correct": 1,
+   "explanation": "En <strong>jon</strong> bildas när en atom antingen förlorar eller tar upp elektroner. Eftersom antalet negativa elektroner inte längre matchar antalet positiva protoner får partikeln en <strong>elektrisk laddning</strong>."
+ },
+ {
+   "category": "Joner & Bindningar",
+   "q": "Vilken typ av kemisk förening bildas genom jonbindning?",
+   "options": [
+     "Metaller.",
+     "Molekyler.",
+     "Salter.",
+     "Gaser."
+   ],
+   "correct": 2,
+   "explanation": "När atomer blir positiva och negativa joner dras de till varandra av de elektriska krafterna. De bygger då stora kristaller som vi inom kemin kallar för <strong>salter</strong>."
+ },
+ {
+   "category": "Joner & Bindningar",
+   "q": "Vilken laddning får en atom från grupp 1 (alkalimetallerna) när den blir en jon?",
+   "options": [
+     "Den blir positiv (1+).",
+     "Den blir neutral (0).",
+     "Den blir negativ (1-).",
+     "Den blir starkt negativ (7-)."
+   ],
+   "correct": 0,
+   "explanation": "Alkalimetaller har en enda <strong>valenselektron</strong> i yttersta skalet. Det är enklast att ge bort den. När en negativ laddning försvinner får atomen ett överskott av en proton och blir <strong>positiv</strong>."
+ },
+ {
+   "category": "Molekyl- & Metallbindning",
+   "q": "Vad händer med elektronerna i en molekylbindning (elektronparbindning)?",
+   "options": [
+     "Elektronerna flyttas helt från en metall till en ickemetall.",
+     "Elektronerna bildar ett moln som är gemensamt för alla atomer i ämnet.",
+     "Elektronerna försvinner som energi i form av ljus och värme.",
+     "Elektronerna delas mellan två atomer så att båda får fulla skal."
+   ],
+   "correct": 3,
+   "explanation": "Ickemetaller vill ofta fylla sina skal men är ovilliga att ge bort elektroner. Lösningen blir en <strong>molekylbindning</strong> där atomerna delar på elektronpar för att båda ska känna att de har uppnått ädelgasstruktur."
+ },
+ {
+   "category": "Molekyl- & Metallbindning",
+   "q": "Vad är orsaken till att metaller har god förmåga att leda elektrisk ström?",
+   "options": [
+     "Metallatomer har inga elektroner och ger därför plats för strömmen.",
+     "De yttersta elektronerna är rörliga och gemensamma för alla atomer.",
+     "Metallatomer sitter så glest att elektronerna kan flyga fritt emellan dem.",
+     "Metaller består av joner som rör sig snabbt mot den positiva polen."
+   ],
+   "correct": 1,
+   "explanation": "I metaller släpper atomerna sina valenselektroner till ett gemensamt hav eller <strong>elektronmoln</strong>. Eftersom dessa elektroner är fria att röra sig genom hela metallbiten leder de <strong>elektricitet</strong> bra."
+ },
+ {
+   "category": "Molekyl- & Metallbindning",
+   "q": "Vilka tre strategier kan atomer använda för att uppnå ädelgasstruktur?",
+   "options": [
+     "Öka antalet protoner, minska antalet neutroner eller byta elektronskal.",
+     "Smälta samman atomkärnor, bilda isotoper eller avge radioaktiv strålning.",
+     "Dela på elektroner, ge bort elektroner eller ta upp elektroner.",
+     "Reagera med vatten, bilda oxider eller deponera elektroner i atomkärnan."
+   ],
+   "correct": 2,
+   "explanation": "Atomer strävar efter fulla skal genom att <strong>dela</strong> (molekylbindning) eller genom att <strong>ge bort/ta upp</strong> elektroner (jonbindning/salter)."
+ },
+ {
+   "category": "Kemiska reaktioner",
+   "q": "Vad innebär lagen om 'massans bevarande' vid en kemisk reaktion?",
+   "options": [
+     "Att vikten är densamma före och efter en reaktion i ett slutet rum.",
+     "Att gaser inte väger någonting vid en kemisk reaktion.",
+     "Att tunga atomer alltid bildar mer energi än lätta atomer vid förbränning.",
+     "Att antalet molekyler alltid måste vara exakt lika många efter en reaktion."
+   ],
+   "correct": 0,
+   "explanation": "Inga atomer försvinner eller skapas vid en reaktion; de byter bara plats. Därför väger de ingående ämnena exakt lika mycket som de ämnen som bildas (totala <strong>massan</strong> bevaras)."
+ },
+ {
+   "category": "Kemiska reaktioner",
+   "q": "Vad är skillnaden mellan beteckningarna O₂ och 2O i en kemisk formel?",
+   "options": [
+     "O₂ betyder två olika grundämnen medan 2O betyder ett grundämne.",
+     "2O är en syremolekyl medan O₂ är två lösa syreatomer i ett skal.",
+     "Det finns ingen skillnad; båda beskriver exakt samma sak i en reaktion.",
+     "O₂ är en molekyl med två atomer medan 2O är två fristående atomer."
+   ],
+   "correct": 3,
+   "explanation": "Siffran nertill (O₂) visar att atomerna sitter ihop kemiskt i en <strong>molekyl</strong>. Siffran framför (2O) är en koefficient som visar att det är två <strong>separata</strong> atomer."
+ },
+ {
+   "category": "Kemiska reaktioner",
+   "q": "Hur balanseras reaktionsformeln för bildandet av vatten: H₂ + O₂ → H₂O?",
+   "options": [
+     "H₂ + O₂ → H₂O₂",
+     "2H₂ + O₂ → 2H₂O",
+     "2H + 2O → 2H₂O",
+     "H₂ + O → H₂O"
+   ],
+   "correct": 1,
+   "explanation": "För att formeln ska stämma måste det finnas lika många atomer av varje sort på båda sidor. Här krävs <strong>två vätemolekyler</strong> (totalt 4 H) för att matcha syret och bilda två vattenmolekyler."
+ },
+ {
+   "category": "Kemiska reaktioner",
+   "q": "Vilken är enzymernas huvudsakliga funktion i kroppens kemiska reaktioner?",
+   "options": [
+     "De fungerar som bränsle och ger energi till alla celler i musklerna.",
+     "De ändrar atomnumret på de ämnen som vi får i oss via maten vi äter.",
+     "De ökar hastigheten på reaktionerna utan att själva förbrukas.",
+     "De ser till att pH-värdet i magen alltid ligger på en helt neutral nivå."
+   ],
+   "correct": 2,
+   "explanation": "Många reaktioner i kroppen skulle gå för långsamt vid 37 grader. <strong>Enzymer</strong> fungerar som katalysatorer som <strong>påskyndar</strong> processer utan att själva ta slut."
+ },
+ {
+   "category": "Luft & Eld",
+   "q": "Vilken gas är den absolut vanligaste i jordens atmosfär?",
+   "options": [
+     "Kvävgas",
+     "Syrgas",
+     "Koldioxid",
+     "Vattenånga"
+   ],
+   "correct": 0,
+   "explanation": "Hela 78 % av luften består av <strong>kvävgas</strong> (N₂). Den är mycket stabil (reaktionströg), till skillnad från syrgas (21 %) som är nödvändigt för eld och liv."
+ },
+ {
+   "category": "Luft & Eld",
+   "q": "Vad kallas de kemiska föreningar som bildas när ett ämne reagerar med syre?",
+   "options": [
+     "Salter",
+     "Syror",
+     "Baser",
+     "Oxider"
+   ],
+   "correct": 3,
+   "explanation": "Syre är mycket reaktivt. De föreningar som bildas när syre binder till andra ämnen kallas <strong>oxider</strong> (t.ex. koldioxid, kväveoxid eller järnoxid/rost)."
+ },
+ {
+   "category": "Luft & Eld",
+   "q": "Varför fyller man ofta glödlampor med ädelgaser som argon istället för vanlig luft?",
+   "options": [
+     "För att lampan ska väga mindre eftersom ädelgaser har lägst densitet.",
+     "För att glödtråden inte ska reagera med syre och brinna upp direkt.",
+     "För att lampan ska lysa med ett starkt blått ljus vid hög temperatur.",
+     "För att ädelgaser leder elektricitet mycket bättre än vad vanlig luft gör."
+   ],
+   "correct": 1,
+   "explanation": "Vanlig luft innehåller syre som skulle få den heta glödtråden att brinna upp. Ädelgaser har fulla elektronskal och <strong>reagerar inte</strong> med andra ämnen, vilket skyddar tråden."
+ },
+ {
+   "category": "Luft & Eld",
+   "q": "Vilken egenskap hos koldioxid utnyttjas när man släcker bränder med en kolsyresläckare?",
+   "options": [
+     "Koldioxid reagerar med bränslet och förvandlar det till ofarligt vatten.",
+     "Koldioxid är en mycket kall gas som sänker temperaturen till noll grader.",
+     "Koldioxid är tyngre än syre och kväver därmed elden effektivt.",
+     "Koldioxid innehåller mycket syre som drar åt sig värmen från lågorna."
+   ],
+   "correct": 2,
+   "explanation": "Koldioxid är <strong>tyngre än luft</strong>. När man sprutar den över elden lägger den sig som ett lock och tränger undan det syre som elden behöver för att brinna."
+ },
+ {
+   "category": "Luft & Eld",
+   "q": "Vilka ämnen bildas nästan alltid när ett kolväte (som gasol eller stearin) brinner helt?",
+   "options": [
+     "Kol, syre och värme.",
+     "Kvävgas och vattenånga.",
+     "Koldioxid och vätgas.",
+     "Koldioxid och vatten."
+   ],
+   "correct": 3,
+   "explanation": "Kolväten består av kol och väte. Vid förbränning reagerar kolatomerna med syre till <strong>koldioxid</strong>, och väteatomerna reagerar med syre till <strong>vatten</strong>."
+ },
+ {
+   "category": "Luft & Eld",
+   "q": "Om man bränner stålull på en våg ser man att massan ökar. Varför?",
+   "options": [
+     "För att järnatomerna i stålullen binder till sig syre från luften.",
+     "För att värmen får järnatomerna att svälla och bli större än tidigare.",
+     "För att koldioxid från luften fastnar som ett lager av sot på järnet.",
+     "För att järnet omvandlas till guld som har en betydligt högre densitet."
+   ],
+   "correct": 0,
+   "explanation": "Det sker en kemisk reaktion där <strong>syreatomer</strong> från luften fastnar på järnet (järnoxid bildas). Den ökade vikten på vågen är alltså vikten av det tillkomna syret."
+ },
+ {
+   "category": "Luft & Eld",
+   "q": "Vilken viktig process i naturen kan beskrivas som en 'omvänd' förbränning där energi lagras?",
+   "options": [
+     "Cellandning",
+     "Fotosyntes",
+     "Korrosion",
+     "Försurning"
+   ],
+   "correct": 1,
+   "explanation": "Vid förbränning frigörs energi. Vid <strong>fotosyntesen</strong> gör växterna tvärtom: de tar upp solenergi och bygger ihop koldioxid och vatten till energirikt socker."
+ },
+ {
+   "category": "Det unika kolet",
+   "q": "Vad är den främsta anledningen till att kolatomen kan bilda så enormt många olika sorters molekyler?",
+   "options": [
+     "Kolatomen är det lättaste grundämnet och kan därför röra sig mycket snabbt.",
+     "Den kan bilda jonbindningar med nästan alla metaller i det periodiska systemet.",
+     "Den har fyra valenselektroner och kan binda till fyra andra atomer samtidigt.",
+     "Den innehåller fler neutroner än andra grundämnen, vilket gör kedjorna stabila."
+   ],
+   "correct": 2,
+   "explanation": "Detta kallas <strong>organisk kemi</strong>. Eftersom kolatomen har fyra valenselektroner kan den bygga långa kedjor, ringar och nätverk, vilket är grunden för <strong>allt liv</strong>."
+ },
+ {
+   "category": "Det unika kolet",
+   "q": "Vilken form av rent kol beskrivs som ett material som är 200 gånger starkare än stål men mycket lätt och genomskinligt?",
+   "options": [
+     "Grafen",
+     "Amorft kol",
+     "Grafit",
+     "Diamant"
+   ],
+   "correct": 0,
+   "explanation": "Rent kol finns i flera former. I <strong>diamant</strong> sitter atomerna i ett hårt nätverk, i <strong>grafit</strong> i lösa lager, men <strong>grafen</strong> består av ett enda tunt skikt som ger det unika egenskaper."
+ },
+ {
+   "category": "Kolväten",
+   "q": "Vad kännetecknar en kemisk förening som tillhör gruppen alkaner (t.ex. metan, etan)?",
+   "options": [
+     "Den innehåller alltid minst en syreatom som är bunden med en dubbelbindning.",
+     "Den består av kol och väte med enbart enkelbindningar mellan kolatomerna.",
+     "Den är en metallisk legering som har smälts samman under mycket högt tryck.",
+     "Den har en funktionell grupp som kallas för hydroxylgrupp (en OH-grupp)."
+   ],
+   "correct": 1,
+   "explanation": "Alkaner är <strong>mättade kolväten</strong>. Det betyder att atomerna binds ihop med enkla bindningar och att kolatomerna håller i så många väteatomer som det får plats."
+ },
+ {
+   "category": "Kolväten",
+   "q": "Vad kallas det när två molekyler har samma molekylformel (lika många atomer) men olika strukturformel (atomerna sitter olika)?",
+   "options": [
+     "Polymerer",
+     "Alkyner",
+     "Estrar",
+     "Isomerer"
+   ],
+   "correct": 3,
+   "explanation": "<strong>Isomerer</strong> är som lego – du kan bygga olika figurer med exakt samma bitar. Butan och isobutan har samma atomer men olika form, vilket ger dem olika egenskaper (t.ex. kokpunkt)."
+ },
+ {
+   "category": "Alkoholer & Syror",
+   "q": "Varför är det livsviktigt att veta skillnaden mellan metanol och etanol, trots att de luktar likt?",
+   "options": [
+     "Metanol är mycket giftigt och kan leda till blindhet eller död vid förtäring.",
+     "Etanol har mycket högre energiinnehåll och används därför enbart som raketbränsle.",
+     "Metanol bildas naturligt vid fotosyntesen medan etanol bara kan skapas i laboratorium.",
+     "Etanol reagerar explosivt med vattenånga medan metanol används för att släcka bränder."
+   ],
+   "correct": 0,
+   "explanation": "Etanol finns i drycker, men <strong>metanol</strong> (träsprit) är en dödlig gift. Kroppen omvandlar metanol till myrsyra och formaldehyd, vilket förstör synen och inre organ."
+ },
+ {
+   "category": "Alkoholer & Syror",
+   "q": "Vilken funktionell grupp måste finnas i en molekyl för att den ska räknas som en karboxylsyra (organisk syra)?",
+   "options": [
+     "En OH-grupp (hydroxylgrupp).",
+     "En -COOH-grupp (karboxylgrupp).",
+     "En kväveatom bunden till kol.",
+     "En dubbelbindning mellan kolatomer."
+   ],
+   "correct": 1,
+   "explanation": "Medan alkoholer har en OH-grupp, kännetecknas <strong>organiska syror</strong> av gruppen -COOH. Exempel är ättiksyra och citronsyra. Om man blandar en syra och en alkohol får man en <strong>ester</strong>."
+ },
+ {
+   "category": "Kolhydrater",
+   "q": "Vilken är den största nyttan med att äta livsmedel som innehåller mycket cellulosa (kostfibrer)?",
+   "options": [
+     "Det ger kroppen en snabb energikick eftersom cellulosa tas upp direkt i blodet.",
+     "Det underlättar matspjälkningen och fungerar som motion för tarmarna.",
+     "Det omvandlas till viktiga mineraler som järn och kalcium inuti magsäcken.",
+     "Det är den enda källan till protein för människor som inte äter kött eller fisk."
+   ],
+   "correct": 1,
+   "explanation": "<strong>Cellulosa</strong> består av långa kedjor sockerarter som människan inte kan bryta ner (till skillnad från kor). Fibrerna ger ingen energi men behövs för att tarmarna ska arbeta bra."
+ },
+ {
+   "category": "Kolhydrater",
+   "q": "Vad händer med energin i fotosyntesen när växter bildar druvsocker?",
+   "options": [
+     "Energin försvinner ut i atmosfären som värmeenergi.",
+     "Den omvandlas till elektrisk energi i växtens rötter.",
+     "Den lagras som rörelseenergi i växtens gröna blad.",
+     "Solenergi omvandlas och lagras som kemisk energi i molekylen."
+   ],
+   "correct": 3,
+   "explanation": "<strong>Fotosyntesen</strong> är naturens solfångare. Växten tar koldioxid och vatten och använder solljuset för att bygga energirika socker-molekyler."
+ },
+ {
+   "category": "Fetter",
+   "q": "Vilka två delar är en fettmolekyl kemiskt uppbyggd av?",
+   "options": [
+     "Alkoholen glycerol och tre fettsyror.",
+     "Druvsockermolekyler och långa proteinkedjor.",
+     "Aminosyror och mineraler som kalcium och järn.",
+     "Vattenmolekyler och mättade kolväteatomer."
+   ],
+   "correct": 0,
+   "explanation": "Fett är en typ av ester. Den bildas när alkoholen <strong>glycerol</strong> reagerar med tre stycken <strong>fettsyror</strong>. Fettsyrornas längd avgör fettets egenskaper."
+ },
+ {
+   "category": "Fetter",
+   "q": "Varför anses det ofta vara nyttigare att äta mer omättat fett än mättat fett?",
+   "options": [
+     "Omättat fett innehåller inga kolatomer och kan därför inte lagras i kroppen.",
+     "Mättat fett blockerar kroppens förmåga att ta upp viktiga vattenlösliga vitaminer.",
+     "Omättat fett är lättare för kroppen att förbränna och minskar risken för sjukdomar.",
+     "Omättat fett innehåller essentiella fettsyror som kroppen inte kan tillverka själv."
+   ],
+   "correct": 3,
+   "explanation": "Kroppen kan bygga det mesta själv, men vissa fetter (t.ex. Omega 3) måste vi äta. <strong>Omättat fett</strong> (ofta flytande, från växtriket) innehåller dessa nyttiga fettsyror."
+ },
+ {
+   "category": "Proteiner",
+   "q": "Vad händer med proteiner i t.ex. ägg eller kött om de värms upp kraftigt?",
+   "options": [
+     "De omvandlas till enkla sockerarter som ger kroppen snabb energi.",
+     "De börjar föröka sig snabbare och bildar nya muskler automatiskt.",
+     "De ändrar färg och blir mer flytande för att lättare transporteras i blodet.",
+     "De koagulerar (stelnar) och tappar sin naturliga form och funktion."
+   ],
+   "correct": 3,
+   "explanation": "Proteiner är nystan av <strong>aminosyror</strong>. Vid hög värme trasslar nystan upp sig och stelnar (<strong>koagulerar</strong>). Det är därför hög feber är farligt – kroppens egna proteiner kan sluta fungera."
+ },
+ {
+   "category": "Proteiner",
+   "q": "Vilken är enzymernas viktigaste uppgift i människokroppen?",
+   "options": [
+     "Att påskynda kemiska reaktioner i cellerna utan att själva förbrukas.",
+     "Att fungera som ett extra lager av fett för att skydda organen mot kyla.",
+     "Att transportera syrgas från lungorna ut till alla muskelceller i armarna.",
+     "Att lagra all strålningsenergi från solen så att vi kan se i mörker."
+   ],
+   "correct": 0,
+   "explanation": "Enzymer är proteiner som fungerar som <strong>biologiska katalysatorer</strong>. De klipper t.ex. isär maten i magen eller bygger ihop nya celler, utan att själva ta slut."
+ },
+ {
+   "category": "Vitaminer & Mineraler",
+   "q": "Varför behöver kroppen få i sig grundämnet järn via kosten?",
+   "options": [
+     "Järn behövs för att bygga upp ett starkt emaljlager på våra tänder.",
+     "Järn behövs i blodet för att kunna transportera syre till alla celler.",
+     "Järn fungerar som ett bränsle som bränns upp direkt i hjärnans celler.",
+     "Järn gör att vi kan producera klorofyll så att vi kan utföra fotosyntes."
+   ],
+   "correct": 1,
+   "explanation": "Järn är en beståndsdel i proteinet <strong>hemoglobin</strong> som finns i röda blodkroppar. Det är järnet som binder syret så att det kan fraktas runt i kroppen."
+ },
+ {
+   "category": "Vitaminer & Mineraler",
+   "q": "Vilken skillnad är det på vitaminer och mineraler ur ett kemiskt perspektiv?",
+   "options": [
+     "Vitaminer är metaller medan mineraler är ickemetaller i gasform.",
+     "Mineraler är stora polymerer medan vitaminer är enkla atomer.",
+     "Vitaminer ger energi (kalorier) medan mineraler bara ger värme.",
+     "Vitaminer är organiska kolföreningar medan mineraler är oorganiska ämnen."
+   ],
+   "correct": 3,
+   "explanation": "<strong>Vitaminer</strong> (som C, D, E) är komplicerade organiska molekyler som kroppen behöver små mängder av. <strong>Mineraler</strong> är rena grundämnen (som järn och kalcium)."
+ },
+ {
+   "category": "Näring & Miljö",
+   "q": "Vad bildas alltid när vi förbränner maten i våra celler (cellandning)?",
+   "options": [
+     "Koldioxid, vatten och energi.",
+     "Druvsocker, syre och solljus.",
+     "Aminosyror, järn och fett.",
+     "Kolmonoxid, sot och värme."
+   ],
+   "correct": 0,
+   "explanation": "<strong>Cellandning</strong> är som en långsam eld inuti cellerna. Druvsocker reagerar med syre, och ut får vi rörelseenergi och värme, medan vi andas ut koldioxid och vattenånga."
+ },
+ {
+   "category": "Näring & Miljö",
+   "q": "Varför förvaras ofta livsmedel i en atmosfär av ren kvävgas (N₂)?",
+   "options": [
+     "Kvävgas gör att maten smakar sötare och ser mer aptitlig ut för kunden.",
+     "Kvävgasen dödar alla virus genom att höja pH-värdet till extremt basiskt.",
+     "Kvävgas reagerar ogärna med maten, vilket hindrar den från att härskna.",
+     "Kvävgasen fungerar som en hårdplast och skyddar förpackningen mot stötar."
+   ],
+   "correct": 2,
+   "explanation": "Luftens syre reagerar med mat (oxidation) så att den blir dålig. <strong>Kvävgas</strong> är reaktionströgt och fungerar som en skyddande kudde som förlänger hållbarheten."
+ },
+ {
+   "category": "Näring & Miljö",
+   "q": "Vilket näringsämne är kroppens viktigaste byggmaterial för att laga celler och bygga muskler?",
+   "options": [
+     "Proteiner",
+     "Fetter",
+     "Kolhydrater",
+     "Vitaminer"
+   ],
+   "correct": 0,
+   "explanation": "Kolhydrater och fett är främst bränsle, men <strong>proteiner</strong> är byggstenar. De bygger upp allt från muskelfibrer och hår till enzymer och hormoner."
+ },
+ {
+   "category": "Näring & Miljö",
+   "q": "Vad är 'rötning' av matavfall, och vad kan produkten användas till?",
+   "options": [
+     "Det är när mat torkas i solen för att sedan spridas som mineralrikt damm.",
+     "Det är när bakterier bryter ner avfall utan syre och bildar biobränsle.",
+     "Det är en kemisk reaktion där man gör plast av gamla grönsaker och frukter.",
+     "Det är när man blandar matrester med saltvatten för att framställa saltsyra."
+   ],
+   "correct": 1,
+   "explanation": "När bakterier får bryta ner matavfall i en syrefri miljö bildas <strong>biogas</strong> (metan). Detta är ett utmärkt, förnybart drivmedel för bussar och bilar."
+ },
+ {
+   "category": "Näring & Miljö",
+   "q": "Vilken av följande modeller visar en organisk kemisk förening?",
+   "options": [
+     "En modell med en syreatom och två väteatomer (vatten).",
+     "En modell med en kväveatom och tre väteatomer (ammoniak).",
+     "En modell med en svavelatom och fyra syreatomer (sulfatjon).",
+     "En modell med kolatomer som är bundna till väteatomer (t.ex. metan)."
+   ],
+   "correct": 3,
+   "explanation": "Definitionen av <strong>organisk kemi</strong> är kolföreningarnas kemi. Nästan alla molekyler som innehåller kol och väte räknas som organiska."
+ },
+ {
+   "category": "Näring & Miljö",
+   "q": "Vad är fördelen med 'långsamma' kolhydrater jämfört med 'snabba'?",
+   "options": [
+     "De innehåller mycket mer energi per gram än vad snabba kolhydrater gör.",
+     "De tas upp direkt i munnen och ger energi till hjärnan på bara några sekunder.",
+     "De ger en jämnare blodsockernivå eftersom det tar tid för kroppen att bryta ner dem.",
+     "De är helt gjorda av metaller och stärker därför skelettet mer än socker gör."
+   ],
+   "correct": 2,
+   "explanation": "Snabba kolhydrater (som socker) går rakt ut i blodet. Långsamma kolhydrater (som fullkorn) är långa kedjor som kroppen måste klippa isär bit för bit, vilket ger <strong>jämnare energi</strong> över tid."
+ },
+ {
+   "category": "Atomer & Joner",
+   "q": "Vilket av följande alternativ beskriver bäst vad som utmärker en jon jämfört med en atom?",
+   "options": [
+     "En jon är en partikel som har olika många elektroner och protoner.",
+     "En jon är en atom som har fått extra många neutroner i sin kärna.",
+     "En jon är en atom som har smält samman med en annan atomkärna.",
+     "En jon är en partikel som alltid saknar elektronskal runt sin kärna."
+   ],
+   "correct": 0,
+   "explanation": "En atom är neutral eftersom den har lika många positiva protoner som negativa elektroner. En <strong>jon</strong> bildas när atomen antingen ger bort eller tar upp elektroner för att få fullt skal, vilket ger partikeln en <strong>elektrisk laddning</strong>."
+ },
+ {
+   "category": "Atomer & Joner",
+   "q": "Varför kan en lösning med salt eller syra leda elektricitet, till skillnad från destillerat vatten?",
+   "options": [
+     "För att molekylerna i saltet rör sig mycket snabbare än vattenmolekyler.",
+     "För att lösningen innehåller fria joner som kan transportera laddningar.",
+     "För att protonerna i atomernas kärnor lossnar och flyter runt i vätskan.",
+     "För att syret i vattnet reagerar med saltet och skapar nya elektroner."
+   ],
+   "correct": 1,
+   "explanation": "I rent vatten sitter atomerna ihop i molekyler som inte leder ström. Elektricitet i vätskor kräver <strong>rörliga laddade partiklar</strong>. När salter, syror eller baser löses i vatten bildas en <strong>jonlösning</strong> där jonerna kan vandra och leda strömmen."
+ },
+ {
+   "category": "Syror & Baser",
+   "q": "Vad är det rent kemiskt som avgör om en vattenlösning blir sur?",
+   "options": [
+     "Att lösningen innehåller en hög koncentration av oladdade väteatomer.",
+     "Att det finns gott om elektroner som simmar fritt omkring i vätskan.",
+     "Att det finns vätejoner som har frigjorts när en syra blandats i.",
+     "Att antalet neutroner i atomernas kärnor har minskat dramatiskt."
+   ],
+   "correct": 2,
+   "explanation": "Det som gör en lösning sur är närvaron av <strong>vätejoner (H<sup>+</sup>)</strong>. En vätejon är i praktiken en väteatom som tappat sin elektron och blivit en ensam proton. Ju fler vätejoner, desto lägre pH."
+ },
+ {
+   "category": "Syror & Baser",
+   "q": "Hur stor är skillnaden i surhet (koncentration av vätejoner) mellan en lösning med pH 2 och en lösning med pH 4?",
+   "options": [
+     "Lösningen med pH 2 är exakt dubbelt så sur som den med pH 4.",
+     "Lösningen med pH 4 är tio gånger surare än lösningen med pH 2.",
+     "Det är ingen egentlig skillnad i surhet eftersom båda är mycket sura.",
+     "Lösningen med pH 2 är hundra gånger surare än den med pH 4."
+   ],
+   "correct": 3,
+   "explanation": "pH-skalan är <strong>logaritmisk</strong>. Det innebär att varje steg på skalan motsvarar en förändring med <strong>10 gånger</strong>. Två steg (från 4 till 2) innebär alltså 10 gånger 10 = 100 gånger fler vätejoner."
+ },
+ {
+   "category": "Syror & Baser",
+   "q": "Vad kännetecknar en stark syra jämfört med en svag syra när de hamnar i vatten?",
+   "options": [
+     "I en stark syra delas alla syramolekyler upp i joner i kontakt med vatten.",
+     "En stark syra innehåller tunga metalljoner som ökar lösningens densitet.",
+     "En stark syra kan bara existera i fast form innan den späds ut med vatten.",
+     "Svaga syror leder ström bättre eftersom de har kvar alla sina elektroner."
+   ],
+   "correct": 0,
+   "explanation": "Styrkan handlar om hur många molekyler som släpper sina vätejoner. Hos en <strong>stark syra</strong> (t.ex. saltsyra) delas nästan 100% av molekylerna upp i joner, medan en svag syra (t.ex. ättika) bara släpper ifrån sig en liten del."
+ },
+ {
+   "category": "Neutralisation",
+   "q": "Vilka ämnen bildas när man blandar saltsyra med den starka basen natriumhydroxid?",
+   "options": [
+     "Det bildas en ny, mycket starkare syra som kallas för kungsvatten.",
+     "Det bildas helt vanligt vatten och ett salt (natriumklorid).",
+     "Det bildas vätgas och klorgas som bubblar upp ur bägaren.",
+     "Det bildas en emulsion av metalliska partiklar och flytande fett."
+   ],
+   "correct": 1,
+   "explanation": "Detta kallas <strong>neutralisation</strong>. Syrans vätejoner (H<sup>+</sup>) och basens hydroxidjoner (OH<sup>−</sup>) slås ihop till <strong>vatten</strong> (H<sub>2</sub>O). De kvarvarande jonerna bildar ett <strong>salt</strong>."
+ },
+ {
+   "category": "Neutralisation",
+   "q": "Varför sprider man ofta ut kalk i svenska sjöar och skogsområden?",
+   "options": [
+     "För att kalken binder syre från luften och förhindrar farlig algblomning.",
+     "För att kalken är ett viktigt näringsämne som får fiskar att växa snabbare.",
+     "För att neutralisera syror som har kommit ner via surt regn.",
+     "För att göra vattnet grumligt så att bottenväxter skyddas mot solljus."
+   ],
+   "correct": 2,
+   "explanation": "Surt regn sänker pH-värdet i naturen. Kalk är basiskt och fungerar som ett motmedel som höjer pH-värdet genom att <strong>neutralisera syran</strong>, vilket räddar livet i sjön."
+ },
+ {
+   "category": "Neutralisation",
+   "q": "Vilken färg får indikatorn BTB om du droppar den i en helt neutral lösning (pH 7)?",
+   "options": [
+     "Den blir starkt röd för att visa att lösningen inte längre är farlig.",
+     "Den blir blå eftersom neutrala lösningar liknar de basiska i färgen.",
+     "Den förblir helt genomskinlig och färglös som vanligt kranvatten.",
+     "Den blir grön för att visa att lösningen varken är sur eller basisk."
+   ],
+   "correct": 3,
+   "explanation": "BTB är en pH-indikator som blir gul i sur miljö, blå i basisk miljö och <strong>grön</strong> när lösningen är neutral (som rent vatten)."
+ },
+ {
+   "category": "Spänningsserien",
+   "q": "Vad är den främsta skillnaden mellan en ädelmetall och en oädel metall?",
+   "options": [
+     "Oädla metaller bildar lätt joner medan ädla metaller helst är atomer.",
+     "Ädla metaller leder alltid ström mycket sämre än vad oädla metaller gör.",
+     "Oädla metaller är tyngre och har därför alltid en mycket högre densitet.",
+     "Ädla metaller finns bara som joner i naturen och aldrig i ren metallform."
+   ],
+   "correct": 0,
+   "explanation": "I <strong>spänningsserien</strong> rangordnas metaller. <strong>Oädla metaller</strong> (som magnesium och zink) vill gärna ge bort elektroner och bilda joner (korrodera), medan <strong>ädla metaller</strong> (som guld) är stabila."
+ },
+ {
+   "category": "Spänningsserien",
+   "q": "Vad händer om du lägger en bit av den oädla metallen magnesium i en stark syra?",
+   "options": [
+     "Ingenting händer eftersom magnesium är en mycket beständig ädelmetall.",
+     "Magnesiumet löses upp, bildar joner och det bildas bubblor av vätgas.",
+     "Syran förvandlas till en bas eftersom magnesiumatomer drar åt sig protoner.",
+     "Metallen får en vacker grön beläggning av oxid som skyddar mot frätning."
+   ],
+   "correct": 1,
+   "explanation": "Oädla metaller (vänster om väte i spänningsserien) reagerar med syror. Metallatomerna ger sina elektroner till vätejonerna i syran. Resultatet blir att metallen fräts upp och <strong>vätgas</strong> bubblar upp."
+ },
+ {
+   "category": "Spänningsserien",
+   "q": "Du placerar en järnspik i en blå lösning av kopparjoner. Vad sker vid spiken?",
+   "options": [
+     "Ingenting sker eftersom järn och koppar är lika ädla i spänningsserien.",
+     "Spiken börjar brinna eftersom reaktionen mellan metaller är mycket exoterm.",
+     "Järnet oxideras till joner och det bildas en beläggning av koppar på spiken.",
+     "Kopparjonerna flyter upp till ytan och bildar en hinna av flytande metall."
+   ],
+   "correct": 2,
+   "explanation": "Eftersom koppar är ädlare än järn vill kopparjonerna hellre ha elektroner än vad järnet vill. Järnet <strong>oxideras</strong> (blir joner) och kopparen <strong>reduceras</strong> (blir fast metall på spiken)."
+ },
+ {
+   "category": "Batterier",
+   "q": "Vilken energiomvandling sker i ett fungerande batteri (galvaniskt element) som är kopplat till en lampa?",
+   "options": [
+     "Elektrisk energi i jonlösningen skapar ny materia genom en reaktion.",
+     "Strålningsenergi från omgivningen sugs upp och blir till elektricitet.",
+     "Rörelseenergi hos atomerna sänker temperaturen så att ström kan flöda.",
+     "Kemisk energi omvandlas till elektrisk energi via en redox-reaktion."
+   ],
+   "correct": 3,
+   "explanation": "Ett batteri utnyttjar metallers olika vilja att ge bort elektroner. Denna <strong>kemiska lagrade energi</strong> tvingar elektroner att vandra genom tråden, vilket skapar elektrisk ström."
+ },
+ {
+   "category": "Batterier",
+   "q": "Vilken metall fungerar som negativ pol i ett enkelt batteri med zink, koppar och en elektrolyt?",
+   "options": [
+     "Zink, eftersom den är oädlast och gärna vill ge ifrån sig sina elektroner.",
+     "Koppar, eftersom den drar till sig joner som har en positiv laddning.",
+     "Båda metallerna är negativa tills man kopplar in en lampa i kretsen.",
+     "Elektrolyten, eftersom det är där som alla vätejonerna befinner sig."
+   ],
+   "correct": 0,
+   "explanation": "Minnesregeln är att den <strong>oädla metallen</strong> (här zink) oxideras och blir joner. När den lämnar ifrån sig elektroner blir den batteriets <strong>negativa pol</strong> (anod)."
+ },
+ {
+   "category": "Batterier",
+   "q": "Varför är det viktigt att lämna in gamla batterier till en miljöstation?",
+   "options": [
+     "För att batterierna annars kan börja brinna spontant efter några år i soporna.",
+     "De innehåller miljöfarliga tungmetaller som kvicksilver, kadmium eller bly.",
+     "För att syran i batterierna kan reagera med plastpåsar och bilda klorgas.",
+     "De kan explodera om de kommer i kontakt med vanligt hushållsavfall."
+   ],
+   "correct": 1,
+   "explanation": "Många batterier innehåller giftiga <strong>tungmetaller</strong>. Om dessa hamnar i naturen kan de tas upp av växter och djur, och slutligen skada oss människor."
+ },
+ {
+   "category": "Redox",
+   "q": "Vad innebär det rent kemiskt att en atom oxideras?",
+   "options": [
+     "Atomen tar upp syre och blir därmed tyngre i en kemisk förening.",
+     "Atomen får fler neutroner och blir en tyngre isotop av sig själv.",
+     "Atomen avger en eller flera elektroner till ett annat ämne.",
+     "Atomen delar sina valenselektroner med en annan likadan atom."
+   ],
+   "correct": 2,
+   "explanation": "<strong>Oxidation</strong> betyder att ett ämne <strong>avger elektroner</strong>. Det motsatta, att ta upp elektroner, kallas reduktion. Dessa sker alltid samtidigt i en så kallad redox-reaktion."
+ },
+ {
+   "category": "Redox",
+   "q": "Vad kallas det när en jon, till exempel en kopparjon (Cu<sup>2+</sup>), tar upp elektroner och blir en atom igen?",
+   "options": [
+     "Oxidation",
+     "Neutralisation",
+     "Elektrolys",
+     "Reduktion"
+   ],
+   "correct": 3,
+   "explanation": "När en positiv jon tar tillbaka sina förlorade elektroner minskar (reduceras) dess laddning. Detta kallas <strong>reduktion</strong>. Minnesregel: Oxidation är Elektron-Avgivande."
+ },
+ {
+   "category": "Elektrolys",
+   "q": "Vilken metall framställs i stora mängder med hjälp av elektrolys eftersom den är så hårt bunden i sin malm?",
+   "options": [
+     "Aluminium",
+     "Järn",
+     "Guld",
+     "Silver"
+   ],
+   "correct": 0,
+   "explanation": "Vissa metaller, som <strong>aluminium</strong>, är så oädla och reaktiva att de inte kan framställas genom vanlig upphettning med kol. Man måste använda enorma mängder <strong>elström (elektrolys)</strong> för att tvinga fram metallen."
+ },
+ {
+   "category": "Elektrolys",
+   "q": "Vad är syftet med att utföra en galvanisering genom elektrolys?",
+   "options": [
+     "Att göra föremålet tyngre så att det får en högre densitet och sjunker.",
+     "Att skydda en metall mot korrosion genom att lägga på ett ytskikt.",
+     "Att förvandla en oädel metall till en ädel metall genom att byta ut dess kärna.",
+     "Att rena föremålet från bakterier med hjälp av den elektriska strömmen."
+   ],
+   "correct": 1,
+   "explanation": "Vid <strong>galvanisering</strong> använder man ström för att täcka en metall med en annan. Vanligtvis lägger man ett lager zink på järn för att skydda mot rost."
+ },
+ {
+   "category": "Korrosion",
+   "q": "Hur fungerar en offeranod av magnesium som ofta sitter på båtskrov av stål?",
+   "options": [
+     "Magnesiumet suger upp allt salt i vattnet så att skrovet förblir torrt.",
+     "Magnesiumet reagerar med vattnet och bildar en seg hinna av plast runt båten.",
+     "Magnesiumet är oädlare än järn och korroderar därför istället för skrovet.",
+     "Magnesiumet fungerar som en magnet som stöter bort alla negativa syrejoner."
+   ],
+   "correct": 2,
+   "explanation": "Magnesium är <strong>oädlare</strong> än järn. Det betyder att naturen hellre 'äter upp' (oxiderar) magnesiumet först. Anoden offrar sig alltså för att rädda stålet."
+ },
+ {
+   "category": "Korrosion",
+   "q": "Varför klarar sig aluminiumburkar mycket bättre mot korrosion i naturen än föremål av järn?",
+   "options": [
+     "Aluminium innehåller inga atomer som kan reagera med syret i luften.",
+     "Aluminium är en ädelmetall som står längst till höger i spänningsserien.",
+     "Aluminiumburkar är täckta av ett tjockt lager vax som skyddar mot fukt.",
+     "Det bildas en tät hinna av aluminiumoxid som skyddar metallen under."
+   ],
+   "correct": 3,
+   "explanation": "Aluminium är egentligen en oädel metall, men när den reagerar med syre bildas en tät hinna av <strong>oxid</strong>. Denna hinna fungerar som en skyddande sköld, till skillnad från järnrost som är poröst och släpper igenom fukt."
+ },
+ {
+   "category": "Atomen & Kretslopp",
+   "q": "Vad menas med \"materiens oförstörbarhet\" i ett miljöperspektiv?",
+   "options": [
+     "Atomer försvinner aldrig utan byter bara plats och ingår i ständiga kretslopp.",
+     "Atomer kan förstöras om de utsätts för miljögifter eller extrema temperaturer.",
+     "Naturen skapar ständigt helt nya sorters atomer för att ersätta de som förbrukas.",
+     "Grundämnen som vi använder i industrin kan aldrig mer återgå till naturens form."
+   ],
+   "correct": 0,
+   "explanation": "Enligt kemins lagar kan materia inte förstöras, bara omvandlas. Det innebär att ämnen vi släpper ut, som <strong>koldioxid</strong> eller <strong>miljögifter</strong>, finns kvar i vårt system och cirkulerar mellan luft, mark och vatten."
+ },
+ {
+   "category": "Atomen & Kretslopp",
+   "q": "Vilket begrepp beskriver bäst att människor ska kunna leva av jordens resurser utan att förbruka dem för framtida generationer?",
+   "options": [
+     "Cirkulär ekonomi",
+     "Hållbar utveckling",
+     "Livscykelanalys",
+     "Ekosystemtjänst"
+   ],
+   "correct": 1,
+   "explanation": "<strong>Hållbar utveckling</strong> innebär att vi tillgodoser dagens behov utan att äventyra nästa generations möjligheter. Det brukar delas in i tre delar: <strong>ekologisk</strong>, <strong>social</strong> och <strong>ekonomisk</strong> hållbarhet."
+ },
+ {
+   "category": "Kolets & Kvävets kretslopp",
+   "q": "Hur får ett lamm i sig de kolatomer som bygger upp dess kropp?",
+   "options": [
+     "Genom att lammet andas in koldioxid direkt från luften som sedan lagras i musklerna.",
+     "Genom att dricka vatten där kolatomer har lösts upp i form av kolsyra från regnet.",
+     "Genom att äta växter som i sin tur har bundit koldioxid från luften via fotosyntesen.",
+     "Genom att bakterier på lammets hud omvandlar luftens kolatomer till organiskt fett."
+   ],
+   "correct": 2,
+   "explanation": "Kolet cirkulerar i ett kretslopp. Växter tar upp koldioxid från luften genom <strong>fotosyntes</strong> och bygger in kolet i socker. När djuret äter växten förs kolet vidare i <strong>näringskedjan</strong>."
+ },
+ {
+   "category": "Kolets & Kvävets kretslopp",
+   "q": "På vilket sätt blir luftens kvävemolekyler (N₂) tillgängliga för de flesta växter?",
+   "options": [
+     "Kvävemolekylerna tränger in genom porerna i bladen när det är hög luftfuktighet.",
+     "Solljuset slår sönder kvävemolekylerna till atomer som växterna suger upp ur luften.",
+     "Växterna tillverkar själva sitt kväve genom en kemisk reaktion i klorofyllet.",
+     "Bakterier i marken omvandlar kvävgasen till föreningar som tas upp via rötterna."
+   ],
+   "correct": 3,
+   "explanation": "Trots att luften består av 78 % kväve kan växter inte ta upp det i gasform. De är beroende av <strong>kvävefixerande bakterier</strong> (eller blixtnedslag) som omvandlar gasen till kväveföreningar i jorden."
+ },
+ {
+   "category": "Övergödning",
+   "q": "Varför kan övergödning i en sjö leda till syrebrist och döda bottnar?",
+   "options": [
+     "När stora mängder alger dör och bryts ner av bakterier förbrukas syret vid botten.",
+     "Algridomen gör att solljuset inte når botten, vilket stoppar syreproduktionen i vattnet.",
+     "Algerna andas in allt syre i vattnet under natten så att fiskarna till slut kvävs.",
+     "Näringsämnena reagerar kemiskt med syret och bildar giftiga oxider som sjunker."
+   ],
+   "correct": 0,
+   "explanation": "Överskott av näring (kväve och fosfor) leder till algblomning. När algerna dör sjunker de till botten. Där kräver <strong>nedbrytarna</strong> (bakterier) enorma mängder syre för att bryta ner dem, vilket leder till <strong>bottendöd</strong>."
+ },
+ {
+   "category": "Övergödning",
+   "q": "Varför finns det en risk att det blir brist på fosfatföreningar till konstgödsel i framtiden?",
+   "options": [
+     "För att fosforatomer bryts ner till andra grundämnen när de används på åkrarna.",
+     "För att vi bryter fosfor ur gruvor men är dåliga på att återföra det till kretsloppet.",
+     "För att fosfor är en gas som stiger upp i atmosfären och försvinner ut i rymden.",
+     "För att växter förbrukar fosforatomerna helt så att de inte kan användas igen."
+   ],
+   "correct": 1,
+   "explanation": "Fosfor är ett grundämne och kan inte förstöras, men det är en <strong>ändlig resurs</strong> som bryts i gruvor. Om vi inte återvinner fosforn från avlopp och matavfall spolas den ut i havet där den blir oåtkomlig."
+ },
+ {
+   "category": "Klimat & Försurning",
+   "q": "Vad händer med pH-värdet i världshaven när halten koldioxid i atmosfären ökar?",
+   "options": [
+     "pH-värdet stiger eftersom koldioxiden neutraliserar gamla miljögifter i vattnet.",
+     "pH-värdet påverkas inte alls eftersom haven är för stora för att ändra sin kemi.",
+     "pH-värdet sjunker eftersom koldioxiden löser sig i vattnet och bildar kolsyra.",
+     "pH-värdet pendlar kraftigt eftersom koldioxidmolekylerna drar till sig joner."
+   ],
+   "correct": 2,
+   "explanation": "Haven tar upp en stor del av utsläppen. När koldioxid löser sig i vatten bildas kolsyra, vilket frigör vätejoner och leder till <strong>havsförsurning</strong>, något som skadar korallrev och skal djur."
+ },
+ {
+   "category": "Klimat & Försurning",
+   "q": "Varför väger koldioxiden som bildas vid bilkörning mer än själva bensinen som förbrukas?",
+   "options": [
+     "För att koldioxidmolekyler har en högre densitet än flytande bensinmolekyler.",
+     "För att energin som frigörs vid förbränningen omvandlas till tunga atomer.",
+     "För att bensinen innehåller vattenånga som expanderar kraftigt i motorn.",
+     "För att kolatomer från bränslet binder till sig tunga syreatomer från luften."
+   ],
+   "correct": 3,
+   "explanation": "Vid förbränning reagerar kolet i bensinen med <strong>syre</strong> från luften. Eftersom varje kolatom binder till två syreatomer (CO₂), kommer massan av avgaserna att vara högre än massan av bränslet."
+ },
+ {
+   "category": "Miljögifter",
+   "q": "Varför är det extra farligt att äta fisk som befinner sig högt upp i näringskedjan (t.ex. gädda)?",
+   "options": [
+     "För att gifter koncentreras i kroppen när fisken äter många mindre djur.",
+     "För att de största fiskarna har flest elektroner som kan reagera med våra celler.",
+     "För att dessa fiskar producerar egna kemikalier för att försvara sig mot miljögifter.",
+     "För att stora fiskar lever i vatten med lägre pH-värde där metaller löser sig lättare."
+   ],
+   "correct": 0,
+   "explanation": "Detta kallas <strong>anrikning</strong>. Miljögifter (som kvicksilver) bryts inte ner utan lagras i fettet. Rovdjur får i sig all gift från de hundratals bytesdjur de ätit, vilket ger höga halter."
+ },
+ {
+   "category": "Miljögifter",
+   "q": "Varför ska man aldrig spola ner gamla läkemedel i toaletten?",
+   "options": [
+     "Tabletterna kan reagera med klor i reningsverket och bilda explosiva gaser.",
+     "Läkemedlen löses upp och reningsverken kan ofta inte fånga upp alla ämnen.",
+     "Kemikalierna i medicinen fräter sönder rören och orsakar läckage av avloppsvatten.",
+     "Mediciner innehåller bakterier som förstör den biologiska reningen i verket."
+   ],
+   "correct": 1,
+   "explanation": "Reningsverken är inte byggda för att ta bort läkemedel. Substanserna passerar rakt ut i naturen där de kan skada fiskars <strong>hormonsystem</strong> eller beteende."
+ },
+ {
+   "category": "Livscykelanalys (LCA)",
+   "q": "Vad är den största miljöfördelen med att använda återvunnet aluminium jämfört med nytt?",
+   "options": [
+     "Återvunnet aluminium har en mycket högre densitet och håller därför längre.",
+     "Återvunnet aluminium reagerar inte med syre och kan därför aldrig börja korrodera.",
+     "Man sparar cirka 95 % av energin jämfört med att framställa det ur bauxit.",
+     "Man slipper transportera bauxitmalm med flygplan från svenska gruvor."
+   ],
+   "correct": 2,
+   "explanation": "Att framställa aluminium ur malm kräver enorma mängder el (smältelektrolys). Att bara smälta om gammalt skrot kräver väldigt lite energi, vilket är bra ur ett <strong>LCA-perspektiv</strong>."
+ },
+ {
+   "category": "Livscykelanalys (LCA)",
+   "q": "Vilken är en nackdel med papper som förpackningsmaterial enligt en livscykelanalys?",
+   "options": [
+     "Papper tillverkas av en ändlig resurs som kommer att ta slut inom kort.",
+     "Förbränning av papper bidrar kraftigt till den ökade växthuseffekten.",
+     "Papper kan aldrig brytas ner biologiskt om det hamnar ute i naturen.",
+     "Kvaliteten försämras vid varje återvinning så att nya fibrer måste tillsättas."
+   ],
+   "correct": 3,
+   "explanation": "Pappersfibrer (cellulosa) slits ner och blir kortare varje gång de återvinns. Efter 5–7 gånger är de för dåliga för att bli nytt papper och måste förbrännas till energi."
+ },
+ {
+   "category": "Vattenrening",
+   "q": "Vilken process i ett reningsverk används för att få bort små, osynliga partiklar av lera eller fosfor?",
+   "options": [
+     "Flockning",
+     "Destillation",
+     "Centrifugering",
+     "Fraktionering"
+   ],
+   "correct": 0,
+   "explanation": "Vid <strong>kemisk rening</strong> tillsätter man ämnen som får små partiklar att klumpa ihop sig till större 'flockar'. Dessa blir tunga och sjunker till botten så att de kan tas bort."
+ },
+ {
+   "category": "Vattenrening",
+   "q": "Varför är rötning av matavfall en viktig del i en cirkulär ekonomi?",
+   "options": [
+     "Det gör att vi kan framställa nya plastförpackningar direkt från gamla fruktskal.",
+     "Bakterier bryter ner avfallet till biogas som kan användas som drivmedel.",
+     "Det renar avfallet från tungmetaller så att det kan användas som dricksvatten.",
+     "Rötningen gör att alla kolatomer försvinner så att de inte bidrar till växthuseffekten."
+   ],
+   "correct": 1,
+   "explanation": "Matavfall kan rötas i en syrefri miljö. Då bildas <strong>biogas</strong> (metan) som kan ersätta fossila bränslen, samt biogödsel som återför näring till åkermarken."
+ },
+ {
+   "category": "Plast & Miljö",
+   "q": "Från vilken källa kommer de största utsläppen av mikroplaster i Sverige?",
+   "options": [
+     "Från kosmetika och hudkrämer med små skrubbande plastkulor.",
+     "Från nedskräpning av plastpåsar och engångsmuggar i stadsmiljön.",
+     "Från slitage av däck från bilar och andra fordon på våra vägar.",
+     "Från tvätt av syntetkläder som fleece i våra tvättmaskiner."
+   ],
+   "correct": 2,
+   "explanation": "När däck slits mot asfalten lossnar små partiklar av gummi och plast. Dessa <strong>mikroplaster</strong> sköljs med regnvattnet ut i diken och vidare till sjöar och hav."
+ },
+ {
+   "category": "Plast & Miljö",
+   "q": "Vad är den främsta miljöfördelen med en plastpåse gjord av cellulosa (bioplast) jämfört med en vanlig plastpåse?",
+   "options": [
+     "Den kan återvinnas oändligt många gånger utan att kvaliteten försämras.",
+     "Den är helt giftfri och kan ätas av djur utan att orsaka skador.",
+     "Den väger betydligt mindre vilket minskar bränsleförbrukningen vid transport.",
+     "Den tillverkas av en förnybar råvara istället för fossil olja."
+   ],
+   "correct": 3,
+   "explanation": "Vanlig plast görs av råolja (fossil). Bioplast görs av växter (t.ex. sockerrör). Även om bioplasten bränns upp bidrar den inte till växthuseffekten eftersom kolet nyss togs från luften (koldioxidneutral)."
+ },
+ {
+   "category": "Blandat",
+   "q": "Varför är det olämpligt att odla mat på marken nära en gammal gruva?",
+   "options": [
+     "Giftiga metalljoner kan lösas i vatten, transporteras och lagras i växterna.",
+     "Gruvdammet gör att jorden blir för hårt packad för att rötter ska kunna växa.",
+     "Maskinerna i gruvan har tagit bort allt kväve från luften i närområdet.",
+     "Markens pH-värde blir så högt att alla växter dör av den basiska miljön."
+   ],
+   "correct": 0,
+   "explanation": "Regnvatten kan lösa upp tungmetaller från gruvavfall. Metalljonerna följer med vattnet till odlingarna där de tas upp av växterna och gör maten giftig."
+ },
+ {
+   "category": "Blandat",
+   "q": "Vilken gas bildas vid ofullständig förbränning (syrebrist) och är mycket giftig för människor?",
+   "options": [
+     "Koldioxid",
+     "Kolmonoxid",
+     "Kvävgas",
+     "Vattenånga"
+   ],
+   "correct": 1,
+   "explanation": "Om elden får för lite syre bildas <strong>kolmonoxid (CO)</strong> istället för koldioxid. Gasen är osynlig och luktfri men dödlig eftersom den hindrar blodet från att transportera syre."
+ },
+ {
+   "category": "Blandat",
+   "q": "Vilken viktig funktion har ozonskiktet högt upp i atmosfären?",
+   "options": [
+     "Det fungerar som ett lock som håller kvar värmen på jorden.",
+     "Det producerar syre som vi kan använda för att andas på höga höjder.",
+     "Det skyddar livet på jorden mot solens ultravioletta (UV) strålning.",
+     "Det neutraliserar surt regn innan det hinner falla ner till marken."
+   ],
+   "correct": 2,
+   "explanation": "Ozon (O₃) absorberar den farliga <strong>UV-strålningen</strong> från solen. Utan detta skyddande lager skulle risken för hudcancer och skador på ögonen öka drastiskt."
+ },
+ {
+   "category": "Blandat",
+   "q": "Vilket av följande är ett exempel på en så kallad ekosystemtjänst?",
+   "options": [
+     "Att tillverka bilar av återvunnet stål för att spara energi.",
+     "Att rena avloppsvatten i ett modernt reningsverk med kemikalier.",
+     "Att bryta malm i gruvor för att kunna bygga starka hus.",
+     "Att insekter pollinerar växter så att vi kan få frukt och bär."
+   ],
+   "correct": 3,
+   "explanation": "<strong>Ekosystemtjänster</strong> är sådant som naturen ger oss 'gratis' och som vi är beroende av. Exempel är pollinering, vattenrening i våtmarker och fotosyntes."
+ },
+ {
+   "category": "Kemiska kretslopp",
+   "q": "Hur leder ökade koldioxidutsläpp i atmosfären till att korallrev i haven skadas?",
+   "options": [
+     "Koldioxiden löser sig i vattnet och bildar kolsyra, vilket sänker pH-värdet och gör det svårare för korallerna att bygga sina kalkskelett.",
+     "Koldioxidgasen lägger sig som ett täcke på vattenytan och hindrar syre från att nå ner till korallernas celler.",
+     "Molekylerna i koldioxiden reagerar med havets salt och bildar tungmetaller som är giftiga för korallpolyperna.",
+     "Koldioxiden fungerar som gödsel för havets alger som då växer så snabbt att de skuggar korallerna till döds."
+   ],
+   "correct": 0,
+   "explanation": "Detta är ett resonemang i flera led: CO<sub>2</sub> löser sig i havet → <strong>kolsyra</strong> bildas → pH-värdet sjunker (försurning) → kalket löses upp eller blir svårt att bygga med. Dessutom leder växthuseffekten till varmare vatten som orsakar <strong>korallblekning</strong>."
+ },
+ {
+   "category": "Kemiska kretslopp",
+   "q": "Varför leder utsläpp av tvättmedel med fosfater till syrebrist på havets botten?",
+   "options": [
+     "Fosfaterna reagerar direkt med syret i vattnet och förvandlar det till fasta mineraler som sjunker.",
+     "Fosforn ger ökad algblomning som när de dör bryts ner av bakterier i en process som förbrukar syre.",
+     "Tvättmedlet bildar en hinna på ytan som hindrar havsvågorna från att suga ner nytt syre från atmosfären.",
+     "De kemiska ämnena dödar alla fiskar vid botten, vilket gör att vattnet slutar cirkulera och blir syrefattigt."
+   ],
+   "correct": 1,
+   "explanation": "Orsakskedjan är: Fosfor är <strong>näring</strong> → alger växer kraftigt → alger dör och sjunker → <strong>nedbrytare</strong> (bakterier) äter upp dem → bakterierna andas och förbrukar allt <strong>syre</strong> → bottendöd."
+ },
+ {
+   "category": "Kemiska kretslopp",
+   "q": "Varför är återvinning av aluminiumburkar så mycket bättre för miljön än att framställa ny metall ur malm?",
+   "options": [
+     "Återvunnet aluminium innehåller fler neutroner som gör att burkarna håller längre och inte behöver ersättas.",
+     "Bauxitmalmen i marken renar grundvattnet, så genom att låta den ligga kvar får vi ett renare dricksvatten.",
+     "Genom att smälta gamla burkar slipper man använda syre, vilket gör att vi får mer frisk luft i atmosfären.",
+     "Framställning ur malm kräver extremt mycket el för elektrolys, medan återvinning bara kräver energi för smältning."
+   ],
+   "correct": 3,
+   "explanation": "Aluminiumjoner binder extremt hårt till syre i berggrunden (bauxit). Att bryta denna bindning kräver <strong>smältelektrolys</strong> och enorma mängder el. Att bara smälta om metallen sparar <strong>95 %</strong> av energin."
+ },
+ {
+   "category": "Hälsa & Kemikalier",
+   "q": "Varför är det ett miljöproblem att spola ner vattenlösliga mediciner i toaletten?",
+   "options": [
+     "Medicinerna reagerar med klor i verket och bildar vätgas som riskerar att orsaka explosioner i ledningarna.",
+     "Kemikalierna i tabletterna gör att vattnet får en högre densitet, vilket leder till att reningsfiltren går sönder.",
+     "Mikroorganismerna i reningsverken kan inte bryta ner dem, så de hamnar i naturen och skadar djurlivet.",
+     "Läkemedlen neutraliserar allt bajs i vattnet så att det inte längre går att producera biogas genom rötning."
+   ],
+   "correct": 2,
+   "explanation": "Många läkemedel är designade för att vara <strong>stabila</strong>. Reningsverken är inte byggda för att rena bort dem, så de passerar rakt igenom och kan störa fiskars <strong>hormonsystem</strong> och fortplantning i våra sjöar."
+ },
+ {
+   "category": "Hälsa & Kemikalier",
+   "q": "Vad händer i kroppens matspjälkning om de specifika enzymerna inte fungerar som de ska?",
+   "options": [
+     "Kemiska reaktioner går för långsamt, vilket gör att kroppen inte hinner utvinna näring och energi ur maten.",
+     "Kroppens temperatur stiger till farliga nivåer eftersom maten inte kan kylas ner under kemiska reaktioner.",
+     "Magsäcken börjar tillverka egna atomer av kol för att ersätta de näringsämnen som inte tas upp av blodet.",
+     "Maten förvandlas till syrgas och kvävgas som bubblar upp i lungorna istället för att gå vidare till tarmen."
+   ],
+   "correct": 0,
+   "explanation": "<strong>Enzymer</strong> fungerar som biologiska <strong>katalysatorer</strong>. Utan dem skulle kemiska reaktioner i kroppen ske så långsamt vid 37 grader att vi inte skulle överleva. Vissa gifter skadar hälsan just genom att blockera enzymer."
+ },
+ {
+   "category": "Hälsa & Kemikalier",
+   "q": "Vilket resonemang beskriver bäst varför miljögifter som kvicksilver kallas för fettlösliga och är så farliga?",
+   "options": [
+     "De löser upp fettvävnad i djurens kroppar så att de blir svagare och får svårt att överleva kalla vintrar.",
+     "De fungerar som en sorts olja som smörjer djurens leder, men som gör att de rör sig för snabbt och dör av utmattning.",
+     "De förvandlar vatten till fett genom en endoterm reaktion, vilket gör att hela sjöar får ett lager av olja på ytan.",
+     "De lagras i kroppens fett och förs vidare till rovdjur, vilket gör att halten ökar högst upp i näringskedjan."
+   ],
+   "correct": 3,
+   "explanation": "Vattenlösliga ämnen kissas ut, men <strong>fettlösliga ämnen</strong> lagras i kroppen. Detta leder till <strong>bioackumulation</strong> (anrikning), där rovdjur (toppkonsumenter) får i sig den samlade dosen från alla bytesdjur de ätit."
+ },
+ {
+   "category": "Hållbarhet",
+   "q": "Varför anses biogas vara mer hållbart för klimatet än bensin, trots att båda bildar koldioxid vid eldning?",
+   "options": [
+     "Biogasmolekyler är lättare än bensinmolekyler och stiger därför upp till rymden istället för att stanna i luften.",
+     "Biogas ingår i ett snabbt kretslopp där växterna nyss bundit den koldioxid som sedan släpps ut vid eldning.",
+     "Vid förbränning av biogas bildas ingen vattenånga, vilket gör att den naturliga växthuseffekten inte påverkas.",
+     "Biogas innehåller en speciell typ av kolatomer som inte kan absorbera värmeenergi från solens strålar."
+   ],
+   "correct": 1,
+   "explanation": "Det handlar om tidsperspektivet i <strong>kretsloppet</strong>. Biogas görs av nutida växter (kort kretslopp), så ingen <em>ny</em> koldioxid tillförs. Bensin tillför kol som varit bundet i marken i miljontals år (långt kretslopp)."
+ },
+ {
+   "category": "Hållbarhet",
+   "q": "Varför beskrivs fosfor som en \"ändlig resurs\" trots att atomer aldrig kan förstöras?",
+   "options": [
+     "Vi bryter fosfor ur gruvor men återför det inte till marken, utan det läcker ut och sprids i haven.",
+     "Fosforatomer har en mycket kort livslängd och faller sönder till andra grundämnen efter några år på åkern.",
+     "Fosfor är en sällsynt gas som avdunstar från jorden och försvinner ut ur atmosfären vid höga temperaturer.",
+     "Människokroppen förbrukar fosforatomerna helt vid bildandet av skelettet så att de inte kan återanvändas."
+   ],
+   "correct": 0,
+   "explanation": "Atomer förstörs inte, men de kan <strong>spridas</strong> så att de blir oanvändbara. Vi flyttar fosfor från koncentrerade <strong>gruvor</strong> till haven (via avlopp) där den späds ut. Hållbarhet kräver att vi sluter kretsloppet."
+ },
+ {
+   "category": "Hållbarhet",
+   "q": "Vilken kemisk process i atmosfären störs när människan släpper ut kloratomer (t.ex. från freoner)?",
+   "options": [
+     "Kloratomerna reagerar med kvävgas och bildar en tung aerosol som faller ner och försurar skogsmarker.",
+     "Kloret fungerar som en katalysator som gör att koldioxidmolekylerna blir tyngre och sjunker till marken.",
+     "Klor reagerar med syreatomer vilket hindrar dem från att bygga upp nya ozonmolekyler (O<sub>3</sub>) i ozonskiktet.",
+     "Kloratomerna tänder eld på luftens vätgas vilket leder till att vattnet i molnen dunstar bort i förtid."
+   ],
+   "correct": 2,
+   "explanation": "<strong>Ozon</strong> (O<sub>3</sub>) skyddar mot UV-strålning. Kloratomer fungerar som katalysatorer som bryter ner ozonet snabbare än det hinner bildas, vilket skapar hål i <strong>ozonskiktet</strong>."
+ },
+ {
+   "category": "Hållbarhet",
+   "q": "Vilken miljökonsekvens kan uppstå om vi byter all bensin mot etanol gjord av odlade grödor?",
+   "options": [
+     "Etanolmolekylerna är så tunga att bilar som drivs med dem kommer att slita ut vägarna dubbelt så snabbt.",
+     "Odlingarna tar upp allt kväve från luften så att det inte längre finns något kvar för oss människor att andas.",
+     "Den kemiska reaktionen vid etanoltillverkning skapar en ny sorts ozonhål som inte kan lagas av naturen.",
+     "Stora odlingsytor krävs, vilket kan leda till skövling av regnskog och minskad biologisk mångfald."
+   ],
+   "correct": 3,
+   "explanation": "Detta visar på en målkonflikt. Etanol är <strong>klimatsmart</strong> (förnybart), men kräver enorma resurser i form av <strong>mark</strong> och vatten, vilket kan hota matförsörjning och natur. Hållbarhet kräver att man ser helheten."
+ },
+ {
+   "category": "Hållbarhet",
+   "q": "Varför är det extra viktigt att lämna in gamla knappcellsbatterier till en miljöstation?",
+   "options": [
+     "Batterierna innehåller vätgas som kan reagera med luftens syre och orsaka explosioner på soptippen.",
+     "De innehåller tungmetaller som kvicksilver som är stabila miljögifter och anrikas i näringskedjan.",
+     "Syran inuti batterierna har ett så lågt pH-värde att den kan smälta ner hela sopbilar genom korrosion.",
+     "Elektronerna i batteriet kan hoppa över till plastpåsar och bilda nya, farliga kemiska föreningar."
+   ],
+   "correct": 1,
+   "explanation": "<strong>Tungmetaller</strong> (som bly, kadmium, kvicksilver) är grundämnen och kan aldrig brytas ner. Om de hamnar i soporna läcker de ut i naturen och skadar nervsystemet hos djur och människor."
+ },
+ {
+   "category": "Hållbarhet",
+   "q": "Hur bidrar energi från åskblixtar till att växter får näring?",
+   "options": [
+     "Blixten värmer upp marken så att växternas rötter kan smälta ner stenar och ta upp mineraler ur dem.",
+     "Blixtarna fungerar som en katalysator som gör att växterna kan genomföra fotosyntes mitt i natten.",
+     "Den höga energin slår sönder kvävemolekyler i luften så att de kan bilda kväveföreningar som växter tar upp.",
+     "Elen från blixten laddar upp växternas atomer så att de drar till sig fler elektroner från jorden."
+   ],
+   "correct": 2,
+   "explanation": "Luftens <strong>kvävgas (N<sub>2</sub>)</strong> har en trippelbindning som är extremt stark. Blixtens enorma energi bryter bindningen så att kvävet kan reagera med syre och bilda <strong>nitrater</strong> (gödsel) som regnar ner."
+ },
+ {
+   "category": "Vetenskaplig metod",
+   "q": "En elev vill undersöka vilken temperatur som krävs för att lösa upp en tablett snabbast. Hen lägger en hel tablett i 20-gradigt vatten och en krossad tablett i 40-gradigt vatten. Vad är det största felet i undersökningen?",
+   "options": [
+     "Eleven ändrar två variabler (både temperatur och finfördelning) samtidigt.",
+     "Vattnet borde ha varit exakt 37 grader för att efterlikna kroppens miljö.",
+     "Hen använder inte en digital pH-mätare för att kontrollera lösningens surhet.",
+     "Tabletten borde ha vägts med en precisionsvåg före och efter experimentet."
+   ],
+   "correct": 0,
+   "explanation": "För att ett resultat ska vara pålitligt krävs <strong>variabelkontroll</strong>. Man får bara ändra en sak i taget. Här vet vi inte om det var värmen eller krossandet som gjorde att det gick fortare."
+ },
+ {
+   "category": "Vetenskaplig metod",
+   "q": "Varför är det viktigt att en kemisk studie om ett nytt läkemedel omfattar tusentals personer istället för bara fem?",
+   "options": [
+     "För att det ser mer vetenskapligt ut om tabellerna i rapporten innehåller mycket data.",
+     "För att minska risken att enstaka personers unika kroppskemi (slumpen) styr resultatet.",
+     "För att kemiska reaktioner i celler kräver stora mängder biomassa för att kunna mätas.",
+     "För att läkemedelsföretagen ska kunna tjäna mer pengar på att sälja testexemplar."
+   ],
+   "correct": 1,
+   "explanation": "Om urvalet är för litet ökar risken att <strong>slumpen</strong> avgör resultatet. Genom att testa på många personer säkerställer man att effekten är verklig och inte bara gäller några få undantag."
+ },
+ {
+   "category": "Vetenskaplig metod",
+   "q": "Vad menas med att ett kemiskt experiment är 'reproducerbart'?",
+   "options": [
+     "Att forskaren har fotograferat alla steg i experimentet för att bevisa att det har hänt.",
+     "Att ämnena som bildas vid reaktionen kan användas som råvaror i en ny kemisk process.",
+     "Att andra forskare kan följa instruktionen, utföra samma test och få samma resultat.",
+     "Att kemikalierna som används är biologiskt nedbrytbara och ingår i naturens kretslopp."
+   ],
+   "correct": 2,
+   "explanation": "Inom naturvetenskapen måste resultat kunna upprepas. Om ett experiment är <strong>reproducerbart</strong> betyder det att andra forskare kan göra exakt samma sak och få samma svar; annars är resultatet inte trovärdigt."
+ },
+ {
+   "category": "Trovärdighet & Jäv",
+   "q": "Du läser en text om att ett visst plastmaterial är helt ofarligt för miljön. Vem av följande avsändare bör du vara mest kritisk mot?",
+   "options": [
+     "En professor i miljökemi vid ett oberoende statligt universitet.",
+     "En expert på Kemikalieinspektionen som arbetar med lagstiftning.",
+     "En miljöjournalist som har skrivit en artikel i en dagstidning.",
+     "En talesperson för organisationen 'Plasttillverkarna i Sverige'."
+   ],
+   "correct": 3,
+   "explanation": "När en avsändare tjänar pengar på produkten de uttalar sig om finns risk för <strong>jäv</strong> (intressekonflikt). En <strong>oberoende myndighet</strong> eller forskare är oftast mer trovärdig eftersom de saknar vinstintresse."
+ },
+ {
+   "category": "Trovärdighet & Jäv",
+   "q": "Vad innebär det att en vetenskaplig studie om t.ex. grafen har genomgått 'Peer-review'?",
+   "options": [
+     "Att studien har blivit granskad av oberoende experter inom samma forskningsområde.",
+     "Att allmänheten har fått rösta på internet om de tror på resultatet eller inte.",
+     "Att författaren har läst igenom sin egen text en extra gång för att hitta stavfel.",
+     "Att resultaten har visats i en populär dokumentärfilm på TV för att nå många."
+   ],
+   "correct": 0,
+   "explanation": "Peer-review (fackgranskning) är vetenskapens kvalitetskontroll. Innan en artikel publiceras granskas den av andra experter för att säkerställa att metoderna är korrekta och att slutsatserna håller."
+ },
+ {
+   "category": "Orsakssamband",
+   "q": "En studie visar att personer som använder mycket parfym oftare har huvudvärk. Vilken tolkning är mest rimlig ur ett källkritiskt perspektiv?",
+   "options": [
+     "Det är bevisat att doftmolekylerna i parfym orsakar en kemisk skada i hjärnan.",
+     "Det finns ett samband, men det kan finnas en bakomliggande orsak till båda sakerna.",
+     "Eftersom båda sakerna händer samtidigt måste parfymen vara den direkta orsaken.",
+     "Studien är falsk eftersom det inte finns några kemiska kopplingar mellan näsa och huvud."
+   ],
+   "correct": 1,
+   "explanation": "Att två saker händer samtidigt (<strong>korrelation</strong>) betyder inte att den ena orsakar den andra (<strong>kausalitet</strong>). Det kan vara så att stressade personer både får huvudvärk och använder mer parfym."
+ },
+ {
+   "category": "Orsakssamband",
+   "q": "En person säger: 'Min farfar jobbade med asbest i 40 år och han blev aldrig sjuk, så asbest är nog ofarligt.' Varför är detta inte ett giltigt vetenskapligt bevis?",
+   "options": [
+     "För att farfar troligen använde en modernare sorts asbest som inte var lika dammig.",
+     "För att farfars lungor kan ha varit unikt starka på grund av en speciell diet.",
+     "För att det är en anekdot som inte motbevisar statistiken om asbestens risker.",
+     "För att personen som berättar historien troligen har glömt bort att farfar rökte."
+   ],
+   "correct": 2,
+   "explanation": "Detta kallas för en <strong>anekdot</strong> (enstaka berättelse). Inom vetenskapen väger <strong>statistik</strong> tyngre. Att en person klarade sig motbevisar inte att asbest orsakar cancer hos de flesta andra."
+ },
+ {
+   "category": "Pseudovetenskap",
+   "q": "Du ser en annons för en 'magisk tvättboll' som sägs rena kläder med hjälp av 'kvant-jonisering' utan tvättmedel. Vilket varningstecken tyder på pseudovetenskap?",
+   "options": [
+     "Att bollens plastmaterial sägs vara återvinningsbart enligt en livscykelanalys.",
+     "Att annonsen förklarar hur vattenmolekyler fungerar som ett polärt lösningsmedel.",
+     "Att tillverkaren rekommenderar att man ändå använder varmt vatten vid tvättningen.",
+     "Att man använder svåra ord som 'kvant-jonisering' för att låta märkvärdig utan bevis."
+   ],
+   "correct": 3,
+   "explanation": "<strong>Pseudovetenskap</strong> använder ofta komplicerade, vetenskapliga ord på ett felaktigt sätt för att verka trovärdigt. Om en produkt lovar mirakel utan att kunna förklara den kemiska reaktionen bör man vara skeptisk."
+ },
+ {
+   "category": "Pseudovetenskap",
+   "q": "En hemsida påstår att 'kemikalier i kranvatten döljer sanningen om universum'. Sidan saknar källor men har många kommentarer från folk som håller med. Hur bör du göra?",
+   "options": [
+     "Söka efter information från oberoende källor som universitet eller myndigheter.",
+     "Lita på informationen eftersom det är så många personer som har kommenterat.",
+     "Sluta dricka kranvatten direkt för att vara på den säkra sidan om det stämmer.",
+     "Skriva en egen kommentar och fråga om de har några bilder som bevisar sanningen."
+   ],
+   "correct": 0,
+   "explanation": "Antalet likes eller kommentarer är inte ett bevis för sanningen. Källkritik handlar om att leta efter <strong>oberoende källor</strong> (t.ex. Livsmedelsverket) som baserar sina råd på vetenskapliga studier."
+ },
+ {
+   "category": "Argumentation",
+   "q": "Vid en diskussion om biobränslen säger en elev: 'Vi måste genast sluta med bensin och bara använda etanol för att rädda miljön.' Vilket perspektiv saknas i elevens resonemang?",
+   "options": [
+     "En förklaring av hur kolatomer i fossila bränslen förstärker den naturliga växthuseffekten.",
+     "Ett led om att produktion av etanol kan kräva stora odlingsytor och påverka matpriser.",
+     "En beskrivning av hur koldioxidmolekyler tas upp av växternas blad genom fotosyntes.",
+     "Fakta om att bensinmolekyler innehåller mer energi per gram än vad etanolmolekyler gör."
+   ],
+   "correct": 1,
+   "explanation": "Ett hållbart resonemang måste väga <strong>fördelar mot nackdelar</strong>. Även om etanol är förnybart finns risker, som att matjorden används till bränsle istället för mat. Man måste se helheten."
+ },
+ {
+   "category": "Argumentation",
+   "q": "I en debattartikel påstås att 'all kemi är farlig och naturliga ämnen är alltid bättre'. Varför är detta ett ovetenskapligt argument?",
+   "options": [
+     "Eftersom naturliga ämnen inte går att studera i ett laboratorium med modern nanoteknik.",
+     "Eftersom naturliga ämnen inte innehåller några atomer, till skillnad från tillverkade kemikalier.",
+     "Eftersom även naturliga ämnen består av kemiska föreningar och kan vara extremt giftiga.",
+     "Eftersom kemiska tecken bara används för att beskriva ämnen som människan har tillverkat."
+   ],
+   "correct": 2,
+   "explanation": "All materia är uppbyggd av atomer och är därmed 'kemi'. Många av de starkaste gifterna (som arsenik och botulinumtoxin) är helt <strong>naturliga</strong>. Att något kommer från naturen betyder inte att det är ofarligt."
+ },
+ {
+   "category": "Källkritik i vardagen",
+   "q": "Du läser en rapport om nanoteknik i solskyddskrämer. Vilken information i texten ökar trovärdigheten mest?",
+   "options": [
+     "Att texten innehåller många bilder på glada människor som solar säkert på en strand.",
+     "Att författaren påstår att metoden är en 'hemlighet' som ingen annan känner till än.",
+     "Att produkten som beskrivs i rapporten har vunnit ett pris för sin snygga förpackning.",
+     "Att rapporten hänvisar till flera olika oberoende forskningsstudier och expertkällor."
+   ],
+   "correct": 3,
+   "explanation": "Trovärdighet byggs genom transparens. <strong>Källhänvisningar</strong> till oberoende forskning visar att författaren har stöd för sina påståenden och inte bara hittar på."
+ },
+ {
+   "category": "Källkritik i vardagen",
+   "q": "En bloggare påstår att man kan 'rensa kroppen från gifter' genom att dricka en dyr juice i tre dagar. Bloggaren visar bilder på sig själv före och efter. Vad är den mest sannolika förklaringen?",
+   "options": [
+     "Juicen innehåller en speciell sorts katalysatorer som förstör alla tunga metallatomer.",
+     "Bloggaren har fått betalt för att göra reklam och bilderna bevisar ingen kemisk rening.",
+     "Kroppens enzymer fungerar bara om man tillsätter de sockerarter som finns i juicen.",
+     "Juicen har ett så lågt pH-värde att den neutraliserar alla basiska miljögifter i blodet."
+   ],
+   "correct": 1,
+   "explanation": "Kroppen har egna organ (lever och njurar) som renar blodet; 'detox' är ofta en myt. Man ska alltid vara skeptisk om det finns ett <strong>ekonomiskt intresse</strong> (reklam) bakom påståendet."
+ },
+ {
+   "category": "Källkritik i vardagen",
+   "q": "Varför bör man vara skeptisk till en rubrik som säger: 'Ny upptäckt: Vatten kan brinna!'?",
+   "options": [
+     "För att vattenmolekyler redan är resultatet av en förbränning och inte kan brinna igen.",
+     "För att vatten har en för hög densitet för att syreatomer ska kunna krocka med väteatomer.",
+     "För att koldioxidhalten i atmosfären är för låg för att stödja en sådan kemisk reaktion.",
+     "För att vätejoner i vattenlösningar alltid är neutrala och därför aldrig kan avge värme."
+   ],
+   "correct": 0,
+   "explanation": "Källkritik handlar också om att kontrollera fakta mot <strong>naturvetenskapliga lagar</strong>. Vatten (H₂O) är väte som redan har brunnit (reagerat med syre). Aska kan inte brinna igen, och det kan inte vatten heller."
+ },
+ {
+   "category": "Källkritik i vardagen",
+   "q": "Du hittar två olika källor om mikroplaster. Källa A är från en miljöorganisation och Källa B är från ett universitet. Båda säger olika saker. Vad är bäst att göra?",
+   "options": [
+     "Lita på den källa som har de mest dramatiska siffrorna för att vara på den säkra sidan.",
+     "Sluta använda plast helt och hållet eftersom man tydligen inte kan veta vad som är sant.",
+     "Jämföra källornas metoder och se vilken som bygger på bäst vetenskaplig kontroll.",
+     "Utgå ifrån att den källa som är nyast alltid har mest rätt oavsett vem som skrivit den."
+   ],
+   "correct": 2,
+   "explanation": "När källor säger olika saker måste man granska deras <strong>metoder</strong> och syften. Ett universitet har oftast högre krav på vetenskaplighet, medan en organisation kan vinkla fakta för att driva opinion."
+ },
+ {
+   "category": "Frågeställningar",
+   "q": "Vilken av följande frågor lämpar sig bäst för en systematisk undersökning i kemisalen?",
+   "options": [
+     "Varför tycker vissa att det luktar illa när man laborerar med svavel?",
+     "Är det viktigt att kemister har på sig skyddsutrustning vid experiment?",
+     "Hur påverkas lösligheten av socker i vatten om vattnets temperatur ökar?",
+     "Varför finns det olika typer av indikatorer för att mäta pH-värden i vatten?"
+   ],
+   "correct": 2,
+   "explanation": "En bra kemisk fråga ska vara <strong>undersökningsbar</strong>. Det innebär att den inte bara frågar \"varför\", utan fokuserar på mätbara förändringar, som \"hur mycket\" eller \"hur snabbt\" något sker."
+ },
+ {
+   "category": "Frågeställningar",
+   "q": "Vad krävs för att en hypotes ska anses vara naturvetenskapligt underbyggd?",
+   "options": [
+     "Att den gissar på ett resultat som är så oväntat och spännande som möjligt.",
+     "Att antagandet motiveras med hjälp av kemiska begrepp, modeller eller teorier.",
+     "Att man utför undersökningen minst tio gånger innan man skriver ner den.",
+     "Att den innehåller en utförlig lista på allt material som krävs för försöket."
+   ],
+   "correct": 1,
+   "explanation": "En <strong>hypotes</strong> är inte samma sak som en gissning. Det är ett antagande om resultatet som måste motiveras med <strong>kemiska kunskaper</strong>, till exempel hur partiklar rör sig vid olika temperaturer."
+ },
+ {
+   "category": "Variabler",
+   "q": "Du ska undersöka hur snabbt ett magnesiumband löses upp i olika koncentrationer av saltsyra. Vad måste du hålla konstant?",
+   "options": [
+     "Saltsyrekoncentrationen i de olika bägarna.",
+     "Hur mycket vätgas som bildas under försöket.",
+     "Tiden det tar för metallen att helt försvinna.",
+     "Magnesiumbandets storlek och syrans temperatur."
+   ],
+   "correct": 3,
+   "explanation": "I en systematisk undersökning får man bara ändra <strong>en variabel</strong> i taget (här koncentrationen). Alla andra faktorer (som temperatur och area) måste hållas <strong>konstanta</strong> för att resultatet ska bli pålitligt."
+ },
+ {
+   "category": "Variabler",
+   "q": "Vad kallas den faktor som du medvetet väljer att förändra i din undersökning?",
+   "options": [
+     "Variabel",
+     "Konstant",
+     "Felkälla",
+     "Reagens"
+   ],
+   "correct": 0,
+   "explanation": "En <strong>variabel</strong> är det som varierar (förändras). Den oberoende variabeln är det du ändrar på (t.ex. temperaturen), för att se om det ger en effekt på resultatet."
+ },
+ {
+   "category": "Variabler",
+   "q": "Du vill undersöka om mängden salt påverkar hur snabbt is smälter. Vad är den beroende variabeln (det du mäter)?",
+   "options": [
+     "Mängden is du startar med.",
+     "Hur många teskedar salt du tillsätter.",
+     "Vilken typ av salt som används vid testet.",
+     "Mängden vatten som smälter under en viss tid."
+   ],
+   "correct": 3,
+   "explanation": "I experimentet är saltmängden den variabel du ändrar (oberoende). Smälthastigheten, alltså <strong>hur mycket vatten</strong> som bildas, är det du mäter som svar (beroende variabel)."
+ },
+ {
+   "category": "Utförande & Säkerhet",
+   "q": "Vilken beskrivning av en undersökningsmetod håller högst kvalitet?",
+   "options": [
+     "En steg-för-steg-instruktion så att en annan person kan göra om försöket.",
+     "En kort text som fokuserar på att förklara varför ämnena reagerar med varandra.",
+     "En lista där man skriver upp namnen på alla kemikalier som man tänker använda.",
+     "En personlig dagbok om vad man kände och tyckte var roligt under laborationens gång."
+   ],
+   "correct": 0,
+   "explanation": "En metodbeskrivning ska vara så tydlig att undersökningen blir <strong>reproducerbar</strong>. Det innebär att vem som helst ska kunna följa instruktionen och få exakt samma resultat."
+ },
+ {
+   "category": "Utförande & Säkerhet",
+   "q": "Vilken säkerhetsregel är viktigast när du ska späda en stark syra med vatten?",
+   "options": [
+     "Att man alltid använder en glastermometer för att se till att vattnet inte kokar.",
+     "Att man följer SIV-regeln: Syra I Vatten, för att undvika att det stänker syra.",
+     "Att man smakar på lösningen för att kontrollera om den har blivit tillräckligt svag.",
+     "Att man håller bägaren så nära ansiktet som möjligt för att se när de blandas."
+   ],
+   "correct": 1,
+   "explanation": "När syra blandas med vatten frigörs värme. Man ska alltid hälla <strong>Syra I Vatten (SIV)</strong>. Gör man tvärtom kan den lilla mängden vatten börja koka direkt och stänka upp frätande syra."
+ },
+ {
+   "category": "Utförande & Säkerhet",
+   "q": "Vad är det viktigaste att göra efter att en laboration är helt avslutad i kemisalen?",
+   "options": [
+     "Låta alla bägare stå kvar på bordet så att läraren kan se att man är klar.",
+     "Hälla tillbaka alla överblivna kemikalier i deras originalflaskor för att spara pengar.",
+     "Lämna salen så snabbt som möjligt för att släppa in nästa klass i tid.",
+     "Diska utrustningen ordentligt, torka bänken och tvätta händerna noga."
+   ],
+   "correct": 3,
+   "explanation": "God laboratoriesed handlar om säkerhet. Att <strong>diska och städa</strong> minskar risken för att nästa grupp ska skadas av kemikalierester, och handtvätt skyddar dig själv."
+ },
+ {
+   "category": "Precision",
+   "q": "Varför bör man använda ett graderat mätglas istället för en vanlig bägare eller mugg när man mäter vätska?",
+   "options": [
+     "Det ger en mer exakt mätning av volymen, vilket gör resultatet mer tillförlitligt.",
+     "Ett mätglas är gjort av plast som gör att syror inte kan fräta hål i botten.",
+     "Mätglaset väger mindre än en mugg och påverkar därför inte vågens slutresultat.",
+     "Man kan inte se färgen på en pH-indikator lika tydligt om man använder en mugg."
+   ],
+   "correct": 0,
+   "explanation": "Att använda rätt utrustning ökar <strong>precisionen</strong>. Ett mätglas har en tydligare skala än en bägare, vilket minskar risken för <strong>mätfel</strong> och gör slutsatserna säkrare."
+ },
+ {
+   "category": "Precision",
+   "q": "Du ska jämföra pH-värdet i tre olika sjöar. Vilket mätverktyg ger det mest exakta värdet?",
+   "options": [
+     "BTB-lösning som ändrar färg till gult, grönt eller blått.",
+     "En digital pH-meter som visar värdet med minst en decimal.",
+     "Ett universalindikatorpapper som jämförs med en färgskala på förpackningen.",
+     "Att titta på vattnets klarhet och se om det finns mycket fisk i sjön."
+   ],
+   "correct": 1,
+   "explanation": "Färgindikatorer ger en grov uppskattning, men en <strong>digital pH-meter</strong> mäter spänningen i vätskan och kan ge ett exakt värde (t.ex. pH 5,4 istället för bara 'surt')."
+ },
+ {
+   "category": "Precision",
+   "q": "Vid ett experiment ska du väga upp exakt 5,0 gram salt. Vad bör du göra för att få ett så bra värde som möjligt?",
+   "options": [
+     "Använda en vanlig matsked eftersom en sådan alltid rymmer exakt fem gram.",
+     "Mäta upp saltet i en bägare med vatten och sedan räkna ut hur mycket det väger.",
+     "Nollställa vågen med en tom behållare på innan du häller på saltet.",
+     "Gissa mängden först och sedan kontrollera om vågen visar ungefär samma siffra."
+   ],
+   "correct": 2,
+   "explanation": "Detta kallas att <strong>tarera</strong> vågen. Genom att nollställa med behållaren på, drar vågen bort vikten av behållaren så att du mäter exakt bara saltets massa."
+ },
+ {
+   "category": "Dokumentation",
+   "q": "Vilket är det bästa sättet att dokumentera mätvärden under ett pågående kemiexperiment?",
+   "options": [
+     "Att vänta tills hela experimentet är slut och sedan skriva ner vad man minns.",
+     "Att rita en teckning av hur lösningen ser ut precis när den börjar bubbla.",
+     "Att skriva ner alla mätvärden på ett löst papper som man kan kasta efteråt.",
+     "Att anteckna exakta värden i en tabell vid bestämda tidsintervall."
+   ],
+   "correct": 3,
+   "explanation": "Dokumentation ska vara systematisk. En <strong>tabell</strong> gör det enkelt att samla in data i realtid och gör det lättare att senare upptäcka mönster eller avvikelser."
+ },
+ {
+   "category": "Dokumentation",
+   "q": "Vad är huvudsyftet med att skapa ett diagram (t.ex. ett linjediagram) efter en undersökning?",
+   "options": [
+     "För att det ser mer proffsigt ut i rapporten och ger läraren en bättre bild.",
+     "För att tydligare kunna se mönster och samband mellan de olika mätvärdena.",
+     "För att man ska slippa förklara resultatet med ord i slutet av sin rapport.",
+     "För att visa att man har använt alla de kemikalier som fanns med i planeringen."
+   ],
+   "correct": 1,
+   "explanation": "Medan en tabell samlar siffror, används <strong>diagram</strong> för att visualisera sambanden. Det gör det mycket lättare att se t.ex. hur snabbt en reaktion går eller när den stannar av."
+ },
+ {
+   "category": "Utvärdering",
+   "q": "Varför är det viktigt att genomföra samma undersökning flera gånger (upprepa försöket)?",
+   "options": [
+     "För att visa att man har tillräckligt med tålamod för att bli en bra naturvetare.",
+     "För att man ska få använda upp alla kemikalier som man har hämtat till sin bänk.",
+     "För att säkerställa att resultatet inte bara var en tillfällighet eller en engångsföreteelse.",
+     "För att man ska kunna skriva en mycket längre rapport med fler tabeller och diagram."
+   ],
+   "correct": 2,
+   "explanation": "En viktig del av utvärderingen är att bedöma tillförlitligheten. Genom att <strong>upprepa försöket</strong> minskar man risken för att slumpen eller ett enstaka misstag har påverkat slutsatsen."
+ },
+ {
+   "category": "Utvärdering",
+   "q": "Vilken av följande är en vanlig metodfelkälla i en kemisk undersökning?",
+   "options": [
+     "Att man råkade använda samma glasstav för att röra om i olika bägare.",
+     "Att man råkade skriva fel datum på sin rapport innan man lämnade in den.",
+     "Att ens hypotes visade sig vara helt felaktig efter att försöket var klart.",
+     "Att man använde en digital våg istället för att bara uppskatta vikten själv."
+   ],
+   "correct": 0,
+   "explanation": "En <strong>felkälla</strong> är något i metoden som gör resultatet osäkert. Att använda smutsig utrustning (korskontaminering) kan starta oönskade reaktioner som förstör mätningen."
+ },
+ {
+   "category": "Utvärdering",
+   "q": "Vad bör du göra om resultatet i din undersökning inte stämmer med din hypotes?",
+   "options": [
+     "Radera din hypotes och skriv en ny som passar bättre med det resultat du faktiskt fick.",
+     "Slänga bort dina mätvärden och göra om försöket tills du får det svar du förväntade dig.",
+     "Diskutera varför det blev som det blev och leta efter möjliga felkällor i din metod.",
+     "Fråga en annan grupp vad de fick för resultat och kopiera deras värden till din rapport."
+   ],
+   "correct": 2,
+   "explanation": "Ett oväntat resultat är inte ett misslyckande. Vetenskap handlar om att vara ärlig. Man ska analysera resultatet och fundera på om det beror på en <strong>felkälla</strong> eller om hypotesen var fel."
+ },
+ {
+   "category": "Slutsatser",
+   "q": "Vad är en korrekt kemisk slutsats om ett magnesiumband försvinner snabbare i en stark syra än i en svag?",
+   "options": [
+     "Ju högre koncentration av vätejoner, desto fler krockar med metallen sker per sekund.",
+     "Den starka syran väger mycket mer och trycker därmed sönder metallens atomer snabbare.",
+     "Metallen magnesium tycker inte om sura miljöer och försöker därför avdunsta till gas.",
+     "Bubblorna som bildas är syrgas som lyfter upp metallen till ytan så att den försvinner."
+   ],
+   "correct": 0,
+   "explanation": "En slutsats kopplar mätvärden till teori. Här förklaras den snabbare reaktionen med <strong>partikelmodellen</strong>: högre koncentration ger fler partiklar, vilket leder till fler kollisioner och snabbare reaktion."
+ },
+ {
+   "category": "Slutsatser",
+   "q": "Vilket av dessa exempel visar ett resonemang i flera led om försurning?",
+   "options": [
+     "Surt regn är dåligt för naturen eftersom det gör att växter och djur dör i skogen.",
+     "Koldioxid i atmosfären gör att det blir varmare på jorden genom växthuseffekten.",
+     "Koldioxid löser sig i havet och bildar kolsyra, vilket sänker pH och skadar koraller.",
+     "Vi bör kalka sjöar för att höja pH-värdet så att fiskarna kan simma bättre där igen."
+   ],
+   "correct": 2,
+   "explanation": "Ett utvecklat resonemang visar kedjereaktioner: <strong>Orsak</strong> (koldioxid) → <strong>Kemisk reaktion</strong> (bildar kolsyra) → <strong>Effekt</strong> (sänkt pH) → <strong>Konsekvens</strong> (skador på djur)."
+ },
+ {
+   "category": "Slutsatser",
+   "q": "Vilket av följande är ett exempel på rimlighetsbedömning av ett resultat?",
+   "options": [
+     "Man kollar om diagrammet har fina färger som matchar resten av laborationsrapporten.",
+     "Man jämför sitt värde med känd fakta för att se om resultatet verkar logiskt.",
+     "Man frågar läraren om man kommer att få ett bra betyg på sin undersökning.",
+     "Man räknar hur många ord man har skrivit i sin sammanfattning av försöket."
+   ],
+   "correct": 1,
+   "explanation": "Att <strong>rimlighetsbedöma</strong> innebär att kritiskt granska sin data. Om man t.ex. mäter kokpunkten för vatten till 150 grader bör man inse att något är fel, eftersom vi vet att det ska vara 100 grader."
+ },
+ {
+   "category": "Slutsatser",
+   "q": "Du har mätt pH i tre vätskor: 2, 7 och 11. Vilken slutsats om vätskorna är korrekt?",
+   "options": [
+     "Vätskan med pH 2 har flest hydroxidjoner och är därför den starkaste basen.",
+     "Vätskan med pH 7 är surare än den med pH 11 eftersom siffran sju är lägre.",
+     "Vätskorna är alla neutrala eftersom de befinner sig på den normala pH-skalan.",
+     "Vätskan med pH 2 är sur, pH 7 är neutral och pH 11 är en basisk lösning."
+   ],
+   "correct": 3,
+   "explanation": "Slutsatsen baseras på pH-skalans definition: Värden under 7 är <strong>sura</strong> (överskott på H+), 7 är <strong>neutralt</strong>, och värden över 7 är <strong>basiska</strong> (överskott på OH-)."
+ }
+]

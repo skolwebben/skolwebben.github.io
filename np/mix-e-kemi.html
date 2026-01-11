@@ -1,0 +1,541 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>NP-Guiden | Blandade Frågor E</title>
+ <script src="https://cdn.tailwindcss.com"></script>
+ <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+ <style>
+     body {
+         font-family: 'Plus Jakarta Sans', sans-serif;
+         background-color: #0b0f19;
+     }
+     /* Custom Scrollbar */
+     ::-webkit-scrollbar { width: 8px; }
+     ::-webkit-scrollbar-track { background: #0b0f19; }
+     ::-webkit-scrollbar-thumb { background: #4c1d95; border-radius: 4px; }
+     ::-webkit-scrollbar-thumb:hover { background: #6d28d9; }
+
+
+     .glass {
+         background: rgba(19, 24, 40, 0.6);
+         backdrop-filter: blur(12px);
+         border: 1px solid rgba(255, 255, 255, 0.08);
+     }
+
+
+     .glass-card {
+         background: linear-gradient(145deg, rgba(30, 27, 75, 0.4), rgba(19, 24, 40, 0.6));
+         backdrop-filter: blur(10px);
+         border: 1px solid rgba(139, 92, 246, 0.1);
+         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+     }
+    
+     .glass-card-static {
+         background: linear-gradient(145deg, rgba(30, 27, 75, 0.4), rgba(19, 24, 40, 0.6));
+         backdrop-filter: blur(10px);
+         border: 1px solid rgba(139, 92, 246, 0.1);
+     }
+
+
+     .hero-gradient {
+         background: radial-gradient(circle at top center, #581c87 0%, transparent 50%),
+                     radial-gradient(circle at bottom right, #312e81 0%, transparent 40%);
+         background-attachment: fixed;
+     }
+
+
+     /* Quiz specifika stilar */
+     .option-btn {
+         transition: all 0.2s ease;
+         text-align: left;
+     }
+     .option-btn:hover:not(:disabled) {
+         background: rgba(139, 92, 246, 0.2);
+         border-color: rgba(167, 139, 250, 0.4);
+         transform: translateX(4px);
+     }
+     .option-correct {
+         background: rgba(34, 197, 94, 0.2) !important;
+         border-color: #22c55e !important;
+         color: #86efac !important;
+     }
+     .option-wrong {
+         background: rgba(239, 68, 68, 0.2) !important;
+         border-color: #ef4444 !important;
+         color: #fca5a5 !important;
+     }
+
+
+     /* Resultatlista stilar */
+     .result-item {
+         background: rgba(255, 255, 255, 0.03);
+         border: 1px solid rgba(255, 255, 255, 0.05);
+     }
+     .result-item.correct {
+         border-left: 4px solid #22c55e;
+     }
+     .result-item.wrong {
+         border-left: 4px solid #ef4444;
+     }
+    
+     .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+     @keyframes fadeIn {
+         from { opacity: 0; transform: translateY(10px); }
+         to { opacity: 1; transform: translateY(0); }
+     }
+ </style>
+</head>
+<body class="text-slate-200 antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+
+
+ <!-- Bakgrund -->
+ <div class="fixed inset-0 z-[-1] hero-gradient"></div>
+ <div class="fixed top-0 left-0 w-full h-full z-[-1] opacity-20" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%239C92AC\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+
+
+ <!-- Navigering -->
+ <nav class="w-full px-6 py-4 flex justify-between items-center z-10 glass border-b-0 border-white/5">
+     <div class="text-xl font-extrabold tracking-tighter text-white flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+         <span class="bg-violet-600 w-8 h-8 rounded-lg flex items-center justify-center text-xs">NP</span>
+         <span>Guiden <span class="text-violet-400">| Kemi</span></span>
+     </div>
+     <a href="kemi" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+         Avsluta
+     </a>
+ </nav>
+
+
+ <!-- Main Content -->
+ <main class="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full flex flex-col justify-center">
+
+
+     <!-- VY 1: Startskärm (Välj antal frågor) -->
+     <div id="setup-view" class="text-center space-y-8 fade-in">
+         <div class="space-y-2">
+             <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
+                 Blandade frågor <span class="text-green-400">Nivå E</span>
+             </h1>
+             <p id="loading-text" class="text-slate-400 max-w-lg mx-auto animate-pulse">
+                 Laddar frågor från databasen...
+             </p>
+             <p id="intro-text" class="hidden text-slate-400 max-w-lg mx-auto">
+                 Testa dina grundläggande kunskaper inför provet. Frågorna slumpas från alla kategorier.
+             </p>
+         </div>
+
+
+         <div id="selection-card" class="glass-card p-8 rounded-2xl max-w-md mx-auto hidden">
+             <h2 class="text-lg font-bold text-white mb-6">Hur många frågor vill du ha?</h2>
+            
+             <div class="grid grid-cols-2 gap-4 mb-8">
+                 <button onclick="selectCount(5)" class="count-btn p-4 rounded-xl border border-white/10 hover:bg-violet-600/20 hover:border-violet-500 transition-all font-bold text-xl text-white">5</button>
+                 <button onclick="selectCount(10)" class="count-btn p-4 rounded-xl border border-white/10 hover:bg-violet-600/20 hover:border-violet-500 transition-all font-bold text-xl text-white">10</button>
+                 <button onclick="selectCount(15)" class="count-btn p-4 rounded-xl border border-white/10 hover:bg-violet-600/20 hover:border-violet-500 transition-all font-bold text-xl text-white">15</button>
+                 <button onclick="selectCount(20)" class="count-btn p-4 rounded-xl border border-white/10 hover:bg-violet-600/20 hover:border-violet-500 transition-all font-bold text-xl text-white">20</button>
+             </div>
+
+
+             <button id="start-btn" disabled onclick="startQuiz()" class="w-full py-4 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg shadow-violet-900/20">
+                 Välj antal ovan
+             </button>
+         </div>
+     </div>
+
+
+     <!-- VY 2: Quiz (Fråga) -->
+     <div id="quiz-view" class="hidden w-full max-w-2xl mx-auto">
+         <!-- Progress Bar -->
+         <div class="flex justify-between text-xs font-bold tracking-wider text-slate-400 mb-2 uppercase">
+             <span id="category-badge">Kategori</span>
+             <span id="progress-text">Fråga 1 av 10</span>
+         </div>
+         <div class="h-1.5 w-full bg-slate-800 rounded-full mb-6 overflow-hidden">
+             <div id="progress-bar" class="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500" style="width: 0%"></div>
+         </div>
+
+
+         <!-- Question Card -->
+         <div class="glass-card-static p-6 md:p-8 rounded-2xl mb-6">
+             <h2 id="question-text" class="text-xl md:text-2xl font-bold text-white leading-relaxed mb-8">
+                 Laddar fråga...
+             </h2>
+
+
+             <div id="options-container" class="space-y-3">
+                 <!-- Options injects here -->
+             </div>
+         </div>
+
+
+         <!-- Explanation Box (Border removed as requested) -->
+         <div id="explanation-box" class="hidden glass p-6 rounded-xl bg-violet-900/10 mb-6">
+             <h3 class="text-violet-300 font-bold mb-2 flex items-center gap-2">
+                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                 Förklaring
+             </h3>
+             <p id="explanation-text" class="text-slate-300 text-sm leading-relaxed"></p>
+         </div>
+
+
+         <button id="next-btn" onclick="nextQuestion()" class="hidden w-full py-4 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-lg">
+             Nästa fråga
+         </button>
+     </div>
+
+
+     <!-- VY 3: Resultat -->
+     <div id="result-view" class="hidden text-center space-y-8 fade-in pb-20">
+         <div class="glass-card p-10 rounded-3xl max-w-2xl mx-auto relative overflow-hidden">
+             <!-- Confetti effect bg can go here -->
+             <div class="absolute inset-0 bg-gradient-to-b from-violet-500/10 to-transparent pointer-events-none"></div>
+            
+             <h2 class="text-3xl font-bold text-white mb-2">Bra jobbat!</h2>
+             <p class="text-slate-400 mb-8">Du är klar med quizet.</p>
+
+
+             <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400 mb-4">
+                 <span id="score-display">0</span>/<span id="total-display">0</span>
+             </div>
+            
+             <div id="feedback-text" class="text-lg font-medium text-white mb-8">
+                 <!-- Dynamic feedback -->
+             </div>
+
+
+             <!-- DETALJERAT RESULTAT -->
+             <div class="text-left mb-8">
+                 <h3 class="text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">Dina svar</h3>
+                 <div id="detailed-results" class="space-y-4">
+                     <!-- Results injected here -->
+                 </div>
+             </div>
+
+
+             <div class="space-y-3">
+                 <button onclick="location.reload()" class="w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl transition-all">
+                     Kör igen
+                 </button>
+                 <button onclick="window.location.href='kemi'" class="w-full py-3 bg-transparent border border-white/10 hover:bg-white/5 text-slate-300 font-bold rounded-xl transition-all">
+                     Tillbaka till startsidan
+                 </button>
+             </div>
+         </div>
+     </div>
+
+
+ </main>
+
+
+ <!-- Logic -->
+ <script>
+   // STATE VARIABLES
+   let allQuestions = [];
+   let selectedQuestionCount = 0;
+   let currentQuestions = [];
+   let userAnswers = []; // Lagrar användarens svar
+   let currentIndex = 0;
+   let score = 0;
+   let hasAnswered = false;
+
+
+   // DOM ELEMENTS
+   const setupView = document.getElementById('setup-view');
+   const quizView = document.getElementById('quiz-view');
+   const resultView = document.getElementById('result-view');
+  
+   const loadingText = document.getElementById('loading-text');
+   const introText = document.getElementById('intro-text');
+   const selectionCard = document.getElementById('selection-card');
+
+
+   const questionText = document.getElementById('question-text');
+   const optionsContainer = document.getElementById('options-container');
+   const categoryBadge = document.getElementById('category-badge');
+   const progressText = document.getElementById('progress-text');
+   const progressBar = document.getElementById('progress-bar');
+  
+   const explanationBox = document.getElementById('explanation-box');
+   const explanationText = document.getElementById('explanation-text');
+   const nextBtn = document.getElementById('next-btn');
+   const startBtn = document.getElementById('start-btn');
+   const detailedResults = document.getElementById('detailed-results');
+
+
+   // INITIALIZATION: Hämta JSON
+   window.onload = async function() {
+       try {
+           const response = await fetch('questions-kemi.json');
+           if (!response.ok) {
+               throw new Error('Kunde inte ladda json-filen');
+           }
+           allQuestions = await response.json();
+          
+           // Uppdatera UI när datan är laddad
+           loadingText.classList.add('hidden');
+           introText.classList.remove('hidden');
+           selectionCard.classList.remove('hidden');
+           selectionCard.classList.add('fade-in');
+
+
+       } catch (error) {
+           loadingText.innerText = "Kunde inte ladda frågor.";
+           loadingText.classList.remove('animate-pulse');
+           loadingText.classList.add('text-red-400');
+           console.error(error);
+       }
+   };
+
+
+   // SETUP FUNCTIONS
+   function selectCount(count) {
+       selectedQuestionCount = count;
+      
+       document.querySelectorAll('.count-btn').forEach(btn => {
+           if (parseInt(btn.innerText) === count) {
+               btn.classList.add('bg-violet-600', 'border-violet-500');
+               btn.classList.remove('border-white/10');
+           } else {
+               btn.classList.remove('bg-violet-600', 'border-violet-500');
+               btn.classList.add('border-white/10');
+           }
+       });
+
+
+       startBtn.disabled = false;
+       startBtn.innerText = `Starta med ${count} frågor`;
+   }
+
+
+   function shuffleArray(array) {
+       for (let i = array.length - 1; i > 0; i--) {
+           const j = Math.floor(Math.random() * (i + 1));
+           [array[i], array[j]] = [array[j], array[i]];
+       }
+       return array;
+   }
+
+
+   function startQuiz() {
+       if(selectedQuestionCount === 0) return;
+
+
+       // Om vi har färre frågor i JSON än vad användaren valt, ta alla
+       const count = Math.min(selectedQuestionCount, allQuestions.length);
+       selectedQuestionCount = count; // Justera variabeln så progressbar blir rätt
+
+
+       const shuffled = shuffleArray([...allQuestions]);
+       currentQuestions = shuffled.slice(0, selectedQuestionCount);
+      
+       // Reset state
+       currentIndex = 0;
+       score = 0;
+       userAnswers = new Array(selectedQuestionCount).fill(null); // Förbered array
+      
+       setupView.classList.add('hidden');
+       resultView.classList.add('hidden');
+       quizView.classList.remove('hidden');
+       quizView.classList.add('fade-in');
+
+
+       renderQuestion();
+   }
+
+
+   // GAME LOOP
+   function renderQuestion() {
+       const q = currentQuestions[currentIndex];
+       hasAnswered = false;
+
+
+       explanationBox.classList.add('hidden');
+       nextBtn.classList.add('hidden');
+       optionsContainer.innerHTML = '';
+      
+       categoryBadge.innerText = q.category;
+       questionText.innerText = q.q;
+       progressText.innerText = `Fråga ${currentIndex + 1} av ${selectedQuestionCount}`;
+       progressBar.style.width = `${((currentIndex + 1) / selectedQuestionCount) * 100}%`;
+
+
+       q.options.forEach((opt, idx) => {
+           const btn = document.createElement('button');
+           btn.className = `option-btn w-full p-4 rounded-xl border border-white/10 bg-white/5 text-slate-200 font-medium mb-2 flex items-center justify-between group`;
+           btn.innerHTML = `<span>${opt}</span>`;
+           btn.onclick = () => handleAnswer(idx, btn);
+           optionsContainer.appendChild(btn);
+       });
+   }
+
+
+   function handleAnswer(selectedIndex, btnElement) {
+       if (hasAnswered) return;
+       hasAnswered = true;
+
+
+       const q = currentQuestions[currentIndex];
+       const allBtns = optionsContainer.children;
+       const isCorrect = selectedIndex === q.correct;
+
+
+       // Spara svaret
+       userAnswers[currentIndex] = {
+           selected: selectedIndex,
+           correct: q.correct,
+           isCorrect: isCorrect,
+           question: q
+       };
+
+
+       if (isCorrect) score++;
+
+
+       if (isCorrect) {
+           btnElement.classList.add('option-correct');
+           btnElement.innerHTML += `<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+       } else {
+           btnElement.classList.add('option-wrong');
+           btnElement.innerHTML += `<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+          
+           const correctBtn = allBtns[q.correct];
+           correctBtn.classList.add('option-correct');
+       }
+
+
+       Array.from(allBtns).forEach(btn => btn.disabled = true);
+
+
+       explanationText.innerHTML = q.explanation;
+       explanationBox.classList.remove('hidden');
+       explanationBox.classList.add('fade-in');
+
+
+       nextBtn.innerText = (currentIndex === selectedQuestionCount - 1) ? "Se resultat" : "Nästa fråga";
+       nextBtn.classList.remove('hidden');
+       nextBtn.scrollIntoView({ behavior: 'smooth', block: 'end' });
+   }
+
+
+   function nextQuestion() {
+       currentIndex++;
+       if (currentIndex < selectedQuestionCount) {
+           renderQuestion();
+           window.scrollTo({ top: 0, behavior: 'smooth' });
+       } else {
+           showResult();
+       }
+   }
+
+
+   function showResult() {
+       quizView.classList.add('hidden');
+       resultView.classList.remove('hidden');
+       window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+       const scoreDisplay = document.getElementById('score-display');
+       const totalDisplay = document.getElementById('total-display');
+       const feedbackText = document.getElementById('feedback-text');
+
+
+       // Score animation
+       totalDisplay.innerText = selectedQuestionCount;
+       let currentCount = 0;
+       const timer = setInterval(() => {
+           if(currentCount >= score) {
+               clearInterval(timer);
+               scoreDisplay.innerText = score;
+           } else {
+               currentCount++;
+               scoreDisplay.innerText = currentCount;
+           }
+       }, 50);
+
+
+       // Feedback Text
+       const percentage = score / selectedQuestionCount;
+       if (percentage === 1) {
+           feedbackText.innerText = "Wow! Alla rätt! Du har full koll på E-nivån.";
+           feedbackText.className = "text-lg font-bold text-green-400 mb-8";
+       } else if (percentage >= 0.75) {
+           feedbackText.innerText = "Mycket bra jobbat! Du har bra koll.";
+           feedbackText.className = "text-lg font-bold text-violet-300 mb-8";
+       } else if (percentage >= 0.5) {
+           feedbackText.innerText = "Godkänt! Men repetera gärna lite mer.";
+           feedbackText.className = "text-lg font-medium text-white mb-8";
+       } else {
+           feedbackText.innerText = "Kämpa på! Läs på lite mer om grunderna och testa igen.";
+           feedbackText.className = "text-lg font-medium text-slate-400 mb-8";
+       }
+
+
+       // GENERERA DETALJERAD LISTA
+       detailedResults.innerHTML = '';
+      
+       userAnswers.forEach((ans, index) => {
+           if(!ans) return;
+
+
+           const div = document.createElement('div');
+           const isCorrect = ans.isCorrect;
+           const statusClass = isCorrect ? 'correct' : 'wrong';
+           const statusIcon = isCorrect
+               ? `<span class="text-green-400 font-bold flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Rätt</span>`
+               : `<span class="text-red-400 font-bold flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Fel</span>`;
+
+
+           div.className = `result-item p-4 rounded-xl ${statusClass}`;
+          
+           let html = `
+               <div class="flex justify-between items-start mb-2">
+                   <span class="text-xs font-bold uppercase tracking-wider text-slate-500">${ans.question.category}</span>
+                   ${statusIcon}
+               </div>
+               <h4 class="text-white font-bold mb-3">${ans.question.q}</h4>
+              
+               <div class="space-y-1 text-sm">
+           `;
+
+
+           // Visa vad användaren svarade
+           html += `
+               <div class="flex gap-2">
+                   <span class="text-slate-400 w-20 shrink-0">Ditt svar:</span>
+                   <span class="${isCorrect ? 'text-green-300' : 'text-red-300'} font-medium">
+                       ${ans.question.options[ans.selected]}
+                   </span>
+               </div>
+           `;
+
+
+           // Om fel, visa rätt svar
+           if (!isCorrect) {
+               html += `
+                   <div class="flex gap-2">
+                       <span class="text-slate-400 w-20 shrink-0">Rätt svar:</span>
+                       <span class="text-green-300 font-medium">
+                           ${ans.question.options[ans.correct]}
+                       </span>
+                   </div>
+               `;
+           }
+
+
+           // Lägg till förklaring
+           html += `
+               <div class="mt-3 pt-3 border-t border-white/5 text-slate-400 text-xs leading-relaxed italic">
+                   <span class="font-bold text-violet-400 not-italic">Förklaring:</span>
+                   ${ans.question.explanation}
+               </div>
+               </div>
+           `;
+
+
+           div.innerHTML = html;
+           detailedResults.appendChild(div);
+       });
+   }
+ </script>
+</body>
+</html>
