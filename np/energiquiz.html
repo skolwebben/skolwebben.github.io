@@ -217,7 +217,7 @@
        }
 
 
-       /* Feedback Box - Återställd till ljus bakgrund utan kanter */
+       /* Feedback Box */
        .feedback-box {
            margin-top: 20px;
            padding: 20px 25px;
@@ -229,7 +229,6 @@
            animation: fadeIn 0.3s ease;
        }
       
-       /* Anpassa rubriken i feedback boxen */
        .feedback-box h3 {
            margin-top: 0;
            font-family: 'Poppins', sans-serif;
@@ -241,7 +240,6 @@
        }
 
 
-       /* Specifika färger för rubriken beroende på rätt/fel */
        .feedback-box.success h3 {
            color: var(--success-color);
        }
@@ -251,7 +249,6 @@
        }
 
 
-       /* Strong taggar i ljus box */
        .feedback-box strong {
            color: var(--brand-color);
        }
@@ -263,7 +260,7 @@
        }
 
 
-       /* Ny Progress Bar Styles */
+       /* Progress Bar Styles */
        .progress-bar-container {
            height: 6px;
            background-color: #f1f3f5;
@@ -275,7 +272,6 @@
 
        .progress-bar {
            height: 100%;
-           /* Fadeblåaktig cyan gradient */
            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
            width: 0%;
            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -377,37 +373,37 @@
            text: "Energi är det som får saker att hända och finns i allt som rör sig, lever, lyser eller är varmt. En av fysikens viktigaste regler är <strong>energiprincipen</strong>, som säger att energi aldrig kan förstöras eller skapas, utan bara <strong>omvandlas</strong> från en form till en annan. Vetenskapen delar in energi i olika energiformer beroende på hur den visar sig, till exempel <strong>rörelseenergi</strong>, <strong>värmeenergi</strong> och <strong>kemisk energi</strong>.",
            questions: [
                {
-                   q: "Vad innebär energiprincipen?",
+                   q: "Vad innebär egentligen energiprincipen?",
                    options: [
-                       "Energi kan aldrig skapas eller förstöras, bara omvandlas.",
-                       "Energi förbrukas och försvinner när vi använder den.",
-                       "Energi skapas i kraftverk och förstörs i våra apparater hemma.",
-                       "Energi är konstant men minskar lite varje gång den används."
-                   ],
-                   correct: 0,
-                   explanation: "Enligt <strong>energiprincipen</strong> är den totala mängden energi alltid densamma, men den byter form."
-               },
-               {
-                   q: "I vilken av dessa finns lagrad kemisk energi?",
-                   options: [
-                       "Ljusstrålar från en lampa.",
-                       "En sten som ligger högt uppe på ett berg.",
-                       "Mat, bensin och batterier.",
-                       "Värmen från en brasa."
+                       "Energi är en kraft som långsamt förbrukas när arbete utförs.",
+                       "Energi är konstant men tappar i styrka varje gång den används.",
+                       "Energi kan inte skapas eller förstöras, bara omvandlas.", // Rätt (Index 2)
+                       "Energi skapas i kraftverk och förstörs i våra apparater."
                    ],
                    correct: 2,
-                   explanation: "<strong>Kemisk energi</strong> är energi som finns lagrad i ämnens kemiska sammansättning, som i mat eller bränsle."
+                   explanation: "Enligt <strong>energiprincipen</strong> är mängden energi i universum konstant. Energi kan varken skapas ur tomma intet eller försvinna helt, utan den <strong>omvandlas</strong> ständigt mellan olika former som lägesenergi, rörelseenergi och värme."
                },
                {
-                   q: "Vad kallas rörelseenergi och lägesenergi med ett gemensamt namn?",
+                   q: "I vilket av följande alternativ finns lagrad kemisk energi?",
                    options: [
-                       "Mekanisk energi.",
-                       "Elektrisk energi.",
-                       "Strålningsenergi.",
-                       "Termisk energi."
+                       "I mat, bensin och batterier.", // Rätt (Index 0)
+                       "I en hoptryckt fjäder eller ett spänt gummiband.",
+                       "I föremål som nyligen har värmts upp kraftigt.",
+                       "I fordon som rör sig snabbt framåt på vägen."
                    ],
                    correct: 0,
-                   explanation: "<strong>Mekanisk energi</strong> är samlingsnamnet för både föremåls rörelse och deras position (läge)."
+                   explanation: "<strong>Kemisk energi</strong> finns lagrad i atomernas bindningar i olika ämnen. När vi äter mat eller förbränner bensin bryts dessa bindningar, och energin frigörs för att kunna användas till rörelse eller värme."
+               },
+               {
+                   q: "Vad menas med begreppet mekanisk energi?",
+                   options: [
+                       "Det är ett annat ord för elektrisk energi som driver motorer.",
+                       "Det är energin som frigörs vid friktion mellan ytor.",
+                       "Det är enbart den energi som krävs för att starta en rörelse.",
+                       "Det är ett samlingsnamn för lägesenergi och rörelseenergi." // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "<strong>Mekanisk energi</strong> är ett samlingsbegrepp som innefattar både ett föremåls <strong>rörelseenergi</strong> (kinetisk energi) och dess <strong>lägesenergi</strong> (potentiell energi). Det beskriver alltså den totala energin kopplad till ett föremåls position och rörelse."
                }
            ]
        },
@@ -417,25 +413,26 @@
            text: "När energi byter form kallas det för en <strong>energiövergång</strong>. I en bilmotor omvandlas bränslets <strong>kemiska energi</strong> till rörelse, men en stor del blir också till <strong>värme</strong>. I en gunga sker en ständig växling: när du är högst upp har du som mest <strong>lägesenergi</strong>, och när du är längst ner i mitten har du som mest <strong>rörelseenergi</strong>.",
            questions: [
                {
-                   q: "Vad händer med huvuddelen av den kemiska energin i bränslet i en bilmotor?",
+                   q: "Vad händer med huvuddelen av energin i bränslet i en vanlig bilmotor?",
                    options: [
-                       "Den blir till rörelseenergi så att bilen kan åka.",
-                       "Den försvinner spårlöst.",
-                       "Den skapas på nytt inuti motorn.",
-                       "Den blir till värmeenergi."
-                   ],
-                   correct: 3,
-                   explanation: "En stor del av energin i bränslet går förlorad som <strong>värme</strong> istället för att bli rörelse (detta handlar om motorns <strong>verkningsgrad</strong>)."
-               },
-               {
-                   q: "När är rörelseenergin som störst för en person som gungar?",
-                   options: [
-                       "I vändläget högst upp.",
-                       "Precis i mitten av rörelsen där farten är högst.",
-                       "När man sitter helt stilla i gungan."
+                       "Den omvandlas till ren rörelseenergi med nästan 100% effektivitet.",
+                       "Den omvandlas till värmeenergi istället för att driva bilen framåt.", // Rätt (Index 1)
+                       "Den lagras i bilens batteri för att användas vid start.",
+                       "Den försvinner spårlöst eftersom den förbrukas av motorn."
                    ],
                    correct: 1,
-                   explanation: "Vid den lägsta punkten har all <strong>lägesenergi</strong> omvandlats till maximal <strong>rörelseenergi</strong>."
+                   explanation: "I en förbränningsmotor är <strong>verkningsgraden</strong> sällan högre än 30-40%, vilket innebär att huvuddelen av energin i bränslet blir till spillvärme. Denna <strong>värmeenergi</strong> måste kylas bort för att motorn inte ska överhettas."
+               },
+               {
+                   q: "När är rörelseenergin som allra störst för en person som gungar?",
+                   options: [
+                       "I vändlägena högst upp där gungan stannar till.",
+                       "Rörelseenergin är konstant under hela gungandet.",
+                       "Precis i mitten av rörelsen, vid den lägsta punkten.", // Rätt (Index 2)
+                       "När man hoppar av gungan i dess högsta punkt."
+                   ],
+                   correct: 2,
+                   explanation: "När gungan är i sin lägsta punkt har all <strong>lägesenergi</strong> från höjden omvandlats till <strong>rörelseenergi</strong>, vilket ger högst fart. I vändlägena högst upp är farten noll och energin är återigen bunden som lägesenergi."
                }
            ]
        },
@@ -445,25 +442,26 @@
            text: "För att producera elektricitet i stor skala används en <strong>generator</strong>. Den fungerar genom <strong>induktion</strong>, vilket innebär att en magnet snurrar inuti eller nära en spole av koppartråd. När magnetfältet förändras inuti spolen skapas en elektrisk ström. Denna upptäckt har haft enorm betydelse för våra levnadsvillkor.",
            questions: [
                {
-                   q: "Vilka två delar måste finnas i en enkel generator för att skapa ström?",
+                   q: "Vilka två komponenter är avgörande i en generator för att skapa ström?",
                    options: [
-                       "En solcell och en motor.",
-                       "En säkring och ett batteri.",
-                       "En magnet och en spole.",
-                       "En turbin och en fläkt."
-                   ],
-                   correct: 2,
-                   explanation: "Genom att röra en <strong>magnet</strong> i förhållande till en <strong>spole</strong> skapas ström genom <strong>induktion</strong>."
-               },
-               {
-                   q: "Hur har upptäckten av generatorn påverkat våra levnadsvillkor mest?",
-                   options: [
-                       "Vi kan ha elektriskt ljus och driva maskiner, vilket ändrat våra arbetsvanor.",
-                       "Vi har slutat använda kemisk energi.",
-                       "Det har blivit svårare att producera värme."
+                       "En stark magnet och en spole (ledare).", // Rätt (Index 0)
+                       "En solcell och en elektrisk motor.",
+                       "En kondensator och ett laddningsbart batteri.",
+                       "En transformator och en strömbrytare."
                    ],
                    correct: 0,
-                   explanation: "<strong>Generatorn</strong> möjliggjorde el i stor skala, vilket lät oss arbeta i skift och ha ljus på natten."
+                   explanation: "En generator skapar ström genom <strong>induktion</strong>, vilket sker när en <strong>magnet</strong> rör sig i förhållande till en <strong>spole</strong>. Det föränderliga magnetfältet sätter fart på elektronerna i ledningen och skapar en elektrisk ström."
+               },
+               {
+                   q: "Hur påverkade upptäckten av generatorn samhället i stort?",
+                   options: [
+                       "Den gjorde att vi slutade använda kol och olja helt och hållet.",
+                       "Den uppfanns enbart för att ersätta farliga kärnkraftverk.",
+                       "Den används mest för att värma upp vatten i enskilda hushåll.",
+                       "Den möjliggjorde massproduktion av el till industrier och hem." // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "Upptäckten av generatorn var startskottet för det moderna samhället eftersom den möjliggjorde <strong>masstillverkning av elektricitet</strong>. Detta gav oss elektriskt ljus, drivkraft till industrier och förändrade våra levnadsvillkor i grunden."
                }
            ]
        },
@@ -473,36 +471,39 @@
            text: "Energikällor delas in i <strong>förnybara</strong> (som vind och vatten) och <strong>icke-förnybara</strong> (som kol och olja). Förbränning av fossila bränslen ökar halten av <strong>koldioxid</strong> i atmosfären, vilket förstärker <strong>växthuseffekten</strong> och leder till global uppvärmning. <strong>Kärnkraft</strong> är en icke-förnybar källa som inte släpper ut koldioxid, men den skapar radioaktivt avfall.",
            questions: [
                {
-                   q: "Vilken av dessa energikällor är förnybar?",
+                   q: "Vilken av följande energikällor räknas som förnybar?",
                    options: [
-                       "Naturgas.",
-                       "Kolkraft.",
-                       "Vindkraft.",
-                       "Olja."
+                       "Naturgas, eftersom den bildas naturligt i marken.",
+                       "Vindkraft, eftersom vinden ständigt fylls på.", // Rätt (Index 1)
+                       "Kärnkraft, eftersom uran räcker i tusentals år.",
+                       "Oljekraft, eftersom olja ursprungligen kommer från växter."
+                   ],
+                   correct: 1,
+                   explanation: "<strong>Vindkraft</strong> räknas som en förnybar energikälla eftersom vinden ständigt fylls på så länge solen lyser. Till skillnad från fossila bränslen tar den inte slut inom en överskådlig framtid."
+               },
+               {
+                   q: "Vad är en betydande miljömässig nackdel med vattenkraft?",
+                   options: [
+                       "Den producerar stora mängder radioaktivt avfall.",
+                       "Den släpper ut mycket koldioxid vid själva driften.",
+                       "Den påverkar ekosystem och hindrar fiskars vandringsvägar.", // Rätt (Index 2)
+                       "Den fungerar bara soliga dagar då snön smälter."
                    ],
                    correct: 2,
-                   explanation: "<strong>Vindkraft</strong> är en flödande energikälla som inte tar slut."
+                   explanation: "Även om vattenkraft är utsläppsfri, innebär dammbyggen stora ingrepp i naturen som förändrar <strong>ekosystemen</strong>. Detta påverkar den biologiska mångfalden, exempelvis genom att hindra lax och öring från att vandra uppströms för att leka."
                },
                {
-                   q: "Vad är en känd nackdel med vattenkraft, trots att den är förnybar?",
+                   q: "Vilken är den största globala risken med att använda fossila bränslen?",
                    options: [
-                       "Den fungerar bara när solen skiner.",
-                       "Den förändrar livsmiljön för djur och växter i och kring älven.",
-                       "Den släpper ut mycket koldioxid.",
-                       "Den är mycket dyrare än kärnkraft."
+                       "De orsakar hål i ozonlagret genom utsläpp av freoner.", // Rätt (Index 0)
+                       "De kyler ner atmosfären genom att blockera solljuset.",
+                       "De är radioaktiva och avfallet måste slutförvaras.",
+                       "De ökar halten koldioxid och förstärker växthuseffekten."
                    ],
-                   correct: 1,
-                   explanation: "Byggandet av <strong>dammar</strong> påverkar den biologiska mångfalden, till exempel fiskars vandring."
-               },
-               {
-                   q: "Vilket är ett av de stora miljöproblemen med att använda kol och olja?",
-                   options: [
-                       "De tar aldrig slut, vilket skapar överskott.",
-                       "De förstärker växthuseffekten genom koldioxidutsläpp.",
-                       "De minskar jordens temperatur för mycket."
-                   ],
-                   correct: 1,
-                   explanation: "Förbränning av fossila bränslen frigör lagrad <strong>koldioxid</strong> som bidrar till global uppvärmning."
+                   correct: 3, // Wait, I put Correct at index 0 in my plan, but the text is Ozone hole (wrong).
+                   // Correction: Keep the correct answer text ("De ökar halten...") but check the index.
+                   // Correct answer is "De ökar halten koldioxid...". I will put it at index 0 in the file to follow the plan.
+                   // Let's re-arrange this question block in the code below to match my plan (4.3 -> Index 0).
                }
            ]
        },
@@ -512,26 +513,26 @@
            text: "<strong>Växthuseffekten</strong> är naturlig och nödvändig för livet på jorden, men människan har förstärkt den. Atmosfären fungerar som ett skyddande lager som släpper in solens strålning men hindrar en del av <strong>värmestrålningen</strong> från att lämna jorden. När vi ökar mängden <strong>växthusgaser</strong> hålls mer värme kvar.",
            questions: [
                {
-                   q: "Vad gör växthusgaserna i atmosfären?",
+                   q: "Hur fungerar växthusgaser i atmosfären?",
                    options: [
-                       "De tar upp värmestrålning och håller kvar värme vid jorden.",
-                       "De filtrerar bort allt solljus så att det blir mörkt.",
-                       "De gör att jorden kyls ner snabbare på natten.",
-                       "De förstör ozonlagret."
+                       "De reflekterar bort solljuset innan det når jordytan.",
+                       "De omvandlar solljus till elektricitet i övre atmosfären.",
+                       "De bryter ner ozonlagret så att värmen läcker in.",
+                       "De absorberar värmestrålning från jorden och håller kvar värmen." // Rätt (Index 3)
                    ],
-                   correct: 0,
-                   explanation: "Gaserna fungerar som glaset i ett växthus och håller kvar <strong>värmeenergin</strong> i atmosfären."
+                   correct: 3,
+                   explanation: "Växthusgaser som koldioxid och metan släpper igenom solljus men absorberar den <strong>värmestrålning</strong> som jorden sänder ut. Detta fungerar som en filt som håller kvar värmen, vilket kallas för <strong>växthuseffekten</strong>."
                },
                {
-                   q: "Vilken typ av strålning kan skada celler och öka risken för cancer om ozonlagret är tunt?",
+                   q: "Vilken typ av strålning skyddar ozonlagret oss främst emot?",
                    options: [
-                       "Synligt ljus.",
-                       "Radiovågor.",
-                       "Ultraviolett strålning (UV-strålning).",
-                       "Infraröd strålning."
+                       "Infraröd strålning, som värmer upp jorden för mycket.",
+                       "Ultraviolett strålning (UV), som kan skada DNA.", // Rätt (Index 1)
+                       "Mikrovågsstrålning, som påverkar vattenmolekyler i kroppen.",
+                       "Gammastrålning, som strålar ut från jordens inre kärna."
                    ],
-                   correct: 2,
-                   explanation: "Ett tunt ozonskikt släpper igenom mer <strong>UV-ljus</strong>, vilket är skadligt för levande organismer."
+                   correct: 1,
+                   explanation: "Ozonlagret fungerar som ett skydd mot solens skadliga <strong>UV-strålning</strong>. Utan detta skydd skulle mer strålning nå jordytan, vilket ökar risken för hudcancer och kan skada växter och djur."
                }
            ]
        },
@@ -541,25 +542,26 @@
            text: "Elektricitet produceras i kraftverk och transporteras till hemmen via ett elnät. I stamnätet används <strong>högspänning</strong> för att undvika att elenergin omvandlas till <strong>värme</strong> i ledningarna (energiförluster). Innan strömmen når ditt vägguttag måste spänningen sänkas i en <strong>transformator</strong>.",
            questions: [
                {
-                   q: "Varför använder man hög spänning i de långa ledningarna från kraftverken?",
+                   q: "Varför används högspänning i de långa ledningarna från kraftverken?",
                    options: [
-                       "För att minska energiförluster i form av värme.",
-                       "För att elen ska färdas med ljusets hastighet.",
-                       "För att det krävs för att driva små apparater.",
-                       "För att göra ledningarna billigare."
-                   ],
-                   correct: 0,
-                   explanation: "<strong>Hög spänning</strong> gör transporten effektivare genom att mindre energi 'läcker ut' som värme."
-               },
-               {
-                   q: "Vad händer i en transformatorstation?",
-                   options: [
-                       "Elen lagras i stora batterier för vintern.",
-                       "Elen görs om till kemisk energi.",
-                       "Spänningen höjs eller sänks för att passa elnätet eller hemmen."
+                       "För att elektriciteten ska nå fram till hushållen snabbare.",
+                       "För att skydda ledningarna mot blixtnedslag och stormar.",
+                       "För att minska energiförlusterna i ledningarna.", // Rätt (Index 2)
+                       "För att våra apparater kräver extremt hög spänning för att starta."
                    ],
                    correct: 2,
-                   explanation: "<strong>Transformatorer</strong> ändrar spänningen så att den är säker och praktisk att använda."
+                   explanation: "Genom att transportera el med <strong>hög spänning</strong> kan man sänka strömstyrkan. Detta är viktigt eftersom hög strömstyrka leder till att ledningarna blir varma, vilket skulle innebära stora <strong>energiförluster</strong> på vägen."
+               },
+               {
+                   q: "Vad är transformatorns huvuduppgift i elnätet?",
+                   options: [
+                       "Den höjer eller sänker spänningen till önskad nivå.", // Rätt (Index 0)
+                       "Den omvandlar växelström till likström för batterier.",
+                       "Den genererar ny elektricitet vid hög belastning.",
+                       "Den mäter hur mycket el som förbrukas i varje område."
+                   ],
+                   correct: 0,
+                   explanation: "En <strong>transformator</strong> används för att ändra spänningen i elnätet. Den sänker den höga spänningen från stamnätet till en lägre nivå (230 V) som är säker att använda i våra <strong>vägguttag</strong> hemma."
                }
            ]
        },
@@ -569,29 +571,47 @@
            text: "Fysik används i många tekniska lösningar. <strong>Solceller</strong> tillverkas ofta av kisel och skapar ström direkt när de belyses av solen. Inom sjukvården används <strong>ultraljud</strong> (ljud med mycket hög frekvens) för att undersöka organ eller foster utan att skada dem.",
            questions: [
                {
-                   q: "Vilken energiform omvandlas till elektrisk energi i en solcell?",
+                   q: "Vilken energiform omvandlas till elektricitet i en solcell?",
                    options: [
-                       "Rörelseenergi.",
-                       "Kärnenergi.",
-                       "Strålningsenergi (ljus).",
-                       "Värmeenergi."
+                       "Värmeenergi från solens heta strålar.",
+                       "Kemisk energi från luften runt panelen.",
+                       "Mekanisk energi från vindens rörelser.",
+                       "Strålningsenergi (ljus) från solen." // Rätt (Index 3)
                    ],
-                   correct: 2,
-                   explanation: "Solceller fångar upp energin i <strong>ljusstrålarna</strong> och skapar en elektrisk spänning."
+                   correct: 3,
+                   explanation: "Solceller består av halvledarmaterial som direkt omvandlar solens <strong>strålningsenergi</strong> (fotoner) till elektrisk ström. Det är alltså ljuset, inte värmen, som driver processen."
                },
                {
-                   q: "Vad är ultraljud?",
+                   q: "Vad kännetecknar ultraljud?",
                    options: [
-                       "Ljud som färdas snabbare än ljuset.",
-                       "Ljud som är så starkt att det gör ont i öronen.",
-                       "Ljud med en frekvens över 20 000 Hz som människor inte kan höra."
+                       "Ljud som färdas snabbare än ljuset i vakuum.",
+                       "Ljudvågor med så hög frekvens att människor inte kan höra dem.", // Rätt (Index 1)
+                       "Ljudvågor med extremt låg frekvens som färdas långt.",
+                       "Ljud som används för att krossa njursten men hörs som ett pip."
                    ],
-                   correct: 2,
-                   explanation: "<strong>Ultraljud</strong> har för hög frekvens för att det mänskliga örat ska kunna uppfatta det."
+                   correct: 1,
+                   explanation: "<strong>Ultraljud</strong> är ljudvågor med en frekvens över 20 000 Hz, vilket är gränsen för vad det mänskliga örat kan uppfatta. Det används ofta inom sjukvården för att skapa bilder av kroppens inre, till exempel vid graviditet."
                }
            ]
        }
    ];
+
+
+   // Correction for 4.3 logic within code to ensure Index 0 is correct
+   // (Re-writing the specific object for 4.3 correctly in the final output)
+   quizData[3].questions[2] = {
+       q: "Vilken är den största globala risken med att använda fossila bränslen?",
+       options: [
+           "De ökar halten koldioxid och förstärker växthuseffekten.", // Correct
+           "De orsakar hål i ozonlagret genom utsläpp av freoner.",
+           "De kyler ner atmosfären genom att blockera solljuset.",
+           "De är radioaktiva och avfallet måste slutförvaras."
+       ],
+       correct: 0,
+       explanation: "När vi förbränner kol och olja frigörs kol som varit bundet i marken i miljontals år som <strong>koldioxid</strong>. Detta ökar mängden växthusgaser i atmosfären, vilket stänger inne mer värme och leder till <strong>global uppvärmning</strong>."
+   };
+
+
 
 
    // --- STATE MANAGEMENT ---
@@ -793,10 +813,10 @@
        // Add class for success/error styling
        if (isCorrect) {
            feedbackBox.className = "feedback-box success";
-           feedbackTitle.innerHTML = "Rätt svar!"; // Removed 🎉
+           feedbackTitle.innerHTML = "Rätt svar!";
        } else {
            feedbackBox.className = "feedback-box error";
-           feedbackTitle.innerHTML = "Inte riktigt..."; // Removed 😕
+           feedbackTitle.innerHTML = "Inte riktigt...";
        }
       
        feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
@@ -816,7 +836,7 @@
        const rect = feedbackBox.getBoundingClientRect();
        const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
        if (!isVisible) {
-            setTimeout(() => {
+           setTimeout(() => {
                feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
            }, 100);
        }

@@ -104,7 +104,7 @@
            border-radius: 12px;
            padding: 20px;
            margin-bottom: 20px;
-           /* Ingen border-left */
+           border-left: 4px solid var(--accent-color);
            display: flex;
            gap: 15px;
            align-items: flex-start;
@@ -373,37 +373,37 @@
            text: "Inom naturvetenskapen räcker det inte med att göra ett experiment en gång. För att ett resultat ska räknas som fakta måste det vara <strong>reproducerbart</strong>. Det betyder att om en annan forskare gör om exakt samma experiment, ska resultatet bli detsamma. För att veta vad som påverkar resultatet måste man ha <strong>variabelkontroll</strong>. Man ändrar bara en sak (den oberoende variabeln) och håller alla andra faktorer konstanta.",
            questions: [
                {
-                   q: "Varför är det viktigt att forskare beskriver sin metod väldigt noga i sina rapporter?",
+                   q: "Varför är det avgörande att forskare beskriver sin metod väldigt noggrant i sina rapporter?",
                    options: [
-                       "För att rapporten ska bli tillräckligt lång.",
-                       "För att andra forskare ska kunna göra om experimentet för att se om resultatet stämmer.",
-                       "För att bevisa att de har använt dyr utrustning.",
-                       "För att ingen annan ska kunna stjäla deras idé."
+                       "För att bevisa att hypotesen är sann oavsett vad resultatet visar.",
+                       "För att säkerställa att ingen annan forskare kan stjäla deras idéer.",
+                       "För att andra forskare ska kunna upprepa försöket och verifiera resultatet.", // Rätt (Index 2)
+                       "För att uppfylla de formella kraven på språklig korrekthet i vetenskapliga journaler."
                    ],
-                   correct: 1,
-                   explanation: "Genomskinlighet i metoden krävs för <strong>reproducerbarhet</strong>. Om ingen kan göra om det, litar man inte på resultatet."
+                   correct: 2,
+                   explanation: "Inom vetenskapen är <strong>reproducerbarhet</strong> avgörande för trovärdigheten. Om en annan forskare inte kan följa instruktionerna och få samma resultat, betraktas upptäckten inte som fakta. Därför måste metoden beskrivas in i minsta detalj."
                },
                {
-                   q: "Pelle ska testa om varmt vatten fryser snabbare än kallt. Han ställer en liten kopp varmt vatten i frysen och en stor hink kallt vatten utomhus. Vad är det största felet?",
+                   q: "Pelle ska testa om varmt vatten fryser snabbare än kallt. Han ställer en kopp varmt vatten i frysen och en hink kallt vatten utomhus. Vad är det största felet?",
                    options: [
-                       "Han har inte kontrollerat variablerna (olika vattenmängd, behållare, platser).",
-                       "Han borde ha använt ljummet vatten också.",
-                       "Han mäter inte temperaturen varje minut.",
-                       "Det går inte att frysa varmt vatten."
+                       "Han borde ha använt termometrar med högre precision för att se skillnaden.",
+                       "Han borde ha upprepat försöket minst tio gånger för att få ett medelvärde.",
+                       "Vattnets kemiska sammansättning ändras när det värms upp i mikron.",
+                       "Han har inte isolerat variablerna, utan ändrat både mängd och plats samtidigt." // Rätt (Index 3)
                    ],
-                   correct: 0,
-                   explanation: "Eftersom han ändrade både vattenmängd och plats vet han inte vad som orsakade resultatet. Detta är bristande <strong>variabelkontroll</strong>."
+                   correct: 3,
+                   explanation: "För att veta vad som påverkar frysningstiden måste man ha strikt <strong>variabelkontroll</strong>. Eftersom Pelle ändrade både vattenmängden och placeringen (frys vs utomhus) går det inte att veta vilken av faktorerna som orsakade resultatet."
                },
                {
-                   q: "En forskare mäter spänningen i ett batteri fem gånger och får olika värden (1,51 V, 1,49 V, etc). Varför gör hen fem mätningar?",
+                   q: "En forskare mäter spänningen i ett batteri fem gånger och får lite olika värden. Varför gör hen så många mätningar?",
                    options: [
-                       "För att tiden ska gå fortare.",
-                       "För att öka tillförlitligheten genom att räkna ut ett medelvärde och minska slumpens inverkan.",
-                       "För att batteriet blir bättre ju fler gånger man mäter.",
-                       "För att det är lag på att mäta fem gånger."
+                       "För att kalibrera mätinstrumentet så att det visar exakt rätt värde.",
+                       "För att det är standard att alltid kasta bort de två första mätvärdena.",
+                       "För att beräkna ett medelvärde och därmed minska inverkan av slumpmässiga fel.", // Rätt (Index 2)
+                       "För att batteriets spänning fluktuerar kraftigt beroende på lufttrycket."
                    ],
-                   correct: 1,
-                   explanation: "Genom att upprepa mätningen ser man om värdena spretar och kan få fram ett noggrannare <strong>medelvärde</strong>."
+                   correct: 2,
+                   explanation: "Alla mätningar innehåller små slumpmässiga fel eller variationer. Genom att mäta flera gånger och beräkna ett <strong>medelvärde</strong> får forskaren ett resultat som ligger närmare det sanna värdet och ökar mätningens <strong>tillförlitlighet</strong>."
                }
            ]
        },
@@ -413,26 +413,26 @@
            text: "När du granskar en källa måste du alltid titta på avsändaren och syftet. Är syftet att informera, sälja eller påverka? Om den som betalar för en studie tjänar pengar på ett visst resultat finns det risk för <strong>jäv</strong> (intressekonflikt). Myndigheter och universitet anses ofta mer trovärdiga än företag, eftersom deras uppdrag är att vara opartiska och tjäna allmänheten, inte att göra vinst.",
            questions: [
                {
-                   q: "Du läser en artikel med rubriken 'Kärnkraft är den enda lösningen för klimatet'. Vem av följande författare bör du vara mest kritisk mot?",
+                   q: "Du läser en artikel med rubriken 'Kärnkraft är den enda lösningen'. Vem av följande författare bör du vara mest kritisk mot?",
                    options: [
                        "En professor i energisystem vid Chalmers Tekniska Högskola.",
-                       "En journalist på tidningen Forskning & Framsteg.",
-                       "VD:n för ett bolag som bygger kärnreaktorer.",
-                       "En expertutredning från Naturvårdsverket."
-                   ],
-                   correct: 2,
-                   explanation: "VD:n har ett <strong>ekonomiskt intresse</strong> (vinstsyfte) av att kärnkraften framställs positivt, vilket ökar risken för vinklad information."
-               },
-               {
-                   q: "Varför anses Strålsäkerhetsmyndigheten vara en trovärdig källa när det gäller risker med mobilstrålning?",
-                   options: [
-                       "För att de säljer strålningsskydd.",
-                       "För att de har den snyggaste hemsidan.",
-                       "För att de aldrig ändrar sina åsikter.",
-                       "För att det är en statlig myndighet med uppdrag att objektivt skydda medborgarna."
+                       "En expertgrupp från FN:s internationella klimatpanel (IPCC).",
+                       "En oberoende vetenskapsjournalist på tidningen Forskning & Framsteg.",
+                       "VD:n för ett bolag som tillverkar och säljer kärnreaktorer." // Rätt (Index 3)
                    ],
                    correct: 3,
-                   explanation: "Myndigheter har inget vinstintresse och arbetar på uppdrag av regeringen för allmänhetens bästa."
+                   explanation: "VD:n har ett tydligt <strong>ekonomiskt intresse</strong> (vinstsyfte) av att kärnkraften framställs positivt. Detta skapar en situation av <strong>jäv</strong>, vilket innebär att informationen kan vara vinklad för att gynna företaget snarare än att vara objektiv."
+               },
+               {
+                   q: "Varför anses Strålsäkerhetsmyndigheten ofta vara en mer trovärdig källa än privata teknikföretag?",
+                   options: [
+                       "För att det är en statlig myndighet med uppdrag att objektivt skydda allmänheten.", // Rätt (Index 0)
+                       "För att de har störst budget av alla aktörer på den svenska telekommarknaden.",
+                       "För att de säljer utrustning som skyddar privatpersoner mot farlig strålning.",
+                       "För att de sponsras av de stora mobiltillverkarna för att lugna folket."
+                   ],
+                   correct: 0,
+                   explanation: "Myndigheter som Strålsäkerhetsmyndigheten har inget vinstintresse utan arbetar på uppdrag av regeringen. Deras syfte är att vara <strong>objektiva</strong> och se till medborgarnas säkerhet, vilket oftast gör dem mer trovärdiga än företag som vill sälja produkter."
                }
            ]
        },
@@ -442,26 +442,26 @@
            text: "Ett vanligt misstag är att blanda ihop <strong>korrelation</strong> (samband) med <strong>kausalitet</strong> (orsak). Bara för att två kurvor följs åt betyder det inte att den ena orsakar den andra. Det kan vara en slump eller en tredje faktor som påverkar båda. Exempel: Glassförsäljning och drunkningsolyckor ökar samtidigt på sommaren, men glass orsakar inte drunkning. Den bakomliggande faktorn är värmen.",
            questions: [
                {
-                   q: "En studie visar att barn som har större fötter är bättre på fysik än barn med små fötter. Vad är den troligaste förklaringen?",
+                   q: "En studie visar att barn med större fötter är bättre på fysik än barn med små fötter. Vad är den troligaste förklaringen?",
                    options: [
-                       "Stora fötter gör att blodet rinner snabbare till hjärnan.",
-                       "Det finns en korrelation, men orsaken är ålder. Äldre barn har både större fötter och kan mer fysik.",
-                       "Det är bevisat att skostorlek påverkar intelligensen.",
-                       "Studien är påhittad, det finns inget samband."
+                       "Det finns ett biologiskt samband där fötternas nervbanor stimulerar hjärnan.",
+                       "Det är ett skensamband där en tredje faktor, barnets ålder, påverkar både fotstorlek och kunskap.", // Rätt (Index 1)
+                       "Resultatet är troligen en slump eftersom studier på barn alltid är osäkra.",
+                       "Barn med stora fötter rör sig mer och får därmed mer syre till hjärnan."
                    ],
                    correct: 1,
-                   explanation: "Detta är ett klassiskt exempel på <strong>skensamband</strong>. Åldern är den tredje faktorn som förklarar båda variablerna."
+                   explanation: "Detta är ett klassiskt exempel på att <strong>korrelation</strong> (samband) inte innebär <strong>kausalitet</strong> (orsak). Äldre barn har naturligtvis större fötter än yngre barn, och de har också hunnit lära sig mer fysik i skolan."
                },
                {
                    q: "Hur kan forskare ta reda på om mobilstrålning faktiskt orsakar huvudvärk, och inte bara råkar sammanfalla med det?",
                    options: [
-                       "Genom att fråga folk på stan vad de tror.",
-                       "Genom att förbjuda mobiler och se om huvudvärken försvinner.",
-                       "Genom en kontrollerad studie där en grupp utsätts för strålning och en annan inte, utan att veta vilken grupp de tillhör.",
-                       "Det går inte att ta reda på."
+                       "Genom att samla in tusentals anekdoter från personer som upplever besvär.",
+                       "Genom ett kontrollerat blindtest där försökspersonerna inte vet om strålningen är på eller av.", // Rätt (Index 1)
+                       "Genom att jämföra huvudvärksfrekvensen i länder med och utan 5G-nät.",
+                       "Genom att mäta strålningen från alla master i en storstad under ett dygn."
                    ],
-                   correct: 2,
-                   explanation: "Endast genom <strong>kontrollerade experiment</strong> där man isolerar variabeln (strålning) kan man säkerställa <strong>kausalitet</strong>."
+                   correct: 1,
+                   explanation: "För att utesluta placeboeffekten (att man får ont för att man *tror* att man utsätts för strålning) krävs ett <strong>blindtest</strong>. Endast genom att isolera variabeln i en kontrollerad miljö kan man fastställa om det finns ett verkligt orsakssamband."
                }
            ]
        },
@@ -471,37 +471,37 @@
            text: "Vetenskapliga studier granskas alltid av andra experter innan de publiceras. Detta kallas <strong>Peer-review</strong> (fackgranskning) och är ett kvalitetsfilter. <strong>Pseudovetenskap</strong> är sådant som låter som vetenskap men inte följer metoderna. Varningstecken är anekdoter ('Det funkade för mig!'), löften om mirakellösningar, konspirationsteorier och felaktig användning av svåra ord (t.ex. 'kvant-energi').",
            questions: [
                {
-                   q: "Vad innebär begreppet 'Peer-review'?",
+                   q: "Vad innebär begreppet 'Peer-review' (fackgranskning) inom forskarvärlden?",
                    options: [
-                       "Att du ber en kompis läsa din text.",
-                       "Att forskaren betalar för att få sin artikel tryckt.",
-                       "Att allmänheten får rösta om studien är bra.",
-                       "Att forskningsresultat granskas av oberoende experter inom samma ämne för att säkra kvalitén."
+                       "Att oberoende experter granskar studien för att hitta fel innan den publiceras.", // Rätt (Index 0)
+                       "Att studien publiceras i en dagstidning för att nå så många som möjligt.",
+                       "Att forskaren betalar en avgift för att garantera att resultatet sprids.",
+                       "Att allmänheten får rösta om forskningsresultatet verkar rimligt."
                    ],
-                   correct: 3,
-                   explanation: "Det är forskarsamhällets viktigaste metod för att sålla bort dålig forskning och fusk."
+                   correct: 0,
+                   explanation: "<strong>Peer-review</strong> (fackgranskning) fungerar som vetenskapens kvalitetsfilter. Oberoende experter kontrollerar metoder och slutsatser för att sålla bort fusk och misstag innan studien får publiceras i en vetenskaplig tidskrift."
                },
                {
-                   q: "Du ser en annons för ett 'Energi-halsband'. Vilken av följande texter är en tydlig varningssignal för pseudovetenskap?",
+                   q: "Du ser en annons för ett 'Energi-halsband'. Vilken text är en tydlig varningssignal för pseudovetenskap?",
                    options: [
-                       "Halsbandet är gjort av återvunnen plast.",
-                       "Forskare har länge studerat magnetismens effekter.",
-                       "Läkarna vägrar erkänna denna hemliga teknik som botar alla sjukdomar med hjälp av kvantvibrationer.",
-                       "Vi erbjuder 30 dagars öppet köp."
+                       "Produkten har genomgått tester som inte visat någon mätbar effekt.",
+                       "Det finns en tydlig innehållsförteckning över materialen i halsbandet.",
+                       "Annonsen hänvisar till publicerade studier i välkända vetenskapliga tidskrifter.",
+                       "Påståenden om att 'läkemedelsindustrin tystar ner denna hemliga mirakelmetod'." // Rätt (Index 3)
                    ],
-                   correct: 2,
-                   explanation: "Kombinationen av konspiration ('läkarna vägrar erkänna'), 'hemlig teknik' och löfte om att bota allt är typisk <strong>pseudovetenskap</strong>."
+                   correct: 3,
+                   explanation: "Typiska tecken på <strong>pseudovetenskap</strong> är konspirationsteorier om att etablerad vetenskap 'mörkar' sanningen. Även löften om mirakellösningar och användning av vagt vetenskapliga ord som 'kvantenergi' utan förklaring är varningssignaler."
                },
                {
                    q: "Vilken typ av källa väger tyngst om du ska skriva ett arbete om klimatförändringar?",
                    options: [
-                       "En rapport från FN:s klimatpanel (IPCC) som sammanställer tusentals granskade studier.",
-                       "En insändare i lokaltidningen.",
-                       "En enskild forskningsrapport som precis blivit klar men inte granskad än.",
-                       "En dokumentärfilm på YouTube gjord av en privatperson."
+                       "En rapport från FN:s klimatpanel (IPCC) som sammanställer tusentals granskade studier.", // Rätt (Index 0)
+                       "En nysläppt forskningsrapport som ännu inte har genomgått fackgranskning.",
+                       "En dokumentärfilm som intervjuar flera engagerade privatpersoner.",
+                       "En debattartikel skriven av en känd miljöaktivist i en stor tidning."
                    ],
                    correct: 0,
-                   explanation: "En sammanställning av tusentals studier (meta-analys) har mycket högre bevisvärde än enskilda studier eller åsikter."
+                   explanation: "En sammanställning av många studier, en så kallad <strong>meta-analys</strong> eller expertrapport (som IPCC), väger tyngre än enskilda studier. Den visar vad den samlade vetenskapen säger, snarare än vad en enskild forskare eller åsikt har kommit fram till."
                }
            ]
        }
@@ -730,7 +730,7 @@
        const rect = feedbackBox.getBoundingClientRect();
        const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
        if (!isVisible) {
-            setTimeout(() => {
+           setTimeout(() => {
                feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
            }, 100);
        }

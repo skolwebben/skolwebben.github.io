@@ -1,917 +1,1061 @@
 ﻿<!DOCTYPE html>
-<html lang="sv">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Fysikquiz: Ljud & Ljus (Åk 9)</title>
-   <!-- Importerar moderna fonter från Google Fonts -->
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-  
-   <style>
-       :root {
-           /* Färgpalett - Professionell & Ren */
-           --card-bg: #ffffff;
-          
-           --brand-color: #2c3e50;
-           --brand-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-          
-           --accent-color: #3498db;
-          
-           --success-color: #10ac84;
-           --success-bg: #e3f9f1;
-          
-           --error-color: #ee5253;
-           --error-bg: #ffeded;
-          
-           --text-main: #2d3436;
-           --text-muted: #636e72;
-          
-           --shadow-card: 0 10px 25px rgba(0,0,0,0.15);
-           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
-           --radius-main: 16px;
-       }
+	<html lang="sv">
+	<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fysikquiz: Ljud & Ljus (Åk 9)</title>
+	<!-- Importerar moderna fonter från Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+	
 
+	<style>
+	:root {
+	/* Färgpalett - Professionell & Ren */
+	--card-bg: #ffffff;
+	
 
-       body {
-           font-family: 'Open Sans', sans-serif;
-           /* Gråaktig fade (Silver/Metallic style) */
-           background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-           color: var(--text-main);
-           margin: 0;
-           padding: 15px;
-           display: flex;
-           justify-content: center;
-           align-items: flex-start;
-           min-height: 100vh;
-       }
+	--brand-color: #2c3e50;
+	--brand-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+	
 
+	--accent-color: #3498db;
+	
 
-       .container {
-           background-color: var(--card-bg);
-           width: 100%;
-           max-width: 680px;
-           border-radius: var(--radius-main);
-           box-shadow: var(--shadow-card);
-           overflow: hidden;
-           display: flex;
-           flex-direction: column;
-           position: relative;
-           margin-top: 3vh;
-           margin-bottom: 3vh;
-       }
+	--success-color: #10ac84;
+	--success-bg: #e3f9f1;
+	
 
+	--error-color: #ee5253;
+	--error-bg: #ffeded;
+	
 
-       header {
-           background: var(--brand-gradient);
-           color: white;
-           padding: 20px;
-           text-align: center;
-           position: relative;
-           overflow: hidden;
-       }
+	--text-main: #2d3436;
+	--text-muted: #636e72;
+	
 
+	--shadow-card: 0 10px 25px rgba(0,0,0,0.15);
+	--shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+	--radius-main: 16px;
+	}
+	
 
-       h1 {
-           font-family: 'Poppins', sans-serif;
-           margin: 0;
-           font-size: 1.5rem;
-           font-weight: 700;
-           letter-spacing: -0.3px;
-       }
+	
 
+	body {
+	font-family: 'Open Sans', sans-serif;
+	/* Gråaktig fade (Silver/Metallic style) */
+	background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	color: var(--text-main);
+	margin: 0;
+	padding: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	min-height: 100vh;
+	}
+	
 
-       .content-area {
-           padding: 25px 30px;
-           flex-grow: 1;
-       }
+	
 
+	.container {
+	background-color: var(--card-bg);
+	width: 100%;
+	max-width: 680px;
+	border-radius: var(--radius-main);
+	box-shadow: var(--shadow-card);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	margin-top: 3vh;
+	margin-bottom: 3vh;
+	}
+	
 
-       h2 {
-           font-family: 'Poppins', sans-serif;
-           color: var(--brand-color);
-           margin-top: 0;
-           font-size: 1.3rem;
-           margin-bottom: 0.8rem;
-           line-height: 1.3;
-       }
+	
 
+	header {
+	background: var(--brand-gradient);
+	color: white;
+	padding: 20px;
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+	}
+	
 
-       /* Fact Section Styles */
-       .fact-box {
-           background: #f8f9fa;
-           border-radius: 12px;
-           padding: 20px;
-           margin-bottom: 20px;
-           /* Ingen border-left */
-           display: flex;
-           gap: 15px;
-           align-items: flex-start;
-       }
-      
-       .fact-icon {
-           font-size: 2rem;
-           display: block;
-           margin-top: -5px;
-       }
-      
-       .fact-content {
-           flex: 1;
-       }
+	
 
+	h1 {
+	font-family: 'Poppins', sans-serif;
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: -0.3px;
+	}
+	
 
-       .btn {
-           background: var(--brand-gradient);
-           color: white;
-           border: none;
-           padding: 12px 24px;
-           font-family: 'Poppins', sans-serif;
-           font-size: 1rem;
-           font-weight: 600;
-           border-radius: 8px;
-           cursor: pointer;
-           transition: all 0.2s ease;
-           display: block;
-           width: 100%;
-           margin-top: 20px;
-           box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
-       }
+	
 
+	.content-area {
+	padding: 25px 30px;
+	flex-grow: 1;
+	}
+	
 
-       .btn:hover {
-           transform: translateY(-2px);
-           box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
-           opacity: 0.95;
-       }
+	
 
+	h2 {
+	font-family: 'Poppins', sans-serif;
+	color: var(--brand-color);
+	margin-top: 0;
+	font-size: 1.3rem;
+	margin-bottom: 0.8rem;
+	line-height: 1.3;
+	}
+	
 
-       /* Question Styles */
-       .question-meta {
-           display: inline-block;
-           color: var(--text-muted);
-           font-size: 0.85rem;
-           margin-bottom: 10px;
-           font-weight: 600;
-           text-transform: uppercase;
-           letter-spacing: 0.5px;
-       }
+	
 
+	/* Fact Section Styles */
+	.fact-box {
+	background: #f8f9fa;
+	border-radius: 12px;
+	padding: 20px;
+	margin-bottom: 20px;
+	/* Ingen border-left */
+	display: flex;
+	gap: 15px;
+	align-items: flex-start;
+	}
+	
 
-       .options-grid {
-           display: grid;
-           gap: 12px;
-           margin-top: 20px;
-       }
+	.fact-icon {
+	font-size: 2rem;
+	display: block;
+	margin-top: -5px;
+	}
+	
 
+	.fact-content {
+	flex: 1;
+	}
+	
 
-       .option-btn {
-           background-color: #fff;
-           border: 2px solid #f1f2f6;
-           padding: 15px 20px;
-           text-align: left;
-           border-radius: 10px;
-           cursor: pointer;
-           font-family: 'Open Sans', sans-serif;
-           font-size: 0.95rem;
-           font-weight: 500;
-           transition: all 0.15s ease;
-           color: var(--text-main);
-           position: relative;
-       }
+	
 
+	.btn {
+	background: var(--brand-gradient);
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1rem;
+	font-weight: 600;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: block;
+	width: 100%;
+	margin-top: 20px;
+	box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+	}
+	
 
-       .option-btn:hover:not(:disabled) {
-           border-color: var(--accent-color);
-           background-color: #f8fcff;
-           transform: translateX(3px);
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-       }
-      
-       /* Status states for options */
-       .option-btn.correct {
-           background-color: var(--success-bg);
-           border-color: var(--success-color);
-           color: #0b6e4f;
-           font-weight: 600;
-       }
-      
-       .option-btn.correct::after {
-           content: "✓";
-           position: absolute;
-           right: 15px;
-           font-weight: bold;
-       }
+	
 
+	.btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
+	opacity: 0.95;
+	}
+	
 
-       .option-btn.incorrect {
-           background-color: var(--error-bg);
-           border-color: var(--error-color);
-           color: #c0392b;
-           opacity: 0.8;
-       }
+	
 
+	/* Question Styles */
+	.question-meta {
+	display: inline-block;
+	color: var(--text-muted);
+	font-size: 0.85rem;
+	margin-bottom: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	}
+	
 
-       .option-btn:disabled {
-           cursor: default;
-       }
+	
 
+	.options-grid {
+	display: grid;
+	gap: 12px;
+	margin-top: 20px;
+	}
+	
 
-       /* Feedback Box */
-       .feedback-box {
-           margin-top: 20px;
-           padding: 20px 25px;
-           border-radius: 12px;
-           background-color: #f8f9fa;
-           color: var(--text-main);
-           border: 1px solid #e9ecef;
-           display: none;
-           animation: fadeIn 0.3s ease;
-       }
-      
-       .feedback-box h3 {
-           margin-top: 0;
-           font-family: 'Poppins', sans-serif;
-           font-size: 1.2rem;
-           display: flex;
-           align-items: center;
-           gap: 8px;
-           margin-bottom: 8px;
-       }
+	
 
+	.option-btn {
+	background-color: #fff;
+	border: 2px solid #f1f2f6;
+	padding: 15px 20px;
+	text-align: left;
+	border-radius: 10px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 0.95rem;
+	font-weight: 500;
+	transition: all 0.15s ease;
+	color: var(--text-main);
+	position: relative;
+	}
+	
 
-       .feedback-box.success h3 {
-           color: var(--success-color);
-       }
-      
-       .feedback-box.error h3 {
-           color: var(--error-color);
-       }
+	
 
+	.option-btn:hover:not(:disabled) {
+	border-color: var(--accent-color);
+	background-color: #f8fcff;
+	transform: translateX(3px);
+	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+	}
+	
 
-       .feedback-box strong {
-           color: var(--brand-color);
-       }
+	/* Status states for options */
+	.option-btn.correct {
+	background-color: var(--success-bg);
+	border-color: var(--success-color);
+	color: #0b6e4f;
+	font-weight: 600;
+	}
+	
 
+	.option-btn.correct::after {
+	content: "✓";
+	position: absolute;
+	right: 15px;
+	font-weight: bold;
+	}
+	
 
-       @keyframes fadeIn {
-           from { opacity: 0; transform: translateY(5px); }
-           to { opacity: 1; transform: translateY(0); }
-       }
+	
 
+	.option-btn.incorrect {
+	background-color: var(--error-bg);
+	border-color: var(--error-color);
+	color: #c0392b;
+	opacity: 0.8;
+	}
+	
 
-       /* Progress Bar Styles */
-       .progress-bar-container {
-           height: 6px;
-           background-color: #f1f3f5;
-           width: 100%;
-           position: relative;
-           z-index: 10;
-       }
+	
 
+	.option-btn:disabled {
+	cursor: default;
+	}
+	
 
-       .progress-bar {
-           height: 100%;
-           background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-           width: 0%;
-           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-           border-radius: 0 4px 4px 0;
-           box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
-       }
+	
 
+	/* Feedback Box */
+	.feedback-box {
+	margin-top: 20px;
+	padding: 20px 25px;
+	border-radius: 12px;
+	background-color: #f8f9fa;
+	color: var(--text-main);
+	border: 1px solid #e9ecef;
+	display: none;
+	animation: fadeIn 0.3s ease;
+	}
+	
 
-       /* Summary Styles */
-       .summary-stats {
-           text-align: center;
-           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-           border: 1px solid #dee2e6;
-           padding: 30px 20px;
-           border-radius: 12px;
-           margin-bottom: 20px;
-       }
+	.feedback-box h3 {
+	margin-top: 0;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.2rem;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	}
+	
 
+	
 
-       .summary-score {
-           font-size: 3.5rem;
-           font-family: 'Poppins', sans-serif;
-           font-weight: 700;
-           display: block;
-           margin: 5px 0;
-           line-height: 1;
-           background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-           -webkit-background-clip: text;
-           -webkit-text-fill-color: transparent;
-       }
-      
-       .summary-list {
-           max-height: 400px;
-           overflow-y: auto;
-           padding-right: 10px;
-       }
-      
-       .summary-item {
-           background: white;
-           border-bottom: 1px solid #f1f1f1;
-           padding: 12px 0;
-       }
-      
-       .summary-item:last-child {
-           border-bottom: none;
-       }
+	.feedback-box.success h3 {
+	color: var(--success-color);
+	}
+	
 
+	.feedback-box.error h3 {
+	color: var(--error-color);
+	}
+	
 
-       .summary-question {
-           font-weight: 600;
-           margin-bottom: 4px;
-           display: block;
-           font-size: 0.95rem;
-       }
-      
-       .summary-answer-row {
-           font-size: 0.9rem;
-       }
+	
 
+	.feedback-box strong {
+	color: var(--brand-color);
+	}
+	
 
-       .summary-correct-text { color: var(--success-color); font-weight: 600; }
-       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
-       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+	
 
+	@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(5px); }
+	to { opacity: 1; transform: translateY(0); }
+	}
+	
 
-       /* Helpers */
-       strong {
-           color: var(--brand-color);
-           font-weight: 700;
-       }
+	
 
+	/* Progress Bar Styles */
+	.progress-bar-container {
+	height: 6px;
+	background-color: #f1f3f5;
+	width: 100%;
+	position: relative;
+	z-index: 10;
+	}
+	
 
-   </style>
-</head>
-<body>
+	
 
+	.progress-bar {
+	height: 100%;
+	background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+	width: 0%;
+	transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+	border-radius: 0 4px 4px 0;
+	box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+	}
+	
 
-<div class="container">
-   <header>
-       <h1 id="header-title">Fysikquiz: Ljud & Ljus</h1>
-   </header>
-   <div class="progress-bar-container">
-       <div class="progress-bar" id="progress-bar"></div>
-   </div>
+	
 
+	/* Summary Styles */
+	.summary-stats {
+	text-align: center;
+	background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+	border: 1px solid #dee2e6;
+	padding: 30px 20px;
+	border-radius: 12px;
+	margin-bottom: 20px;
+	}
+	
 
-   <div class="content-area" id="app">
-       <!-- Content will be injected here by JavaScript -->
-   </div>
-</div>
+	
 
+	.summary-score {
+	font-size: 3.5rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	display: block;
+	margin: 5px 0;
+	line-height: 1;
+	background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	}
+	
 
-<script>
-   // --- DATA ---
-const quizData = [
-    {
-        title: "Del 1: Ljudets grunder",
-        icon: "🔊",
-        text: "<strong>Ljud</strong> är vibrationer som sprider sig som förtätningar och förtunningar i luften. För att ljud ska kunna färdas krävs ett material (<strong>medium</strong>), oftast luft, vatten eller metall. I <strong>vakuum</strong> (som i rymden) kan man inte höra ljud eftersom det inte finns några molekyler. Ljudets <strong>frekvens</strong> mäts i <strong>Hertz (Hz)</strong> och avgör om en ton är ljus eller mörk. <strong>Amplitud</strong> beskriver ljudvågens höjd och avgör ljudets <strong>styrka</strong> (volym), vilket mäts i <strong>decibel (dB)</strong>.",
-        questions: [
-            {
-                q: "Varför kan man inte höra ljud i rymden?",
-                options: [
-                    "Det finns inget ljus som kan bära ljudet.",
-                    "Det är för kallt för att partiklar ska kunna vibrera.",
-                    "Avstånden är för stora för att ljudet ska nå fram.",
-                    "Det är vakuum, vilket betyder att det saknas materia som kan transportera vibrationerna."
-                ],
-                correct: 3,
-                explanation: "Ljud behöver molekyler som 'puffar' på varandra för att sprida sig, vilket saknas i <strong>vakuum</strong>."
-            },
-            {
-                q: "Vad händer med en ton om dess frekvens ökar?",
-                options: [
-                    "Tonhöjden blir högre (ljusare ton).",
-                    "Ljudstyrkan blir högre (starkare ljud).",
-                    "Ljudet färdas snabbare genom luften.",
-                    "Våglängden blir längre."
-                ],
-                correct: 0,
-                explanation: "Högre <strong>frekvens</strong> innebär fler svängningar per sekund, vilket vi uppfattar som en <strong>ljusare ton</strong>."
-            },
-            {
-                q: "Vilket begrepp beskriver ljudvågens höjd och därmed dess volym?",
-                options: [
-                    "Hertz.",
-                    "Amplitud.",
-                    "Frekvens.",
-                    "Resonans."
-                ],
-                correct: 1,
-                explanation: "Högre <strong>amplitud</strong> (våghöjd) ger ett starkare ljud med högre decibeltal."
-            }
-        ]
-    },
-    {
-        title: "Del 2: Ljudets hastighet och eko",
-        icon: "⚡",
-        text: "Ljudet färdas med ungefär <strong>340 m/s</strong> i luft. <strong>Ljus</strong> är enormt mycket snabbare än ljud, vilket förklarar varför man ser en blixt innan man hör knallen. Genom att räkna sekunder mellan blixt och dunder kan man räkna ut avståndet; tre sekunder motsvarar ungefär en kilometer. Fenomenet <strong>eko</strong> uppstår när ljudvågor studsar mot en yta. Detta används i <strong>ekolod</strong> för att mäta havsdjup.",
-        questions: [
-            {
-                q: "Varför ser du blixten innan du hör åskmullret?",
-                options: [
-                    "Ljuset skapas före ljudet i molnet.",
-                    "Ljudvågorna bromsas upp av regndroppar.",
-                    "Ljusets hastighet är mycket högre än ljudets hastighet.",
-                    "Ögat reagerar snabbare än örat."
-                ],
-                correct: 2,
-                explanation: "Ljus färdas med 300 000 km/s medan ljudet bara rör sig i <strong>340 m/s</strong>, vilket skapar en tidsskillnad."
-            },
-            {
-                q: "Hur långt hinner ljudet på 3 sekunder i luft?",
-                options: [
-                    "Cirka 340 meter.",
-                    "Cirka 100 meter.",
-                    "Cirka 3 000 meter (3 km).",
-                    "Cirka 1 000 meter (1 km)."
-                ],
-                correct: 3,
-                explanation: "Eftersom ljudet går 340 m/s blir 3 sekunder ca 1020 meter, alltså drygt <strong>en kilometer</strong>."
-            },
-            {
-                q: "Vad används ett ekolod till på en fiskebåt?",
-                options: [
-                    "Att mäta avståndet till botten eller fiskstim genom att låta ljud studsa.",
-                    "Att skrämma iväg rovfiskar med höga ljud.",
-                    "Att kommunicera med andra båtar via radiovågor.",
-                    "Att rena vattnet runt båten med vibrationer."
-                ],
-                correct: 0,
-                explanation: "<strong>Ekolodet</strong> mäter tiden för en ljudsignal att studsa tillbaka (reflekteras) för att beräkna avstånd."
-            }
-        ]
-    },
-    {
-        title: "Del 3: Ultraljud",
-        icon: "🦇",
-        text: "Människans öra kan uppfatta ljud mellan <strong>20 Hz</strong> och <strong>20 000 Hz</strong>. Ljud med högre frekvens än 20 000 Hz kallas <strong>ultraljud</strong>. Inom sjukvården används ultraljud för <strong>fosterdiagnostik</strong>, där man kan se bilder av ett barn i magen utan att skada det. Det kan också användas för att krossa njursten eller undersöka hjärtat.",
-        questions: [
-            {
-                q: "Vilket frekvensomfång har ultraljud?",
-                options: [
-                    "Under 20 Hz.",
-                    "Över 20 000 Hz.",
-                    "Mellan 100 och 1 000 Hz.",
-                    "Ljudet har ingen bestämd frekvens."
-                ],
-                correct: 1,
-                explanation: "<strong>Ultraljud</strong> definieras som ljud med så hög frekvens att människor inte kan höra det (över 20 000 Hz)."
-            },
-            {
-                q: "Vilken är en stor fördel med ultraljud inom medicin?",
-                options: [
-                    "Det ger mer energi till kroppen så man blir pigg.",
-                    "Det kan bota alla typer av virusinfektioner.",
-                    "Det kan skapa bilder av inre organ och foster utan farlig strålning.",
-                    "Det gör att patienten sover bättre under undersökningen."
-                ],
-                correct: 2,
-                explanation: "Ultraljud är inte skadligt för celler och ger möjlighet att upptäcka skador eller sjukdomar tidigt utan <strong>strålning</strong>."
-            }
-        ]
-    },
-    {
-        title: "Del 4: Ljusets brytning och färger",
-        icon: "🌈",
-        text: "Ljus består av partiklar som kallas <strong>fotoner</strong> men rör sig även som <strong>vågor</strong>. <strong>Vitt ljus</strong> är egentligen en blandning av alla färger (ROGGBIV). När ljus går från ett material till ett annat, t.ex. från luft till vatten, ändrar det hastighet och byter riktning, vilket kallas <strong>brytning</strong>. En <strong>regnbåge</strong> uppstår när solljuset bryts och reflekteras i vattendroppar, vilket delar upp ljuset i ett <strong>spektrum</strong>.",
-        questions: [
-            {
-                q: "Varför ser vi en regnbåge när det regnar och solen skiner?",
-                options: [
-                    "Vattendropparna färgas av föroreningar i luften.",
-                    "Molnen fungerar som speglar som reflekterar solens färger.",
-                    "Ljuset studsar mot marken och sedan upp i regnet.",
-                    "Solljuset bryts i dropparna och delas upp i sina olika färger."
-                ],
-                correct: 3,
-                explanation: "Olika färger har olika våglängd och <strong>bryts</strong> därför olika mycket i vattendroppen, vilket skapar ett spektrum."
-            },
-            {
-                q: "Varför uppfattar vi en växt som grön?",
-                options: [
-                    "Växten absorberar alla färger utom grönt, som istället reflekteras in i våra ögon.",
-                    "Växten skapar eget grönt ljus med hjälp av fotosyntes.",
-                    "Växten absorberar (suger upp) grönt ljus men reflekterar andra färger.",
-                    "Det är en optisk illusion som beror på linsen i vårt öga."
-                ],
-                correct: 0,
-                explanation: "Föremåls färg beror på vilken våglängd av ljuset de <strong>reflekterar</strong> istället för att absorbera."
-            },
-            {
-                q: "Vad händer med ljusets hastighet när det går från luft in i en glasbit?",
-                options: [
-                    "Den ökar kraftigt.",
-                    "Den minskar, vilket gör att ljuset bryts.",
-                    "Den förblir exakt densamma.",
-                    "Ljuset stannar helt inuti glaset."
-                ],
-                correct: 1,
-                explanation: "Ljus bryts eftersom det har <strong>olika hastighet</strong> i olika material med olika optisk täthet."
-            }
-        ]
-    },
-    {
-        title: "Del 5: Speglar och totalreflektion",
-        icon: "🪞",
-        text: "När ljus träffar en plan spegel är <strong>infallsvinkeln</strong> lika stor som <strong>reflektionsvinkeln</strong>. <strong>Konvexa speglar</strong> buktar utåt och ger en förminskad bild men med ett större synfält. <strong>Konkava speglar</strong> buktar inåt och kan förstora bilden. <strong>Totalreflektion</strong> uppstår när ljuset studsar helt mot en yta inuti ett material, som i <strong>fiberoptik</strong>.",
-        questions: [
-            {
-                q: "Vilken typ av spegel används ofta i trafikkorsningar för att se runt hörn?",
-                options: [
-                    "En konkav spegel eftersom den förstorar bilar.",
-                    "En plan spegel eftersom den visar sanningen.",
-                    "En konvex spegel eftersom den ger en förminskad bild men visar ett större område.",
-                    "En färgstark spegel som drar till sig uppmärksamhet."
-                ],
-                correct: 2,
-                explanation: "<strong>Konvexa speglar</strong> sprider de reflekterade strålarna så att hjärnan uppfattar ett vidare synfält."
-            },
-            {
-                q: "Hur fungerar en optisk fiber som ger oss snabbt internet?",
-                options: [
-                    "Ljuset går i en helt rak linje genom jorden.",
-                    "Ljuset totalreflekteras mot fiberns insida och följer ledningen även när den böjs.",
-                    "Ljuset omvandlas till elektricitet inuti kabeln.",
-                    "Kabeln är fylld med radiovågor som färdas snabbare än ljus."
-                ],
-                correct: 1,
-                explanation: "Infallsvinkeln är så stor att inget ljus bryts ut, utan allt studsar tillbaka (<strong>totalreflekteras</strong>) in i fibern."
-            },
-            {
-                q: "Vad innebär reflektionslagen?",
-                options: [
-                    "Ljuset försvinner när det träffar en mörk yta.",
-                    "Ljusets hastighet är konstant i alla material.",
-                    "Ljuset bryts alltid mot normalen.",
-                    "Infallsvinkeln är lika stor som reflektionsvinkeln."
-                ],
-                correct: 3,
-                explanation: "Ljuset studsar ut från en yta med exakt samma vinkel som det kom in med."
-            }
-        ]
-    },
-    {
-        title: "Del 6: Linser och ögat",
-        icon: "👁️",
-        text: "En <strong>konvex lins</strong> (samlingslins) är tjockast på mitten och samlar ljusstrålar till en <strong>brännpunkt</strong> (fokus). En <strong>konkav lins</strong> (spridningslins) är smalast på mitten och sprider ut ljuset. I våra ögon finns en konvex lins som samlar ljuset på näthinnan. <strong>Närsynta</strong> personer behöver konkava linser medan <strong>översynta</strong> behöver konvexa linser.",
-        questions: [
-            {
-                q: "Vilken typ av lins används i ett förstoringsglas för att samla solljus till en punkt?",
-                options: [
-                    "En konvex lins (samlingslins).",
-                    "En konkav lins.",
-                    "En plan lins.",
-                    "En polariserad lins."
-                ],
-                correct: 0,
-                explanation: "En <strong>konvex lins</strong> bryter samman parallella strålar så att de möts i en brännpunkt."
-            },
-            {
-                q: "Vad behöver en närsynt person för typ av glasögon?",
-                options: [
-                    "Glasögon med konvexa linser som samlar ljuset tidigare.",
-                    "Glasögon med mörkt glas som stoppar UV-strålning.",
-                    "Glasögon med konkava linser som sprider ljuset så det träffar näthinnan rätt.",
-                    "Glasögon som förstorar allting."
-                ],
-                correct: 2,
-                explanation: "Hos en <strong>närsynt</strong> person bryts ljuset före näthinnan; en <strong>konkav lins</strong> hjälper till att flytta bak bilden."
-            },
-            {
-                q: "Var i ögat finns de ljuskänsliga cellerna tappar och stavar?",
-                options: [
-                    "I linsen.",
-                    "På näthinnan.",
-                    "På hornhinnan.",
-                    "I pupillen."
-                ],
-                correct: 1,
-                explanation: "<strong>Näthinnan</strong> är ögats 'film' där syncellerna sitter; tapparna ser färger och stavarna ser i mörker."
-            }
-        ]
-    },
-    {
-        title: "Del 7: Elektromagnetiska spektrumet",
-        icon: "📡",
-        text: "Ljus är bara en liten del av det <strong>elektromagnetiska spektrumet</strong>. <strong>Radiovågor</strong> har längst våglängd och minst energi. <strong>UV-strålning</strong> har mer energi än synligt ljus och gör oss solbrända, men kan skada våra celler. <strong>Laser</strong> är en speciell sorts ljus där alla ljusvågor har samma <strong>våglängd</strong> och går i samma riktning.",
-        questions: [
-            {
-                q: "Vilken typ av elektromagnetisk strålning har mest energi och är farligast?",
-                options: [
-                    "Radiovågor.",
-                    "Synligt ljus.",
-                    "Gammastrålning.",
-                    "Infraröd strålning (värme)."
-                ],
-                correct: 2,
-                explanation: "<strong>Gammastrålning</strong> har extremt kort våglängd och hög energi, vilket gör den joniserande och skadlig."
-            },
-            {
-                q: "Varför är det viktigt att skydda sig mot för mycket UV-strålning från solen?",
-                options: [
-                    "Den kyler ner kroppen för snabbt.",
-                    "Den gör att man ser sämre i mörker.",
-                    "Den stoppar syretillförseln till huden.",
-                    "Den kan skada cellernas DNA och öka risken för hudcancer."
-                ],
-                correct: 3,
-                explanation: "<strong>UV-strålning</strong> är energirik och kan tränga in i celler och orsaka mutationer."
-            },
-            {
-                q: "Vad är speciellt med laserljus jämfört med ljuset från en vanlig lampa?",
-                options: [
-                    "Det består av bara en färg (våglängd) och alla vågor går i samma takt och riktning.",
-                    "Det innehåller alla regnbågens färger samtidigt.",
-                    "Det är kallt och sprider sig i alla riktningar.",
-                    "Det kan bara ses genom ett mikroskop."
-                ],
-                correct: 0,
-                explanation: "Genom att ljuset är i fas och koncentrerat får <strong>laserstrålen</strong> en mycket hög energitäthet."
-            }
-        ]
-    }
+	.summary-list {
+	max-height: 400px;
+	overflow-y: auto;
+	padding-right: 10px;
+	}
+	
+
+	.summary-item {
+	background: white;
+	border-bottom: 1px solid #f1f1f1;
+	padding: 12px 0;
+	}
+	
+
+	.summary-item:last-child {
+	border-bottom: none;
+	}
+	
+
+	
+
+	.summary-question {
+	font-weight: 600;
+	margin-bottom: 4px;
+	display: block;
+	font-size: 0.95rem;
+	}
+	
+
+	.summary-answer-row {
+	font-size: 0.9rem;
+	}
+	
+
+	
+
+	.summary-correct-text { color: var(--success-color); font-weight: 600; }
+	.summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+	.real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+	
+
+	
+
+	/* Helpers */
+	strong {
+	color: var(--brand-color);
+	font-weight: 700;
+	}
+	
+
+	
+
+	</style>
+	</head>
+	<body>
+	
+
+	
+
+	<div class="container">
+	<header>
+	<h1 id="header-title">Fysikquiz: Ljud & Ljus</h1>
+	</header>
+	<div class="progress-bar-container">
+	<div class="progress-bar" id="progress-bar"></div>
+	</div>
+	
+
+	
+
+	<div class="content-area" id="app">
+	<!-- Content will be injected here by JavaScript -->
+	</div>
+	</div>
+	
+
+	
+
+	<script>
+	// --- DATA ---
+	const quizData = [
+	{
+   "title": "Del 1: Ljudets grunder",
+   "icon": "🔊",
+   "text": "<strong>Ljud</strong> är vibrationer som sprider sig som förtätningar och förtunningar i luften. För att ljud ska kunna färdas krävs ett material (<strong>medium</strong>), oftast luft, vatten eller metall. I <strong>vakuum</strong> (som i rymden) kan man inte höra ljud eftersom det inte finns några molekyler. Ljudets <strong>frekvens</strong> mäts i <strong>Hertz (Hz)</strong> och avgör om en ton är ljus eller mörk. <strong>Amplitud</strong> beskriver ljudvågens höjd och avgör ljudets <strong>styrka</strong> (volym), vilket mäts i <strong>decibel (dB)</strong>.",
+   "questions": [
+     {
+       "q": "Varför är det omöjligt att höra ljud i rymden?",
+       "options": [
+         "Rymdens extremt låga temperatur gör att ljudvågorna fryser och stannar av.",
+         "De elektromagnetiska fälten i rymden stör ut de mekaniska ljudvågorna.",
+         "Det råder vakuum, vilket innebär att det saknas materia som kan transportera vibrationerna.",
+         "Avstånden mellan planeterna är för stora för att ljudet ska hinna fram innan det dör ut."
+       ],
+       "correct": 2,
+       "explanation": "Ljud är mekaniska vågor som kräver ett <strong>medium</strong> (som luft eller vatten) för att spridas. I rymden råder <strong>vakuum</strong>, vilket betyder att det inte finns några molekyler som kan knuffa på varandra och föra ljudet vidare."
+     },
+     {
+       "q": "Vad händer rent fysikaliskt med en ton om dess frekvens ökar?",
+       "options": [
+         "Ljudvågorna rör sig snabbare genom luften.",
+         "Tonhöjden blir högre och ljudet uppfattas som ljusare (diskant).",
+         "Ljudstyrkan ökar markant och tonen upplevs som starkare.",
+         "Våglängden blir längre och tonen uppfattas som djupare (bas)."
+       ],
+       "correct": 1,
+       "explanation": "<strong>Frekvens</strong> är ett mått på hur många gånger ljudvågen svänger per sekund. En hög frekvens innebär snabba svängningar, vilket våra öron uppfattar som en <strong>ljus ton</strong>. Om frekvensen istället är låg hör vi en mörk baston."
+     },
+     {
+       "q": "Vilket begrepp beskriver ljudvågens höjd och avgör dess volym?",
+       "options": [
+         "Hertz (Hz)",
+         "Resonans",
+         "Frekvens",
+         "Amplitud"
+       ],
+       "correct": 3,
+       "explanation": "Ljudets styrka (volym) bestäms av hur kraftiga svängningarna är, vilket kallas <strong>amplitud</strong> (våghöjd). En högre amplitud ger ett starkare ljud med ett högre decibeltal (<strong>dB</strong>)."
+     }
+   ]
+ },
+ {
+   "title": "Del 2: Ljudets hastighet och eko",
+   "icon": "⚡",
+   "text": "Ljudet färdas med ungefär <strong>340 m/s</strong> i luft. <strong>Ljus</strong> är enormt mycket snabbare än ljud, vilket förklarar varför man ser en blixt innan man hör knallen. Genom att räkna sekunder mellan blixt och dunder kan man räkna ut avståndet; tre sekunder motsvarar ungefär en kilometer. Fenomenet <strong>eko</strong> uppstår när ljudvågor studsar mot en yta. Detta används i <strong>ekolod</strong> för att mäta havsdjup.",
+   "questions": [
+     {
+       "q": "Vad är den huvudsakliga anledningen till att man ser blixten innan man hör åskmullret?",
+       "options": [
+         "Ögat reagerar snabbare på synintryck än vad örat gör på ljudintryck.",
+         "Ljuset har en hastighet på 300 000 km/s, vilket är mycket snabbare än ljudets 340 m/s.",
+         "Ljudvågorna bromsas upp kraftigt av regnet och molnen, medan ljuset går rakt igenom.",
+         "Blixten uppstår faktiskt före ljudet i molnet på grund av elektriska urladdningar."
+       ],
+       "correct": 1,
+       "explanation": "Skillnaden beror på att <strong>ljusets hastighet</strong> är enormt mycket högre än ljudets. Ljuset når oss nästan omedelbart, medan ljudet behöver cirka 3 sekunder på sig att färdas en enda kilometer i luft (<strong>340 m/s</strong>)."
+     },
+     {
+       "q": "Hur långt hinner ljudet färdas i luft på 3 sekunder?",
+       "options": [
+         "Cirka 3 kilometer (3000 meter).",
+         "Cirka 100 meter.",
+         "Cirka 340 meter.",
+         "Cirka 1 kilometer (1000 meter)."
+       ],
+       "correct": 3,
+       "explanation": "Eftersom ljudet rör sig med cirka <strong>340 meter per sekund</strong>, så hinner det på tre sekunder färdas 3 * 340 = 1020 meter. Därför brukar man säga att tre sekunder mellan blixt och dunder motsvarar <strong>en kilometer</strong>."
+     },
+     {
+       "q": "Vad är den primära funktionen hos ett ekolod på en båt?",
+       "options": [
+         "Att rena vattnet runt båten med hjälp av högfrekventa vibrationer.",
+         "Att skrämma iväg sälar och rovfiskar från näten.",
+         "Att mäta djupet eller hitta fisk genom att skicka ut ljudpulser som studsar.",
+         "Att kommunicera med andra fartyg via undervattenssignaler."
+       ],
+       "correct": 2,
+       "explanation": "Ett <strong>ekolod</strong> sänder ut en ljudpuls och mäter hur lång tid det tar för <strong>ekot</strong> att studsa tillbaka från botten eller ett fiskstim. Genom att veta ljudets hastighet i vatten kan instrumentet räkna ut avståndet."
+     }
+   ]
+ },
+ {
+   "title": "Del 3: Ultraljud",
+   "icon": "🦇",
+   "text": "Människans öra kan uppfatta ljud mellan <strong>20 Hz</strong> och <strong>20 000 Hz</strong>. Ljud med högre frekvens än 20 000 Hz kallas <strong>ultraljud</strong>. Inom sjukvården används ultraljud för <strong>fosterdiagnostik</strong>, där man kan se bilder av ett barn i magen utan att skada det. Det kan också användas för att krossa njursten eller undersöka hjärtat.",
+   "questions": [
+     {
+       "q": "Inom vilket frekvensintervall definieras ultraljud?",
+       "options": [
+         "Ljud med en frekvens under 20 Hz (infraljud).",
+         "Ljud som saknar en bestämd frekvens (brus).",
+         "Ljud med en frekvens över 20 000 Hz.",
+         "Ljud som ligger mellan 100 Hz och 1 000 Hz."
+       ],
+       "correct": 2,
+       "explanation": "Gränsen för vad det mänskliga örat kan uppfatta går vid 20 000 Hz. Ljud med högre frekvens än så kallas <strong>ultraljud</strong>. Motsatsen, ljud under 20 Hz, kallas för infraljud."
+     },
+     {
+       "q": "Varför är ultraljud en föredragen metod vid fosterdiagnostik?",
+       "options": [
+         "Det botar eventuella virusinfektioner hos fostret.",
+         "Det skapar bilder av inre organ helt utan skadlig joniserande strålning.",
+         "Det ger extra energi till cellerna så att fostret växer snabbare.",
+         "Det söver patienten så att undersökningen blir smärtfri."
+       ],
+       "correct": 1,
+       "explanation": "Till skillnad från röntgen, som använder strålning, baseras <strong>ultraljud</strong> på ljudvågor som studsar mot kroppens vävnader. Det är därför en säker metod för att titta på känsliga organ och foster utan risk för <strong>strålningsskador</strong>."
+     }
+   ]
+ },
+ {
+   "title": "Del 4: Ljusets brytning och färger",
+   "icon": "🌈",
+   "text": "Ljus består av partiklar som kallas <strong>fotoner</strong> men rör sig även som <strong>vågor</strong>. <strong>Vitt ljus</strong> är egentligen en blandning av alla färger (ROGGBIV). När ljus går från ett material till ett annat, t.ex. från luft till vatten, ändrar det hastighet och byter riktning, vilket kallas <strong>brytning</strong>. En <strong>regnbåge</strong> uppstår när solljuset bryts och reflekteras i vattendroppar, vilket delar upp ljuset i ett <strong>spektrum</strong>.",
+   "questions": [
+     {
+       "q": "Vad är den fysikaliska förklaringen till att en regnbåge uppstår?",
+       "options": [
+         "Solljuset bryts och reflekteras i vattendroppar, vilket delar upp det vita ljuset i färger.",
+         "Föroreningar i luften färgar regndropparna när solen lyser på dem.",
+         "Molnen fungerar som stora speglar som projicerar solens färger mot marken.",
+         "Ljuset studsar mot marken och tar upp färg från växtligheten som sedan syns i himlen."
+       ],
+       "correct": 0,
+       "explanation": "Vitt ljus innehåller alla färger. När ljuset träffar vattendropparna sker en <strong>ljusbrytning</strong> och reflektion som delar upp ljuset i ett <strong>spektrum</strong> (ROGGBIV), eftersom olika färger bryts olika mycket."
+     },
+     {
+       "q": "Varför uppfattar våra ögon bladen på en växt som gröna?",
+       "options": [
+         "Växten sänder ut eget grönt ljus genom fotosyntesen.",
+         "Växten absorberar (suger upp) det gröna ljuset men reflekterar alla andra färger.",
+         "Det är en optisk illusion som skapas av linsen i ögat.",
+         "Växten absorberar alla andra färger men reflekterar just det gröna ljuset."
+       ],
+       "correct": 3,
+       "explanation": "Ett föremåls färg avgörs av vilket ljus det kastar tillbaka. Klorofyllet i växten absorberar rött och blått ljus för energi, men <strong>reflekterar</strong> det gröna ljuset, vilket är det som når våra ögon."
+     },
+     {
+       "q": "Vad händer med ljusets hastighet när det går från luft in i en glasbit?",
+       "options": [
+         "Den ökar kraftigt på grund av glasets hårdhet.",
+         "Den förblir exakt densamma (ljusets hastighet är konstant).",
+         "Den minskar, vilket gör att ljusstrålen ändrar riktning (bryts).",
+         "Ljuset stannar helt upp och absorberas av glaset."
+       ],
+       "correct": 2,
+       "explanation": "Ljus går långsammare i tätare material som glas och vatten än vad det gör i luft. Denna hastighetsförändring gör att ljusstrålen byter riktning, vilket kallas för <strong>ljusbrytning</strong>."
+     }
+   ]
+ },
+ {
+   "title": "Del 5: Speglar och totalreflektion",
+   "icon": "🪞",
+   "text": "När ljus träffar en plan spegel är <strong>infallsvinkeln</strong> lika stor som <strong>reflektionsvinkeln</strong>. <strong>Konvexa speglar</strong> buktar utåt och ger en förminskad bild men med ett större synfält. <strong>Konkava speglar</strong> buktar inåt och kan förstora bilden. <strong>Totalreflektion</strong> uppstår när ljuset studsar helt mot en yta inuti ett material, som i <strong>fiberoptik</strong>.",
+   "questions": [
+     {
+       "q": "Vilken typ av spegel används ofta i trafikkorsningar och butiker för övervakning?",
+       "options": [
+         "En plan spegel, eftersom den återger verkligheten exakt som den är.",
+         "En konkav spegel, eftersom den förstorar bilden så man ser detaljer bättre.",
+         "En konvex spegel, eftersom den ger en förminskad bild men ett mycket bredare synfält.",
+         "En polariserad spegel som tar bort störande reflektioner."
+       ],
+       "correct": 2,
+       "explanation": "<strong>Konvexa speglar</strong> buktar utåt (som baksidan av en sked) och sprider ljuset. Det gör att man ser \"mer\" av omgivningen i spegeln, vilket är perfekt för att se runt hörn i trafiken."
+     },
+     {
+       "q": "Vilken princip utnyttjas i fiberoptiska kablar för att leda ljus långa sträckor?",
+       "options": [
+         "Refraktion, där ljuset bryts ut genom kabelns väggar.",
+         "Totalreflektion, där ljuset studsar mot insidan utan att komma ut.",
+         "Elektrisk ledning, där ljuset omvandlas till ström.",
+         "Absorption, där kabeln suger åt sig ljuset för att spara energi."
+       ],
+       "correct": 1,
+       "explanation": "Ljusstrålarna träffar insidan av fiberkabeln med en så flack vinkel att de inte kan ta sig ut. Istället sker <strong>totalreflektion</strong>, och ljuset studsar vidare genom kabeln nästan utan energiförlust."
+     },
+     {
+       "q": "Vad säger reflektionslagen om hur ljus studsar mot en plan spegel?",
+       "options": [
+         "Infallsvinkeln är lika stor som reflektionsvinkeln.",
+         "Ljuset bryts alltid mot normalen när det träffar ytan.",
+         "Reflektionsvinkeln är alltid hälften så stor som infallsvinkeln.",
+         "Ljuset absorberas till 50% och reflekteras till 50%."
+       ],
+       "correct": 0,
+       "explanation": "Reflektionslagen är enkel: Ljuset studsar ut med exakt samma vinkel som det kom in med. Det vill säga, <strong>infallsvinkeln</strong> = <strong>reflektionsvinkeln</strong>."
+     }
+   ]
+ },
+ {
+   "title": "Del 6: Linser och ögat",
+   "icon": "👁️",
+   "text": "En <strong>konvex lins</strong> (samlingslins) är tjockast på mitten och samlar ljusstrålar till en <strong>brännpunkt</strong> (fokus). En <strong>konkav lins</strong> (spridningslins) är smalast på mitten och sprider ut ljuset. I våra ögon finns en konvex lins som samlar ljuset på näthinnan. <strong>Närsynta</strong> personer behöver konkava linser medan <strong>översynta</strong> behöver konvexa linser.",
+   "questions": [
+     {
+       "q": "Vilken typ av lins används i ett förstoringsglas för att samla ljuset?",
+       "options": [
+         "En konvex lins (samlingslins).",
+         "En konkav lins (spridningslins).",
+         "En cylindrisk lins.",
+         "En plan lins."
+       ],
+       "correct": 0,
+       "explanation": "En <strong>konvex lins</strong> är tjockast på mitten och bryter ljusstrålarna inåt så att de möts i en brännpunkt. Det är detta som gör att den förstorar och kan användas för att tända eld med solljus."
+     },
+     {
+       "q": "Vilken typ av glasögonlins behöver en person som är närsynt?",
+       "options": [
+         "En konvex lins som flyttar fokus framåt.",
+         "En konkav lins som sprider ljuset så bilden hamnar längre bak på näthinnan.",
+         "En mörk lins som minskar ljusinsläppet.",
+         "En progressiv lins som både förstorar och förminskar."
+       ],
+       "correct": 1,
+       "explanation": "Hos en <strong>närsynt</strong> person är ögat ofta lite för långt, så bilden hamnar *framför* näthinnan. En <strong>konkav lins</strong> sprider ljuset innan det når ögat, så att fokus flyttas bakåt till rätt plats."
+     },
+     {
+       "q": "Var i ögat sitter de ljuskänsliga cellerna (tappar och stavar)?",
+       "options": [
+         "På hornhinnan.",
+         "I pupillen.",
+         "I glaskroppen.",
+         "På näthinnan."
+       ],
+       "correct": 3,
+       "explanation": "Längst bak i ögat sitter <strong>näthinnan</strong>. Det är här bilden projiceras och de ljuskänsliga cellerna omvandlar ljuset till nervsignaler som skickas till hjärnan."
+     }
+   ]
+ },
+ {
+   "title": "Del 7: Elektromagnetiska spektrumet",
+   "icon": "📡",
+   "text": "Ljus är bara en liten del av det <strong>elektromagnetiska spektrumet</strong>. <strong>Radiovågor</strong> har längst våglängd och minst energi. <strong>UV-strålning</strong> har mer energi än synligt ljus och gör oss solbrända, men kan skada våra celler. <strong>Laser</strong> är en speciell sorts ljus där alla ljusvågor har samma <strong>våglängd</strong> och går i samma riktning.",
+   "questions": [
+     {
+       "q": "Vad utmärker laserljus jämfört med ljuset från en vanlig glödlampa?",
+       "options": [
+         "Det innehåller alla regnbågens färger samtidigt (vitt ljus).",
+         "Det består av ljusvågor som svänger i takt och har exakt samma våglängd (koherent).",
+         "Det är en typ av joniserande strålning som liknar röntgen.",
+         "Det sprider sig i alla riktningar för att lysa upp ett helt rum."
+       ],
+       "correct": 1,
+       "explanation": "Vanligt ljus är en blandning av våglängder som sprids åt alla håll. <strong>Laser</strong> är unikt eftersom ljuset är monokromatiskt (en färg) och <strong>koherent</strong>, vilket betyder att vågorna rör sig i perfekt takt och riktning."
+     },
+     {
+       "q": "Vilken typ av strålning har kortast våglängd och högst energi (och är därmed farligast)?",
+       "options": [
+         "Radiovågor.",
+         "Infraröd strålning (värme).",
+         "Gammastrålning.",
+         "Synligt ljus."
+       ],
+       "correct": 2,
+       "explanation": "I det elektromagnetiska spektrumet har <strong>gammastrålning</strong> den kortaste våglängden och den högsta energin. Det är en form av joniserande strålning som kan tränga igenom det mesta och skada levande celler allvarligt."
+     },
+     {
+       "q": "Varför är UV-strålning från solen potentiellt skadlig för oss?",
+       "options": [
+         "Den energirika strålningen kan tränga in i hudcellerna och skada DNA:t.",
+         "Den värmer upp kroppen så snabbt att man riskerar värmeslag.",
+         "Den blockerar produktionen av D-vitamin i huden.",
+         "Den gör att ögat tappar förmågan att se färger."
+       ],
+       "correct": 0,
+       "explanation": "<strong>UV-strålning</strong> har tillräckligt med energi för att bryta bindningar i molekyler. Om detta sker i hudcellernas DNA kan det leda till mutationer och i förlängningen hudcancer, vilket är varför solskydd är viktigt."
+     }
+   ]
+ }
 ];
 
 
-   // --- STATE MANAGEMENT ---
-   let currentSectionIndex = 0;
-   let currentQuestionIndex = 0; // Relative to current section
-   let score = 0;
-   let userAnswers = [];
-   let state = 'intro'; // 'intro', 'question', 'summary'
+// --- STATE MANAGEMENT ---
+	let currentSectionIndex = 0;
+	let currentQuestionIndex = 0; // Relative to current section
+	let score = 0;
+	let userAnswers = [];
+	let state = 'intro'; // 'intro', 'question', 'summary'
+	
 
+	
 
-   // --- DOM ELEMENTS ---
-   const app = document.getElementById('app');
-   const headerTitle = document.getElementById('header-title');
-   const progressBar = document.getElementById('progress-bar');
+	// --- DOM ELEMENTS ---
+	const app = document.getElementById('app');
+	const headerTitle = document.getElementById('header-title');
+	const progressBar = document.getElementById('progress-bar');
+	
 
+	
 
-   // --- MAIN RENDER FUNCTION ---
-   function render() {
-       if (state === 'summary') {
-           renderSummary();
-           return;
-       }
+	// --- MAIN RENDER FUNCTION ---
+	function render() {
+	if (state === 'summary') {
+	renderSummary();
+	return;
+	}
+	
 
+	
 
-       const section = quizData[currentSectionIndex];
+	const section = quizData[currentSectionIndex];
+	
 
+	
 
-       // Update Header with smooth fade
-       headerTitle.style.opacity = '0';
-       setTimeout(() => {
-           headerTitle.innerText = section.title;
-           headerTitle.style.transition = 'opacity 0.2s';
-           headerTitle.style.opacity = '1';
-       }, 150);
+	// Update Header with smooth fade
+	headerTitle.style.opacity = '0';
+	setTimeout(() => {
+	headerTitle.innerText = section.title;
+	headerTitle.style.transition = 'opacity 0.2s';
+	headerTitle.style.opacity = '1';
+	}, 150);
+	
 
+	
 
-       // Calculate total progress
-       let totalQuestions = 0;
-       let answeredQuestions = 0;
-      
-       quizData.forEach((sec, idx) => {
-           totalQuestions += sec.questions.length;
-           if (idx < currentSectionIndex) {
-               answeredQuestions += sec.questions.length;
-           } else if (idx === currentSectionIndex && state === 'question') {
-               answeredQuestions += currentQuestionIndex;
-           }
-       });
-       const pct = (answeredQuestions / totalQuestions) * 100;
-       progressBar.style.width = `${pct}%`;
+	// Calculate total progress
+	let totalQuestions = 0;
+	let answeredQuestions = 0;
+	
 
+	quizData.forEach((sec, idx) => {
+	totalQuestions += sec.questions.length;
+	if (idx < currentSectionIndex) {
+	answeredQuestions += sec.questions.length;
+	} else if (idx === currentSectionIndex && state === 'question') {
+	answeredQuestions += currentQuestionIndex;
+	}
+	});
+	const pct = (answeredQuestions / totalQuestions) * 100;
+	progressBar.style.width = `${pct}%`;
+	
 
-       if (state === 'intro') {
-           renderSectionIntro(section);
-       } else if (state === 'question') {
-           renderQuestion(section.questions[currentQuestionIndex]);
-       }
-   }
+	
 
+	if (state === 'intro') {
+	renderSectionIntro(section);
+	} else if (state === 'question') {
+	renderQuestion(section.questions[currentQuestionIndex]);
+	}
+	}
+	
 
-   // --- RENDER SECTION TEXT ---
-   function renderSectionIntro(section) {
-       // Simple animation class reset
-       app.classList.remove('fade-in');
-       void app.offsetWidth; // trigger reflow
-       app.classList.add('fade-in');
+	
 
+	// --- RENDER SECTION TEXT ---
+	function renderSectionIntro(section) {
+	// Simple animation class reset
+	app.classList.remove('fade-in');
+	void app.offsetWidth; // trigger reflow
+	app.classList.add('fade-in');
+	
 
-       app.innerHTML = `
-           <div class="fact-box">
-               <span class="fact-icon">${section.icon}</span>
-               <div class="fact-content">
-                   <h2>Fakta</h2>
-                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
-               </div>
-           </div>
-           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
-       `;
-   }
+	
 
+	app.innerHTML = `
+	<div class="fact-box">
+	<span class="fact-icon">${section.icon}</span>
+	<div class="fact-content">
+	<h2>Fakta</h2>
+	<p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+	</div>
+	</div>
+	<button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+	`;
+	}
+	
 
-   // --- RENDER QUESTION ---
-   function renderQuestion(q) {
-       const totalInCurrent = quizData[currentSectionIndex].questions.length;
-      
-       // Render with reset styles for feedback box
-       app.innerHTML = `
-           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
-           <h2 style="color: #2c3e50; font-weight: 600; margin-bottom:15px;">${q.q}</h2>
-           <div class="options-grid">
-               ${q.options.map((opt, idx) => `
-                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
-               `).join('')}
-           </div>
-           <div id="feedback" class="feedback-box">
-               <h3 id="feedback-title"></h3>
-               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
-               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
-           </div>
-       `;
-   }
+	
 
+	// --- RENDER QUESTION ---
+	function renderQuestion(q) {
+	const totalInCurrent = quizData[currentSectionIndex].questions.length;
+	
 
-   // --- RENDER SUMMARY ---
-   function renderSummary() {
-       headerTitle.innerText = "Sammanfattning";
-       progressBar.style.width = '100%';
-      
-       let totalQ = 0;
-       quizData.forEach(s => totalQ += s.questions.length);
-      
-       // Calculate score
-       let correctCount = userAnswers.filter(a => a.isCorrect).length;
-       let pct = Math.round((correctCount / totalQ) * 100);
-      
-       let gradeTitle = "";
-      
-       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
-       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
-       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
-       else { gradeTitle = "Fortsätt kämpa! 💪"; }
+	// Render with reset styles for feedback box
+	app.innerHTML = `
+	<div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+	<h2 style="color: #2c3e50; font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+	<div class="options-grid">
+	${q.options.map((opt, idx) => `
+	<button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+	`).join('')}
+	</div>
+	<div id="feedback" class="feedback-box">
+	<h3 id="feedback-title"></h3>
+	<p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+	<button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+	</div>
+	`;
+	}
+	
 
+	
 
-       let html = `
-           <div class="summary-stats">
-               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
-               <span class="summary-score">${correctCount}/${totalQ}</span>
-               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
-               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
-           </div>
-           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
-           <div class="summary-list">
-       `;
+	// --- RENDER SUMMARY ---
+	function renderSummary() {
+	headerTitle.innerText = "Sammanfattning";
+	progressBar.style.width = '100%';
+	
 
+	let totalQ = 0;
+	quizData.forEach(s => totalQ += s.questions.length);
+	
 
-       userAnswers.forEach((ans, idx) => {
-           const isCorrect = ans.isCorrect;
-          
-           html += `
-               <div class="summary-item">
-                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
-                   <div class="summary-answer-row">
-                       ${isCorrect
-                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
-                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
-                       }
-                   </div>
-               </div>
-           `;
-       });
+	// Calculate score
+	let correctCount = userAnswers.filter(a => a.isCorrect).length;
+	let pct = Math.round((correctCount / totalQ) * 100);
+	
 
+	let gradeTitle = "";
+	
 
-       html += `</div>`;
-       app.innerHTML = html;
-   }
+	if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+	else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+	else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+	else { gradeTitle = "Fortsätt kämpa! 💪"; }
+	
 
+	
 
-   // --- LOGIC FUNCTIONS ---
-   window.startQuestions = function() {
-       state = 'question';
-       currentQuestionIndex = 0;
-       render();
-   };
+	let html = `
+	<div class="summary-stats">
+	<h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+	<span class="summary-score">${correctCount}/${totalQ}</span>
+	<span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+	<button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+	</div>
+	<h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+	<div class="summary-list">
+	`;
+	
 
+	
 
-   window.handleAnswer = function(selectedIndex) {
-       // Disable all buttons
-       const buttons = document.querySelectorAll('.option-btn');
-       buttons.forEach(b => b.disabled = true);
+	userAnswers.forEach((ans, idx) => {
+	const isCorrect = ans.isCorrect;
+	
 
+	html += `
+	<div class="summary-item">
+	<span class="summary-question">${idx + 1}. ${ans.question}</span>
+	<div class="summary-answer-row">
+	${isCorrect
+	? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+	: `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+	}
+	</div>
+	</div>
+	`;
+	});
+	
 
-       const section = quizData[currentSectionIndex];
-       const currentQ = section.questions[currentQuestionIndex];
-       const isCorrect = selectedIndex === currentQ.correct;
+	
 
+	html += `</div>`;
+	app.innerHTML = html;
+	}
+	
 
-       // Visual feedback on buttons
-       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
-       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+	
 
+	// --- LOGIC FUNCTIONS ---
+	window.startQuestions = function() {
+	state = 'question';
+	currentQuestionIndex = 0;
+	render();
+	};
+	
 
-       if (isCorrect) {
-           selectedBtn.classList.add('correct');
-       } else {
-           selectedBtn.classList.add('incorrect');
-           correctBtn.classList.add('correct'); // Show which one was right
-       }
+	
 
+	window.handleAnswer = function(selectedIndex) {
+	// Disable all buttons
+	const buttons = document.querySelectorAll('.option-btn');
+	buttons.forEach(b => b.disabled = true);
+	
 
-       // Show feedback box
-       const feedbackBox = document.getElementById('feedback');
-       const feedbackTitle = document.getElementById('feedback-title');
-       const feedbackText = document.getElementById('feedback-text');
-       const nextBtn = document.getElementById('next-btn');
+	
 
+	const section = quizData[currentSectionIndex];
+	const currentQ = section.questions[currentQuestionIndex];
+	const isCorrect = selectedIndex === currentQ.correct;
+	
 
-       feedbackBox.style.display = 'block';
-      
-       // Add class for success/error styling
-       if (isCorrect) {
-           feedbackBox.className = "feedback-box success";
-           feedbackTitle.innerHTML = "Rätt svar!";
-       } else {
-           feedbackBox.className = "feedback-box error";
-           feedbackTitle.innerHTML = "Inte riktigt...";
-       }
-      
-       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+	
 
+	// Visual feedback on buttons
+	const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+	const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+	
 
-       // Check if last question of entire quiz
-       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
-      
-       if(isLastQuestionOverall) {
-           nextBtn.innerText = "Se resultat 🏁";
-       } else if (currentQuestionIndex === section.questions.length - 1) {
-           nextBtn.innerText = "Nästa del ➔";
-       }
+	
 
+	if (isCorrect) {
+	selectedBtn.classList.add('correct');
+	} else {
+	selectedBtn.classList.add('incorrect');
+	correctBtn.classList.add('correct'); // Show which one was right
+	}
+	
 
-       // Scroll to feedback if needed on mobile, but gently
-       const rect = feedbackBox.getBoundingClientRect();
-       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
-       if (!isVisible) {
-            setTimeout(() => {
-               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-           }, 100);
-       }
+	
 
+	// Show feedback box
+	const feedbackBox = document.getElementById('feedback');
+	const feedbackTitle = document.getElementById('feedback-title');
+	const feedbackText = document.getElementById('feedback-text');
+	const nextBtn = document.getElementById('next-btn');
+	
 
-       // Save data
-       userAnswers.push({
-           question: currentQ.q,
-           userAnswer: currentQ.options[selectedIndex],
-           correctAnswer: currentQ.options[currentQ.correct],
-           isCorrect: isCorrect
-       });
-   };
+	
 
+	feedbackBox.style.display = 'block';
+	
 
-   window.nextStep = function() {
-       const section = quizData[currentSectionIndex];
-      
-       // Reset feedback styles for next render
-       const feedbackBox = document.getElementById('feedback');
-       if(feedbackBox) {
-           feedbackBox.style.display = 'none';
-       }
+	// Add class for success/error styling
+	if (isCorrect) {
+	feedbackBox.className = "feedback-box success";
+	feedbackTitle.innerHTML = "Rätt svar!";
+	} else {
+	feedbackBox.className = "feedback-box error";
+	feedbackTitle.innerHTML = "Inte riktigt...";
+	}
+	
 
+	feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+	
 
-       // Check if there are more questions in this section
-       if (currentQuestionIndex < section.questions.length - 1) {
-           currentQuestionIndex++;
-           render();
-       } else {
-           // End of section, move to next section
-           if (currentSectionIndex < quizData.length - 1) {
-               currentSectionIndex++;
-               state = 'intro';
-               render();
-           } else {
-               // End of quiz
-               state = 'summary';
-               render();
-           }
-       }
-   };
+	
 
+	// Check if last question of entire quiz
+	const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+	
 
-   // --- INIT ---
-   render();
+	if(isLastQuestionOverall) {
+	nextBtn.innerText = "Se resultat 🏁";
+	} else if (currentQuestionIndex === section.questions.length - 1) {
+	nextBtn.innerText = "Nästa del ➔";
+	}
+	
 
+	
 
-</script>
+	// Scroll to feedback if needed on mobile, but gently
+	const rect = feedbackBox.getBoundingClientRect();
+	const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+	if (!isVisible) {
+	setTimeout(() => {
+	feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}, 100);
+	}
+	
 
+	
 
-</body>
-</html>
+	// Save data
+	userAnswers.push({
+	question: currentQ.q,
+	userAnswer: currentQ.options[selectedIndex],
+	correctAnswer: currentQ.options[currentQ.correct],
+	isCorrect: isCorrect
+	});
+	};
+	
+
+	
+
+	window.nextStep = function() {
+	const section = quizData[currentSectionIndex];
+	
+
+	// Reset feedback styles for next render
+	const feedbackBox = document.getElementById('feedback');
+	if(feedbackBox) {
+	feedbackBox.style.display = 'none';
+	}
+	
+
+	
+
+	// Check if there are more questions in this section
+	if (currentQuestionIndex < section.questions.length - 1) {
+	currentQuestionIndex++;
+	render();
+	} else {
+	// End of section, move to next section
+	if (currentSectionIndex < quizData.length - 1) {
+	currentSectionIndex++;
+	state = 'intro';
+	render();
+	} else {
+	// End of quiz
+	state = 'summary';
+	render();
+	}
+	}
+	};
+	
+
+	
+
+	// --- INIT ---
+	render();
+	
+
+	
+
+	</script>
+	
+
+	
+
+	</body>
+	</html>

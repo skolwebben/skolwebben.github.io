@@ -1,924 +1,1066 @@
 ﻿<!DOCTYPE html>
-<html lang="sv">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Fysikquiz: Atomfysik & Strålning (Åk 9)</title>
-   <!-- Importerar moderna fonter från Google Fonts -->
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-  
-   <style>
-       :root {
-           /* Färgpalett - Professionell & Ren */
-           --card-bg: #ffffff;
-          
-           --brand-color: #2c3e50;
-           --brand-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-          
-           --accent-color: #3498db;
-          
-           --success-color: #10ac84;
-           --success-bg: #e3f9f1;
-          
-           --error-color: #ee5253;
-           --error-bg: #ffeded;
-          
-           --text-main: #2d3436;
-           --text-muted: #636e72;
-          
-           --shadow-card: 0 10px 25px rgba(0,0,0,0.15);
-           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
-           --radius-main: 16px;
-       }
-
-
-       body {
-           font-family: 'Open Sans', sans-serif;
-           /* Gråaktig fade (Silver/Metallic style) */
-           background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-           color: var(--text-main);
-           margin: 0;
-           padding: 15px;
-           display: flex;
-           justify-content: center;
-           align-items: flex-start;
-           min-height: 100vh;
-       }
-
-
-       .container {
-           background-color: var(--card-bg);
-           width: 100%;
-           max-width: 680px;
-           border-radius: var(--radius-main);
-           box-shadow: var(--shadow-card);
-           overflow: hidden;
-           display: flex;
-           flex-direction: column;
-           position: relative;
-           margin-top: 3vh;
-           margin-bottom: 3vh;
-       }
-
-
-       header {
-           background: var(--brand-gradient);
-           color: white;
-           padding: 20px;
-           text-align: center;
-           position: relative;
-           overflow: hidden;
-       }
-
-
-       h1 {
-           font-family: 'Poppins', sans-serif;
-           margin: 0;
-           font-size: 1.5rem;
-           font-weight: 700;
-           letter-spacing: -0.3px;
-       }
-
-
-       .content-area {
-           padding: 25px 30px;
-           flex-grow: 1;
-       }
-
-
-       h2 {
-           font-family: 'Poppins', sans-serif;
-           color: var(--brand-color);
-           margin-top: 0;
-           font-size: 1.3rem;
-           margin-bottom: 0.8rem;
-           line-height: 1.3;
-       }
-
-
-       /* Fact Section Styles */
-       .fact-box {
-           background: #f8f9fa;
-           border-radius: 12px;
-           padding: 20px;
-           margin-bottom: 20px;
-           /* Ingen border-left */
-           display: flex;
-           gap: 15px;
-           align-items: flex-start;
-       }
-      
-       .fact-icon {
-           font-size: 2rem;
-           display: block;
-           margin-top: -5px;
-       }
-      
-       .fact-content {
-           flex: 1;
-       }
-
-
-       .btn {
-           background: var(--brand-gradient);
-           color: white;
-           border: none;
-           padding: 12px 24px;
-           font-family: 'Poppins', sans-serif;
-           font-size: 1rem;
-           font-weight: 600;
-           border-radius: 8px;
-           cursor: pointer;
-           transition: all 0.2s ease;
-           display: block;
-           width: 100%;
-           margin-top: 20px;
-           box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
-       }
-
-
-       .btn:hover {
-           transform: translateY(-2px);
-           box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
-           opacity: 0.95;
-       }
-
-
-       /* Question Styles */
-       .question-meta {
-           display: inline-block;
-           color: var(--text-muted);
-           font-size: 0.85rem;
-           margin-bottom: 10px;
-           font-weight: 600;
-           text-transform: uppercase;
-           letter-spacing: 0.5px;
-       }
-
-
-       .options-grid {
-           display: grid;
-           gap: 12px;
-           margin-top: 20px;
-       }
-
-
-       .option-btn {
-           background-color: #fff;
-           border: 2px solid #f1f2f6;
-           padding: 15px 20px;
-           text-align: left;
-           border-radius: 10px;
-           cursor: pointer;
-           font-family: 'Open Sans', sans-serif;
-           font-size: 0.95rem;
-           font-weight: 500;
-           transition: all 0.15s ease;
-           color: var(--text-main);
-           position: relative;
-       }
-
-
-       .option-btn:hover:not(:disabled) {
-           border-color: var(--accent-color);
-           background-color: #f8fcff;
-           transform: translateX(3px);
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-       }
-      
-       /* Status states for options */
-       .option-btn.correct {
-           background-color: var(--success-bg);
-           border-color: var(--success-color);
-           color: #0b6e4f;
-           font-weight: 600;
-       }
-      
-       .option-btn.correct::after {
-           content: "✓";
-           position: absolute;
-           right: 15px;
-           font-weight: bold;
-       }
-
-
-       .option-btn.incorrect {
-           background-color: var(--error-bg);
-           border-color: var(--error-color);
-           color: #c0392b;
-           opacity: 0.8;
-       }
-
-
-       .option-btn:disabled {
-           cursor: default;
-       }
-
-
-       /* Feedback Box */
-       .feedback-box {
-           margin-top: 20px;
-           padding: 20px 25px;
-           border-radius: 12px;
-           background-color: #f8f9fa;
-           color: var(--text-main);
-           border: 1px solid #e9ecef;
-           display: none;
-           animation: fadeIn 0.3s ease;
-       }
-      
-       .feedback-box h3 {
-           margin-top: 0;
-           font-family: 'Poppins', sans-serif;
-           font-size: 1.2rem;
-           display: flex;
-           align-items: center;
-           gap: 8px;
-           margin-bottom: 8px;
-       }
-
-
-       .feedback-box.success h3 {
-           color: var(--success-color);
-       }
-      
-       .feedback-box.error h3 {
-           color: var(--error-color);
-       }
-
-
-       .feedback-box strong {
-           color: var(--brand-color);
-       }
-
-
-       @keyframes fadeIn {
-           from { opacity: 0; transform: translateY(5px); }
-           to { opacity: 1; transform: translateY(0); }
-       }
-
-
-       /* Progress Bar Styles */
-       .progress-bar-container {
-           height: 6px;
-           background-color: #f1f3f5;
-           width: 100%;
-           position: relative;
-           z-index: 10;
-       }
-
-
-       .progress-bar {
-           height: 100%;
-           background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-           width: 0%;
-           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-           border-radius: 0 4px 4px 0;
-           box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
-       }
-
-
-       /* Summary Styles */
-       .summary-stats {
-           text-align: center;
-           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-           border: 1px solid #dee2e6;
-           padding: 30px 20px;
-           border-radius: 12px;
-           margin-bottom: 20px;
-       }
-
-
-       .summary-score {
-           font-size: 3.5rem;
-           font-family: 'Poppins', sans-serif;
-           font-weight: 700;
-           display: block;
-           margin: 5px 0;
-           line-height: 1;
-           background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-           -webkit-background-clip: text;
-           -webkit-text-fill-color: transparent;
-       }
-      
-       .summary-list {
-           max-height: 400px;
-           overflow-y: auto;
-           padding-right: 10px;
-       }
-      
-       .summary-item {
-           background: white;
-           border-bottom: 1px solid #f1f1f1;
-           padding: 12px 0;
-       }
-      
-       .summary-item:last-child {
-           border-bottom: none;
-       }
-
-
-       .summary-question {
-           font-weight: 600;
-           margin-bottom: 4px;
-           display: block;
-           font-size: 0.95rem;
-       }
-      
-       .summary-answer-row {
-           font-size: 0.9rem;
-       }
-
-
-       .summary-correct-text { color: var(--success-color); font-weight: 600; }
-       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
-       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
-
-
-       /* Helpers */
-       strong {
-           color: var(--brand-color);
-           font-weight: 700;
-       }
-
-
-   </style>
-</head>
-<body>
-
-
-<div class="container">
-   <header>
-       <h1 id="header-title">Fysikquiz: Atomfysik & Strålning</h1>
-   </header>
-   <div class="progress-bar-container">
-       <div class="progress-bar" id="progress-bar"></div>
-   </div>
-
-
-   <div class="content-area" id="app">
-       <!-- Content will be injected here by JavaScript -->
-   </div>
-</div>
-
-
-<script>
-   // --- DATA ---
-   const quizData = [
-       {
-           title: "Del 1: Atomens uppbyggnad",
-           icon: "⚛️",
-           text: "Kunskapen om atomen har utvecklats genom historien. John Dalton lade grunden och <strong>Ernest Rutherford</strong> upptäckte senare genom experiment med guldfolie att atomen har en <strong>positiv kärna</strong> men består mestadels av tomrum. Atomen är uppbyggd av <strong>protoner</strong> (positiva) och <strong>neutroner</strong> (neutrala) i kärnan, med <strong>elektroner</strong> (negativa) i skal runt omkring. Antalet protoner (<strong>atomnumret</strong>) bestämmer vilket grundämne det är.",
-           questions: [
-               {
-                   q: "Vad upptäckte Ernest Rutherford genom sitt berömda experiment med guldfolie?",
-                   options: [
-                       "Atomen har en positiv kärna och består mestadels av tomrum.",
-                       "Elektroner rör sig i bestämda energinivåer (skal).",
-                       "Materia och energi är två sidor av samma sak.",
-                       "Neutronen upptäcktes i atomens kärna."
-                   ],
-                   correct: 0,
-                   explanation: "Rutherford såg att de flesta partiklar gick rakt igenom folien, men några studsade mot den kompakta <strong>kärnan</strong>."
-               },
-               {
-                   q: "Vilken partikel i atomen avgör vilket grundämne det är (atomnumret)?",
-                   options: [
-                       "Elektronen.",
-                       "Protonen.",
-                       "Neutronen.",
-                       "Fotonen."
-                   ],
-                   correct: 1,
-                   explanation: "Antalet <strong>protoner</strong> är unikt för varje grundämne och kallas för <strong>atomnummer</strong>."
-               },
-               {
-                   q: "Vad kallas de varianter av ett grundämne som har samma antal protoner men olika antal neutroner?",
-                   options: [
-                       "Joner.",
-                       "Valenselektroner.",
-                       "Isotoper.",
-                       "Kvarkar."
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Isotoper</strong> är varianter av samma grundämne med olika masstal på grund av skillnaden i antalet <strong>neutroner</strong>."
-               }
-           ]
-       },
-       {
-           title: "Del 2: Ljus och fotoner",
-           icon: "💡",
-           text: "När en atom tillförs energi, till exempel genom uppvärmning, kan elektroner <strong>exciteras</strong> och hoppa till ett skal längre ut. Eftersom elektronen snabbt hoppar tillbaka sänds överskottsenergin ut som en ljuspartikel, en <strong>foton</strong>. Olika långa hopp ger fotoner med olika våglängd, vilket skapar ett unikt <strong>linjespektrum</strong> för varje grundämne.",
-           questions: [
-               {
-                   q: "Vad händer i en atom när den sänder ut ljus i form av en foton?",
-                   options: [
-                       "En proton omvandlas till en neutron.",
-                       "Atomen klyvs i två mindre delar.",
-                       "Atomen tar upp en elektron från omgivningen.",
-                       "En elektron hoppar tillbaka till ett inre skal från ett yttre."
-                   ],
-                   correct: 3,
-                   explanation: "När elektronen faller tillbaka till en lägre <strong>energinivå</strong> frigörs energi som en ljuspartikel."
-               },
-               {
-                   q: "Varför kan ett linjespektrum liknas vid ett 'fingeravtryck' för ett grundämne?",
-                   options: [
-                       "Alla atomer har exakt lika många elektronskal.",
-                       "Ljuset från alla ämnen ser likadant ut för det mänskliga ögat.",
-                       "Det beror på hur många neutroner som finns i kärnan.",
-                       "Varje grundämne har en unik elektronfördelning som ger specifika ljusvåglängder."
-                   ],
-                   correct: 3,
-                   explanation: "Eftersom elektronhoppen beror på atomens <strong>unika uppbyggnad</strong> sänder varje ämne ut ett unikt mönster av färger."
-               }
-           ]
-       },
-       {
-           title: "Del 3: Radioaktivitet och mätning",
-           icon: "☢️",
-           text: "<strong>Radioaktivitet</strong> innebär att instabila atomkärnor sönderfaller spontant och avger strålning. Strålning som kan slå bort elektroner från atomer så att de blir laddade kallas <strong>joniserande strålning</strong>. Aktiviteten hos ett ämne mäts i <strong>Becquerel (Bq)</strong> (sönderfall per sekund), medan den energi en kropp tar upp mäts i <strong>Sievert (Sv)</strong> (stråldos).",
-           questions: [
-               {
-                   q: "Vad kännetecknar joniserande strålning?",
-                   options: [
-                       "Den har förmågan att slå bort elektroner från atomer så att joner bildas.",
-                       "Den består enbart av synligt ljus som vi kan se.",
-                       "Den är alltid helt ofarlig för levande organismer.",
-                       "Den kan endast skapas i stora partikelacceleratorer som CERN."
-                   ],
-                   correct: 0,
-                   explanation: "<strong>Joniserande strålning</strong> är energirik och förändrar atomerna den passerar genom att skapa joner."
-               },
-               {
-                   q: "Vilka grundämnen är naturligt instabila (radioaktiva)?",
-                   options: [
-                       "Alla ämnen med fler än 20 protoner.",
-                       "Alla grundämnen med atomnummer över 82.",
-                       "Endast de ämnen som människan har skapat i lab.",
-                       "Endast ämnen som används i kärnkraftverk."
-                   ],
-                   correct: 1,
-                   explanation: "Atomkärnor med <strong>atomnummer över 82</strong> är för stora för att vara stabila och sönderfaller därför spontant."
-               },
-               {
-                   q: "Vilken enhet används för att mäta den stråldos (energi per kilo) en människa utsätts för?",
-                   options: [
-                       "Becquerel (Bq).",
-                       "Newton (N).",
-                       "Sievert (Sv).",
-                       "Watt (W)."
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Sievert</strong> mäter den biologiska effekten och energin som kroppen tar upp."
-               }
-           ]
-       },
-       {
-           title: "Del 4: Typer av strålning",
-           icon: "〰️",
-           text: "De tre vanligaste typerna av strålning från radioaktiva ämnen är <strong>Alfastrålning</strong> (består av alfapartiklar, två protoner och två neutroner), <strong>Betastrålning</strong> (en neutron omvandlas till en proton och en elektron skjuts ut) och <strong>Gammastrålning</strong> (elektromagnetisk strålning med mycket hög energi). Gammastrålning stoppas först av tjockt bly eller betong.",
-           questions: [
-               {
-                   q: "Vad består alfastrålning av?",
-                   options: [
-                       "Elektroner som skjuts ut ur kärnan.",
-                       "Fotoner med mycket hög energi.",
-                       "En blandning av radiovågor och UV-ljus.",
-                       "Partiklar med två protoner och två neutroner (heliumkärnor)."
-                   ],
-                   correct: 3,
-                   explanation: "En <strong>alfapartikel</strong> är en <strong>heliumkärna</strong> som lämnar en instabil urankärna vid sönderfall."
-               },
-               {
-                   q: "Vilken egenskap är typisk för gammastrålning?",
-                   options: [
-                       "Den har lång våglängd och mycket låg energi.",
-                       "Den är mycket energirik och har god förmåga att tränga igenom material.",
-                       "Den stoppas enkelt av ett vanligt pappersark.",
-                       "Den består av positiva joner som rör sig långsamt."
-                   ],
-                   correct: 1,
-                   explanation: "<strong>Gammastrålning</strong> består av fotoner med kort våglängd som kan passera genom kroppen."
-               }
-           ]
-       },
-       {
-           title: "Del 5: Användning och medicin",
-           icon: "🩻",
-           text: "Strålning används flitigt i samhället. <strong>Röntgenstrålning</strong> passerar genom kroppens mjuka delar men stoppas av skelettet. Inom sjukvården används <strong>gammakamerapris</strong> för att spåra radioaktiva ämnen inuti organ. <strong>Kol 14-metoden</strong> utnyttjar halveringstiden hos kol-14 (5730 år) för att åldersbestämma organiska fynd.",
-           questions: [
-               {
-                   q: "Varför kan man se skelettet på en röntgenbild?",
-                   options: [
-                       "Röntgenstrålningen passerar genom mjuka delar men stoppas av det hårda skelettet.",
-                       "Skelettet sänder ut egen strålning som fastnar på filmen.",
-                       "Röntgenstrålarna reflekteras mot huden och studsar tillbaka.",
-                       "Strålningen gör att skelettet börjar lysa i mörkret."
-                   ],
-                   correct: 0,
-                   explanation: "Handens mjuka delar släpper igenom mer <strong>strålning</strong> än <strong>skelettet</strong>, vilket skapar kontrast på bilden."
-               },
-               {
-                   q: "Vad används Kol 14-metoden till?",
-                   options: [
-                       "Att skapa energi i moderna kärnkraftverk.",
-                       "Att behandla cancer genom att stråla tumörer.",
-                       "Att bestämma åldern på gamla föremål från växter eller djur.",
-                       "Att mäta hur mycket koldioxid det finns i atmosfären."
-                   ],
-                   correct: 2,
-                   explanation: "Genom att mäta mängden kvarvarande kol-14 kan man se hur länge sedan en <strong>organism dog</strong>."
-               },
-               {
-                   q: "Hur fungerar en undersökning med gammakamera?",
-                   options: [
-                       "Man lyser på patienten med en stark laserstråle.",
-                       "Patienten fotograferas med vanligt ljus i ett mörkt rum.",
-                       "En magnet i kameran skapar en bild av kroppens vätskor.",
-                       "Ett radioaktivt ämne sprutas in och sänder ut strålning inifrån organet."
-                   ],
-                   correct: 3,
-                   explanation: "Kameran fångar upp de energirika strålarna som kommer från det <strong>radioaktiva ämnet</strong> inuti organet."
-               }
-           ]
-       },
-       {
-           title: "Del 6: Risker och miljö",
-           icon: "⚠️",
-           text: "<strong>Joniserande strålning</strong> kan vara farlig eftersom den kan bryta sönder <strong>DNA-molekyler</strong>, vilket kan leda till mutationer och cancer. <strong>Radioaktivt avfall</strong> från kärnkraftverk har en mycket lång halveringstid och måste därför slutförvaras djupt i berggrunden för att isoleras från människor och miljö i tusentals år.",
-           questions: [
-               {
-                   q: "Varför kan joniserande strålning orsaka cancer?",
-                   options: [
-                       "Den gör att kroppen blir för varm och cellerna kokar.",
-                       "Den kan skada cellens DNA så att det uppstår mutationer vid reparationen.",
-                       "Den hindrar blodet från att transportera syre till hjärnan.",
-                       "Den tar bort alla antioxidanter i huden så att man blir bränd."
-                   ],
-                   correct: 1,
-                   explanation: "När <strong>DNA-molekylen</strong> bryts sönder kan fel uppstå när cellen försöker laga sig själv."
-               },
-               {
-                   q: "Varför planeras slutförvaring av kärnavfall djupt nere i berggrunden?",
-                   options: [
-                       "För att isolera det farliga avfallet under hela dess långa sönderfallstid.",
-                       "För att uranet behöver värme från jordens inre för att sluta stråla.",
-                       "För att det är billigare än att förvara det i byggnader på marken.",
-                       "För att strålningen kan användas för att värma upp grundvattnet."
-                   ],
-                   correct: 0,
-                   explanation: "Eftersom avfallet är <strong>farligt</strong> under mycket lång tid krävs en stabil och isolerad plats."
-               }
-           ]
-       },
-       {
-           title: "Del 7: Fission och Fusion",
-           icon: "🏭",
-           text: "<strong>Fission</strong> innebär att tunga atomkärnor, som uran-235, klyvs när de träffas av neutroner. Den försvunna massan omvandlas till energi. <strong>Fusion</strong> är motsatsen: lätta kärnor (väte) slås samman till tyngre (helium). Detta kräver extremt högt tryck och temperatur och är den process som driver solen.",
-           questions: [
-               {
-                   q: "Vad startar kedjereaktionen i ett kärnkraftverk (fission)?",
-                   options: [
-                       "Atomer som värms upp med eld.",
-                       "Elektroner som krockar med varandra.",
-                       "En neutron som träffar och klyver en urankärna.",
-                       "Magnetfält som drar isär atomerna."
-                   ],
-                   correct: 2,
-                   explanation: "När en <strong>neutron</strong> träffar urankärnan blir den instabil, klyvs och frigör nya neutroner."
-               },
-               {
-                   q: "Vilka förutsättningar krävs för att fusion ska kunna ske i en stjärna?",
-                   options: [
-                       "Vakuum och totalt mörker.",
-                       "Enbart närvaro av tunga grundämnen som guld och bly.",
-                       "Närvaro av flytande vatten och syrgas.",
-                       "Extremt hög temperatur och högt tryck/gravitation."
-                   ],
-                   correct: 3,
-                   explanation: "För att övervinna motståndet mellan de positiva kärnorna krävs <strong>enorm energi och tryck</strong>."
-               },
-               {
-                   q: "Vad är den största skillnaden mellan fission och fusion?",
-                   options: [
-                       "Fission klyver tunga kärnor medan fusion slår samman lätta kärnor.",
-                       "Fission skapar vatten medan fusion skapar koldioxid.",
-                       "Fission används bara i rymden medan fusion bara finns på jorden.",
-                       "Fission kräver solljus medan fusion sker i mörker."
-                   ],
-                   correct: 0,
-                   explanation: "<strong>Fission</strong> handlar om delning (kärnkraft) och <strong>fusion</strong> om förening (stjärnor)."
-               }
-           ]
-       },
-       {
-           title: "Del 8: EM-strålning och teknik",
-           icon: "📡",
-           text: "Ljus är en del av det elektromagnetiska spektrumet. <strong>UV-strålning</strong> har mer energi än synligt ljus och kan skada huden. <strong>Laser</strong> är en speciell form av ljus där alla vågor har samma våglängd och riktning. Detta ger en koncentrerad stråle som kan användas för kirurgi eller för att mäta hastighet genom reflektion.",
-           questions: [
-               {
-                   q: "Varför är det viktigt att skydda sig mot för stora mängder UV-strålning från solen?",
-                   options: [
-                       "Den gör att kroppen förlorar förmågan att bilda pigment.",
-                       "Den kan skada cellerna och öka risken för hudcancer.",
-                       "Den gör att ögonens linser blir konkava och ger sämre syn.",
-                       "Den hindrar radiovågor från att nå fram till din mobiltelefon."
-                   ],
-                   correct: 1,
-                   explanation: "<strong>UV-strålning</strong> är energirik och kan tränga in och orsaka skador i hudens celler."
-               },
-               {
-                   q: "Hur kan polisen mäta hastigheten på en bil med laserljus?",
-                   options: [
-                       "Lasern värmer upp bilens däck så att farten kan beräknas.",
-                       "Lasern skickar radiovågor som ändrar färg beroende på bilens märke.",
-                       "Ljussignaler reflekteras mot bilen och tiden det tar beräknas utifrån ljusets hastighet.",
-                       "Lasern väger bilen på avstånd och räknar ut farten baserat på massan."
-                   ],
-                   correct: 2,
-                   explanation: "Genom att mäta tiden för ljusets <strong>reflektion</strong> kan avståndet och därmed hastigheten bestämmas."
-               }
-           ]
-       }
-   ];
-
-
-   // --- STATE MANAGEMENT ---
-   let currentSectionIndex = 0;
-   let currentQuestionIndex = 0; // Relative to current section
-   let score = 0;
-   let userAnswers = [];
-   let state = 'intro'; // 'intro', 'question', 'summary'
-
-
-   // --- DOM ELEMENTS ---
-   const app = document.getElementById('app');
-   const headerTitle = document.getElementById('header-title');
-   const progressBar = document.getElementById('progress-bar');
-
-
-   // --- MAIN RENDER FUNCTION ---
-   function render() {
-       if (state === 'summary') {
-           renderSummary();
-           return;
-       }
-
-
-       const section = quizData[currentSectionIndex];
-
-
-       // Update Header with smooth fade
-       headerTitle.style.opacity = '0';
-       setTimeout(() => {
-           headerTitle.innerText = section.title;
-           headerTitle.style.transition = 'opacity 0.2s';
-           headerTitle.style.opacity = '1';
-       }, 150);
-
-
-       // Calculate total progress
-       let totalQuestions = 0;
-       let answeredQuestions = 0;
-      
-       quizData.forEach((sec, idx) => {
-           totalQuestions += sec.questions.length;
-           if (idx < currentSectionIndex) {
-               answeredQuestions += sec.questions.length;
-           } else if (idx === currentSectionIndex && state === 'question') {
-               answeredQuestions += currentQuestionIndex;
-           }
-       });
-       const pct = (answeredQuestions / totalQuestions) * 100;
-       progressBar.style.width = `${pct}%`;
-
-
-       if (state === 'intro') {
-           renderSectionIntro(section);
-       } else if (state === 'question') {
-           renderQuestion(section.questions[currentQuestionIndex]);
-       }
-   }
-
-
-   // --- RENDER SECTION TEXT ---
-   function renderSectionIntro(section) {
-       // Simple animation class reset
-       app.classList.remove('fade-in');
-       void app.offsetWidth; // trigger reflow
-       app.classList.add('fade-in');
-
-
-       app.innerHTML = `
-           <div class="fact-box">
-               <span class="fact-icon">${section.icon}</span>
-               <div class="fact-content">
-                   <h2>Fakta</h2>
-                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
-               </div>
-           </div>
-           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
-       `;
-   }
-
-
-   // --- RENDER QUESTION ---
-   function renderQuestion(q) {
-       const totalInCurrent = quizData[currentSectionIndex].questions.length;
-      
-       // Render with reset styles for feedback box
-       app.innerHTML = `
-           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
-           <h2 style="color: #2c3e50; font-weight: 600; margin-bottom:15px;">${q.q}</h2>
-           <div class="options-grid">
-               ${q.options.map((opt, idx) => `
-                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
-               `).join('')}
-           </div>
-           <div id="feedback" class="feedback-box">
-               <h3 id="feedback-title"></h3>
-               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
-               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
-           </div>
-       `;
-   }
-
-
-   // --- RENDER SUMMARY ---
-   function renderSummary() {
-       headerTitle.innerText = "Sammanfattning";
-       progressBar.style.width = '100%';
-      
-       let totalQ = 0;
-       quizData.forEach(s => totalQ += s.questions.length);
-      
-       // Calculate score
-       let correctCount = userAnswers.filter(a => a.isCorrect).length;
-       let pct = Math.round((correctCount / totalQ) * 100);
-      
-       let gradeTitle = "";
-      
-       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
-       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
-       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
-       else { gradeTitle = "Fortsätt kämpa! 💪"; }
-
-
-       let html = `
-           <div class="summary-stats">
-               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
-               <span class="summary-score">${correctCount}/${totalQ}</span>
-               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
-               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
-           </div>
-           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
-           <div class="summary-list">
-       `;
-
-
-       userAnswers.forEach((ans, idx) => {
-           const isCorrect = ans.isCorrect;
-          
-           html += `
-               <div class="summary-item">
-                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
-                   <div class="summary-answer-row">
-                       ${isCorrect
-                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
-                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
-                       }
-                   </div>
-               </div>
-           `;
-       });
-
-
-       html += `</div>`;
-       app.innerHTML = html;
-   }
-
-
-   // --- LOGIC FUNCTIONS ---
-   window.startQuestions = function() {
-       state = 'question';
-       currentQuestionIndex = 0;
-       render();
-   };
-
-
-   window.handleAnswer = function(selectedIndex) {
-       // Disable all buttons
-       const buttons = document.querySelectorAll('.option-btn');
-       buttons.forEach(b => b.disabled = true);
-
-
-       const section = quizData[currentSectionIndex];
-       const currentQ = section.questions[currentQuestionIndex];
-       const isCorrect = selectedIndex === currentQ.correct;
-
-
-       // Visual feedback on buttons
-       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
-       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
-
-
-       if (isCorrect) {
-           selectedBtn.classList.add('correct');
-       } else {
-           selectedBtn.classList.add('incorrect');
-           correctBtn.classList.add('correct'); // Show which one was right
-       }
-
-
-       // Show feedback box
-       const feedbackBox = document.getElementById('feedback');
-       const feedbackTitle = document.getElementById('feedback-title');
-       const feedbackText = document.getElementById('feedback-text');
-       const nextBtn = document.getElementById('next-btn');
-
-
-       feedbackBox.style.display = 'block';
-      
-       // Add class for success/error styling
-       if (isCorrect) {
-           feedbackBox.className = "feedback-box success";
-           feedbackTitle.innerHTML = "Rätt svar!";
-       } else {
-           feedbackBox.className = "feedback-box error";
-           feedbackTitle.innerHTML = "Inte riktigt...";
-       }
-      
-       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
-
-
-       // Check if last question of entire quiz
-       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
-      
-       if(isLastQuestionOverall) {
-           nextBtn.innerText = "Se resultat 🏁";
-       } else if (currentQuestionIndex === section.questions.length - 1) {
-           nextBtn.innerText = "Nästa del ➔";
-       }
-
-
-       // Scroll to feedback if needed on mobile, but gently
-       const rect = feedbackBox.getBoundingClientRect();
-       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
-       if (!isVisible) {
-            setTimeout(() => {
-               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-           }, 100);
-       }
-
-
-       // Save data
-       userAnswers.push({
-           question: currentQ.q,
-           userAnswer: currentQ.options[selectedIndex],
-           correctAnswer: currentQ.options[currentQ.correct],
-           isCorrect: isCorrect
-       });
-   };
-
-
-   window.nextStep = function() {
-       const section = quizData[currentSectionIndex];
-      
-       // Reset feedback styles for next render
-       const feedbackBox = document.getElementById('feedback');
-       if(feedbackBox) {
-           feedbackBox.style.display = 'none';
-       }
-
-
-       // Check if there are more questions in this section
-       if (currentQuestionIndex < section.questions.length - 1) {
-           currentQuestionIndex++;
-           render();
-       } else {
-           // End of section, move to next section
-           if (currentSectionIndex < quizData.length - 1) {
-               currentSectionIndex++;
-               state = 'intro';
-               render();
-           } else {
-               // End of quiz
-               state = 'summary';
-               render();
-           }
-       }
-   };
-
-
-   // --- INIT ---
-   render();
-
-
-</script>
-
-
-</body>
-</html>
+	<html lang="sv">
+	<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fysikquiz: Atomfysik & Strålning (Åk 9)</title>
+	<!-- Importerar moderna fonter från Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+	
+
+	<style>
+	:root {
+	/* Färgpalett - Professionell & Ren */
+	--card-bg: #ffffff;
+	
+
+	--brand-color: #2c3e50;
+	--brand-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+	
+
+	--accent-color: #3498db;
+	
+
+	--success-color: #10ac84;
+	--success-bg: #e3f9f1;
+	
+
+	--error-color: #ee5253;
+	--error-bg: #ffeded;
+	
+
+	--text-main: #2d3436;
+	--text-muted: #636e72;
+	
+
+	--shadow-card: 0 10px 25px rgba(0,0,0,0.15);
+	--shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+	--radius-main: 16px;
+	}
+	
+
+	
+
+	body {
+	font-family: 'Open Sans', sans-serif;
+	/* Gråaktig fade (Silver/Metallic style) */
+	background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	color: var(--text-main);
+	margin: 0;
+	padding: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	min-height: 100vh;
+	}
+	
+
+	
+
+	.container {
+	background-color: var(--card-bg);
+	width: 100%;
+	max-width: 680px;
+	border-radius: var(--radius-main);
+	box-shadow: var(--shadow-card);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	margin-top: 3vh;
+	margin-bottom: 3vh;
+	}
+	
+
+	
+
+	header {
+	background: var(--brand-gradient);
+	color: white;
+	padding: 20px;
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+	}
+	
+
+	
+
+	h1 {
+	font-family: 'Poppins', sans-serif;
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: -0.3px;
+	}
+	
+
+	
+
+	.content-area {
+	padding: 25px 30px;
+	flex-grow: 1;
+	}
+	
+
+	
+
+	h2 {
+	font-family: 'Poppins', sans-serif;
+	color: var(--brand-color);
+	margin-top: 0;
+	font-size: 1.3rem;
+	margin-bottom: 0.8rem;
+	line-height: 1.3;
+	}
+	
+
+	
+
+	/* Fact Section Styles */
+	.fact-box {
+	background: #f8f9fa;
+	border-radius: 12px;
+	padding: 20px;
+	margin-bottom: 20px;
+	/* Ingen border-left */
+	display: flex;
+	gap: 15px;
+	align-items: flex-start;
+	}
+	
+
+	.fact-icon {
+	font-size: 2rem;
+	display: block;
+	margin-top: -5px;
+	}
+	
+
+	.fact-content {
+	flex: 1;
+	}
+	
+
+	
+
+	.btn {
+	background: var(--brand-gradient);
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1rem;
+	font-weight: 600;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: block;
+	width: 100%;
+	margin-top: 20px;
+	box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+	}
+	
+
+	
+
+	.btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
+	opacity: 0.95;
+	}
+	
+
+	
+
+	/* Question Styles */
+	.question-meta {
+	display: inline-block;
+	color: var(--text-muted);
+	font-size: 0.85rem;
+	margin-bottom: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	}
+	
+
+	
+
+	.options-grid {
+	display: grid;
+	gap: 12px;
+	margin-top: 20px;
+	}
+	
+
+	
+
+	.option-btn {
+	background-color: #fff;
+	border: 2px solid #f1f2f6;
+	padding: 15px 20px;
+	text-align: left;
+	border-radius: 10px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 0.95rem;
+	font-weight: 500;
+	transition: all 0.15s ease;
+	color: var(--text-main);
+	position: relative;
+	}
+	
+
+	
+
+	.option-btn:hover:not(:disabled) {
+	border-color: var(--accent-color);
+	background-color: #f8fcff;
+	transform: translateX(3px);
+	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+	}
+	
+
+	/* Status states for options */
+	.option-btn.correct {
+	background-color: var(--success-bg);
+	border-color: var(--success-color);
+	color: #0b6e4f;
+	font-weight: 600;
+	}
+	
+
+	.option-btn.correct::after {
+	content: "✓";
+	position: absolute;
+	right: 15px;
+	font-weight: bold;
+	}
+	
+
+	
+
+	.option-btn.incorrect {
+	background-color: var(--error-bg);
+	border-color: var(--error-color);
+	color: #c0392b;
+	opacity: 0.8;
+	}
+	
+
+	
+
+	.option-btn:disabled {
+	cursor: default;
+	}
+	
+
+	
+
+	/* Feedback Box */
+	.feedback-box {
+	margin-top: 20px;
+	padding: 20px 25px;
+	border-radius: 12px;
+	background-color: #f8f9fa;
+	color: var(--text-main);
+	border: 1px solid #e9ecef;
+	display: none;
+	animation: fadeIn 0.3s ease;
+	}
+	
+
+	.feedback-box h3 {
+	margin-top: 0;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.2rem;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	}
+	
+
+	
+
+	.feedback-box.success h3 {
+	color: var(--success-color);
+	}
+	
+
+	.feedback-box.error h3 {
+	color: var(--error-color);
+	}
+	
+
+	
+
+	.feedback-box strong {
+	color: var(--brand-color);
+	}
+	
+
+	
+
+	@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(5px); }
+	to { opacity: 1; transform: translateY(0); }
+	}
+	
+
+	
+
+	/* Progress Bar Styles */
+	.progress-bar-container {
+	height: 6px;
+	background-color: #f1f3f5;
+	width: 100%;
+	position: relative;
+	z-index: 10;
+	}
+	
+
+	
+
+	.progress-bar {
+	height: 100%;
+	background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+	width: 0%;
+	transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+	border-radius: 0 4px 4px 0;
+	box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+	}
+	
+
+	
+
+	/* Summary Styles */
+	.summary-stats {
+	text-align: center;
+	background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+	border: 1px solid #dee2e6;
+	padding: 30px 20px;
+	border-radius: 12px;
+	margin-bottom: 20px;
+	}
+	
+
+	
+
+	.summary-score {
+	font-size: 3.5rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	display: block;
+	margin: 5px 0;
+	line-height: 1;
+	background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	}
+	
+
+	.summary-list {
+	max-height: 400px;
+	overflow-y: auto;
+	padding-right: 10px;
+	}
+	
+
+	.summary-item {
+	background: white;
+	border-bottom: 1px solid #f1f1f1;
+	padding: 12px 0;
+	}
+	
+
+	.summary-item:last-child {
+	border-bottom: none;
+	}
+	
+
+	
+
+	.summary-question {
+	font-weight: 600;
+	margin-bottom: 4px;
+	display: block;
+	font-size: 0.95rem;
+	}
+	
+
+	.summary-answer-row {
+	font-size: 0.9rem;
+	}
+	
+
+	
+
+	.summary-correct-text { color: var(--success-color); font-weight: 600; }
+	.summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+	.real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+	
+
+	
+
+	/* Helpers */
+	strong {
+	color: var(--brand-color);
+	font-weight: 700;
+	}
+	
+
+	
+
+	</style>
+	</head>
+	<body>
+	
+
+	
+
+	<div class="container">
+	<header>
+	<h1 id="header-title">Fysikquiz: Atomfysik & Strålning</h1>
+	</header>
+	<div class="progress-bar-container">
+	<div class="progress-bar" id="progress-bar"></div>
+	</div>
+	
+
+	
+
+	<div class="content-area" id="app">
+	<!-- Content will be injected here by JavaScript -->
+	</div>
+	</div>
+	
+
+	
+
+	<script>
+	// --- DATA ---
+	const quizData = [
+	{
+   "title": "Del 1: Atomens uppbyggnad",
+   "icon": "⚛️",
+   "text": "Kunskapen om atomen har utvecklats genom historien. John Dalton lade grunden och <strong>Ernest Rutherford</strong> upptäckte senare genom experiment med guldfolie att atomen har en <strong>positiv kärna</strong> men består mestadels av tomrum. Atomen är uppbyggd av <strong>protoner</strong> (positiva) och <strong>neutroner</strong> (neutrala) i kärnan, med <strong>elektroner</strong> (negativa) i skal runt omkring. Antalet protoner (<strong>atomnumret</strong>) bestämmer vilket grundämne det är.",
+   "questions": [
+     {
+       "q": "Vad upptäckte Ernest Rutherford genom sitt berömda experiment med guldfolie?",
+       "options": [
+         "Atomen har en positiv kärna och består mestadels av tomrum.",
+         "Elektroner rör sig i bestämda energinivåer (skal).",
+         "Materia och energi är två sidor av samma sak.",
+         "Neutronen upptäcktes i atomens kärna."
+       ],
+       "correct": 0,
+       "explanation": "Rutherford såg att de flesta partiklar gick rakt igenom folien, men några studsade mot den kompakta <strong>kärnan</strong>."
+     },
+     {
+       "q": "Vilken partikel i atomen avgör vilket grundämne det är (atomnumret)?",
+       "options": [
+         "Elektronen.",
+         "Protonen.",
+         "Neutronen.",
+         "Fotonen."
+       ],
+       "correct": 1,
+       "explanation": "Antalet <strong>protoner</strong> är unikt för varje grundämne och kallas för <strong>atomnummer</strong>."
+     },
+     {
+       "q": "Vad kallas de varianter av ett grundämne som har samma antal protoner men olika antal neutroner?",
+       "options": [
+         "Joner.",
+         "Valenselektroner.",
+         "Isotoper.",
+         "Kvarkar."
+       ],
+       "correct": 2,
+       "explanation": "<strong>Isotoper</strong> är varianter av samma grundämne med olika masstal på grund av skillnaden i antalet <strong>neutroner</strong>."
+     }
+   ]
+ },
+ {
+   "title": "Del 2: Ljus och fotoner",
+   "icon": "💡",
+   "text": "När en atom tillförs energi, till exempel genom uppvärmning, kan elektroner <strong>exciteras</strong> och hoppa till ett skal längre ut. Eftersom elektronen snabbt hoppar tillbaka sänds överskottsenergin ut som en ljuspartikel, en <strong>foton</strong>. Olika långa hopp ger fotoner med olika våglängd, vilket skapar ett unikt <strong>linjespektrum</strong> för varje grundämne.",
+   "questions": [
+     {
+       "q": "Vad händer i en atom när den sänder ut ljus i form av en foton?",
+       "options": [
+         "En proton omvandlas till en neutron.",
+         "Atomen klyvs i två mindre delar.",
+         "Atomen tar upp en elektron från omgivningen.",
+         "En elektron hoppar tillbaka till ett inre skal från ett yttre."
+       ],
+       "correct": 3,
+       "explanation": "När elektronen faller tillbaka till en lägre <strong>energinivå</strong> frigörs energi som en ljuspartikel."
+     },
+     {
+       "q": "Varför kan ett linjespektrum liknas vid ett 'fingeravtryck' för ett grundämne?",
+       "options": [
+         "Alla atomer har exakt lika många elektronskal.",
+         "Ljuset från alla ämnen ser likadant ut för det mänskliga ögat.",
+         "Det beror på hur många neutroner som finns i kärnan.",
+         "Varje grundämne har en unik elektronfördelning som ger specifika ljusvåglängder."
+       ],
+       "correct": 3,
+       "explanation": "Eftersom elektronhoppen beror på atomens <strong>unika uppbyggnad</strong> sänder varje ämne ut ett unikt mönster av färger."
+     }
+   ]
+ },
+ {
+   "title": "Del 3: Radioaktivitet och mätning",
+   "icon": "☢️",
+   "text": "<strong>Radioaktivitet</strong> innebär att instabila atomkärnor sönderfaller spontant och avger strålning. Strålning som kan slå bort elektroner från atomer så att de blir laddade kallas <strong>joniserande strålning</strong>. Aktiviteten hos ett ämne mäts i <strong>Becquerel (Bq)</strong> (sönderfall per sekund), medan den energi en kropp tar upp mäts i <strong>Sievert (Sv)</strong> (stråldos).",
+   "questions": [
+     {
+       "q": "Vad kännetecknar joniserande strålning?",
+       "options": [
+         "Den har förmågan att slå bort elektroner från atomer så att joner bildas.",
+         "Den består enbart av synligt ljus som vi kan se.",
+         "Den är alltid helt ofarlig för levande organismer.",
+         "Den kan endast skapas i stora partikelacceleratorer som CERN."
+       ],
+       "correct": 0,
+       "explanation": "<strong>Joniserande strålning</strong> är energirik och förändrar atomerna den passerar genom att skapa joner."
+     },
+     {
+       "q": "Vilka grundämnen är naturligt instabila (radioaktiva)?",
+       "options": [
+         "Alla ämnen med fler än 20 protoner.",
+         "Alla grundämnen med atomnummer över 82.",
+         "Endast de ämnen som människan har skapat i lab.",
+         "Endast ämnen som används i kärnkraftverk."
+       ],
+       "correct": 1,
+       "explanation": "Atomkärnor med <strong>atomnummer över 82</strong> är för stora för att vara stabila och sönderfaller därför spontant."
+     },
+     {
+       "q": "Vilken enhet används för att mäta den stråldos (energi per kilo) en människa utsätts för?",
+       "options": [
+         "Becquerel (Bq).",
+         "Newton (N).",
+         "Sievert (Sv).",
+         "Watt (W)."
+       ],
+       "correct": 2,
+       "explanation": "<strong>Sievert</strong> mäter den biologiska effekten och energin som kroppen tar upp."
+     }
+   ]
+ },
+ {
+   "title": "Del 4: Typer av strålning",
+   "icon": "〰️",
+   "text": "De tre vanligaste typerna av strålning från radioaktiva ämnen är <strong>Alfastrålning</strong> (består av alfapartiklar, två protoner och två neutroner), <strong>Betastrålning</strong> (en neutron omvandlas till en proton och en elektron skjuts ut) och <strong>Gammastrålning</strong> (elektromagnetisk strålning med mycket hög energi). Gammastrålning stoppas först av tjockt bly eller betong.",
+   "questions": [
+     {
+       "q": "Vad består alfastrålning av?",
+       "options": [
+         "Elektroner som skjuts ut ur kärnan.",
+         "Fotoner med mycket hög energi.",
+         "En blandning av radiovågor och UV-ljus.",
+         "Partiklar med två protoner och två neutroner (heliumkärnor)."
+       ],
+       "correct": 3,
+       "explanation": "En <strong>alfapartikel</strong> är en <strong>heliumkärna</strong> som lämnar en instabil urankärna vid sönderfall."
+     },
+     {
+       "q": "Vilken egenskap är typisk för gammastrålning?",
+       "options": [
+         "Den har lång våglängd och mycket låg energi.",
+         "Den är mycket energirik och har god förmåga att tränga igenom material.",
+         "Den stoppas enkelt av ett vanligt pappersark.",
+         "Den består av positiva joner som rör sig långsamt."
+       ],
+       "correct": 1,
+       "explanation": "<strong>Gammastrålning</strong> består av fotoner med kort våglängd som kan passera genom kroppen."
+     }
+   ]
+ },
+ {
+   "title": "Del 5: Användning och medicin",
+   "icon": "🩻",
+   "text": "Strålning används flitigt i samhället. <strong>Röntgenstrålning</strong> passerar genom kroppens mjuka delar men stoppas av skelettet. Inom sjukvården används <strong>gammakamerapris</strong> för att spåra radioaktiva ämnen inuti organ. <strong>Kol 14-metoden</strong> utnyttjar halveringstiden hos kol-14 (5730 år) för att åldersbestämma organiska fynd.",
+   "questions": [
+     {
+       "q": "Varför kan man se skelettet på en röntgenbild?",
+       "options": [
+         "Röntgenstrålningen passerar genom mjuka delar men stoppas av det hårda skelettet.",
+         "Skelettet sänder ut egen strålning som fastnar på filmen.",
+         "Röntgenstrålarna reflekteras mot huden och studsar tillbaka.",
+         "Strålningen gör att skelettet börjar lysa i mörkret."
+       ],
+       "correct": 0,
+       "explanation": "Handens mjuka delar släpper igenom mer <strong>strålning</strong> än <strong>skelettet</strong>, vilket skapar kontrast på bilden."
+     },
+     {
+       "q": "Vad används Kol 14-metoden till?",
+       "options": [
+         "Att skapa energi i moderna kärnkraftverk.",
+         "Att behandla cancer genom att stråla tumörer.",
+         "Att bestämma åldern på gamla föremål från växter eller djur.",
+         "Att mäta hur mycket koldioxid det finns i atmosfären."
+       ],
+       "correct": 2,
+       "explanation": "Genom att mäta mängden kvarvarande kol-14 kan man se hur länge sedan en <strong>organism dog</strong>."
+     },
+     {
+       "q": "Hur fungerar en undersökning med gammakamera?",
+       "options": [
+         "Man lyser på patienten med en stark laserstråle.",
+         "Patienten fotograferas med vanligt ljus i ett mörkt rum.",
+         "En magnet i kameran skapar en bild av kroppens vätskor.",
+         "Ett radioaktivt ämne sprutas in och sänder ut strålning inifrån organet."
+       ],
+       "correct": 3,
+       "explanation": "Kameran fångar upp de energirika strålarna som kommer från det <strong>radioaktiva ämnet</strong> inuti organet."
+     }
+   ]
+ },
+ {
+   "title": "Del 6: Risker och miljö",
+   "icon": "⚠️",
+   "text": "<strong>Joniserande strålning</strong> kan vara farlig eftersom den kan bryta sönder <strong>DNA-molekyler</strong>, vilket kan leda till mutationer och cancer. <strong>Radioaktivt avfall</strong> från kärnkraftverk har en mycket lång halveringstid och måste därför slutförvaras djupt i berggrunden för att isoleras från människor och miljö i tusentals år.",
+   "questions": [
+     {
+       "q": "Varför kan joniserande strålning orsaka cancer?",
+       "options": [
+         "Den gör att kroppen blir för varm och cellerna kokar.",
+         "Den kan skada cellens DNA så att det uppstår mutationer vid reparationen.",
+         "Den hindrar blodet från att transportera syre till hjärnan.",
+         "Den tar bort alla antioxidanter i huden så att man blir bränd."
+       ],
+       "correct": 1,
+       "explanation": "När <strong>DNA-molekylen</strong> bryts sönder kan fel uppstå när cellen försöker laga sig själv."
+     },
+     {
+       "q": "Varför planeras slutförvaring av kärnavfall djupt nere i berggrunden?",
+       "options": [
+         "För att isolera det farliga avfallet under hela dess långa sönderfallstid.",
+         "För att uranet behöver värme från jordens inre för att sluta stråla.",
+         "För att det är billigare än att förvara det i byggnader på marken.",
+         "För att strålningen kan användas för att värma upp grundvattnet."
+       ],
+       "correct": 0,
+       "explanation": "Eftersom avfallet är <strong>farligt</strong> under mycket lång tid krävs en stabil och isolerad plats."
+     }
+   ]
+ },
+ {
+   "title": "Del 7: Fission och Fusion",
+   "icon": "🏭",
+   "text": "<strong>Fission</strong> innebär att tunga atomkärnor, som uran-235, klyvs när de träffas av neutroner. Den försvunna massan omvandlas till energi. <strong>Fusion</strong> är motsatsen: lätta kärnor (väte) slås samman till tyngre (helium). Detta kräver extremt högt tryck och temperatur och är den process som driver solen.",
+   "questions": [
+     {
+       "q": "Vad startar kedjereaktionen i ett kärnkraftverk (fission)?",
+       "options": [
+         "Atomer som värms upp med eld.",
+         "Elektroner som krockar med varandra.",
+         "En neutron som träffar och klyver en urankärna.",
+         "Magnetfält som drar isär atomerna."
+       ],
+       "correct": 2,
+       "explanation": "När en <strong>neutron</strong> träffar urankärnan blir den instabil, klyvs och frigör nya neutroner."
+     },
+     {
+       "q": "Vilka förutsättningar krävs för att fusion ska kunna ske i en stjärna?",
+       "options": [
+         "Vakuum och totalt mörker.",
+         "Enbart närvaro av tunga grundämnen som guld och bly.",
+         "Närvaro av flytande vatten och syrgas.",
+         "Extremt hög temperatur och högt tryck/gravitation."
+       ],
+       "correct": 3,
+       "explanation": "För att övervinna motståndet mellan de positiva kärnorna krävs <strong>enorm energi och tryck</strong>."
+     },
+     {
+       "q": "Vad är den största skillnaden mellan fission och fusion?",
+       "options": [
+         "Fission klyver tunga kärnor medan fusion slår samman lätta kärnor.",
+         "Fission skapar vatten medan fusion skapar koldioxid.",
+         "Fission används bara i rymden medan fusion bara finns på jorden.",
+         "Fission kräver solljus medan fusion sker i mörker."
+       ],
+       "correct": 0,
+       "explanation": "<strong>Fission</strong> handlar om delning (kärnkraft) och <strong>fusion</strong> om förening (stjärnor)."
+     }
+   ]
+ },
+ {
+   "title": "Del 8: EM-strålning och teknik",
+   "icon": "📡",
+   "text": "Ljus är en del av det elektromagnetiska spektrumet. <strong>UV-strålning</strong> har mer energi än synligt ljus och kan skada huden. <strong>Laser</strong> är en speciell form av ljus där alla vågor har samma våglängd och riktning. Detta ger en koncentrerad stråle som kan användas för kirurgi eller för att mäta hastighet genom reflektion.",
+   "questions": [
+     {
+       "q": "Varför är det viktigt att skydda sig mot för stora mängder UV-strålning från solen?",
+       "options": [
+         "Den gör att kroppen förlorar förmågan att bilda pigment.",
+         "Den kan skada cellerna och öka risken för hudcancer.",
+         "Den gör att ögonens linser blir konkava och ger sämre syn.",
+         "Den hindrar radiovågor från att nå fram till din mobiltelefon."
+       ],
+       "correct": 1,
+       "explanation": "<strong>UV-strålning</strong> är energirik och kan tränga in och orsaka skador i hudens celler."
+     },
+     {
+       "q": "Hur kan polisen mäta hastigheten på en bil med laserljus?",
+       "options": [
+         "Lasern värmer upp bilens däck så att farten kan beräknas.",
+         "Lasern skickar radiovågor som ändrar färg beroende på bilens märke.",
+         "Ljussignaler reflekteras mot bilen och tiden det tar beräknas utifrån ljusets hastighet.",
+         "Lasern väger bilen på avstånd och räknar ut farten baserat på massan."
+       ],
+       "correct": 2,
+       "explanation": "Genom att mäta tiden för ljusets <strong>reflektion</strong> kan avståndet och därmed hastigheten bestämmas."
+     }
+   ]
+ }
+];
+	// --- STATE MANAGEMENT ---
+	let currentSectionIndex = 0;
+	let currentQuestionIndex = 0; // Relative to current section
+	let score = 0;
+	let userAnswers = [];
+	let state = 'intro'; // 'intro', 'question', 'summary'
+	
+
+	
+
+	// --- DOM ELEMENTS ---
+	const app = document.getElementById('app');
+	const headerTitle = document.getElementById('header-title');
+	const progressBar = document.getElementById('progress-bar');
+	
+
+	
+
+	// --- MAIN RENDER FUNCTION ---
+	function render() {
+	if (state === 'summary') {
+	renderSummary();
+	return;
+	}
+	
+
+	
+
+	const section = quizData[currentSectionIndex];
+	
+
+	
+
+	// Update Header with smooth fade
+	headerTitle.style.opacity = '0';
+	setTimeout(() => {
+	headerTitle.innerText = section.title;
+	headerTitle.style.transition = 'opacity 0.2s';
+	headerTitle.style.opacity = '1';
+	}, 150);
+	
+
+	
+
+	// Calculate total progress
+	let totalQuestions = 0;
+	let answeredQuestions = 0;
+	
+
+	quizData.forEach((sec, idx) => {
+	totalQuestions += sec.questions.length;
+	if (idx < currentSectionIndex) {
+	answeredQuestions += sec.questions.length;
+	} else if (idx === currentSectionIndex && state === 'question') {
+	answeredQuestions += currentQuestionIndex;
+	}
+	});
+	const pct = (answeredQuestions / totalQuestions) * 100;
+	progressBar.style.width = `${pct}%`;
+	
+
+	
+
+	if (state === 'intro') {
+	renderSectionIntro(section);
+	} else if (state === 'question') {
+	renderQuestion(section.questions[currentQuestionIndex]);
+	}
+	}
+	
+
+	
+
+	// --- RENDER SECTION TEXT ---
+	function renderSectionIntro(section) {
+	// Simple animation class reset
+	app.classList.remove('fade-in');
+	void app.offsetWidth; // trigger reflow
+	app.classList.add('fade-in');
+	
+
+	
+
+	app.innerHTML = `
+	<div class="fact-box">
+	<span class="fact-icon">${section.icon}</span>
+	<div class="fact-content">
+	<h2>Fakta</h2>
+	<p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+	</div>
+	</div>
+	<button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+	`;
+	}
+	
+
+	
+
+	// --- RENDER QUESTION ---
+	function renderQuestion(q) {
+	const totalInCurrent = quizData[currentSectionIndex].questions.length;
+	
+
+	// Render with reset styles for feedback box
+	app.innerHTML = `
+	<div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+	<h2 style="color: #2c3e50; font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+	<div class="options-grid">
+	${q.options.map((opt, idx) => `
+	<button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+	`).join('')}
+	</div>
+	<div id="feedback" class="feedback-box">
+	<h3 id="feedback-title"></h3>
+	<p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+	<button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+	</div>
+	`;
+	}
+	
+
+	
+
+	// --- RENDER SUMMARY ---
+	function renderSummary() {
+	headerTitle.innerText = "Sammanfattning";
+	progressBar.style.width = '100%';
+	
+
+	let totalQ = 0;
+	quizData.forEach(s => totalQ += s.questions.length);
+	
+
+	// Calculate score
+	let correctCount = userAnswers.filter(a => a.isCorrect).length;
+	let pct = Math.round((correctCount / totalQ) * 100);
+	
+
+	let gradeTitle = "";
+	
+
+	if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+	else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+	else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+	else { gradeTitle = "Fortsätt kämpa! 💪"; }
+	
+
+	
+
+	let html = `
+	<div class="summary-stats">
+	<h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+	<span class="summary-score">${correctCount}/${totalQ}</span>
+	<span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+	<button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+	</div>
+	<h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+	<div class="summary-list">
+	`;
+	
+
+	
+
+	userAnswers.forEach((ans, idx) => {
+	const isCorrect = ans.isCorrect;
+	
+
+	html += `
+	<div class="summary-item">
+	<span class="summary-question">${idx + 1}. ${ans.question}</span>
+	<div class="summary-answer-row">
+	${isCorrect
+	? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+	: `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+	}
+	</div>
+	</div>
+	`;
+	});
+	
+
+	
+
+	html += `</div>`;
+	app.innerHTML = html;
+	}
+	
+
+	
+
+	// --- LOGIC FUNCTIONS ---
+	window.startQuestions = function() {
+	state = 'question';
+	currentQuestionIndex = 0;
+	render();
+	};
+	
+
+	
+
+	window.handleAnswer = function(selectedIndex) {
+	// Disable all buttons
+	const buttons = document.querySelectorAll('.option-btn');
+	buttons.forEach(b => b.disabled = true);
+	
+
+	
+
+	const section = quizData[currentSectionIndex];
+	const currentQ = section.questions[currentQuestionIndex];
+	const isCorrect = selectedIndex === currentQ.correct;
+	
+
+	
+
+	// Visual feedback on buttons
+	const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+	const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+	
+
+	
+
+	if (isCorrect) {
+	selectedBtn.classList.add('correct');
+	} else {
+	selectedBtn.classList.add('incorrect');
+	correctBtn.classList.add('correct'); // Show which one was right
+	}
+	
+
+	
+
+	// Show feedback box
+	const feedbackBox = document.getElementById('feedback');
+	const feedbackTitle = document.getElementById('feedback-title');
+	const feedbackText = document.getElementById('feedback-text');
+	const nextBtn = document.getElementById('next-btn');
+	
+
+	
+
+	feedbackBox.style.display = 'block';
+	
+
+	// Add class for success/error styling
+	if (isCorrect) {
+	feedbackBox.className = "feedback-box success";
+	feedbackTitle.innerHTML = "Rätt svar!";
+	} else {
+	feedbackBox.className = "feedback-box error";
+	feedbackTitle.innerHTML = "Inte riktigt...";
+	}
+	
+
+	feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+	
+
+	
+
+	// Check if last question of entire quiz
+	const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+	
+
+	if(isLastQuestionOverall) {
+	nextBtn.innerText = "Se resultat 🏁";
+	} else if (currentQuestionIndex === section.questions.length - 1) {
+	nextBtn.innerText = "Nästa del ➔";
+	}
+	
+
+	
+
+	// Scroll to feedback if needed on mobile, but gently
+	const rect = feedbackBox.getBoundingClientRect();
+	const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+	if (!isVisible) {
+	setTimeout(() => {
+	feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}, 100);
+	}
+	
+
+	
+
+	// Save data
+	userAnswers.push({
+	question: currentQ.q,
+	userAnswer: currentQ.options[selectedIndex],
+	correctAnswer: currentQ.options[currentQ.correct],
+	isCorrect: isCorrect
+	});
+	};
+	
+
+	
+
+	window.nextStep = function() {
+	const section = quizData[currentSectionIndex];
+	
+
+	// Reset feedback styles for next render
+	const feedbackBox = document.getElementById('feedback');
+	if(feedbackBox) {
+	feedbackBox.style.display = 'none';
+	}
+	
+
+	
+
+	// Check if there are more questions in this section
+	if (currentQuestionIndex < section.questions.length - 1) {
+	currentQuestionIndex++;
+	render();
+	} else {
+	// End of section, move to next section
+	if (currentSectionIndex < quizData.length - 1) {
+	currentSectionIndex++;
+	state = 'intro';
+	render();
+	} else {
+	// End of quiz
+	state = 'summary';
+	render();
+	}
+	}
+	};
+	
+
+	
+
+	// --- INIT ---
+	render();
+	
+
+	
+
+	</script>
+	
+
+	
+
+	</body>
+	</html>

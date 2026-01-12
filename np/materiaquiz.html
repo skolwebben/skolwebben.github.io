@@ -366,219 +366,219 @@
 
 <script>
    // --- DATA ---
-const quizData = [
-    {
-        title: "Tema 1: Partikelmodellen & Värme",
-        icon: "⚛️",
-        text: "Allt omkring oss är uppbyggt av atomer, som är naturens byggstenar. Materia är allt som har en massa (vikt). Enligt <strong>partikelmodellen</strong> rör sig dessa små partiklar ständigt. Värme är ett mått på hur mycket partiklarna rör sig; ju högre temperaturen är, desto snabbare rör sig atomerna. När materia värms upp tar partiklarna mer plats eftersom de knuffar på varandra mer, vilket kallas för <strong>värmeutvidgning</strong>.",
-        questions: [
-            {
-                q: "En rispapperslykta fylld med varm luft stiger uppåt. Vilket påstående förklarar bäst varför?",
-                options: [
-                    "Varm luft har lägre densitet än kall luft.", // Flyttad till index 0
-                    "Varm luft har högre densitet än kall luft.",
-                    "Partiklarna i varm luft har lägre massa än i kall luft.",
-                    "Dragningskraften slutar verka på varm luft."
-                ],
-                correct: 0,
-                explanation: "När luften i lyktan värms upp rör sig partiklarna mer och tar större plats, vilket gör att luften blir <strong>mindre tät</strong> (lägre <strong>densitet</strong>) än den omgivande kalla luften."
-            },
-            {
-                q: "Om du tar ut en tom, stängd PET-flaska i kylan en vinterdag ändrar den form. Varför?",
-                options: [
-                    "Luften läcker ut genom plasten när det blir kallt.",
-                    "Partiklarna i flaskan blir färre till antalet.",
-                    "Lufttrycket utanför flaskan minskar i kylan.",
-                    "Partiklarna rör sig mindre och tar mindre plats." // Flyttad till index 3
-                ],
-                correct: 3,
-                explanation: "Vid lägre temperatur rör sig luftpartiklarna inne i flaskan <strong>långsammare</strong> och kommer närmare varandra, vilket gör att <strong>volymen minskar</strong>."
-            },
-            {
-                q: "Vad händer med en järnvägsräls av stål en mycket varm sommardag?",
-                options: [
-                    "Skenornas massa ökar av solenergin.",
-                    "Skenornas volym ökar.", // Flyttad till index 1
-                    "Skenornas volym minskar.",
-                    "Skenornas massa minskar."
-                ],
-                correct: 1,
-                explanation: "När metallen värms upp ökar <strong>partiklarnas rörelse</strong>, vilket gör att materialet <strong>expanderar</strong> och tar upp en större volym."
-            }
-        ]
-    },
-    {
-        title: "Tema 2: Fasövergångar",
-        icon: "💧",
-        text: "De flesta ämnen kan förekomma i tre olika faser: <strong>fast</strong>, <strong>flytande</strong> och <strong>gas</strong>. Vilken fas ett ämne befinner sig i styrs av temperaturen och partiklarnas rörelse. När ett ämne byter fas kallas det för en <strong>fasövergång</strong>. Exempelvis kallas det <strong>kondensation</strong> när en gas blir vätska, och <strong>avdunstning</strong> när en vätska blir gas.",
-        questions: [
-            {
-                q: "Efter att du duschat varmt kan det bildas vattendroppar på en kall vattenledning i badrummet. Vad kallas detta fenomen?",
-                options: [
-                    "Smältning",
-                    "Avdunstning",
-                    "Stelning",
-                    "Kondensation" // Flyttad till index 3
-                ],
-                correct: 3,
-                explanation: "Varm vattenånga <strong>kyls ner</strong> när den träffar den kalla ledningen, vilket gör att vattenmolekylerna går samman till <strong>flytande</strong> droppar."
-            },
-            {
-                q: "Varför torkar en blöt tröja snabbare i solen än i skuggan?",
-                options: [
-                    "Solen tar bort luftmotståndet runt tröjan.",
-                    "Solens strålar gör att vattnet i tröjan fryser och ramlar av.",
-                    "Energin från solen får vattenmolekylerna att röra sig snabbare.", // Flyttad till index 2
-                    "Vattnet sugs upp av solstrålarna genom strålning."
-                ],
-                correct: 2,
-                explanation: "Energin från solljuset <strong>ökar vattenmolekylernas rörelse</strong> så att de lättare kan lämna tröjan i form av vattenånga (<strong>avdunstning</strong>)."
-            },
-            {
-                q: "Vilket ämne i tabellen nedan är bäst lämpat för en utetermometer i Sverige? (Pentan: -130°C/36°C, Etanol: -117°C/79°C, Glykol: -13°C/197°C)",
-                options: [
-                    "Etanol, för den är flytande i både sträng kyla och sommarvärme.", // Flyttad till index 0
-                    "Glykol, för den har högsta kokpunkten.",
-                    "Pentan, för den fryser aldrig.",
-                    "Glykol, för den fryser snabbast."
-                ],
-                correct: 0,
-                explanation: "Etanol har en tillräckligt låg <strong>smältpunkt</strong> för att inte frysa på vintern och en tillräckligt hög <strong>kokpunkt</strong> för att inte koka bort en varm sommardag."
-            }
-        ]
-    },
-    {
-        title: "Tema 3: Densitet & Arkimedes princip",
-        icon: "🚤",
-        text: "<strong>Densitet</strong> beskriver hur tätt partiklarna i ett ämne är packade (massa per volym). Ett ämne med låg densitet är 'lättare' än ett ämne med hög densitet om de har samma volym. <strong>Arkimedes princip</strong> säger att ett föremål som sänks ner i en vätska påverkas av en <strong>lyftkraft</strong> som är lika stor som tyngden av den vätska som trängs undan.",
-        questions: [
-            {
-                q: "Ett lastfartyg flyter högre i saltvatten än i sötvatten. Vad beror det på?",
-                options: [
-                    "Salthalten minskar fartygets totala massa.",
-                    "Sötvatten trycker hårdare mot fartygets sidor.",
-                    "Saltvatten har högre densitet, vilket ger en större lyftkraft.", // Flyttad till index 2
-                    "Saltet i vattnet suger fast i fartygets botten."
-                ],
-                correct: 2,
-                explanation: "Saltet gör att vattnet blir <strong>tätare</strong> (högre <strong>densitet</strong>), vilket innebär att den undanträngda vätskan väger mer och ger fartyget en större <strong>lyftkraft</strong>."
-            },
-            {
-                q: "Is flyter på vatten. Vad kan vi då veta om isens densitet?",
-                options: [
-                    "Is har högre densitet än vatten.",
-                    "Is har lägre densitet än vatten.", // Flyttad till index 1
-                    "Is har samma densitet som vatten.",
-                    "Is saknar helt densitet."
-                ],
-                correct: 1,
-                explanation: "Föremål med <strong>lägre densitet</strong> än den omgivande vätskan flyter."
-            },
-            {
-                q: "Du sänker ner en sten som väger 50 N i en full bägare med vatten. 20 N vatten rinner över. Hur mycket väger stenen när den är under vattnet?",
-                options: [
-                    "50 N",
-                    "20 N",
-                    "70 N",
-                    "30 N" // Flyttad till index 3
-                ],
-                correct: 3,
-                explanation: "<strong>Lyftkraften</strong> är lika stor som <strong>tyngden</strong> av det undanträngda vattnet (20 N), så stenens tyngd i vattnet blir 50 N - 20 N = 30 N."
-            }
-        ]
-    },
-    {
-        title: "Tema 4: Tryck i luft och vatten",
-        icon: "🎈",
-        text: "<strong>Tryck</strong> definieras som kraft fördelad på en yta. Ju mindre ytan är, desto högre blir trycket om kraften är densamma. <strong>Lufttrycket</strong> beror på tyngden av alla luftmolekyler ovanför oss och minskar ju högre upp vi kommer. <strong>Kommunicerande kärl</strong> innebär att vattenytan i sammanhängande kärl alltid hamnar på samma nivå.",
-        questions: [
-            {
-                q: "Varför utvidgas en oöppnad chipspåse när man tar med den högt upp på ett berg?",
-                options: [
-                    "Luftpartiklarna inne i påsen blir fler.",
-                    "Lufttrycket utanför påsen minskar.", // Flyttad till index 1
-                    "Temperaturen är alltid mycket högre på bergstoppar.",
-                    "Påsen vill suga in mer luft från omgivningen."
-                ],
-                correct: 1,
-                explanation: "Eftersom <strong>lufttrycket</strong> utanför påsen <strong>sjunker</strong> på hög höjd kan de instängda luftpartiklarna inuti påsen pressa ut väggarna mer."
-            },
-            {
-                q: "Varför sjunker man ner mindre i snön om man använder snöskor?",
-                options: [
-                    "Kroppens tyngd fördelas på en större yta.", // Flyttad till index 0
-                    "Snöskorna minskar kroppens tyngd.",
-                    "Snöskorna skapar en kemisk reaktion som gör snön hård.",
-                    "Snöskorna ökar friktionen mot luften."
-                ],
-                correct: 0,
-                explanation: "Genom att <strong>öka ytan</strong> mot snön sprids kroppens tyngdkraft ut, vilket <strong>minskar trycket</strong> per kvadratcentimeter."
-            },
-            {
-                q: "Åt vilket håll blåser vindar oftast mellan ett högtryck och ett lågtryck?",
-                options: [
-                    "Från lågtrycket mot högtrycket på grund av värme.",
-                    "Vindarna rör sig aldrig mellan tryckområden.",
-                    "Från högtrycket mot lågtrycket för att jämna ut trycket.", // Flyttad till index 2
-                    "Medurs i en cirkel runt högtrycket utan att flytta på sig."
-                ],
-                correct: 2,
-                explanation: "Luft rör sig från områden med mycket luftpartiklar (<strong>högtryck</strong>) mot områden med färre (<strong>lågtryck</strong>) för att jämna ut skillnaden."
-            }
-        ]
-    },
-    {
-        title: "Tema 5: Värmespridning",
-        icon: "☀️",
-        text: "Värme kan spridas på tre sätt: <strong>ledning</strong>, <strong>strömning</strong> och <strong>strålning</strong>. Ledning sker främst i fasta material (metaller leder bäst), strömning sker i vätskor och gaser, och strålning är ljuspartiklar (<strong>fotoner</strong>). Mörka ytor <strong>absorberar</strong> (tar upp) mer strålningsvärme än ljusa ytor, som istället <strong>reflekterar</strong> bort den.",
-        questions: [
-            {
-                q: "Varför bränner man sig ofta mer på tomaten än på brödet i en varm smörgås, trots att de varit i ugnen lika länge?",
-                options: [
-                    "Brödet har en mycket högre temperatur än tomaten.",
-                    "Tomaten innehåller mycket vatten som lagrar och leder värme bra.", // Flyttad till index 1
-                    "Tomaten drar till sig mer strålning från ugnen.",
-                    "Brödet består av metall som svalnar snabbt."
-                ],
-                correct: 1,
-                explanation: "Vatten har god förmåga att <strong>lagra energi</strong> och <strong>leda värme</strong>, medan brödet innehåller mycket luft som fungerar som <strong>isolering</strong>."
-            },
-            {
-                q: "Vilket sätt att sprida värme förklarar varför solen kan värma jorden trots att det är vakuum i rymden?",
-                options: [
-                    "Ledning",
-                    "Strömning",
-                    "Strålning", // Flyttad till index 2
-                    "Konvektion"
-                ],
-                correct: 2,
-                explanation: "<strong>Värmestrålning</strong> (elektromagnetisk strålning) behöver inget material för att sprida sig."
-            },
-            {
-                q: "Varför är det bättre att ha en vit tröja än en svart tröja om man vill hålla sig sval en solig dag?",
-                options: [
-                    "Vita ytor reflekterar bort mer värmestrålning.", // Flyttad till index 0
-                    "Svarta ytor leder bort värme snabbare från kroppen.",
-                    "Vita ytor har högre densitet och släpper igenom vind.",
-                    "Svarta ytor skapar kyla genom kondensation."
-                ],
-                correct: 0,
-                explanation: "Ljusa färger <strong>absorberar</strong> mindre <strong>strålningsenergi</strong> från solen och <strong>reflekterar</strong> istället bort den."
-            },
-            {
-                q: "I ett strykjärn finns en bimetall som fungerar som strömbrytare. Hur fungerar den?",
-                options: [
-                    "Den ena metallen leder ström bättre än den andra.",
-                    "Metallerna utvidgar sig olika mycket vid värme så att skenan böjs.", // Flyttad till index 1
-                    "Den ena metallen smälter vid en viss temperatur.",
-                    "Metallerna dras till varandra som magneter när det blir varmt."
-                ],
-                correct: 1,
-                explanation: "En <strong>bimetall</strong> består av två olika metaller som <strong>expanderar</strong> olika snabbt vid uppvärmning, vilket tvingar skenan att böja sig."
-            }
-        ]
-    }
-];
+   const quizData = [
+       {
+           title: "Tema 1: Partikelmodellen & Värme",
+           icon: "⚛️",
+           text: "Allt omkring oss är uppbyggt av atomer, som är naturens byggstenar. Materia är allt som har en massa (vikt). Enligt <strong>partikelmodellen</strong> rör sig dessa små partiklar ständigt. Värme är ett mått på hur mycket partiklarna rör sig; ju högre temperaturen är, desto snabbare rör sig atomerna. När materia värms upp tar partiklarna mer plats eftersom de knuffar på varandra mer, vilket kallas för <strong>värmeutvidgning</strong>.",
+           questions: [
+               {
+                   q: "En rispapperslykta fylld med varm luft stiger uppåt. Vilket påstående förklarar bäst varför?",
+                   options: [
+                       "Partiklarna i den varma luften krockar mindre, vilket minskar friktionen.",
+                       "Varm luft har högre densitet och trycker sig därför uppåt genom atmosfären.",
+                       "Varm luft har lägre densitet än kall luft, vilket skapar en lyftkraft uppåt.", // Rätt (Index 2)
+                       "Tyngdkraften påverkar inte gaser som har en temperatur över 50 grader."
+                   ],
+                   correct: 2,
+                   explanation: "När luften i lyktan värms upp rör sig partiklarna snabbare och sprider ut sig mer. Detta gör att luften blir <strong>glesare</strong> (lägre densitet) än den kalla luften utanför, vilket får lyktan att stiga likt en kork i vatten."
+               },
+               {
+                   q: "Om du tar ut en tom, stängd PET-flaska i kylan en vinterdag skrynklas den ihop. Vad är orsaken?",
+                   options: [
+                       "Luftpartiklarna rör sig långsammare och tar mindre plats, vilket minskar volymen.", // Rätt (Index 0)
+                       "Kylan gör att plasten i flaskan reagerar kemiskt och drar ihop sig.",
+                       "Det yttre lufttrycket ökar kraftigt vid låga temperaturer och krossar flaskan.",
+                       "Luftpartiklarna kondenserar till vatten och rinner ut genom korken."
+                   ],
+                   correct: 0,
+                   explanation: "När temperaturen sjunker minskar atomernas rörelseenergi inne i flaskan. De 'knuffas' mindre mot väggarna och kommer närmare varandra, vilket gör att gasens totala <strong>volym minskar</strong> och flaskan dras samman av det yttre trycket."
+               },
+               {
+                   q: "Vad händer med en järnvägsräls av stål en mycket varm sommardag?",
+                   options: [
+                       "Skenornas massa ökar eftersom värmeenergi har vikt.",
+                       "Skenornas densitet ökar kraftigt på grund av solljuset.",
+                       "Skenorna blir kortare då värmen får metallen att dunsta.",
+                       "Skenornas volym ökar eftersom atomerna vibrerar kraftigare." // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "Vid uppvärmning vibrerar metallatomerna mer våldsamt och kräver större utrymme kring sina jämviktslägen. Detta leder till <strong>värmeutvidgning</strong> där rälsen blir både längre och bredare, vilket kan orsaka solkurvor om det inte finns expansionsfogar."
+               }
+           ]
+       },
+       {
+           title: "Tema 2: Fasövergångar",
+           icon: "💧",
+           text: "De flesta ämnen kan förekomma i tre olika faser: <strong>fast</strong>, <strong>flytande</strong> och <strong>gas</strong>. Vilken fas ett ämne befinner sig i styrs av temperaturen och partiklarnas rörelse. När ett ämne byter fas kallas det för en <strong>fasövergång</strong>. Exempelvis kallas det <strong>kondensation</strong> när en gas blir vätska, och <strong>avdunstning</strong> när en vätska blir gas.",
+           questions: [
+               {
+                   q: "Efter att du duschat varmt kan det bildas vattendroppar på en kall spegel i badrummet. Vad kallas detta fenomen?",
+                   options: [
+                       "Sublimering, då ångan övergår direkt till fast form.",
+                       "Kondensation, då vattenångan kyls ner och blir flytande.", // Rätt (Index 1)
+                       "Avdunstning, då ytspänningen drar ihop fukten.",
+                       "Transpiration, då spegeln avger fukt på grund av värmen."
+                   ],
+                   correct: 1,
+                   explanation: "När den varma vattenångan träffar den kalla spegelytan förlorar vattenmolekylerna energi. De bromsas in och binds till varandra igen, vilket innebär att de övergår från <strong>gasform till flytande form</strong>."
+               },
+               {
+                   q: "Varför torkar en blöt tröja snabbare i solen än i skuggan?",
+                   options: [
+                       "Solen sänker lufttrycket runt tröjan, vilket suger ut vattnet.",
+                       "UV-strålningen bryter sönder vattenmolekylerna till syre och väte.",
+                       "Solen tillför energi som får vattenmolekylerna att röra sig snabbare.", // Rätt (Index 2)
+                       "Vattnet absorberas av solljusets fotoner och försvinner."
+                   ],
+                   correct: 2,
+                   explanation: "För att vatten ska avdunsta krävs energi för att bryta bindningarna mellan molekylerna. Solens värme ger vattenmolekylerna högre <strong>rörelseenergi</strong>, vilket gör att fler molekyler orkar lämna tyget och bli vattenånga."
+               },
+               {
+                   q: "Vilket ämne är bäst för en utetermometer i Sverige? (Pentan: kokpunkt 36°C, Etanol: fryspunkt -114°C, Glykol: trögflytande)",
+                   options: [
+                       "Pentan, eftersom låg kokpunkt ger snabbare reaktionstid.",
+                       "Vatten, eftersom det är mest miljövänligt vid läckage.",
+                       "Kvicksilver, eftersom det reagerar snabbast på värme.",
+                       "Etanol, eftersom fryspunkten är låg nog för kalla vintrar." // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "En termometervätska får inte frysa när det är kallt eller koka när det är varmt. Etanol har en mycket låg <strong>fryspunkt (-114°C)</strong> vilket gör att den fungerar utmärkt även under de kallaste svenska vinterdagarna."
+               }
+           ]
+       },
+       {
+           title: "Tema 3: Densitet & Arkimedes princip",
+           icon: "🚤",
+           text: "<strong>Densitet</strong> beskriver hur tätt partiklarna i ett ämne är packade (massa per volym). Ett ämne med låg densitet är 'lättare' än ett ämne med hög densitet om de har samma volym. <strong>Arkimedes princip</strong> säger att ett föremål som sänks ner i en vätska påverkas av en <strong>lyftkraft</strong> som är lika stor som tyngden av den vätska som trängs undan.",
+           questions: [
+               {
+                   q: "Ett lastfartyg flyter högre upp vid vattenlinjen i saltvatten än i sötvatten. Vad är den fysikaliska förklaringen?",
+                   options: [
+                       "Saltvatten har högre densitet än sötvatten, vilket ger en kraftigare lyftkraft.", // Rätt (Index 0)
+                       "Ytspänningen är starkare i saltvatten och håller fartyget uppe.",
+                       "Saltkristallerna skapar friktion mot skrovet som bromsar sjunkandet.",
+                       "Sötvatten tränger lättare in i skrovet och gör fartyget tyngre."
+                   ],
+                   correct: 0,
+                   explanation: "Saltet gör att vattnet väger mer per liter (högre densitet). Enligt <strong>Arkimedes princip</strong> bestäms lyftkraften av tyngden på det undanträngda vattnet; eftersom saltvatten är tyngre krävs det mindre undanträngd volym för att bära fartyget."
+               },
+               {
+                   q: "Is flyter på vatten, vilket är ovanligt för fasta ämnen. Vad innebär detta för isens egenskaper?",
+                   options: [
+                       "Isen innehåller luftbubblor som lyfter den mot ytan.",
+                       "Is har lägre densitet än flytande vatten på grund av kristallstrukturen.", // Rätt (Index 1)
+                       "Isen är egentligen tyngre men hålls uppe av ytspänningen.",
+                       "Isen saknar massa eftersom molekylerna står stilla."
+                   ],
+                   correct: 1,
+                   explanation: "När vatten fryser ordnar sig molekylerna i ett glesare mönster än i vätskeform. Detta gör att isen får <strong>lägre densitet</strong> än det flytande vattnet, vilket är anledningen till att isberg flyter och sjöar fryser uppifrån och ner."
+               },
+               {
+                   q: "En sten väger 50 N. Du sänker ner den i vatten och den tränger undan vatten som väger 20 N. Vad visar dynamometern när stenen är i vattnet?",
+                   options: [
+                       "70 N, eftersom vattentrycket adderas till vikten.",
+                       "50 N, eftersom stenens massa inte ändras av vatten.",
+                       "30 N, eftersom lyftkraften minskar den upplevda tyngden.", // Rätt (Index 2)
+                       "20 N, eftersom stenen antar vattnets vikt."
+                   ],
+                   correct: 2,
+                   explanation: "Lyftkraften är riktad uppåt och är lika stor som tyngden av det undanträngda vattnet (20 N). Den resulterande kraften blir då stenens tyngd minus lyftkraften: <strong>50 N - 20 N = 30 N</strong>."
+               }
+           ]
+       },
+       {
+           title: "Tema 4: Tryck i luft och vatten",
+           icon: "🎈",
+           text: "<strong>Tryck</strong> definieras som kraft fördelad på en yta. Ju mindre ytan är, desto högre blir trycket om kraften är densamma. <strong>Lufttrycket</strong> beror på tyngden av alla luftmolekyler ovanför oss och minskar ju högre upp vi kommer. <strong>Kommunicerande kärl</strong> innebär att vattenytan i sammanhängande kärl alltid hamnar på samma nivå.",
+           questions: [
+               {
+                   q: "Varför sväller en oöppnad chipspåse upp om man tar med den högt upp på ett berg?",
+                   options: [
+                       "Kylan på berget får plasten att slappna av och expandera.",
+                       "Luften inuti påsen expanderar på grund av ökad solstrålning.",
+                       "Luftmolekyler tränger in genom påsens porer på hög höjd.",
+                       "Lufttrycket utanför påsen är lägre än trycket inuti påsen.", // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "På hög höjd är luftpelaren ovanför oss mindre, vilket ger ett <strong>lägre lufttryck</strong>. Eftersom trycket inuti den förseglade påsen är detsamma som vid havsnivå, kommer övertrycket inuti att pressa ut påsens väggar."
+               },
+               {
+                   q: "Varför sjunker man ner mindre i djup snö om man använder snöskor istället för vanliga stövlar?",
+                   options: [
+                       "Din tyngd fördelas över en större yta, vilket minskar trycket mot snön.", // Rätt (Index 0)
+                       "Snöskorna ökar friktionen mot snön så att man glider ovanpå.",
+                       "Snöskorna är gjorda av ett material med lägre densitet än snö.",
+                       "Den totala massan minskar eftersom snöskorna är ihåliga."
+                   ],
+                   correct: 0,
+                   explanation: "Tryck är kraft delat med area ($P = F/A$). Genom att använda snöskor ökar du arean mot snön markant. Eftersom din tyngd är oförändrad men ytan större, blir <strong>trycket per kvadratcentimeter lägre</strong> och snön håller bättre."
+               },
+               {
+                   q: "Hur rör sig vindarna naturligt för att jämna ut skillnader i atmosfären?",
+                   options: [
+                       "Från lågtryck mot högtryck eftersom värme stiger.",
+                       "Från högtryck mot lågtryck för att jämna ut skillnaden i lufttäthet.", // Rätt (Index 1)
+                       "Vindar rör sig alltid parallellt med ekvatorn oavsett tryck.",
+                       "Från kalla hav in mot varmare landområden oavsett tryck."
+                   ],
+                   correct: 1,
+                   explanation: "Naturen strävar alltid efter jämvikt. Luft strömmar därför från områden med överskott av luft (<strong>högtryck</strong>) till områden med underskott av luft (<strong>lågtryck</strong>). Det är denna luftrörelse vi upplever som vind."
+               }
+           ]
+       },
+       {
+           title: "Tema 5: Värmespridning",
+           icon: "☀️",
+           text: "Värme kan spridas på tre sätt: <strong>ledning</strong>, <strong>strömning</strong> och <strong>strålning</strong>. Ledning sker främst i fasta material (metaller leder bäst), strömning sker i vätskor och gaser, och strålning är ljuspartiklar (<strong>fotoner</strong>). Mörka ytor <strong>absorberar</strong> (tar upp) mer strålningsvärme än ljusa ytor, som istället <strong>reflekterar</strong> bort den.",
+           questions: [
+               {
+                   q: "Varför bränner man sig ofta mer på tomaten än på brödet i en varm smörgås, trots samma ugnstemperatur?",
+                   options: [
+                       "Brödets skrovliga yta reflekterar bort värmen snabbare.",
+                       "Tomaten innehåller syror som reagerar kemiskt med huden.",
+                       "Tomaten innehåller mycket vatten som lagrar värmeenergi bra och leder den till huden.", // Rätt (Index 2)
+                       "Brödet isolerar värmen i sin kärna och känns därför kallt på ytan."
+                   ],
+                   correct: 2,
+                   explanation: "Vatten har en mycket hög <strong>värmekapacitet</strong>, vilket betyder att det lagrar mycket energi. Dessutom leder vatten värme bättre än det luftiga brödet. När du biter i tomaten överförs därför en stor mängd energi snabbt till din mun."
+               },
+               {
+                   q: "Solen värmer jorden trots att rymden är ett vakuum. Hur färdas värmen hit?",
+                   options: [
+                       "Genom värmestrålning, som inte kräver något material att färdas i.", // Rätt (Index 0)
+                       "Genom ledning via de tunna gasmoln som finns i rymden.",
+                       "Genom konvektion, då solvinden kastar heta partiklar mot oss.",
+                       "Genom induktion, där solens magnetfält sätter fart på jordens atomer."
+                   ],
+                   correct: 0,
+                   explanation: "Både ledning och strömning kräver materia (atomer) för att fungera. Eftersom rymden är nästan tom kan värmen bara nå oss via <strong>elektromagnetisk strålning</strong> (infrarött ljus och synligt ljus), som kan färdas genom vakuum."
+               },
+               {
+                   q: "Varför är det smartare att ha en vit tröja än en svart tröja om man vill hålla sig sval en solig dag?",
+                   options: [
+                       "Svarta kläder är tätare och stänger in kroppsvärmen mer effektivt.",
+                       "Vita textilier har bättre värmeledningsförmåga och kyler huden.",
+                       "Svarta ytor omvandlar solljuset till elektricitet som värmer tyget.",
+                       "Vita ytor reflekterar bort solens strålningsenergi istället för att absorbera den.", // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "Färger som vi uppfattar som mörka <strong>absorberar</strong> (suger åt sig) det mesta av ljuset som träffar dem och omvandlar det till värme. Vita ytor <strong>reflekterar</strong> (studsar bort) ljuset, och därmed även värmeenergin."
+               },
+               {
+                   q: "I en termostat används ofta en bimetall. Vad är principen bakom en sådan?",
+                   options: [
+                       "Den ena metallen blir magnetisk vid värme och slår ifrån brytaren.",
+                       "Två metaller som utvidgar sig olika mycket vid värme sitter ihop, vilket får remsan att böjas.", // Rätt (Index 1)
+                       "Metallen ändrar elektriskt motstånd så att strömmen stryps vid hetta.",
+                       "Den kemiska bindningen mellan metallerna bryts vid en viss temperatur."
+                   ],
+                   correct: 1,
+                   explanation: "En bimetall består av två sammanpressade metallremsor av olika material. Eftersom olika metaller har olika stor <strong>längdutvidgning</strong> vid uppvärmning, kommer den ena sidan bli längre än den andra, vilket tvingar hela remsan att <strong>böja sig</strong>."
+               }
+           ]
+       }
+   ];
 
 
    // --- STATE MANAGEMENT ---
@@ -803,7 +803,7 @@ const quizData = [
        const rect = feedbackBox.getBoundingClientRect();
        const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
        if (!isVisible) {
-            setTimeout(() => {
+           setTimeout(() => {
                feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
            }, 100);
        }

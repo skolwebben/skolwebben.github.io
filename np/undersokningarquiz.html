@@ -373,37 +373,37 @@
            text: "En systematisk undersökning börjar alltid med en frågeställning och ofta en <strong>hypotes</strong> (en välgrundad gissning). För att undersökningen ska bli rättvis ('fair test') måste man ha koll på sina variabler. <strong>Oberoende variabel</strong> är den sak du ändrar på med flit. Man ska bara ändra en sak i taget. <strong>Beroende variabel</strong> är den sak du mäter för att se resultatet. <strong>Kontrollvariabler</strong> är allt annat som måste hållas lika för att inte förstöra resultatet.",
            questions: [
                {
-                   q: "Du ska undersöka hur pendelns längd påverkar svängningstiden. Vad är den oberoende variabeln i detta experiment?",
+                   q: "Du ska undersöka hur pendelns längd påverkar svängningstiden. Vad är den oberoende variabeln?",
                    options: [
-                       "Tyngden på pendeln",
-                       "Snörets längd",
-                       "Tiden det tar att svänga",
-                       "Färgen på snöret"
+                       "Svängningstiden, eftersom det är den vi mäter med tidtagaruret.",
+                       "Tyngden på pendeln, eftersom den påverkar hur fort det går.",
+                       "Luftmotståndet, eftersom det alltid bromsar pendeln lite.",
+                       "Snörets längd, eftersom det är den faktorn vi bestämmer och ändrar." // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "I en systematisk undersökning är den <strong>oberoende variabeln</strong> den faktor du medvetet ändrar för att se om det påverkar resultatet. Här ändrar du **snörets längd** för att mäta hur det påverkar tiden."
+               },
+               {
+                   q: "Varför är det så viktigt att bara ändra en variabel i taget under ett experiment?",
+                   options: [
+                       "För att mätinstrumenten ska hinna registrera alla värden korrekt.",
+                       "För att veta exakt vilken faktor som orsakar förändringen i resultatet.", // Rätt (Index 1)
+                       "För att det sparar tid och materiel under laborationen.",
+                       "För att hypotesen annars automatiskt blir motbevisad."
                    ],
                    correct: 1,
-                   explanation: "Den <strong>oberoende variabeln</strong> är det du ändrar för att se vad som händer. I detta fall ändrar du längden för att se hur tiden påverkas."
+                   explanation: "Om man ändrar flera saker samtidigt (t.ex. både längd och tyngd) går det inte att avgöra vilken av dem som orsakade resultatförändringen. Detta kallas för <strong>variabelkontroll</strong> och är grunden för en rättvis undersökning."
                },
                {
-                   q: "Varför är det viktigt att bara ändra en variabel i taget?",
+                   q: "Vad är den vetenskapliga definitionen av en hypotes?",
                    options: [
-                       "För att det annars blir svårt att veta vad som orsakade resultatet.",
-                       "För att spara tid under laborationen.",
-                       "För att mätinstrumenten inte klarar av flera variabler.",
-                       "För att hypotesen alltid måste vara sann."
+                       "Ett genomtänkt antagande om resultatet som görs före experimentet.", // Rätt (Index 0)
+                       "En ren gissning som inte behöver ha någon koppling till teori.",
+                       "Det slutgiltiga beviset på att experimentet lyckades.",
+                       "En sammanfattning av resultaten efter laborationen."
                    ],
                    correct: 0,
-                   explanation: "Om du ändrar både längd och tyngd samtidigt vet du inte vilken av dem som gjorde att tiden ändrades. Detta kallas för en <strong>rättvis undersökning (fair test)</strong>."
-               },
-               {
-                   q: "Vad är en hypotes?",
-                   options: [
-                       "En gissning helt utan grund.",
-                       "Det slutgiltiga resultatet av undersökningen.",
-                       "Ett antagande om resultatet baserat på tidigare kunskaper.",
-                       "En lista på materiel man behöver."
-                   ],
-                   correct: 2,
-                   explanation: "En <strong>hypotes</strong> är inte bara en gissning ('jag tror X') utan innehåller ofta en motivering ('jag tror X därför att...')."
+                   explanation: "En <strong>hypotes</strong> är ett vetenskapligt antagande om vad som kommer hända, baserat på tidigare kunskaper eller teorier. Den formuleras ofta som 'Om jag gör X, så händer Y, därför att...'."
                }
            ]
        },
@@ -413,37 +413,37 @@
            text: "När du genomför laborationen är det viktigt att använda rätt mätinstrument. I fysiken mäter vi <strong>storheter</strong> (t.ex. kraft, tid) som har <strong>enheter</strong> (Newton, sekunder). För att minska risken för slarvfel eller tillfälliga fel är det bra att göra <strong>upprepade mätningar</strong>. Om du mäter samma sak tre gånger och får nästan samma svar kan du lita mer på ditt resultat.",
            questions: [
                {
-                   q: "Vilket instrument används för att mäta kraft?",
+                   q: "Vilket mätinstrument ska du använda om du vill mäta en kraft i Newton?",
                    options: [
-                       "Termometer",
-                       "Manometer",
-                       "Skjutmått",
-                       "Dynamometer"
-                   ],
-                   correct: 3,
-                   explanation: "En <strong>dynamometer</strong> mäter kraft (ofta i enheten Newton). Ett skjutmått mäter små längder noggrant."
-               },
-               {
-                   q: "Eleverna Maja och Li mäter hur långt en bil rullar. Första gången rullar den 1,25 m, andra gången 1,22 m och tredje gången 1,28 m. Vad bör de göra?",
-                   options: [
-                       "De räknar ut ett medelvärde av de tre mätningarna.",
-                       "De väljer det värde som stämmer bäst med deras hypotes.",
-                       "De kastar resultaten eftersom de är olika.",
-                       "De väljer det högsta värdet för att få 'bäst' resultat."
-                   ],
-                   correct: 0,
-                   explanation: "Genom att beräkna <strong>medelvärdet</strong> jämnar man ut små tillfälliga variationer och får ett mer tillförlitligt mätvärde."
-               },
-               {
-                   q: "Vad menas med att 'avläsa instrumentet vinkelrätt'?",
-                   options: [
-                       "Att man håller instrumentet upp och ner.",
-                       "Att man använder en vinkelhake när man mäter.",
-                       "Att man tittar rakt framifrån på skalan för att undvika felvärde.",
-                       "Att man alltid mäter i 90 graders temperatur."
+                       "En barometer, som mäter tryckförändringar.",
+                       "En termometer, som mäter värmeenergi.",
+                       "En dynamometer, som mäter dragkraft.", // Rätt (Index 2)
+                       "Ett skjutmått, som mäter små avstånd."
                    ],
                    correct: 2,
-                   explanation: "Om man tittar snett på en visare eller vätskeyta ser värdet ut att vara högre eller lägre än det faktiskt är. Detta kallas <strong>parallaxfel</strong>."
+                   explanation: "En <strong>dynamometer</strong> är ett instrument med en fjäder som dras ut proportionellt mot kraften, och skalan är graderad i enheten <strong>Newton (N)</strong>. En barometer mäter tryck och en termometer temperatur."
+               },
+               {
+                   q: "Eleverna Maja och Li får mätvärdena 1,25 m, 1,22 m och 1,28 m. Vad bör de göra?",
+                   options: [
+                       "De bör beräkna ett medelvärde för att minska slumpens inverkan.", // Rätt (Index 0)
+                       "De bör välja mätvärdet som stämmer bäst med deras hypotes.",
+                       "De bör addera alla värden för att få en totalsumma.",
+                       "De bör välja det mittersta värdet och kasta de andra."
+                   ],
+                   correct: 0,
+                   explanation: "Genom att göra flera mätningar och beräkna ett <strong>medelvärde</strong> minskar man inverkan av <strong>slumpmässiga fel</strong>. Detta ger ett mätvärde som ligger närmare det sanna värdet än en enskild mätning gör."
+               },
+               {
+                   q: "Varför ska man läsa av mätinstrument rakt framifrån (vinkelrätt)?",
+                   options: [
+                       "För att instrumentet fungerar bäst i 90 graders vinkel.",
+                       "För att ljuset ska reflekteras rätt i glaset.",
+                       "För att vätskan i instrumentet ska stabilisera sig.",
+                       "För att undvika parallaxfel som ger felaktiga mätvärden." // Rätt (Index 3)
+                   ],
+                   correct: 3,
+                   explanation: "Om man tittar snett på en mätskala eller vätskeyta uppstår ett s.k. <strong>parallaxfel</strong>, vilket gör att värdet ser högre eller lägre ut än det är. Man ska alltid ha ögat i jämnhöjd med skalan."
                }
            ]
        },
@@ -453,37 +453,37 @@
            text: "Resultaten från en undersökning ska dokumenteras tydligt, ofta i en <strong>tabell</strong> och sedan i ett <strong>diagram</strong>. Tabeller ska ha tydliga rubriker där storhet och enhet står. Diagram gör det lättare att se samband. Den oberoende variabeln (den vi styrde) sätts oftast på <strong>x-axeln</strong> (vågrät), och den beroende variabeln (resultatet) på <strong>y-axeln</strong> (lodrät).",
            questions: [
                {
-                   q: "Du har undersökt hur vattnets temperatur sjunker med tiden. Vilken diagramtyp passar bäst för att visa förändringen över tid?",
+                   q: "Vilken diagramtyp är bäst för att visa hur vattnets temperatur förändras över tid?",
                    options: [
-                       "Cirkeldiagram",
-                       "Stapeldiagram",
-                       "Linjediagram",
-                       "Venndiagram"
+                       "Ett stapeldiagram, eftersom det visar tydliga nivåer.",
+                       "Ett linjediagram, för att visa förändring över tid.", // Rätt (Index 1)
+                       "Ett cirkeldiagram, för att se andelar av tiden.",
+                       "Ett flödesschema, för att visa processens steg."
+                   ],
+                   correct: 1,
+                   explanation: "Ett <strong>linjediagram</strong> är bäst lämpat för att visa hur en kontinuerlig variabel (som temperatur) förändras beroende på en annan (som tid). Stapeldiagram används oftare för kategorier som inte hänger ihop."
+               },
+               {
+                   q: "I din resultattabell har du skrivit 'Sträcka' som rubrik. Vad mer måste finnas med?",
+                   options: [
+                       "Datum för när mätningen gjordes.",
+                       "Namnet på mätinstrumentet som användes.",
+                       "Enheten (t.ex. meter) för att siffrorna ska betyda något.", // Rätt (Index 2)
+                       "En förklaring av eventuella felkällor."
                    ],
                    correct: 2,
-                   explanation: "<strong>Linjediagram</strong> är bäst för att visa hur något förändras kontinuerligt, exempelvis temperatur över tid eller sträcka över tid."
+                   explanation: "En fysikalisk <strong>storhet</strong> (som sträcka) blir meningslös utan en tillhörande <strong>enhet</strong> (som meter eller cm). Utan enheten vet man inte om siffran 5 betyder 5 millimeter eller 5 mil."
                },
                {
-                   q: "I din tabell har du skrivit rubriken 'Sträcka'. Vad saknas?",
+                   q: "Om punkterna i diagrammet bildar en rät linje genom origo (0,0), vad visar det?",
                    options: [
-                       "Enheten (t.ex. meter eller cm).",
-                       "Vilket datum det är.",
-                       "Ditt namn.",
-                       "Resultatet."
+                       "Att variablerna är proportionella mot varandra.", // Rätt (Index 0)
+                       "Att det inte finns något tydligt samband mellan variablerna.",
+                       "Att sambandet är exponentiellt och ökar snabbare och snabbare.",
+                       "Att mätvärdena är felaktiga eftersom linjen borde vara krokig."
                    ],
                    correct: 0,
-                   explanation: "En storhet (som sträcka) måste alltid ha en <strong>enhet</strong> för att siffrorna ska betyda något. '5' säger inget, men '5 meter' är tydligt."
-               },
-               {
-                   q: "Om punkterna i ditt diagram bildar en rät linje som går genom origo (0,0), vad säger det om sambandet?",
-                   options: [
-                       "Att det inte finns något samband.",
-                       "Att resultatet är felaktigt.",
-                       "Att mätningen gick baklänges.",
-                       "Att variablerna är proportionella."
-                   ],
-                   correct: 3,
-                   explanation: "En rät linje genom origo visar <strong>proportionalitet</strong>. Det betyder att om den ena variabeln ökar dubbelt, ökar den andra också dubbelt."
+                   explanation: "En rät linje som startar i origo (0,0) innebär att det finns ett <strong>proportionellt samband</strong>. Det betyder att om den ena variabeln dubblas, så dubblas även den andra variabeln exakt."
                }
            ]
        },
@@ -493,37 +493,37 @@
            text: "I <strong>slutsatsen</strong> svarar du på din frågeställning. I utvärderingen diskuterar man undersökningens kvalitet, <strong>tillförlitlighet</strong> och <strong>felkällor</strong>. Vi skiljer på slarvfel och <strong>systematiska fel</strong> (t.ex. att vågen alltid visar 5g för mycket). En viktig del är att kunna föreslå förbättringar av metoden.",
            questions: [
                {
-                   q: "Du mäter kokpunkten på vatten och får den till 98 °C istället för 100 °C. Vad är en rimlig felkälla att diskutera?",
+                   q: "Du mäter kokpunkten på vatten till 98 °C istället för 100 °C. Vad är en rimlig felkälla?",
                    options: [
-                       "Jag var dålig på att mäta.",
-                       "Termometern kan vara felkalibrerad eller så påverkade lufttrycket.",
-                       "Vattnet kanske inte var gjort av atomer.",
-                       "Det finns inga felkällor i fysik."
+                       "Vattnet var troligen gammalt och hade förlorat sin kokförmåga.",
+                       "Värmeplattan var inte tillräckligt varm för att nå 100 grader.",
+                       "Experimentet utfördes slarvigt och bör därför underkännas.",
+                       "Termometern kan vara felkalibrerad eller påverkad av lufttrycket." // Rätt (Index 3)
                    ],
-                   correct: 1,
-                   explanation: "Detta är en fysikalisk förklaring. Att bara säga 'jag mätte fel' är ingen bra analys av en <strong>felkälla</strong>."
+                   correct: 3,
+                   explanation: "En bra diskussion om felkällor letar efter fysikaliska orsaker. Termometern kan vara felkalibrerad (ett <strong>systematiskt fel</strong>) eller så kan det aktuella <strong>lufttrycket</strong> vara lågt, vilket sänker kokpunkten."
                },
                {
-                   q: "Vad innebär det att kritiskt granska sin metod?",
+                   q: "Vad innebär det att kritiskt granska sin metod i en labbrapport?",
                    options: [
-                       "Att man säger att labben var tråkig.",
-                       "Att man skyller på sin lab-partner.",
-                       "Att man funderar på om man hade kunnat göra undersökningen noggrannare.",
-                       "Att man ändrar sina svar så de stämmer med facit."
+                       "Att man erkänner att man var dålig på att genomföra labben.",
+                       "Att man letar efter svagheter i utförandet och föreslår förbättringar.", // Rätt (Index 1)
+                       "Att man justerar sina mätvärden så att de stämmer med facit.",
+                       "Att man skriver att allt gick bra och att resultatet är perfekt."
                    ],
-                   correct: 2,
-                   explanation: "En viktig del av betyget handlar om att kunna föreslå <strong>förbättringar</strong>, t.ex. 'Vi borde ha använt lock på bägaren'."
+                   correct: 1,
+                   explanation: "Att kritiskt granska metoden innebär att analysera undersökningens <strong>tillförlitlighet</strong> och föreslå konkreta <strong>förbättringar</strong>. Det handlar om att hitta svagheter som kan ha påverkat resultatet, inte att skylla på personliga misstag."
                },
                {
                    q: "Vad skiljer ett systematiskt fel från ett slumpmässigt fel?",
                    options: [
-                       "Systematiska fel gör att alla mätvärden blir fel åt samma håll (t.ex. för höga).",
-                       "Systematiska fel händer bara ibland.",
-                       "Slumpmässiga fel beror på att instrumentet är trasigt.",
-                       "Det är ingen skillnad."
+                       "Slumpmässiga fel är allvarligare eftersom de inte går att upptäcka.",
+                       "Det finns ingen praktisk skillnad, båda ger felaktiga slutsatser.",
+                       "Systematiska fel ger fel åt samma håll, medan slumpmässiga varierar.", // Rätt (Index 2)
+                       "Systematiska fel beror på slarv, medan slumpmässiga beror på utrustningen."
                    ],
-                   correct: 0,
-                   explanation: "Ett <strong>systematiskt fel</strong> (t.ex. felkalibrerad våg) påverkar alla mätningar lika mycket. Slumpmässiga fel varierar upp och ner."
+                   correct: 2,
+                   explanation: "<strong>Systematiska fel</strong>, som en felkalibrerad våg, ger en avvikelse åt samma håll varje gång. <strong>Slumpmässiga fel</strong> beror på tillfälligheter och varierar både uppåt och nedåt kring det sanna värdet."
                }
            ]
        },
@@ -533,37 +533,37 @@
            text: "Systematiska undersökningar handlar också om <strong>säkerhet</strong> och att koppla resultatet till <strong>fysikaliska modeller</strong>. Om du undersöker friktion måste du kunna koppla dina resultat till teorin om ytors ojämnhet. Riskbedömning görs för att undvika skador innan man börjar.",
            questions: [
                {
-                   q: "Varför gör man en riskbedömning innan en laboration?",
+                   q: "Varför gör man en riskbedömning innan en laboration påbörjas?",
                    options: [
-                       "För att läraren säger det.",
-                       "För att resultatet ska bli bättre.",
-                       "För att spara materiel.",
-                       "För att identifiera vad som kan vara farligt och undvika skador."
+                       "För att identifiera faror och förhindra att någon skadar sig.", // Rätt (Index 0)
+                       "För att se till att materialet räcker till alla elever.",
+                       "För att resultatet av experimentet ska bli mer exakt.",
+                       "För att läraren ska slippa ta ansvar om något händer."
+                   ],
+                   correct: 0,
+                   explanation: "En <strong>riskbedömning</strong> görs för att identifiera moment som kan vara farliga, t.ex. hantering av kemikalier eller värme. Syftet är att förebygga olyckor och skapa en god <strong>säkerhet</strong> i laboratoriet."
+               },
+               {
+                   q: "Ditt resultat visar att en järnbit sjunker medan en träbit flyter. Vilken modell förklarar detta?",
+                   options: [
+                       "Newtons tröghetslag och friktion.",
+                       "Termodynamikens lagar om värme.",
+                       "Ohms lag om elektriskt motstånd.",
+                       "Arkimedes princip och densitet." // Rätt (Index 3)
                    ],
                    correct: 3,
-                   explanation: "<strong>Säkerhet</strong> går alltid först. Det kan handla om varma plattor, glaskross, kemikalier eller elektricitet."
+                   explanation: "Resultatet förklaras med fysikaliska modeller om <strong>densitet</strong> och <strong>Arkimedes princip</strong>. Om föremålets densitet är högre än vätskans densitet blir tyngden större än lyftkraften, och föremålet sjunker."
                },
                {
-                   q: "Du har undersökt densitet. Ditt resultat visar att en järnbit sjunker medan en träbit flyter. Vilken modell förklarar detta?",
+                   q: "Vad är det viktigaste vetenskapliga syftet med en laborationsrapport?",
                    options: [
-                       "Ohms lag.",
-                       "Arkimedes princip och densitet.",
-                       "Newtons tredje lag.",
-                       "Atomernas rörelseenergi (värme)."
+                       "Att visa att man har förstått teorin i läroboken.",
+                       "Att någon annan ska kunna göra om undersökningen exakt likadant.", // Rätt (Index 1)
+                       "Att skriva så långt och detaljerat som möjligt.",
+                       "Att samla in poäng för att få ett högre betyg."
                    ],
                    correct: 1,
-                   explanation: "Om ett föremåls <strong>densitet</strong> är högre än vätskans sjunker det. <strong>Arkimedes princip</strong> förklarar lyftkraften."
-               },
-               {
-                   q: "Vad är det viktigaste syftet med en laborationsrapport?",
-                   options: [
-                       "Att visa att man har snygg handstil.",
-                       "Att skriva så många sidor som möjligt.",
-                       "Att någon annan ska kunna läsa den och göra om exakt samma undersökning.",
-                       "Att kopiera lärobokens text."
-                   ],
-                   correct: 2,
-                   explanation: "I vetenskaplig metod är <strong>repeterbarhet</strong> nyckeln. Om ingen kan upprepa ditt försök utifrån din rapport har den inte ett vetenskapligt värde."
+                   explanation: "Huvudsyftet med en vetenskaplig rapport är att dokumentera arbetet så tydligt att någon annan kan upprepa undersökningen. Detta krav på <strong>reproducerbarhet</strong> är grunden för att verifiera vetenskapliga resultat."
                }
            ]
        }
@@ -792,7 +792,7 @@
        const rect = feedbackBox.getBoundingClientRect();
        const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
        if (!isVisible) {
-            setTimeout(() => {
+           setTimeout(() => {
                feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
            }, 100);
        }
