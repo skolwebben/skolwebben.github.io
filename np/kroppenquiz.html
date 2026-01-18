@@ -1,899 +1,1049 @@
 ﻿<!DOCTYPE html>
-<html lang="sv">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Biologiquiz: Kroppen & Organ (Åk 9)</title>
-   <!-- Importerar moderna fonter från Google Fonts -->
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-  
-   <style>
-       :root {
-           /* Färgpalett - Rött Tema (Kroppen/Hälsa) med Komplement */
-           --card-bg: #ffffff;
-          
-           --brand-color: #c62828; /* Djup röd */
-           --brand-gradient: linear-gradient(135deg, #c62828 0%, #e53935 100%);
-          
-           --accent-color: #ef5350; /* Ljusare röd */
-          
-           /* Komplementfärg: Mörk Gråblå (Slate) - För balans */
-           --complement-color: #37474f;
-
-
-           --success-color: #2e7d32;
-           --success-bg: #e8f5e9;
-          
-           --error-color: #c62828;
-           --error-bg: #ffebee;
-          
-           --text-main: #212121;
-           --text-muted: #616161;
-          
-           --shadow-card: 0 10px 25px rgba(0,0,0,0.1);
-           --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
-           --radius-main: 16px;
-       }
-
-
-       body {
-           font-family: 'Open Sans', sans-serif;
-           /* Neutral bakgrund med varm ton */
-           background-image: linear-gradient(135deg, #fafafa 0%, #eceff1 100%);
-           color: var(--text-main);
-           margin: 0;
-           padding: 15px;
-           display: flex;
-           justify-content: center;
-           align-items: flex-start;
-           min-height: 100vh;
-       }
-
-
-       .container {
-           background-color: var(--card-bg);
-           width: 100%;
-           max-width: 680px;
-           border-radius: var(--radius-main);
-           box-shadow: var(--shadow-card);
-           overflow: hidden;
-           display: flex;
-           flex-direction: column;
-           position: relative;
-           margin-top: 3vh;
-           margin-bottom: 3vh;
-       }
-
-
-       header {
-           background: var(--brand-gradient);
-           color: white;
-           padding: 20px;
-           text-align: center;
-           position: relative;
-           overflow: hidden;
-       }
-
-
-       h1 {
-           font-family: 'Poppins', sans-serif;
-           margin: 0;
-           font-size: 1.5rem;
-           font-weight: 700;
-           letter-spacing: -0.3px;
-       }
-
-
-       .content-area {
-           padding: 25px 30px;
-           flex-grow: 1;
-       }
-
-
-       h2 {
-           font-family: 'Poppins', sans-serif;
-           color: var(--text-main);
-           margin-top: 0;
-           font-size: 1.3rem;
-           margin-bottom: 0.8rem;
-           line-height: 1.3;
-       }
-
-
-       /* Fact Section Styles */
-       .fact-box {
-           background: #ffffff;
-           border: 1px solid #eeeeee;
-           border-radius: 12px;
-           padding: 20px;
-           margin-bottom: 20px;
-           display: flex;
-           gap: 15px;
-           align-items: flex-start;
-           box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-       }
-      
-       .fact-icon {
-           font-size: 2rem;
-           display: block;
-           margin-top: -5px;
-           color: var(--complement-color); /* Komplementfärg på ikonen */
-       }
-      
-       .fact-content {
-           flex: 1;
-       }
-
-
-       .btn {
-           background: var(--brand-gradient);
-           color: white;
-           border: none;
-           padding: 12px 24px;
-           font-family: 'Poppins', sans-serif;
-           font-size: 1rem;
-           font-weight: 600;
-           border-radius: 8px;
-           cursor: pointer;
-           transition: all 0.2s ease;
-           display: block;
-           width: 100%;
-           margin-top: 20px;
-           box-shadow: 0 4px 10px rgba(198, 40, 40, 0.2);
-       }
-
-
-       .btn:hover {
-           transform: translateY(-2px);
-           box-shadow: 0 6px 14px rgba(198, 40, 40, 0.3);
-           opacity: 0.95;
-       }
-
-
-       /* Question Styles */
-       .question-meta {
-           display: inline-block;
-           color: var(--complement-color);
-           font-size: 0.85rem;
-           margin-bottom: 10px;
-           font-weight: 700;
-           text-transform: uppercase;
-           letter-spacing: 0.5px;
-       }
-
-
-       .options-grid {
-           display: grid;
-           gap: 12px;
-           margin-top: 20px;
-       }
-
-
-       .option-btn {
-           background-color: #fff;
-           border: 2px solid #f5f5f5;
-           padding: 15px 20px;
-           text-align: left;
-           border-radius: 10px;
-           cursor: pointer;
-           font-family: 'Open Sans', sans-serif;
-           font-size: 0.95rem;
-           font-weight: 500;
-           transition: all 0.15s ease;
-           color: var(--text-main);
-           position: relative;
-       }
-
-
-       .option-btn:hover:not(:disabled) {
-           border-color: var(--accent-color);
-           background-color: #ffebee;
-           transform: translateX(3px);
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-       }
-      
-       /* Status states for options */
-       .option-btn.correct {
-           background-color: var(--success-bg);
-           border-color: var(--success-color);
-           color: #1b5e20;
-           font-weight: 600;
-       }
-      
-       .option-btn.correct::after {
-           content: "✓";
-           position: absolute;
-           right: 15px;
-           font-weight: bold;
-       }
-
-
-       .option-btn.incorrect {
-           background-color: var(--error-bg);
-           border-color: var(--error-color);
-           color: #b71c1c;
-           opacity: 0.8;
-       }
-
-
-       .option-btn:disabled {
-           cursor: default;
-       }
-
-
-       /* Feedback Box */
-       .feedback-box {
-           margin-top: 20px;
-           padding: 20px 25px;
-           border-radius: 12px;
-           background-color: #f9f9f9;
-           color: var(--text-main);
-           border: 1px solid #e0e0e0;
-           display: none;
-           animation: fadeIn 0.3s ease;
-       }
-      
-       .feedback-box h3 {
-           margin-top: 0;
-           font-family: 'Poppins', sans-serif;
-           font-size: 1.2rem;
-           display: flex;
-           align-items: center;
-           gap: 8px;
-           margin-bottom: 8px;
-       }
-
-
-       .feedback-box.success h3 {
-           color: var(--success-color);
-       }
-      
-       .feedback-box.error h3 {
-           color: var(--error-color);
-       }
-
-
-       .feedback-box strong {
-           color: #000;
-       }
-
-
-       @keyframes fadeIn {
-           from { opacity: 0; transform: translateY(5px); }
-           to { opacity: 1; transform: translateY(0); }
-       }
-
-
-       /* Progress Bar Styles */
-       .progress-bar-container {
-           height: 6px;
-           background-color: #eeeeee;
-           width: 100%;
-           position: relative;
-           z-index: 10;
-       }
-
-
-       .progress-bar {
-           height: 100%;
-           /* Röd gradient */
-           background: linear-gradient(90deg, #ef5350 0%, #c62828 100%);
-           width: 0%;
-           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-           border-radius: 0 4px 4px 0;
-           box-shadow: 0 0 10px rgba(229, 57, 53, 0.5);
-       }
-
-
-       /* Summary Styles */
-       .summary-stats {
-           text-align: center;
-           background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-           border: 1px solid #ef9a9a;
-           padding: 30px 20px;
-           border-radius: 12px;
-           margin-bottom: 20px;
-       }
-
-
-       .summary-score {
-           font-size: 3.5rem;
-           font-family: 'Poppins', sans-serif;
-           font-weight: 700;
-           display: block;
-           margin: 5px 0;
-           line-height: 1;
-           background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%);
-           -webkit-background-clip: text;
-           -webkit-text-fill-color: transparent;
-       }
-      
-       .summary-list {
-           max-height: 400px;
-           overflow-y: auto;
-           padding-right: 10px;
-       }
-      
-       .summary-item {
-           background: white;
-           border-bottom: 1px solid #eeeeee;
-           padding: 12px 0;
-       }
-      
-       .summary-item:last-child {
-           border-bottom: none;
-       }
-
-
-       .summary-question {
-           font-weight: 600;
-           margin-bottom: 4px;
-           display: block;
-           font-size: 0.95rem;
-       }
-      
-       .summary-answer-row {
-           font-size: 0.9rem;
-       }
-
-
-       .summary-correct-text { color: var(--success-color); font-weight: 600; }
-       .summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
-       .real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
-
-
-       /* Helpers */
-       strong {
-           color: #000;
-           font-weight: 700;
-       }
-
-
-   </style>
-</head>
-<body>
-
-
-<div class="container">
-   <header>
-       <h1 id="header-title">Biologiquiz: Kroppen & Organ</h1>
-   </header>
-   <div class="progress-bar-container">
-       <div class="progress-bar" id="progress-bar"></div>
-   </div>
-
-
-   <div class="content-area" id="app">
-       <!-- Content will be injected here by JavaScript -->
-   </div>
-</div>
-
-
-<script>
-   // --- DATA ---
-   const quizData = [
-       {
-           title: "Del 1: Cellen och Stamceller",
-           icon: "🧬",
-           text: "Cellen är den minsta levande enheten. I en människa finns ca 200 olika celltyper specialiserade för olika uppgifter, som muskelceller eller nervceller. <strong>Stamceller</strong> är unika eftersom de både kan skapa kopior av sig själva och utvecklas till specialiserade celler. Embryonala stamceller kan bli vilken celltyp som helst, medan vuxna stamceller främst ersätter celler i specifika organ.",
-           questions: [
-               {
-                   q: "Vilken del av cellen fungerar som dess 'energikraftverk' där cellandningen sker?",
-                   options: [
-                       "Mitokondrierna",
-                       "Cellkärnan",
-                       "Ribosomerna",
-                       "Cellmembranet"
-                   ],
-                   correct: 0,
-                   explanation: "I <strong>mitokondrierna</strong> omvandlas druvsocker till energi genom cellandning."
-               },
-               {
-                   q: "Vad är en tumör, rent biologiskt?",
-                   options: [
-                       "En typ av virusinfektion",
-                       "En cellklump som uppstått genom okontrollerad celldelning",
-                       "En ansamling av döda vita blodkroppar",
-                       "Ett organ som slutat fungera"
-                   ],
-                   correct: 1,
-                   explanation: "Cancer uppstår när cellens DNA förändras (mutation) så att den delar sig <strong>obegränsat</strong>."
-               }
-           ]
-       },
-       {
-           title: "Del 2: Nervsystemet och Hjärnan",
-           icon: "🧠",
-           text: "<strong>Nervsystemet</strong> styr kroppen med elektriska impulser. Det delas in i <strong>centrala nervsystemet</strong> (hjärna och ryggmärg) och perifera nervsystemet. <strong>Reflexer</strong> är blixtsnabba eftersom impulsen kopplas om direkt i ryggmärgen. Viljestyrda rörelser kallas däremot för <strong>reaktioner</strong> och kräver att hjärnan tolkar signalen.",
-           questions: [
-               {
-                   q: "Vilken funktion har myelinskidan som omger nervcellens axon?",
-                   options: [
-                       "Den tillverkar signalsubstanser",
-                       "Den fungerar som cellens kärna",
-                       "Den isolerar axonet så att den elektriska signalen går snabbare",
-                       "Den tar emot signaler från andra celler"
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Myelinet</strong> hindrar signalen från att spridas och ökar hastigheten till upp mot 150 m/s."
-               },
-               {
-                   q: "Vilken del av hjärnan ansvarar för balans, koordination och timing i våra rörelser?",
-                   options: [
-                       "Storhjärnan",
-                       "Hjärnstammen",
-                       "Mellanhjärnan",
-                       "Lillhjärnan"
-                   ],
-                   correct: 3,
-                   explanation: "<strong>Lillhjärnan</strong> sammanordnar impulser från sinnen och muskler för att göra rörelser mjuka och exakta."
-               },
-               {
-                   q: "Vad är skillnaden mellan en reflex och en reaktion?",
-                   options: [
-                       "Reflexen kopplas om i ryggmärgen, reaktionen går via hjärnan",
-                       "Reflexen är viljestyrd, reaktionen är automatisk",
-                       "Reaktionen är snabbare än reflexen",
-                       "Reflexer finns bara hos barn, reaktioner hos vuxna"
-                   ],
-                   correct: 0,
-                   explanation: "Vid en <strong>reflex</strong> går signalen direkt från ryggmärgen till muskeln för att spara tid vid fara."
-               },
-               {
-                   q: "Vilken del av hjärnan styr livsviktiga funktioner som vi inte påverkar med viljan, t.ex. andning och blodtryck?",
-                   options: [
-                       "Pannloben",
-                       "Hjärnstammen",
-                       "Hjärnbalken",
-                       "Tinningloben"
-                   ],
-                   correct: 1,
-                   explanation: "<strong>Hjärnstammen</strong> styr instinkter och autonoma funktioner som andning och hjärtrytm."
-               },
-               {
-                   q: "Vad händer i en synaps?",
-                   options: [
-                       "DNA kopieras inför en celldelning",
-                       "Muskeln drar ihop sig",
-                       "Signalsubstanser släpps ut för att föra impulsen vidare till nästa cell",
-                       "Blodet renas från gifter"
-                   ],
-                   correct: 2,
-                   explanation: "I <strong>synapsen</strong> omvandlas den elektriska signalen till en kemisk signal med hjälp av signalsubstanser."
-               }
-           ]
-       },
-       {
-           title: "Del 3: Hjärta, Blod och Andning",
-           icon: "❤️",
-           text: "Hjärtat är en pump som driver två kretslopp. Det lilla kretsloppet går till lungorna, och det stora kretsloppet pumpar syrerikt blod ut i kroppen. I lungornas <strong>alveoler</strong> (lungblåsor) sker gasutbytet där syre tas upp och koldioxid lämnas av.",
-           questions: [
-               {
-                   q: "Vilken uppgift har de röda blodkropparna?",
-                   options: [
-                       "Att bilda sårskorpor (koagulera)",
-                       "Att äta upp bakterier och virus",
-                       "Att reglera kroppens temperatur",
-                       "Att transportera syre med hjälp av hemoglobin"
-                   ],
-                   correct: 3,
-                   explanation: "<strong>Hemoglobin</strong> innehåller järn som binder syre för transport till cellerna."
-               },
-               {
-                   q: "Varför förbättras konditionen av att hjärtat blir starkare?",
-                   options: [
-                       "Hjärtat kan pumpa ut mer blod per slag så att musklerna får mer syre",
-                       "Hjärtat slår snabbare även när man vilar",
-                       "Hjärtat tillverkar mer socker till musklerna",
-                       "Det blir lättare att hålla andan länge"
-                   ],
-                   correct: 0,
-                   explanation: "Ett starkare hjärta ger effektivare <strong>gastransport</strong> till arbetande muskler."
-               },
-               {
-                   q: "Vilket blodkärl leder syrerikt blod från hjärtat ut till kroppen?",
-                   options: [
-                       "Venerna",
-                       "Artärerna (t.ex. aortan)",
-                       "Kapillärerna",
-                       "Hålvenerna"
-                   ],
-                   correct: 1,
-                   explanation: "<strong>Artärer</strong> leder blod bort från hjärtat, och i det stora kretsloppet är detta blod syrerikt."
-               },
-               {
-                   q: "Var i lungorna sker själva utbytet av syre och koldioxid?",
-                   options: [
-                       "I luftstrupen",
-                       "I bronkerna",
-                       "I lungblåsorna (alveolerna)",
-                       "I lungsäcken"
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Alveolerna</strong> är små blåsor omgivna av tunna blodkärl där gasutbytet sker."
-               },
-               {
-                   q: "Vad händer med mellangärdet (diafragman) när du andas in?",
-                   options: [
-                       "Den slappnar av och trycks uppåt",
-                       "Den står helt stilla",
-                       "Den producerar slem",
-                       "Den spänns och dras nedåt så att lungornas volym ökar"
-                   ],
-                   correct: 3,
-                   explanation: "När muskeln dras nedåt skapas ett <strong>undertryck</strong> som gör att luft sugs in i lungorna."
-               }
-           ]
-       },
-       {
-           title: "Del 4: Matspjälkning och Rening",
-           icon: "🍽️",
-           text: "<strong>Matspjälkning</strong> innebär att maten delas upp så att näringen kan tas upp av blodet. I <strong>tunntarmen</strong> tas näringen upp. <strong>Levern</strong> och <strong>njurarna</strong> är kroppens reningsverk. Levern bryter ner gifter, medan njurarna filtrerar blodet och bildar urin.",
-           questions: [
-               {
-                   q: "Vilket enzym i saliven börjar bryta ner kolhydrater redan i munnen?",
-                   options: [
-                       "Amylas",
-                       "Pepsin",
-                       "Insulin",
-                       "Galla"
-                   ],
-                   correct: 0,
-                   explanation: "<strong>Amylas</strong> bryter ner stärkelse till enklare sockerarter."
-               },
-               {
-                   q: "Vilket organ producerar galla för att bryta ner fett?",
-                   options: [
-                       "Magsäcken",
-                       "Levern",
-                       "Njuren",
-                       "Tjocktarmen"
-                   ],
-                   correct: 1,
-                   explanation: "<strong>Levern</strong> bildar galla som lagras i gallblåsan och används i tolvfingertarmen."
-               },
-               {
-                   q: "Vilken är tjocktarmens viktigaste uppgift?",
-                   options: [
-                       "Att bryta ner proteiner till aminosyror",
-                       "Att producera magsyra",
-                       "Att suga upp vatten och salt så att avföringen blir fast",
-                       "Att pumpa blod till tarmarna"
-                   ],
-                   correct: 2,
-                   explanation: "<strong>Tjocktarmen</strong> återvinner vatten så att vi inte drabbas av vätskebrist."
-               },
-               {
-                   q: "Hur påverkas njurarna av långvarig alkoholkonsumtion?",
-                   options: [
-                       "De börjar producera mer socker",
-                       "De blir bättre på att lagra vitaminer",
-                       "De slutar tillverka galla",
-                       "Deras förmåga att rena blodet från avfall försämras"
-                   ],
-                   correct: 3,
-                   explanation: "Alkohol skadar njurarnas <strong>filtreringsförmåga</strong> så att de inte kan rena kroppen effektivt."
-               }
-           ]
-       },
-       {
-           title: "Del 5: Försvar och Hälsa",
-           icon: "🛡️",
-           text: "Kroppen skyddas av <strong>immunförsvaret</strong>. Vita blodkroppar (B-celler) bildar <strong>antikroppar</strong> mot inkräktare. <strong>Vaccination</strong> ger kroppen en ofarlig dos av smittämnet så att <strong>minnesceller</strong> kan bildas utan att vi blir sjuka.",
-           questions: [
-               {
-                   q: "Vad är syftet med en vaccination?",
-                   options: [
-                       "Att lära immunförsvaret att känna igen och bilda försvar mot ett smittämne",
-                       "Att döda bakterier som redan finns i kroppen",
-                       "Att ge kroppen extra energi i form av socker",
-                       "Att bygga upp muskelmassan"
-                   ],
-                   correct: 0,
-                   explanation: "Vaccinet gör att kroppen bildar <strong>antikroppar</strong> och minnesceller inför en framtida infektion."
-               },
-               {
-                   q: "Varför fungerar inte antibiotika (t.ex. penicillin) mot en vanlig förkylning?",
-                   options: [
-                       "Antibiotika fungerar bara mot virus",
-                       "Förkylningar orsakas av virus, och antibiotika biter bara på bakterier",
-                       "Antibiotika är för svagt för förkylningsvirus",
-                       "Förkylningar är inte en riktig sjukdom"
-                   ],
-                   correct: 1,
-                   explanation: "Antibiotika hämmar bakterietillväxt men har <strong>ingen effekt på virus</strong>."
-               },
-               {
-                   q: "Vilken del av immunförsvaret 'minns' en sjukdom så att du blir immun?",
-                   options: [
-                       "Röda blodkroppar",
-                       "Blodplättar",
-                       "Minnesceller (en typ av vita blodkroppar)",
-                       "Hudceller"
-                   ],
-                   correct: 2,
-                   explanation: "B-celler omvandlas till <strong>minnesceller</strong> som snabbt kan bilda antikroppar om samma smitta återkommer."
-               }
-           ]
-       }
-   ];
-
-
-   // --- STATE MANAGEMENT ---
-   let currentSectionIndex = 0;
-   let currentQuestionIndex = 0; // Relative to current section
-   let score = 0;
-   let userAnswers = [];
-   let state = 'intro'; // 'intro', 'question', 'summary'
-
-
-   // --- DOM ELEMENTS ---
-   const app = document.getElementById('app');
-   const headerTitle = document.getElementById('header-title');
-   const progressBar = document.getElementById('progress-bar');
-
-
-   // --- MAIN RENDER FUNCTION ---
-   function render() {
-       if (state === 'summary') {
-           renderSummary();
-           return;
-       }
-
-
-       const section = quizData[currentSectionIndex];
-
-
-       // Update Header with smooth fade
-       headerTitle.style.opacity = '0';
-       setTimeout(() => {
-           headerTitle.innerText = section.title;
-           headerTitle.style.transition = 'opacity 0.2s';
-           headerTitle.style.opacity = '1';
-       }, 150);
-
-
-       // Calculate total progress
-       let totalQuestions = 0;
-       let answeredQuestions = 0;
-      
-       quizData.forEach((sec, idx) => {
-           totalQuestions += sec.questions.length;
-           if (idx < currentSectionIndex) {
-               answeredQuestions += sec.questions.length;
-           } else if (idx === currentSectionIndex && state === 'question') {
-               answeredQuestions += currentQuestionIndex;
+	<html lang="sv">
+	<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Biologiquiz: Kroppen & Organ (Åk 9)</title>
+	<!-- Importerar moderna fonter från Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+	
+
+	<style>
+	:root {
+	/* Färgpalett - Rött Tema (Kroppen/Hälsa) med Komplement */
+	--card-bg: #ffffff;
+	
+
+	--brand-color: #c62828; /* Djup röd */
+	--brand-gradient: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+	
+
+	--accent-color: #ef5350; /* Ljusare röd */
+	
+
+	/* Komplementfärg: Mörk Gråblå (Slate) - För balans */
+	--complement-color: #37474f;
+	
+
+	
+
+	--success-color: #2e7d32;
+	--success-bg: #e8f5e9;
+	
+
+	--error-color: #c62828;
+	--error-bg: #ffebee;
+	
+
+	--text-main: #212121;
+	--text-muted: #616161;
+	
+
+	--shadow-card: 0 10px 25px rgba(0,0,0,0.1);
+	--shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+	--radius-main: 16px;
+	}
+	
+
+	
+
+	body {
+	font-family: 'Open Sans', sans-serif;
+	/* Neutral bakgrund med varm ton */
+	background-image: linear-gradient(135deg, #fafafa 0%, #eceff1 100%);
+	color: var(--text-main);
+	margin: 0;
+	padding: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	min-height: 100vh;
+	}
+	
+
+	
+
+	.container {
+	background-color: var(--card-bg);
+	width: 100%;
+	max-width: 680px;
+	border-radius: var(--radius-main);
+	box-shadow: var(--shadow-card);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	margin-top: 3vh;
+	margin-bottom: 3vh;
+	}
+	
+
+	
+
+	header {
+	background: var(--brand-gradient);
+	color: white;
+	padding: 20px;
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+	}
+	
+
+	
+
+	h1 {
+	font-family: 'Poppins', sans-serif;
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: -0.3px;
+	}
+	
+
+	
+
+	.content-area {
+	padding: 25px 30px;
+	flex-grow: 1;
+	}
+	
+
+	
+
+	h2 {
+	font-family: 'Poppins', sans-serif;
+	color: var(--text-main);
+	margin-top: 0;
+	font-size: 1.3rem;
+	margin-bottom: 0.8rem;
+	line-height: 1.3;
+	}
+	
+
+	
+
+	/* Fact Section Styles */
+	.fact-box {
+	background: #ffffff;
+	border: 1px solid #eeeeee;
+	border-radius: 12px;
+	padding: 20px;
+	margin-bottom: 20px;
+	display: flex;
+	gap: 15px;
+	align-items: flex-start;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+	}
+	
+
+	.fact-icon {
+	font-size: 2rem;
+	display: block;
+	margin-top: -5px;
+	color: var(--complement-color); /* Komplementfärg på ikonen */
+	}
+	
+
+	.fact-content {
+	flex: 1;
+	}
+	
+
+	
+
+	.btn {
+	background: var(--brand-gradient);
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1rem;
+	font-weight: 600;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: block;
+	width: 100%;
+	margin-top: 20px;
+	box-shadow: 0 4px 10px rgba(198, 40, 40, 0.2);
+	}
+	
+
+	
+
+	.btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 14px rgba(198, 40, 40, 0.3);
+	opacity: 0.95;
+	}
+	
+
+	
+
+	/* Question Styles */
+	.question-meta {
+	display: inline-block;
+	color: var(--complement-color);
+	font-size: 0.85rem;
+	margin-bottom: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	}
+	
+
+	
+
+	.options-grid {
+	display: grid;
+	gap: 12px;
+	margin-top: 20px;
+	}
+	
+
+	
+
+	.option-btn {
+	background-color: #fff;
+	border: 2px solid #f5f5f5;
+	padding: 15px 20px;
+	text-align: left;
+	border-radius: 10px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 0.95rem;
+	font-weight: 500;
+	transition: all 0.15s ease;
+	color: var(--text-main);
+	position: relative;
+	}
+	
+
+	
+
+	.option-btn:hover:not(:disabled) {
+	border-color: var(--accent-color);
+	background-color: #ffebee;
+	transform: translateX(3px);
+	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+	}
+	
+
+	/* Status states for options */
+	.option-btn.correct {
+	background-color: var(--success-bg);
+	border-color: var(--success-color);
+	color: #1b5e20;
+	font-weight: 600;
+	}
+	
+
+	.option-btn.correct::after {
+	content: "✓";
+	position: absolute;
+	right: 15px;
+	font-weight: bold;
+	}
+	
+
+	
+
+	.option-btn.incorrect {
+	background-color: var(--error-bg);
+	border-color: var(--error-color);
+	color: #b71c1c;
+	opacity: 0.8;
+	}
+	
+
+	
+
+	.option-btn:disabled {
+	cursor: default;
+	}
+	
+
+	
+
+	/* Feedback Box */
+	.feedback-box {
+	margin-top: 20px;
+	padding: 20px 25px;
+	border-radius: 12px;
+	background-color: #f9f9f9;
+	color: var(--text-main);
+	border: 1px solid #e0e0e0;
+	display: none;
+	animation: fadeIn 0.3s ease;
+	}
+	
+
+	.feedback-box h3 {
+	margin-top: 0;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.2rem;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	}
+	
+
+	
+
+	.feedback-box.success h3 {
+	color: var(--success-color);
+	}
+	
+
+	.feedback-box.error h3 {
+	color: var(--error-color);
+	}
+	
+
+	
+
+	.feedback-box strong {
+	color: #000;
+	}
+	
+
+	
+
+	@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(5px); }
+	to { opacity: 1; transform: translateY(0); }
+	}
+	
+
+	
+
+	/* Progress Bar Styles */
+	.progress-bar-container {
+	height: 6px;
+	background-color: #eeeeee;
+	width: 100%;
+	position: relative;
+	z-index: 10;
+	}
+	
+
+	
+
+	.progress-bar {
+	height: 100%;
+	/* Röd gradient */
+	background: linear-gradient(90deg, #ef5350 0%, #c62828 100%);
+	width: 0%;
+	transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+	border-radius: 0 4px 4px 0;
+	box-shadow: 0 0 10px rgba(229, 57, 53, 0.5);
+	}
+	
+
+	
+
+	/* Summary Styles */
+	.summary-stats {
+	text-align: center;
+	background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+	border: 1px solid #ef9a9a;
+	padding: 30px 20px;
+	border-radius: 12px;
+	margin-bottom: 20px;
+	}
+	
+
+	
+
+	.summary-score {
+	font-size: 3.5rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	display: block;
+	margin: 5px 0;
+	line-height: 1;
+	background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	}
+	
+
+	.summary-list {
+	max-height: 400px;
+	overflow-y: auto;
+	padding-right: 10px;
+	}
+	
+
+	.summary-item {
+	background: white;
+	border-bottom: 1px solid #eeeeee;
+	padding: 12px 0;
+	}
+	
+
+	.summary-item:last-child {
+	border-bottom: none;
+	}
+	
+
+	
+
+	.summary-question {
+	font-weight: 600;
+	margin-bottom: 4px;
+	display: block;
+	font-size: 0.95rem;
+	}
+	
+
+	.summary-answer-row {
+	font-size: 0.9rem;
+	}
+	
+
+	
+
+	.summary-correct-text { color: var(--success-color); font-weight: 600; }
+	.summary-wrong-text { color: var(--error-color); text-decoration: line-through; opacity: 0.8;}
+	.real-answer { color: var(--success-color); font-weight: 600; margin-left: 5px; }
+	
+
+	
+
+	/* Helpers */
+	strong {
+	color: #000;
+	font-weight: 700;
+	}
+	
+
+	
+
+	</style>
+	</head>
+	<body>
+	
+
+	
+
+	<div class="container">
+	<header>
+	<h1 id="header-title">Biologiquiz: Kroppen & Organ</h1>
+	</header>
+	<div class="progress-bar-container">
+	<div class="progress-bar" id="progress-bar"></div>
+	</div>
+	
+
+	
+
+	<div class="content-area" id="app">
+	<!-- Content will be injected here by JavaScript -->
+	</div>
+	</div>
+	
+
+	
+
+	<script>
+	// --- DATA —
+
+
+const quizData = [
+   {
+       title: "Del 1: Cellen och Stamceller",
+       icon: "🧬",
+       text: "Cellen är den minsta levande enheten. I en människa finns ca 200 olika celltyper specialiserade för olika uppgifter, som muskelceller eller nervceller. <strong>Stamceller</strong> är unika eftersom de både kan skapa kopior av sig själva och utvecklas till specialiserade celler. Embryonala stamceller kan bli vilken celltyp som helst, medan vuxna stamceller främst ersätter celler i specifika organ.",
+       questions: [
+           {
+               q: "Vilken del av cellen fungerar som dess 'energikraftverk' där cellandningen sker?",
+               options: [
+                   "Cellkärnan", // Kort
+                   "Ribosomerna", // Kort
+                   "Det yttre cellmembranet som skyddar cellen mot omgivningen", // Längst
+                   "Mitokondrierna" // Rätt (Mellan)
+               ],
+               correct: 3,
+               explanation: "I <strong>mitokondrierna</strong> omvandlas druvsocker och syre till energi som cellen kan använda. Man kan säga att det är här 'förbränningen' i kroppen sker."
+           },
+           {
+               q: "Vad är en tumör, rent biologiskt?",
+               options: [
+                   "En cellklump som uppstått genom att celler delat sig okontrollerat", // Rätt (Längst)
+                   "En typ av virus", // Kort
+                   "Ett organ som slutat fungera", // Mellan
+                   "Döda vita blodkroppar" // Mellan
+               ],
+               correct: 0,
+               explanation: "Cancer uppstår när cellens DNA förändras (mutation) så att den delar sig <strong>obegränsat</strong>. När dessa celler klumpar ihop sig bildas en tumör som kan skada organen."
            }
-       });
-       const pct = (answeredQuestions / totalQuestions) * 100;
-       progressBar.style.width = `${pct}%`;
-
-
-       if (state === 'intro') {
-           renderSectionIntro(section);
-       } else if (state === 'question') {
-           renderQuestion(section.questions[currentQuestionIndex]);
-       }
-   }
-
-
-   // --- RENDER SECTION TEXT ---
-   function renderSectionIntro(section) {
-       // Simple animation class reset
-       app.classList.remove('fade-in');
-       void app.offsetWidth; // trigger reflow
-       app.classList.add('fade-in');
-
-
-       app.innerHTML = `
-           <div class="fact-box">
-               <span class="fact-icon">${section.icon}</span>
-               <div class="fact-content">
-                   <h2>Fakta</h2>
-                   <p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
-               </div>
-           </div>
-           <button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
-       `;
-   }
-
-
-   // --- RENDER QUESTION ---
-   function renderQuestion(q) {
-       const totalInCurrent = quizData[currentSectionIndex].questions.length;
-      
-       // Render with reset styles for feedback box
-       app.innerHTML = `
-           <div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
-           <h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
-           <div class="options-grid">
-               ${q.options.map((opt, idx) => `
-                   <button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
-               `).join('')}
-           </div>
-           <div id="feedback" class="feedback-box">
-               <h3 id="feedback-title"></h3>
-               <p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
-               <button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
-           </div>
-       `;
-   }
-
-
-   // --- RENDER SUMMARY ---
-   function renderSummary() {
-       headerTitle.innerText = "Sammanfattning";
-       progressBar.style.width = '100%';
-      
-       let totalQ = 0;
-       quizData.forEach(s => totalQ += s.questions.length);
-      
-       // Calculate score
-       let correctCount = userAnswers.filter(a => a.isCorrect).length;
-       let pct = Math.round((correctCount / totalQ) * 100);
-      
-       let gradeTitle = "";
-      
-       if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
-       else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
-       else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
-       else { gradeTitle = "Fortsätt kämpa! 💪"; }
-
-
-       let html = `
-           <div class="summary-stats">
-               <h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
-               <span class="summary-score">${correctCount}/${totalQ}</span>
-               <span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
-               <button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
-           </div>
-           <h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
-           <div class="summary-list">
-       `;
-
-
-       userAnswers.forEach((ans, idx) => {
-           const isCorrect = ans.isCorrect;
-          
-           html += `
-               <div class="summary-item">
-                   <span class="summary-question">${idx + 1}. ${ans.question}</span>
-                   <div class="summary-answer-row">
-                       ${isCorrect
-                           ? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
-                           : `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
-                       }
-                   </div>
-               </div>
-           `;
-       });
-
-
-       html += `</div>`;
-       app.innerHTML = html;
-   }
-
-
-   // --- LOGIC FUNCTIONS ---
-   window.startQuestions = function() {
-       state = 'question';
-       currentQuestionIndex = 0;
-       render();
-   };
-
-
-   window.handleAnswer = function(selectedIndex) {
-       // Disable all buttons
-       const buttons = document.querySelectorAll('.option-btn');
-       buttons.forEach(b => b.disabled = true);
-
-
-       const section = quizData[currentSectionIndex];
-       const currentQ = section.questions[currentQuestionIndex];
-       const isCorrect = selectedIndex === currentQ.correct;
-
-
-       // Visual feedback on buttons
-       const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
-       const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
-
-
-       if (isCorrect) {
-           selectedBtn.classList.add('correct');
-       } else {
-           selectedBtn.classList.add('incorrect');
-           correctBtn.classList.add('correct'); // Show which one was right
-       }
-
-
-       // Show feedback box
-       const feedbackBox = document.getElementById('feedback');
-       const feedbackTitle = document.getElementById('feedback-title');
-       const feedbackText = document.getElementById('feedback-text');
-       const nextBtn = document.getElementById('next-btn');
-
-
-       feedbackBox.style.display = 'block';
-      
-       // Add class for success/error styling
-       if (isCorrect) {
-           feedbackBox.className = "feedback-box success";
-           feedbackTitle.innerHTML = "Rätt svar!";
-       } else {
-           feedbackBox.className = "feedback-box error";
-           feedbackTitle.innerHTML = "Inte riktigt...";
-       }
-      
-       feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
-
-
-       // Check if last question of entire quiz
-       const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
-      
-       if(isLastQuestionOverall) {
-           nextBtn.innerText = "Se resultat 🏁";
-       } else if (currentQuestionIndex === section.questions.length - 1) {
-           nextBtn.innerText = "Nästa del ➔";
-       }
-
-
-       // Scroll to feedback if needed on mobile, but gently
-       const rect = feedbackBox.getBoundingClientRect();
-       const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
-       if (!isVisible) {
-            setTimeout(() => {
-               feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-           }, 100);
-       }
-
-
-       // Save data
-       userAnswers.push({
-           question: currentQ.q,
-           userAnswer: currentQ.options[selectedIndex],
-           correctAnswer: currentQ.options[currentQ.correct],
-           isCorrect: isCorrect
-       });
-   };
-
-
-   window.nextStep = function() {
-       const section = quizData[currentSectionIndex];
-      
-       // Reset feedback styles for next render
-       const feedbackBox = document.getElementById('feedback');
-       if(feedbackBox) {
-           feedbackBox.style.display = 'none';
-       }
-
-
-       // Check if there are more questions in this section
-       if (currentQuestionIndex < section.questions.length - 1) {
-           currentQuestionIndex++;
-           render();
-       } else {
-           // End of section, move to next section
-           if (currentSectionIndex < quizData.length - 1) {
-               currentSectionIndex++;
-               state = 'intro';
-               render();
-           } else {
-               // End of quiz
-               state = 'summary';
-               render();
+       ]
+   },
+   {
+       title: "Del 2: Nervsystemet och Hjärnan",
+       icon: "🧠",
+       text: "<strong>Nervsystemet</strong> styr kroppen med elektriska impulser. Det delas in i <strong>centrala nervsystemet</strong> (hjärna och ryggmärg) och perifera nervsystemet. <strong>Reflexer</strong> är blixtsnabba eftersom impulsen kopplas om direkt i ryggmärgen. Viljestyrda rörelser kallas däremot för <strong>reaktioner</strong> och kräver att hjärnan tolkar signalen.",
+       questions: [
+           {
+               q: "Vilken funktion har myelinskidan som omger nervcellens långa utskott (axon)?",
+               options: [
+                   "Den fungerar som cellens energikälla", // Mellan
+                   "Den isolerar nervtråden", // Rätt (Kortast)
+                   "Den tillverkar viktiga signalsubstanser som behövs i synapsen", // Längst
+                   "Den tar emot signaler" // Mellan
+               ],
+               correct: 1,
+               explanation: "<strong>Myelinet</strong> är ett fettlager som hindrar signalen från att läcka ut. Detta gör att nervimpulsen kan färdas mycket snabbare, upp mot 150 meter per sekund."
+           },
+           {
+               q: "Vilken del av hjärnan ansvarar för balans och att göra våra rörelser mjuka?",
+               options: [
+                   "Storhjärnan som tänker", // Mellan
+                   "Hjärnstammen", // Kort
+                   "Lillhjärnan", // Rätt (Kortast)
+                   "Det perifera nervsystemet" // Längst
+               ],
+               correct: 2,
+               explanation: "<strong>Lillhjärnan</strong> sitter baktill under storhjärnan. Den tar emot information om kroppens läge och finjusterar rörelserna så att vi inte ramlar eller rör oss ryckigt."
+           },
+           {
+               q: "Vad är den avgörande skillnaden mellan en reflex och en reaktion?",
+               options: [
+                   "Reaktionen är snabbare", // Kort
+                   "Reflexer finns bara hos små barn", // Mellan
+                   "Reflexen är alltid viljestyrd", // Mellan
+                   "Reflexen kopplas om direkt i ryggmärgen, medan reaktionen går via hjärnan" // Rätt (Längst)
+               ],
+               correct: 3,
+               explanation: "Vid en <strong>reflex</strong> (t.ex. om du bränner dig) måste kroppen agera innan du hinner tänka. Signalen vänder därför i ryggmärgen för att spara livsviktig tid."
+           },
+           {
+               q: "Vilken del av hjärnan styr automatiska funktioner som andning och blodtryck?",
+               options: [
+                   "Hjärnstammen", // Rätt (Mellan)
+                   "Pannloben", // Kort
+                   "Den stora hjärnbalken", // Mellan
+                   "Tinningloben där hörseln sitter" // Längst
+               ],
+               correct: 0,
+               explanation: "<strong>Hjärnstammen</strong> är den äldsta delen av hjärnan och styr våra överlevnadsinstinkter. Den ser till att hjärtat slår och att vi andas även när vi sover."
+           },
+           {
+               q: "Vad händer i en synaps (kopplingen mellan två nervceller)?",
+               options: [
+                   "Muskeln drar ihop sig", // Mellan
+                   "Signalsubstanser för impulsen vidare", // Rätt (Mellan)
+                   "Blodet renas", // Kort
+                   "DNA kopieras inför en celldelning för att skapa nya celler" // Längst
+               ],
+               correct: 1,
+               explanation: "I <strong>synapsen</strong> kan den elektriska signalen inte hoppa över själv. Den omvandlas därför till en kemisk signal med hjälp av ämnen som dopamin eller serotonin."
            }
-       }
-   };
+       ]
+   },
+   {
+       title: "Del 3: Hjärta, Blod och Andning",
+       icon: "❤️",
+       text: "Hjärtat är en pump som driver två kretslopp. Det lilla kretsloppet går till lungorna, och det stora kretsloppet pumpar syrerikt blod ut i kroppen. I lungornas <strong>alveoler</strong> (lungblåsor) sker gasutbytet där syre tas upp och koldioxid lämnas av.",
+       questions: [
+           {
+               q: "Vilken är de röda blodkropparnas viktigaste uppgift?",
+               options: [
+                   "Att bilda sårskorpor", // Mellan
+                   "Att reglera kroppsvärmen", // Mellan
+                   "Att transportera syre med hjälp av ämnet hemoglobin", // Rätt (Längst)
+                   "Att äta virus" // Kort
+               ],
+               correct: 2,
+               explanation: "<strong>Hemoglobinet</strong> innehåller järn, vilket är det som binder syret. Utan tillräckligt med röda blodkroppar får cellerna syrebrist och vi blir trötta."
+           },
+           {
+               q: "Varför får man bättre kondition när hjärtat blir starkare?",
+               options: [
+                   "Hjärtat slår mycket snabbare i vila", // Mellan
+                   "Det blir lättare att hålla andan", // Mellan
+                   "Hjärtat bildar socker", // Kort
+                   "Hjärtat orkar pumpa ut mer blod i varje slag" // Rätt (Mellan)
+               ],
+               correct: 3,
+               explanation: "Ett starkt hjärta har en större slagvolym. Det betyder att det kan transportera mer syre till musklerna utan att behöva slå lika många slag per minut."
+           },
+           {
+               q: "Vilket blodkärl leder syrerikt blod från hjärtat ut till kroppen?",
+               options: [
+                   "Artärerna", // Rätt (Kortast)
+                   "De tunna kapillärerna", // Mellan
+                   "Venerna som leder blod tillbaka", // Mellan
+                   "Hålvenerna som samlar upp blod från kroppen" // Längst
+               ],
+               correct: 0,
+               explanation: "<strong>Artärer</strong> är kärl som leder blod *från* hjärtat. Den största artären heter Aortan. Vener leder däremot blodet tillbaka *till* hjärtat."
+           },
+           {
+               q: "Var i lungorna sker själva utbytet av syre och koldioxid?",
+               options: [
+                   "I luftstrupen", // Kort
+                   "I lungblåsorna (alveolerna)", // Rätt (Mellan)
+                   "I den omgivande lungsäcken", // Mellan
+                   "I bronkerna som leder luften ner i lungan" // Längst
+               ],
+               correct: 1,
+               explanation: "<strong>Alveolerna</strong> är små blåsor omgivna av extremt tunna blodkärl. Här kan syret smita över till blodet och koldioxiden vädras ut när vi andas."
+           },
+           {
+               q: "Vad händer med mellangärdet (diafragman) när du andas in?",
+               options: [
+                   "Den står helt stilla", // Kort
+                   "Den producerar slem", // Kort
+                   "Den spänns och dras nedåt så att lungornas volym ökar", // Rätt (Längst)
+                   "Den slappnar av och trycks uppåt" // Mellan
+               ],
+               correct: 2,
+               explanation: "När diafragman dras nedåt skapas ett <strong>undertryck</strong> i bröstkorgen. Det fungerar som en blåsbälg och gör att luft sugs in i lungorna."
+           }
+       ]
+   },
+   {
+       title: "Del 4: Matspjälkning och Rening",
+       icon: "🍽️",
+       text: "<strong>Matspjälkning</strong> innebär att maten delas upp så att näringen kan tas upp av blodet. I <strong>tunntarmen</strong> tas näringen upp. <strong>Levern</strong> och <strong>njurarna</strong> är kroppens reningsverk. Levern bryter ner gifter, medan njurarna filtrerar blodet och bildar urin.",
+       questions: [
+           {
+               q: "Vilket enzym i saliven börjar bryta ner kolhydrater redan i munnen?",
+               options: [
+                   "Det sura ämnet Pepsin", // Mellan
+                   "Hormonet Insulin", // Mellan
+                   "Den fettlösande Gallan", // Mellan
+                   "Amylas" // Rätt (Kortast)
+               ],
+               correct: 3,
+               explanation: "<strong>Amylas</strong> klipper sönder långa kolhydratkedjor (stärkelse) till mindre sockerbitar. Det är därför bröd kan smaka sötare om man tuggar det länge."
+           },
+           {
+               q: "Vilket organ producerar galla för att hjälpa till att bryta ner fett?",
+               options: [
+                   "Levern", // Rätt (Kortast)
+                   "Magsäcken som knådar maten", // Mellan
+                   "Tjocktarmen", // Kort
+                   "Bukspottkörteln" // Mellan
+               ],
+               correct: 0,
+               explanation: "<strong>Levern</strong> tillverkar galla som sedan lagras i gallblåsan. Gallan fungerar som diskmedel; den delar upp fettklumpar i små droppar så att de kan brytas ner."
+           },
+           {
+               q: "Vilken är tjocktarmens absolut viktigaste uppgift?",
+               options: [
+                   "Att bryta ner proteiner", // Mellan
+                   "Att suga upp vatten och salt så att avföringen blir fast", // Rätt (Längst)
+                   "Att producera magsyra", // Mellan
+                   "Att pumpa blod" // Kort
+               ],
+               correct: 1,
+               explanation: "När maten kommer till <strong>tjocktarmen</strong> är den som en lös välling. Tjocktarmen återvinner vattnet till kroppen så att vi inte drabbas av vätskebrist."
+           },
+           {
+               q: "Hur påverkas njurarna av långvarig alkoholkonsumtion?",
+               options: [
+                   "De producerar socker", // Mellan
+                   "De lagrar vitaminer", // Mellan
+                   "Reningen av blodet försämras", // Rätt (Mellan)
+                   "De slutar tillverka galla helt och hållet" // Längst
+               ],
+               correct: 2,
+               explanation: "Alkohol och andra gifter sliter på njurarnas små filter. Om de skadas kan gifter stanna kvar i blodet istället för att kissa ut dem, vilket är farligt."
+           }
+       ]
+   },
+   {
+       title: "Del 5: Försvar och Hälsa",
+       icon: "🛡️",
+       text: "Kroppen skyddas av <strong>immunförsvaret</strong>. Vita blodkroppar (B-celler) bildar <strong>antikroppar</strong> mot inkräktare. <strong>Vaccination</strong> ger kroppen en ofarlig dos av smittämnet så att <strong>minnesceller</strong> kan bildas utan att vi blir sjuka.",
+       questions: [
+           {
+               q: "Vad är själva syftet med att vaccinera sig?",
+               options: [
+                   "Att döda bakterier", // Kort
+                   "Att ge energi", // Kort
+                   "Att bygga muskler", // Kort
+                   "Att lära immunförsvaret att känna igen och bilda försvar mot smittan" // Rätt (Längst)
+               ],
+               correct: 3,
+               explanation: "Vaccinet lurar kroppen att tro att den är sjuk. Då bildas <strong>antikroppar</strong> och minnesceller som snabbt kan bekämpa den verkliga sjukdomen om den dyker upp."
+           },
+           {
+               q: "Varför fungerar inte antibiotika (t.ex. penicillin) mot en vanlig förkylning?",
+               options: [
+                   "Antibiotika biter bara på bakterier, inte virus", // Rätt (Mellan)
+                   "Det är för svagt", // Kort
+                   "Förkylning är ingen sjukdom", // Mellan
+                   "Antibiotika fungerar enbart mot mycket sällsynta tropiska virus" // Längst
+               ],
+               correct: 0,
+               explanation: "Förkylningar orsakas av <strong>virus</strong>. Antibiotika är ett gift som dödar bakterier genom att förstöra deras cellväggar, men virus har inga cellväggar."
+           },
+           {
+               q: "Vilken celltyp 'minns' en genomgången sjukdom så att du blir immun?",
+               options: [
+                   "Röda blodkroppar", // Mellan
+                   "Minnesceller", // Rätt (Mellan)
+                   "Blodplättar", // Kort
+                   "Hudceller som skyddar kroppen" // Längst
+               ],
+               correct: 1,
+               explanation: "Dessa specialiserade vita blodkroppar (B-celler) stannar kvar i blodet i många år. Om samma virus kommer tillbaka, vet <strong>minnescellerna</strong> exakt hur det ska besegras."
+           }
+       ]
+   }
+];
 
 
-   // --- INIT ---
-   render();
+	
 
+	// --- STATE MANAGEMENT ---
+	let currentSectionIndex = 0;
+	let currentQuestionIndex = 0; // Relative to current section
+	let score = 0;
+	let userAnswers = [];
+	let state = 'intro'; // 'intro', 'question', 'summary'
+	
 
-</script>
+	
 
+	// --- DOM ELEMENTS ---
+	const app = document.getElementById('app');
+	const headerTitle = document.getElementById('header-title');
+	const progressBar = document.getElementById('progress-bar');
+	
 
-</body>
-</html>
+	
+
+	// --- MAIN RENDER FUNCTION ---
+	function render() {
+	if (state === 'summary') {
+	renderSummary();
+	return;
+	}
+	
+
+	
+
+	const section = quizData[currentSectionIndex];
+	
+
+	
+
+	// Update Header with smooth fade
+	headerTitle.style.opacity = '0';
+	setTimeout(() => {
+	headerTitle.innerText = section.title;
+	headerTitle.style.transition = 'opacity 0.2s';
+	headerTitle.style.opacity = '1';
+	}, 150);
+	
+
+	
+
+	// Calculate total progress
+	let totalQuestions = 0;
+	let answeredQuestions = 0;
+	
+
+	quizData.forEach((sec, idx) => {
+	totalQuestions += sec.questions.length;
+	if (idx < currentSectionIndex) {
+	answeredQuestions += sec.questions.length;
+	} else if (idx === currentSectionIndex && state === 'question') {
+	answeredQuestions += currentQuestionIndex;
+	}
+	});
+	const pct = (answeredQuestions / totalQuestions) * 100;
+	progressBar.style.width = `${pct}%`;
+	
+
+	
+
+	if (state === 'intro') {
+	renderSectionIntro(section);
+	} else if (state === 'question') {
+	renderQuestion(section.questions[currentQuestionIndex]);
+	}
+	}
+	
+
+	
+
+	// --- RENDER SECTION TEXT ---
+	function renderSectionIntro(section) {
+	// Simple animation class reset
+	app.classList.remove('fade-in');
+	void app.offsetWidth; // trigger reflow
+	app.classList.add('fade-in');
+	
+
+	
+
+	app.innerHTML = `
+	<div class="fact-box">
+	<span class="fact-icon">${section.icon}</span>
+	<div class="fact-content">
+	<h2>Fakta</h2>
+	<p style="line-height: 1.6; font-size: 1rem; margin-top:0;">${section.text}</p>
+	</div>
+	</div>
+	<button class="btn" onclick="startQuestions()">Starta frågor för denna del</button>
+	`;
+	}
+	
+
+	
+
+	// --- RENDER QUESTION ---
+	function renderQuestion(q) {
+	const totalInCurrent = quizData[currentSectionIndex].questions.length;
+	
+
+	// Render with reset styles for feedback box
+	app.innerHTML = `
+	<div class="question-meta">Del ${currentSectionIndex + 1} • Fråga ${currentQuestionIndex + 1}/${totalInCurrent}</div>
+	<h2 style="color: var(--text-main); font-weight: 600; margin-bottom:15px;">${q.q}</h2>
+	<div class="options-grid">
+	${q.options.map((opt, idx) => `
+	<button class="option-btn" onclick="handleAnswer(${idx})" id="opt-${idx}">${opt}</button>
+	`).join('')}
+	</div>
+	<div id="feedback" class="feedback-box">
+	<h3 id="feedback-title"></h3>
+	<p id="feedback-text" style="margin: 5px 0 15px 0; font-size: 0.95rem; line-height: 1.6;"></p>
+	<button class="btn" id="next-btn" onclick="nextStep()" style="margin-top:0; width: auto; min-width: 150px;">Nästa fråga ➔</button>
+	</div>
+	`;
+	}
+	
+
+	
+
+	// --- RENDER SUMMARY ---
+	function renderSummary() {
+	headerTitle.innerText = "Sammanfattning";
+	progressBar.style.width = '100%';
+	
+
+	let totalQ = 0;
+	quizData.forEach(s => totalQ += s.questions.length);
+	
+
+	// Calculate score
+	let correctCount = userAnswers.filter(a => a.isCorrect).length;
+	let pct = Math.round((correctCount / totalQ) * 100);
+	
+
+	let gradeTitle = "";
+	
+
+	if(pct > 90) { gradeTitle = "Fantastiskt bra! 🏆"; }
+	else if(pct > 70) { gradeTitle = "Mycket bra jobbat! 🌟"; }
+	else if(pct > 50) { gradeTitle = "Godkänt! 👍"; }
+	else { gradeTitle = "Fortsätt kämpa! 💪"; }
+	
+
+	
+
+	let html = `
+	<div class="summary-stats">
+	<h2 style="color:var(--brand-color); margin:0 0 10px 0;">${gradeTitle}</h2>
+	<span class="summary-score">${correctCount}/${totalQ}</span>
+	<span style="color:#666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Rätt svar</span>
+	<button class="btn" onclick="location.reload()" style="background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); margin-top: 20px; box-shadow:none; width: auto; padding: 10px 30px;">Gör om testet</button>
+	</div>
+	<h3 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--text-muted);">Dina svar:</h3>
+	<div class="summary-list">
+	`;
+	
+
+	
+
+	userAnswers.forEach((ans, idx) => {
+	const isCorrect = ans.isCorrect;
+	
+
+	html += `
+	<div class="summary-item">
+	<span class="summary-question">${idx + 1}. ${ans.question}</span>
+	<div class="summary-answer-row">
+	${isCorrect
+	? `<span class="summary-correct-text">✔ ${ans.userAnswer}</span>`
+	: `<span class="summary-wrong-text">✖ ${ans.userAnswer}</span> <span style="margin: 0 5px; color:#999;">➔</span> <span class="real-answer">${ans.correctAnswer}</span>`
+	}
+	</div>
+	</div>
+	`;
+	});
+	
+
+	
+
+	html += `</div>`;
+	app.innerHTML = html;
+	}
+	
+
+	
+
+	// --- LOGIC FUNCTIONS ---
+	window.startQuestions = function() {
+	state = 'question';
+	currentQuestionIndex = 0;
+	render();
+	};
+	
+
+	
+
+	window.handleAnswer = function(selectedIndex) {
+	// Disable all buttons
+	const buttons = document.querySelectorAll('.option-btn');
+	buttons.forEach(b => b.disabled = true);
+	
+
+	
+
+	const section = quizData[currentSectionIndex];
+	const currentQ = section.questions[currentQuestionIndex];
+	const isCorrect = selectedIndex === currentQ.correct;
+	
+
+	
+
+	// Visual feedback on buttons
+	const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+	const correctBtn = document.getElementById(`opt-${currentQ.correct}`);
+	
+
+	
+
+	if (isCorrect) {
+	selectedBtn.classList.add('correct');
+	} else {
+	selectedBtn.classList.add('incorrect');
+	correctBtn.classList.add('correct'); // Show which one was right
+	}
+	
+
+	
+
+	// Show feedback box
+	const feedbackBox = document.getElementById('feedback');
+	const feedbackTitle = document.getElementById('feedback-title');
+	const feedbackText = document.getElementById('feedback-text');
+	const nextBtn = document.getElementById('next-btn');
+	
+
+	
+
+	feedbackBox.style.display = 'block';
+	
+
+	// Add class for success/error styling
+	if (isCorrect) {
+	feedbackBox.className = "feedback-box success";
+	feedbackTitle.innerHTML = "Rätt svar!";
+	} else {
+	feedbackBox.className = "feedback-box error";
+	feedbackTitle.innerHTML = "Inte riktigt...";
+	}
+	
+
+	feedbackText.innerHTML = currentQ.explanation; // Use innerHTML to render <strong> tags
+	
+
+	
+
+	// Check if last question of entire quiz
+	const isLastQuestionOverall = (currentSectionIndex === quizData.length - 1) && (currentQuestionIndex === section.questions.length - 1);
+	
+
+	if(isLastQuestionOverall) {
+	nextBtn.innerText = "Se resultat 🏁";
+	} else if (currentQuestionIndex === section.questions.length - 1) {
+	nextBtn.innerText = "Nästa del ➔";
+	}
+	
+
+	
+
+	// Scroll to feedback if needed on mobile, but gently
+	const rect = feedbackBox.getBoundingClientRect();
+	const isVisible = (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+	if (!isVisible) {
+	setTimeout(() => {
+	feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}, 100);
+	}
+	
+
+	
+
+	// Save data
+	userAnswers.push({
+	question: currentQ.q,
+	userAnswer: currentQ.options[selectedIndex],
+	correctAnswer: currentQ.options[currentQ.correct],
+	isCorrect: isCorrect
+	});
+	};
+	
+
+	
+
+	window.nextStep = function() {
+	const section = quizData[currentSectionIndex];
+	
+
+	// Reset feedback styles for next render
+	const feedbackBox = document.getElementById('feedback');
+	if(feedbackBox) {
+	feedbackBox.style.display = 'none';
+	}
+	
+
+	
+
+	// Check if there are more questions in this section
+	if (currentQuestionIndex < section.questions.length - 1) {
+	currentQuestionIndex++;
+	render();
+	} else {
+	// End of section, move to next section
+	if (currentSectionIndex < quizData.length - 1) {
+	currentSectionIndex++;
+	state = 'intro';
+	render();
+	} else {
+	// End of quiz
+	state = 'summary';
+	render();
+	}
+	}
+	};
+	
+
+	
+
+	// --- INIT ---
+	render();
+	
+
+	
+
+	</script>
+	
+
+	
+
+	</body>
+	</html>
