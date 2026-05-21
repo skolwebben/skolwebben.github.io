@@ -1,0 +1,602 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <title>Maskspel (Snake) - Ljuslila Fruktfest</title>
+   <!-- Använder Tailwind CSS via CDN för snygg och snabb styling -->
+   <script src="https://cdn.tailwindcss.com"></script>
+   <style>
+       /* Förhindra skrollning på touch-enheter när man drar över spelplanen */
+       canvas#gameCanvas {
+           touch-action: none;
+       }
+       body {
+           /* Förhindrar 'studs'-effekten när man skrollar på iOS */
+           overscroll-behavior: none;
+       }
+   </style>
+</head>
+<body class="bg-gradient-to-br from-fuchsia-100 via-purple-50 to-indigo-100 text-slate-800 font-sans min-h-screen flex flex-col items-center justify-center overflow-hidden selection:bg-purple-200 selection:text-slate-900 relative">
+
+
+   <!-- Bakgrundscanvas för fruktregnet -->
+   <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none -z-10"></canvas>
+
+
+   <div class="max-w-md w-full px-4 flex flex-col items-center z-10">
+       <!-- Header & Poäng -->
+       <div class="w-full flex justify-between items-center mb-6">
+           <h1 class="text-4xl font-black tracking-wider bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 bg-clip-text text-transparent filter drop-shadow-sm animate-pulse">
+               SNAKE 🍒
+           </h1>
+           <div class="flex space-x-3">
+               <div class="bg-white/85 px-3 py-1.5 rounded-xl border border-purple-200 shadow-sm flex flex-col items-center min-w-[75px] backdrop-blur-sm">
+                   <span class="text-purple-600 text-[10px] uppercase font-bold tracking-wider">Bästa</span>
+                   <span id="highScoreDisplay" class="text-lg font-black text-purple-700">0</span>
+               </div>
+               <div class="bg-white/85 px-3 py-1.5 rounded-xl border border-pink-200 shadow-sm flex flex-col items-center min-w-[75px] backdrop-blur-sm">
+                   <span class="text-pink-600 text-[10px] uppercase font-bold tracking-wider">Frukter</span>
+                   <span id="scoreDisplay" class="text-lg font-black text-slate-800">0</span>
+               </div>
+           </div>
+       </div>
+
+
+       <!-- Spelcontainer -->
+       <div class="relative w-full aspect-square max-w-[400px]">
+           <!-- Spelplanen har en mycket fin ljuslila färg (bg-purple-100/95) och en matchande lila ram -->
+           <canvas id="gameCanvas" width="400" height="400" class="bg-purple-100/95 rounded-2xl shadow-xl border-4 border-purple-300 w-full h-full backdrop-blur-sm"></canvas>
+          
+           <!-- Overlay för Start / Game Over -->
+           <div id="overlay" class="absolute inset-0 bg-purple-950/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center transition-opacity duration-300 border border-purple-500/20">
+               <span class="text-5xl mb-2 animate-bounce">🍎🍓🍌</span>
+               <h2 id="overlayTitle" class="text-4xl font-extrabold text-white mb-2 tracking-wide">Fruktfest?</h2>
+               <p id="overlayMessage" class="text-purple-200 text-center px-6 mb-6 text-sm leading-relaxed">Tryck på knappen för att starta din hungriga mask!</p>
+               <button id="startBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-extrabold py-3.5 px-10 rounded-full shadow-lg shadow-purple-500/20 transition-all transform hover:scale-105 active:scale-95 text-lg tracking-wide uppercase">
+                   Spela
+               </button>
+           </div>
+       </div>
+
+
+       <!-- Instruktioner -->
+       <p class="mt-8 text-purple-800/60 text-xs text-center font-bold tracking-wide">
+           <span class="hidden sm:inline">Använd piltangenterna eller W A S D för att styra.<br></span>
+           <span class="sm:hidden">Svep (swipe) över skärmen för att styra.<br></span>
+       </p>
+   </div>
+
+
+   <script>
+       // --- Bakgrundseffekt: Smooth Fruktregn ---
+       const bgCanvas = document.getElementById('bgCanvas');
+       const bgCtx = bgCanvas.getContext('2d');
+       const fruitTypes = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍒', '🍉', '🍍', '🥝', '🍑'];
+       let bgFruits = [];
+       const maxBgFruits = 25; // Antal frukter som regnar samtidigt
+
+
+       function resizeBgCanvas() {
+           bgCanvas.width = window.innerWidth;
+           bgCanvas.height = window.innerHeight;
+       }
+       window.addEventListener('resize', resizeBgCanvas);
+       resizeBgCanvas();
+
+
+       // Skapa regnande frukter med mer dynamisk fysik (för mjukare känsla)
+       for (let i = 0; i < maxBgFruits; i++) {
+           bgFruits.push({
+               x: Math.random() * bgCanvas.width,
+               y: Math.random() * bgCanvas.height,
+               size: Math.random() * 20 + 20, // Storlek mellan 20px och 40px
+               speed: Math.random() * 1.0 + 0.4, // Lugnt daltempo
+               emoji: fruitTypes[Math.floor(Math.random() * fruitTypes.length)],
+               angle: Math.random() * Math.PI * 2,
+               spin: (Math.random() - 0.5) * 0.01, // Hur snabbt de roterar
+               swayPhase: Math.random() * Math.PI * 2, // Fas för mjuk sidorörelse
+               swaySpeed: Math.random() * 0.015 + 0.005 // Hur snabbt de svänger i sidled
+           });
+       }
+
+
+       let lastBgTime = performance.now();
+       function animateBg(timestamp) {
+           // Beräkna tidsskillnad för att regnet ska flyta på i exakt samma takt oavsett skärmens hz
+           const dt = Math.min(3, (timestamp - lastBgTime) / 16.666);
+           lastBgTime = timestamp;
+
+
+           bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+
+           bgFruits.forEach(fruit => {
+               fruit.y += fruit.speed * dt;
+               fruit.angle += fruit.spin * dt;
+               fruit.swayPhase += fruit.swaySpeed * dt;
+              
+               // Skapar en jättefin, mjuk s-kurva när frukterna faller
+               const swayOffset = Math.sin(fruit.swayPhase) * 0.4 * dt;
+               fruit.x += swayOffset;
+
+
+               // Om en frukt dalar utanför botten, placera om den högst upp
+               if (fruit.y > bgCanvas.height + 50) {
+                   fruit.y = -50;
+                   fruit.x = Math.random() * bgCanvas.width;
+                   fruit.speed = Math.random() * 1.0 + 0.4;
+                   fruit.emoji = fruitTypes[Math.floor(Math.random() * fruitTypes.length)];
+                   fruit.swayPhase = Math.random() * Math.PI * 2;
+               }
+
+
+               bgCtx.save();
+               bgCtx.translate(fruit.x, fruit.y);
+               bgCtx.rotate(fruit.angle);
+               bgCtx.globalAlpha = 0.15; // Mycket subtil opacitet för att hålla fokus på spelet
+               bgCtx.font = `${fruit.size}px serif`;
+               bgCtx.textAlign = 'center';
+               bgCtx.textBaseline = 'middle';
+               bgCtx.fillText(fruit.emoji, 0, 0);
+               bgCtx.restore();
+           });
+
+
+           requestAnimationFrame(animateBg);
+       }
+       requestAnimationFrame(animateBg);
+
+
+
+
+       // --- Spelkod ---
+       const canvas = document.getElementById('gameCanvas');
+       const ctx = canvas.getContext('2d');
+       const scoreDisplay = document.getElementById('scoreDisplay');
+       const highScoreDisplay = document.getElementById('highScoreDisplay');
+       const overlay = document.getElementById('overlay');
+       const overlayTitle = document.getElementById('overlayTitle');
+       const overlayMessage = document.getElementById('overlayMessage');
+       const startBtn = document.getElementById('startBtn');
+
+
+       // Spelinställningar
+       const gridSize = 20; // 20x20 rutnät
+       const tileCount = 20;
+       let speed = 160; // Tid mellan logiska uppdateringar (millisekunder)
+       let gameLoopId;
+
+
+       // Spelvariabler
+       let snake = [];
+       let previousSnake = []; // Sparar förra positionen för mjuk rörelse-interpolation
+       let food = { x: -1, y: -1, type: '🍎' };
+       let dx = 0;
+       let dy = 0;
+       let nextDx = 0;
+       let nextDy = 0;
+       let score = 0;
+       let highScore = localStorage.getItem('snakeHighScore') || 0;
+       let gameActive = false;
+       let lastTickTime = 0;
+
+
+       // Fruktiga färger för maskens olika segment (skapar en regnbågseffekt)
+       const fruitColors = [
+           '#f43f5e', // Jordgubbsröd
+           '#f97316', // Mango-orange
+           '#eab308', // Banangul
+           '#10b981', // Lime/Mintgrön
+           '#06b6d4', // Blåbärsblå
+           '#8b5cf6'  // Vindruvs-lila
+       ];
+
+
+       // Touch-variabler
+       let touchStartX = 0;
+       let touchStartY = 0;
+
+
+       // Visa sparat high score när sidan laddas
+       highScoreDisplay.textContent = highScore;
+
+
+       // Initiera spelet
+       function initGame() {
+           // Startposition i mitten
+           snake = [
+               { x: 10, y: 10 },
+               { x: 10, y: 11 },
+               { x: 10, y: 12 }
+           ];
+           previousSnake = JSON.parse(JSON.stringify(snake));
+          
+           dx = 0;
+           dy = -1; // Börjar röra sig uppåt
+           nextDx = 0;
+           nextDy = -1;
+          
+           score = 0;
+           scoreDisplay.textContent = score;
+           speed = 170; // Startfördröjning i millisekunder
+          
+           spawnFood();
+           gameActive = true;
+           overlay.classList.add('hidden');
+          
+           lastTickTime = performance.now();
+           if (gameLoopId) cancelAnimationFrame(gameLoopId);
+           gameLoopId = requestAnimationFrame(gameLoop);
+       }
+
+
+       // Slumpa fram mat
+       function spawnFood() {
+           let validPosition = false;
+           while (!validPosition) {
+               food = {
+                   x: Math.floor(Math.random() * tileCount),
+                   y: Math.floor(Math.random() * tileCount),
+                   type: fruitTypes[Math.floor(Math.random() * fruitTypes.length)]
+               };
+               // Kontrollera att frukten inte hamnar på masken
+               validPosition = !snake.some(segment => segment.x === food.x && segment.y === food.y);
+           }
+       }
+
+
+       // Ny mjuk spelloop som uppdateras baserat på tidsskillnad
+       function gameLoop(timestamp) {
+           if (!gameActive) return;
+
+
+           let elapsed = timestamp - lastTickTime;
+
+
+           // Om tillräckligt med tid har gått gör vi en logisk uppdatering (ett "tick")
+           if (elapsed >= speed) {
+               update();
+               lastTickTime = timestamp - (elapsed % speed);
+               elapsed = timestamp - lastTickTime;
+           }
+
+
+           // Räkna ut hur långt vi har kommit mellan det förra och nästa steget (mellan 0.0 och 1.0)
+           let progress = Math.min(1, elapsed / speed);
+
+
+           draw(progress);
+
+
+           gameLoopId = requestAnimationFrame(gameLoop);
+       }
+
+
+       // Uppdatera spelstatus (Logiska förändringar)
+       function update() {
+           // Spara den nuvarande positionen så vi kan glida mjukt från den
+           previousSnake = JSON.parse(JSON.stringify(snake));
+
+
+           // Uppdatera riktning från input, men förhindra 180-graders svängar
+           if (nextDx !== -dx || dx === 0) dx = nextDx;
+           if (nextDy !== -dy || dy === 0) dy = nextDy;
+
+
+           // Beräkna nytt huvud
+           const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+
+           // Kolla kollision med väggar
+           if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+               gameOver();
+               return;
+           }
+
+
+           // Kolla kollision med sig själv
+           if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+               gameOver();
+               return;
+           }
+
+
+           // Lägg till nytt huvud
+           snake.unshift(head);
+
+
+           // Kolla om vi äter frukten
+           if (head.x === food.x && head.y === food.y) {
+               score += 1;
+               scoreDisplay.textContent = score;
+               // Öka hastigheten mycket långsammare och sätt en gräns
+               if (speed > 80) speed -= 2;
+               spawnFood();
+           } else {
+               // Ta bort svansen om vi inte åt
+               snake.pop();
+           }
+       }
+
+
+       // Rita ut allt med mjuk rörelse-interpolation
+       function draw(progress = 1.0) {
+           // Rensa skärmen
+           ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+           const tileW = canvas.width / tileCount;
+           const tileH = canvas.height / tileCount;
+
+
+           // Rita ett svagt mönster (lila stödraster) för bättre spelkänsla
+           ctx.strokeStyle = 'rgba(147, 51, 234, 0.08)';
+           ctx.lineWidth = 1;
+
+
+           for (let i = 0; i < tileCount; i++) {
+               ctx.beginPath();
+               ctx.moveTo(i * tileW, 0);
+               ctx.lineTo(i * tileW, canvas.height);
+               ctx.stroke();
+
+
+               ctx.beginPath();
+               ctx.moveTo(0, i * tileH);
+               ctx.lineTo(canvas.width, i * tileH);
+               ctx.stroke();
+           }
+
+
+           // Rita frukten som en emoji
+           if (food.x >= 0 && food.y >= 0) {
+               ctx.shadowBlur = 8;
+               ctx.shadowColor = 'rgba(76, 29, 149, 0.25)';
+              
+               ctx.font = `${tileH * 0.85}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+               ctx.textAlign = "center";
+               ctx.textBaseline = "middle";
+               ctx.fillText(
+                   food.type,
+                   food.x * tileW + tileW / 2,
+                   food.y * tileH + tileH / 2 + 1
+               );
+
+
+               ctx.shadowBlur = 0;
+           }
+
+
+           // Skapa lista med delar som ska ritas ut med glidande positioner
+           let segmentsToDraw = [];
+
+
+           for (let i = 0; i < snake.length; i++) {
+               const curr = snake[i];
+               const prev = previousSnake[i] || curr;
+
+
+               // Räkna ut den exakta mellanliggande positionen
+               const interpX = prev.x + (curr.x - prev.x) * progress;
+               const interpY = prev.y + (curr.y - prev.y) * progress;
+
+
+               segmentsToDraw.push({
+                   x: interpX,
+                   y: interpY,
+                   index: i,
+                   scale: 1.0
+               });
+           }
+
+
+           // Om masken rör sig framåt utan att ha ätit, krymp den allra sista svansdelen mjukt
+           if (previousSnake.length > snake.length && previousSnake.length > 0) {
+               const oldTail = previousSnake[previousSnake.length - 1];
+               // Skala går från 1.0 till 0.0 under rörelsen
+               const scale = 1.0 - progress;
+               segmentsToDraw.push({
+                   x: oldTail.x,
+                   y: oldTail.y,
+                   index: previousSnake.length - 1,
+                   scale: scale
+               });
+           }
+
+
+           // Rita hela masken baserat på de mjuka positionerna
+           segmentsToDraw.forEach((segment) => {
+               const colorIndex = segment.index % fruitColors.length;
+               ctx.fillStyle = fruitColors[colorIndex];
+
+
+               const radius = 6 * segment.scale;
+               const w = (tileW - 3) * segment.scale;
+               const h = (tileH - 3) * segment.scale;
+
+
+               // Centrera den krympande svansdelen
+               const xOffset = (tileW - 3 - w) / 2;
+               const yOffset = (tileH - 3 - h) / 2;
+
+
+               const x = segment.x * tileW + 1.5 + xOffset;
+               const y = segment.y * tileH + 1.5 + yOffset;
+
+
+               if (w <= 0 || h <= 0) return;
+
+
+               // Skapa rundade hörn på delarna
+               ctx.beginPath();
+               ctx.moveTo(x + radius, y);
+               ctx.lineTo(x + w - radius, y);
+               ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+               ctx.lineTo(x + w, y + h - radius);
+               ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+               ctx.lineTo(x + radius, y + h - radius);
+               ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+               ctx.lineTo(x, y + radius);
+               ctx.quadraticCurveTo(x, y, x + radius, y);
+               ctx.closePath();
+               ctx.fill();
+
+
+               ctx.strokeStyle = '#2e1065';
+               ctx.lineWidth = 1.5 * segment.scale;
+               ctx.stroke();
+
+
+               // Rita söta ögon på huvudet (index 0)
+               if (segment.index === 0) {
+                   ctx.fillStyle = '#ffffff'; // Ögonvitor
+                   const eyeRadius = 3.5;
+                   const pupilRadius = 1.5;
+                  
+                   let leftEyeX, leftEyeY, rightEyeX, rightEyeY;
+
+
+                   if (dx === 1) { // Höger
+                       leftEyeX = x + w - 6; leftEyeY = y + 5;
+                       rightEyeX = x + w - 6; rightEyeY = y + h - 5;
+                   } else if (dx === -1) { // Vänster
+                       leftEyeX = x + 6; leftEyeY = y + 5;
+                       rightEyeX = x + 6; rightEyeY = y + h - 5;
+                   } else if (dy === 1) { // Neråt
+                       leftEyeX = x + 5; leftEyeY = y + h - 6;
+                       rightEyeX = x + w - 5; rightEyeY = y + h - 6;
+                   } else { // Uppåt
+                       leftEyeX = x + 5; leftEyeY = y + 6;
+                       rightEyeX = x + w - 5; rightEyeY = y + 6;
+                   }
+
+
+                   ctx.beginPath();
+                   ctx.arc(leftEyeX, leftEyeY, eyeRadius, 0, Math.PI * 2);
+                   ctx.arc(rightEyeX, rightEyeY, eyeRadius, 0, Math.PI * 2);
+                   ctx.fill();
+
+
+                   ctx.fillStyle = '#0f172a'; // Pupiller
+                   ctx.beginPath();
+                   ctx.arc(leftEyeX, leftEyeY, pupilRadius, 0, Math.PI * 2);
+                   ctx.arc(rightEyeX, rightEyeY, pupilRadius, 0, Math.PI * 2);
+                   ctx.fill();
+               }
+           });
+       }
+
+
+       // Hantera Game Over
+       function gameOver() {
+           gameActive = false;
+           if (gameLoopId) cancelAnimationFrame(gameLoopId);
+          
+           let message = `Du samlade ${score} frukter! Bra jobbat.`;
+          
+           if (score > highScore) {
+               highScore = score;
+               localStorage.setItem('snakeHighScore', highScore);
+               highScoreDisplay.textContent = highScore;
+               message = `Mums! Nytt fruktrekord: ${score} 🎉`;
+           }
+          
+           overlayTitle.textContent = "Spelet Slut!";
+           overlayTitle.classList.replace('text-white', 'text-pink-500');
+           overlayMessage.textContent = message;
+           startBtn.textContent = "Spela Igen";
+           overlay.classList.remove('hidden');
+       }
+
+
+       // --- Kontroller ---
+
+
+       window.addEventListener('keydown', (e) => {
+           if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight", " "].indexOf(e.code) > -1) {
+               e.preventDefault();
+           }
+
+
+           if (!gameActive) return;
+
+
+           switch(e.key) {
+               case 'ArrowUp':
+               case 'w':
+               case 'W':
+                   if (dy !== 1) { nextDx = 0; nextDy = -1; }
+                   break;
+               case 'ArrowDown':
+               case 's':
+               case 'S':
+                   if (dy !== -1) { nextDx = 0; nextDy = 1; }
+                   break;
+               case 'ArrowLeft':
+               case 'a':
+               case 'A':
+                   if (dx !== 1) { nextDx = -1; nextDy = 0; }
+                   break;
+               case 'ArrowRight':
+               case 'd':
+               case 'D':
+                   if (dx !== -1) { nextDx = 1; nextDy = 0; }
+                   break;
+           }
+       });
+
+
+       canvas.addEventListener('touchstart', (e) => {
+           touchStartX = e.changedTouches[0].screenX;
+           touchStartY = e.changedTouches[0].screenY;
+       }, { passive: false });
+
+
+       canvas.addEventListener('touchmove', (e) => {
+           e.preventDefault();
+       }, { passive: false });
+
+
+       canvas.addEventListener('touchend', (e) => {
+           if (!gameActive) return;
+
+
+           const touchEndX = e.changedTouches[0].screenX;
+           const touchEndY = e.changedTouches[0].screenY;
+          
+           handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+       }, { passive: false });
+
+
+       function handleSwipe(startX, startY, endX, endY) {
+           const diffX = endX - startX;
+           const diffY = endY - startY;
+          
+           if (Math.abs(diffX) < 30 && Math.abs(diffY) < 30) return;
+
+
+           if (Math.abs(diffX) > Math.abs(diffY)) {
+               if (diffX > 0 && dx !== -1) {
+                   nextDx = 1; nextDy = 0;
+               } else if (diffX < 0 && dx !== 1) {
+                   nextDx = -1; nextDy = 0;
+               }
+           } else {
+               if (diffY > 0 && dy !== -1) {
+                   nextDx = 0; nextDy = 1;
+               } else if (diffY < 0 && dy !== 1) {
+                   nextDx = 0; nextDy = -1;
+               }
+           }
+       }
+
+
+       startBtn.addEventListener('click', initGame);
+
+
+       // Rita första statiska bilden
+       draw(1.0);
+   </script>
+</body>
+</html>
