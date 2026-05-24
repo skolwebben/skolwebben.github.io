@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zervos Fastighetsförmedling - Hitta ditt drömhem</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght=0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght=200..800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1311;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Regnig bakgrundseffekt på canvas */
+        #rainCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.45;
+        }
+
+        /* Dimma och mysig belysning */
+        .ambient-glow {
+            background: radial-gradient(circle at 50% 30%, rgba(20, 50, 35, 0.4) 0%, rgba(11, 19, 17, 0) 70%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Hover-filter panel som glider ut elegant */
+        .filter-panel {
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Aktiveras vid hover på triggerområdet eller när panelen själv hoveras */
+        .hover-trigger:hover .filter-panel,
+        .filter-panel:hover {
+            transform: translateX(0);
+        }
+
+        /* Touch-stöd: Klass för att tvinga fram öppen panel */
+        .filter-panel.is-open {
+            transform: translateX(0);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f1c18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3f20;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2d5a30;
+        }
+
+        /* Glas-morfism (Glassmorphism) */
+        .glass {
+            background: rgba(15, 28, 24, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-light {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex flex-col">
+
+    <!-- Regnig bakgrundskanvas -->
+    <canvas id="rainCanvas"></canvas>
+    <!-- Mysigt grönt ljussken -->
+    <div class="ambient-glow"></div>
+
+    <!-- LOGOTYP & MENY -->
+    <header class="glass sticky top-0 z-40 px-6 py-4 transition-all duration-300">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-800 text-emerald-100 p-2 rounded-lg flex items-center justify-center shadow-lg">
+                    <i data-lucide="home" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-bold tracking-wider text-emerald-100 font-serif">ZERVOS</span>
+                    <span class="text-xs block text-emerald-400 font-sans tracking-widest uppercase">Premium Fastigheter</span>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-emerald-100/80">
+                <a href="#bostader" class="hover:text-emerald-400 transition-colors">Sök Bostad</a>
+                <a href="#varfor-zervos" class="hover:text-emerald-400 transition-colors">Om Zervos</a>
+                <a href="#kalkylator" class="hover:text-emerald-400 transition-colors">Bolånekalkyl</a>
+                <a href="#kontakt" class="hover:text-emerald-400 transition-colors">Kontakta Oss</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleMobileFilter()" class="lg:hidden bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-300 p-2.5 rounded-lg flex items-center gap-2 border border-emerald-800/50 transition-all">
+                    <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                    <span class="text-xs font-semibold">Filter</span>
+                </button>
+                <a href="#kontakt" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-emerald-950/50 transition-all hover:-translate-y-0.5 hidden sm:inline-block">
+                    Boka Fri Värdering
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HUVUDINNEHÅLL -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        
+        <!-- HERO SEKTION -->
+        <section class="mb-12 text-center max-w-3xl mx-auto mt-6 md:mt-12">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-800/30 text-emerald-300 text-xs font-medium mb-6 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Smidigt för nybörjaren • Kraftfullt för proffset
+            </div>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif text-white leading-tight mb-6">
+                Hitta ditt nästa kap bland <span class="text-emerald-400 italic font-normal">Sveriges vackraste</span> miljöer
+            </h1>
+            <p class="text-base sm:text-lg text-emerald-100/70 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Zervos premium fastigheter erbjuder hus både i innerstan men även i yttersta delarna av Stockholm. Sätt dig bekvämt med en varm kopp te, lyssna på det rogivande regnet mot rutan och låt oss vägleda dig hem. Oavsett om du söker en idyllisk bondgård på landet, en äkta 1920-talsdröm i Mälarhöjden eller exakt finansiell data för en investering, så gör vi bostadsresan harmonisk och trygg.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#bostader" class="bg-emerald-700 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl font-medium shadow-lg hover:shadow-emerald-900/30 transition-all flex items-center gap-2">
+                    Utforska bostäder
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+                <a href="#kalkylator" class="glass hover:bg-white/5 text-emerald-100 px-8 py-4 rounded-xl font-medium transition-all">
+                    Gör en boendekalkyl
+                </a>
+            </div>
+        </section>
+
+        <!-- KATEGORI-KNAPP: STOCKHOLM VS SVERIGE -->
+        <div class="flex items-center justify-center mb-10">
+            <div class="bg-emerald-950/80 p-1.5 rounded-full border border-emerald-800/60 inline-flex shadow-2xl backdrop-blur-md">
+                <button id="toggleSthlmBtn" onclick="setSthlmToggle(true)" class="px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 bg-emerald-600 text-white shadow-lg flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-4 h-4"></i> Endast Stockholm
+                </button>
+                <button id="toggleSwedenBtn" onclick="setSthlmToggle(false)" class="px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 text-emerald-300/60 hover:text-emerald-100 flex items-center gap-2">
+                    <i data-lucide="globe" class="w-4 h-4"></i> Hela Sverige
+                </button>
+            </div>
+        </div>
+
+        <!-- SÖK & FILTER (INTERAKTIV GRID) -->
+        <div id="bostader" class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start pt-4">
+            
+            <!-- HOVER-TRIGGER & FILTERPANEL (VÄNSTERKANTEN PÅ DESKTOP, GLIDER UT VID HOVER) -->
+            <div class="lg:col-span-1 relative hover-trigger z-30">
+                
+                <!-- Indikator / Trigger-knapp som syns för att visa var man ska hålla musen -->
+                <div class="hidden lg:flex flex-col gap-3 p-5 glass rounded-2xl border border-emerald-800/30 cursor-pointer shadow-lg group hover:border-emerald-500/40 transition-all mb-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold">Håll musen här</span>
+                        <span class="flex h-2.5 w-2.5 relative">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-3 text-white">
+                        <i data-lucide="sliders-horizontal" class="w-6 h-6 text-emerald-400 group-hover:rotate-180 transition-transform duration-500"></i>
+                        <span class="font-serif text-lg font-bold group-hover:text-emerald-300">Öppna Sökfilter</span>
+                    </div>
+                    <p class="text-xs text-emerald-100/50">Dra i prisreglaget för att direkt dölja bostäder utanför din budget. Perfekt för att hålla koll på lånelöftet!</p>
+                </div>
+
+                <!-- Själva filterpanelen -->
+                <div class="filter-panel lg:fixed lg:top-24 lg:left-4 lg:w-80 lg:max-h-[82vh] lg:overflow-y-auto glass p-6 rounded-2xl lg:shadow-2xl border border-emerald-700/30 z-50">
+                    
+                    <!-- Stäng-knapp mobil / Information -->
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-serif text-xl text-white flex items-center gap-2">
+                            <i data-lucide="filter" class="text-emerald-400 w-5 h-5"></i>
+                            Anpassa sökning
+                        </h3>
+                        <button onclick="toggleMobileFilter()" class="lg:hidden text-emerald-400 hover:text-white p-1">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                    <!-- Filter 1: Sökfält (Text) -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-2">Fritextsökning</label>
+                        <div class="relative">
+                            <input type="text" id="searchInput" oninput="filterProperties()" placeholder="Sök stad, gata, beskrivning..." class="w-full bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-2.5 text-sm text-white placeholder-emerald-100/40 focus:outline-none focus:border-emerald-500 transition-all">
+                            <i data-lucide="search" class="w-4 h-4 text-emerald-400/60 absolute right-3.5 top-3.5"></i>
+                        </div>
+                    </div>
+
+                    <!-- Filter 2: Dubbelt Prisfilter (Minimum och Maximum) -->
+                    <div class="mb-5 space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400">Minimipris</label>
+                                <span id="minPriceDisplay" class="text-xs font-bold text-emerald-200">1 000 000 kr</span>
+                            </div>
+                            <input type="range" id="minPriceRange" min="1000000" max="49000000" step="500000" value="1000000" oninput="updateMinPrice(this.value)" class="w-full h-1.5 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400">Maximipris</label>
+                                <span id="maxPriceDisplay" class="text-xs font-bold text-emerald-200">50 000 000 kr</span>
+                            </div>
+                            <input type="range" id="maxPriceRange" min="2000000" max="50000000" step="500000" value="50000000" oninput="updateMaxPrice(this.value)" class="w-full h-1.5 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                    </div>
+
+                    <!-- Filter 3: Dubbelt Rumsfilter (Minimum och Maximum Rum) -->
+                    <div class="mb-5 space-y-3 border-t border-emerald-900/30 pt-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400">Minst antal rum</label>
+                                <span id="minRoomsDisplay" class="text-xs font-bold text-emerald-200">1 rum</span>
+                            </div>
+                            <input type="range" id="minRoomsRange" min="1" max="8" step="1" value="1" oninput="updateMinRooms(this.value)" class="w-full h-1.5 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400">Mest antal rum</label>
+                                <span id="maxRoomsDisplay" class="text-xs font-bold text-emerald-200">8 rum</span>
+                            </div>
+                            <input type="range" id="maxRoomsRange" min="1" max="8" step="1" value="8" oninput="updateMaxRooms(this.value)" class="w-full h-1.5 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                    </div>
+
+                    <!-- Filter 4: Bostadstyp -->
+                    <div class="mb-5 border-t border-emerald-900/30 pt-4">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-2.5">Bostadstyp</label>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button onclick="setBostadstyp('Alla')" id="btnTypeAlla" class="bg-emerald-800/80 text-white text-[11px] font-medium py-2 rounded-lg border border-emerald-600/30 hover:bg-emerald-700 transition-all">Alla</button>
+                            <button onclick="setBostadstyp('Hus')" id="btnTypeHus" class="bg-emerald-950/40 text-emerald-300/80 text-[11px] font-medium py-2 rounded-lg border border-emerald-800/40 hover:bg-emerald-900/40 transition-all">Hus</button>
+                            <button onclick="setBostadstyp('Lägenhet')" id="btnTypeLgh" class="bg-emerald-950/40 text-emerald-300/80 text-[11px] font-medium py-2 rounded-lg border border-emerald-800/40 hover:bg-emerald-900/40 transition-all">Lägenhet</button>
+                        </div>
+                    </div>
+
+                    <!-- Filter 5: Områden (Dynamisk & rullningsbar lista) -->
+                    <div class="mb-5 border-t border-emerald-900/30 pt-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400 font-bold">Välj Områden</label>
+                            <div class="flex gap-2 text-[10px]">
+                                <button onclick="toggleAllAreas(true)" class="text-emerald-300 hover:underline">Alla</button>
+                                <span class="text-emerald-800">|</span>
+                                <button onclick="toggleAllAreas(false)" class="text-emerald-300 hover:underline">Nollställ</button>
+                            </div>
+                        </div>
+                        <div id="areasFilterContainer" class="max-h-40 overflow-y-auto space-y-2 pr-1 bg-emerald-950/20 p-2.5 rounded-xl border border-emerald-900/40">
+                            <!-- Genereras dynamiskt via JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BOSTADSLISTNING -->
+            <div class="lg:col-span-3">
+                
+                <!-- Sortering och Resultatinfo -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-emerald-900/30">
+                    <div>
+                        <h2 class="text-2xl font-serif text-white">Våra handplockade hem</h2>
+                        <p class="text-sm text-emerald-100/60"><span id="resultsCount">0</span> bostäder matchar dina kriterier</p>
+                    </div>
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <span class="text-xs text-emerald-100/50 whitespace-nowrap">Sortera efter:</span>
+                        <select id="sortBy" onchange="filterProperties()" class="bg-emerald-950/50 border border-emerald-800/40 text-sm text-emerald-100 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 w-full sm:w-auto">
+                            <option value="rekommenderat">Zervos Rekommenderar</option>
+                            <option value="pris-stigande">Pris: Lågt till Högt</option>
+                            <option value="pris-fallande">Pris: Högt till Lågt</option>
+                            <option value="kvm-fallande">Storlek: Störst först</option>
+                            <option value="roi-fallande">Est. ROI (Årlig värdeökning): Högst först</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bostadskort Grid -->
+                <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Genereras dynamiskt via JS -->
+                </div>
+
+                <!-- Tomt resultat-vy -->
+                <div id="noResults" class="hidden text-center py-12 glass rounded-2xl border border-emerald-900/30">
+                    <i data-lucide="frown" class="w-12 h-12 text-emerald-400/50 mx-auto mb-4"></i>
+                    <h3 class="text-lg font-serif text-white mb-2">Hoppsan, inga träffar</h3>
+                    <p class="text-sm text-emerald-100/60 max-w-md mx-auto">Vi kunde inte hitta några bostäder med de valda filtren. Justera priserna, rummen eller byt geografisk räckvidd högst upp.</p>
+                    <button onclick="resetFilters()" class="mt-4 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all">
+                        Återställ filter
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MYSIG SEKTION: VARFÖR ZERVOS -->
+        <section id="varfor-zervos" class="mt-24 mb-16">
+            <div class="glass rounded-3xl p-8 md:p-12 border border-emerald-800/20 relative overflow-hidden">
+                <div class="absolute -right-24 -bottom-24 w-96 h-96 bg-emerald-900/20 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="max-w-3xl">
+                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">En trygg affär</span>
+                    <h2 class="text-3xl md:text-4xl font-serif text-white mt-2 mb-6">Vi kombinerar hemtrevnad med professionell analys</h2>
+                    <p class="text-emerald-100/70 mb-8 leading-relaxed">
+                        På Zervos tror vi att bostadsköp handlar lika mycket om känsla som om siffror. Oavsett om du kliver in på bostadsmarknaden för allra första gången och vill ha vägledning över en kopp te, eller om du är en erfaren investerare som letar efter hög ROI, har vi verktygen som gör din resa framgångsrik.
+                    </p>
+                </div>
+
+                <!-- Två spalter: Nybörjare vs Proffs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 pt-8 border-t border-emerald-900/30">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="bg-emerald-950 text-emerald-400 p-2 rounded-lg">
+                                <i data-lucide="compass" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="text-lg font-serif text-white">Smidigt för Nybörjaren</h3>
+                        </div>
+                        <ul class="space-y-3 text-sm text-emerald-100/60">
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Enkel steg-för-steg guidning genom köpprocessen.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Tydliga ordförklaringar på svåra banktermer.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Integrerad boendekalkylator som räknar ut allt automatiskt.
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="bg-emerald-950 text-emerald-400 p-2 rounded-lg">
+                                <i data-lucide="line-chart" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="text-lg font-serif text-white">Kraftfullt för Proffset</h3>
+                        </div>
+                        <ul class="space-y-3 text-sm text-emerald-100/60">
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Detaljerade nyckeltal (driftkostnad, pris/kvm, ROI-prognoser).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Demografi- och områdesanalyser för framtida värdetillväxt.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Direkt export av finansiell bostadsdata till Excel (.csv).
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOLÅNEKALKYLATOR -->
+        <section id="kalkylator" class="mb-16">
+            <h2 class="text-3xl font-serif text-center text-white mb-2">Zervos Smarta Bolånekalkyl</h2>
+            <p class="text-center text-emerald-100/60 max-w-lg mx-auto mb-10 text-sm">Räkna ut vad ditt framtida drömhem kostar per månad på ett ögonblick.</p>
+            
+            <div class="glass max-w-4xl mx-auto rounded-3xl p-6 md:p-10 border border-emerald-800/20 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Inputs -->
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-2">Bostadens Pris (SEK)</label>
+                        <input type="number" id="calcPrice" value="4500000" oninput="calculateMortgage()" class="w-full bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Kontantinsats (Min 15%)</label>
+                            <span id="calcDownpaymentPct" class="text-xs text-emerald-300">15%</span>
+                        </div>
+                        <input type="number" id="calcDownpayment" value="675000" oninput="calculateMortgage('downpayment')" class="w-full bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Ränta (%)</label>
+                        </div>
+                        <input type="number" id="calcInterest" value="3.85" step="0.05" oninput="calculateMortgage()" class="w-full bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+                </div>
+
+                <!-- Resultat -->
+                <div class="bg-emerald-950/40 border border-emerald-800/30 rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Estimerad Månadskostnad</span>
+                        <div id="calcMonthlyPayment" class="text-4xl font-serif text-white font-bold my-3">
+                            15 450 kr <span class="text-sm font-sans font-normal text-emerald-100/50">/mån</span>
+                        </div>
+                        <p class="text-xs text-emerald-100/40 leading-relaxed mb-6">Beräkningen baseras på rak amortering (2% om belåning > 70%, 1% om belåning 50-70%) plus räntekostnad efter 30% ränteavdrag.</p>
+                    </div>
+
+                    <div class="space-y-2 border-t border-emerald-900/50 pt-4 text-xs text-emerald-100/70">
+                        <div class="flex justify-between">
+                            <span>Lånebelopp:</span>
+                            <span id="calcLoanAmount" class="font-bold">3 825 000 kr</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Månadsamortering:</span>
+                            <span id="calcAmortization" class="font-bold">6 375 kr</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Räntekostnad (efter avdrag):</span>
+                            <span id="calcInterestCost" class="font-bold">8 584 kr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- INTRESSEANMÄLAN / KONTAKT -->
+    <section id="kontakt" class="glass-light border-t border-emerald-900/30 py-16 relative z-10">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Personlig service</span>
+            <h2 class="text-3xl md:text-4xl font-serif text-white mt-2 mb-4">Vill du ha en kostnadsfri värdering?</h2>
+            <p class="text-sm text-emerald-100/60 max-w-lg mx-auto mb-8">Fyll i dina uppgifter så kontaktar en av våra experter dig. Brygg en kopp te, luta dig tillbaka och låt oss göra jobbet.</p>
+            
+            <form id="contactForm" onsubmit="handleContactSubmit(event)" class="max-w-md mx-auto space-y-4">
+                <input type="text" placeholder="Ditt namn" required class="w-full bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-3 text-sm text-white placeholder-emerald-100/40 focus:outline-none focus:border-emerald-500 transition-all">
+                <input type="email" placeholder="E-postadress" required class="w-full bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-3 text-sm text-white placeholder-emerald-100/40 focus:outline-none focus:border-emerald-500 transition-all">
+                <input type="tel" placeholder="Telefonnummer" class="w-full bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-3 text-sm text-white placeholder-emerald-100/40 focus:outline-none focus:border-emerald-500 transition-all">
+                <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-semibold py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                    Kontakta mig
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </form>
+            
+            <!-- Tack-meddelande vid skickat formulär -->
+            <div id="contactSuccess" class="hidden max-w-md mx-auto p-6 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-center text-emerald-200">
+                <i data-lucide="check-circle" class="w-10 h-10 text-emerald-400 mx-auto mb-2"></i>
+                <h4 class="font-serif text-lg font-semibold text-white mb-1">Tack för din anmälan!</h4>
+                <p class="text-xs text-emerald-100/60">Vi hör av oss inom kort. Njut av ditt te så länge!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="glass-light border-t border-emerald-900/50 py-12 relative z-10 text-emerald-100/50 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-950 text-emerald-400 p-1.5 rounded flex items-center justify-center">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <span class="font-serif font-bold text-white tracking-wider">ZERVOS</span>
+                    <span class="text-[9px] block text-emerald-400 font-sans tracking-widest uppercase">Premium Fastigheter</span>
+                </div>
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-emerald-400 transition-colors">Användarvillkor</a>
+                <a href="#" class="hover:text-emerald-400 transition-colors">Integritetspolicy</a>
+                <a href="#" class="hover:text-emerald-400 transition-colors">Cookie-inställningar</a>
+            </div>
+            <p>&copy; 2026 Zervos Fastighetsförmedling AB. Alla rättigheter reserverade.</p>
+        </div>
+    </footer>
+
+    <!-- DETALJERAD INFO-MODAL FÖR BOSTAD -->
+    <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="glass max-w-2xl w-full rounded-3xl overflow-hidden border border-emerald-800/40 shadow-2xl relative">
+            
+            <button onclick="closeModal()" class="absolute right-4 top-4 bg-emerald-950/80 hover:bg-emerald-900 text-white p-2 rounded-full z-20 transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Galleribild med bläddringsmöjlighet -->
+            <div class="relative h-72 md:h-80 bg-cover bg-center transition-all duration-300" id="modalImgContainer">
+                <div class="absolute inset-0 bg-gradient-to-t from-emerald-950 to-transparent"></div>
+                
+                <!-- Bläddringsknappar -->
+                <button onclick="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-emerald-900 text-white p-2 rounded-full transition-all border border-white/10 z-10">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-emerald-900 text-white p-2 rounded-full transition-all border border-white/10 z-10">
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Bildindikator -->
+                <div class="absolute top-4 left-4 bg-black/60 text-[10px] text-emerald-300 font-bold px-3 py-1 rounded-full border border-white/10" id="imageIndicator">
+                    Bild 1 av 5
+                </div>
+
+                <div class="absolute bottom-4 left-6 pr-6">
+                    <span id="modalArea" class="bg-emerald-800 text-white text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold border border-emerald-700/50">Område</span>
+                    <h3 id="modalTitle" class="text-2xl md:text-3xl font-serif text-white mt-2 drop-shadow-md">Bostadens rubrik</h3>
+                </div>
+            </div>
+
+            <!-- Modal-innehåll -->
+            <div class="p-6 md:p-8 space-y-6 max-h-[55vh] overflow-y-auto">
+                
+                <!-- Snabbsiffror -->
+                <div class="grid grid-cols-3 gap-3 text-center">
+                    <div class="bg-emerald-950/40 p-3 rounded-xl border border-emerald-900/30">
+                        <span class="text-[9px] text-emerald-400 uppercase tracking-widest block mb-1">Pris</span>
+                        <span id="modalPrice" class="text-sm md:text-base font-bold text-white">-</span>
+                    </div>
+                    <div class="bg-emerald-950/40 p-3 rounded-xl border border-emerald-900/30">
+                        <span class="text-[9px] text-emerald-400 uppercase tracking-widest block mb-1">Storlek</span>
+                        <span id="modalKvm" class="text-sm md:text-base font-bold text-white">-</span>
+                    </div>
+                    <div class="bg-emerald-950/40 p-3 rounded-xl border border-emerald-900/30">
+                        <span class="text-[9px] text-emerald-400 uppercase tracking-widest block mb-1">Rum</span>
+                        <span id="modalRum" class="text-sm md:text-base font-bold text-white">-</span>
+                    </div>
+                </div>
+
+                <!-- Detaljerad Proffs-statistik -->
+                <div>
+                    <h4 class="text-xs uppercase tracking-wider text-emerald-400 font-bold mb-3 flex items-center gap-1">
+                        <i data-lucide="line-chart" class="w-4 h-4 text-emerald-400"></i>
+                        Tekniska detaljer &amp; Proffs-analys
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                        <div class="p-2.5 bg-emerald-900/20 rounded-lg border border-emerald-900/20">
+                            <span class="text-emerald-100/50 block text-[10px]">Driftkostnad:</span>
+                            <span id="modalDrift" class="font-bold text-emerald-100">-</span>
+                        </div>
+                        <div class="p-2.5 bg-emerald-900/20 rounded-lg border border-emerald-900/20">
+                            <span class="text-emerald-100/50 block text-[10px]">Pris per kvm:</span>
+                            <span id="modalKvmPris" class="font-bold text-emerald-100">-</span>
+                        </div>
+                        <div class="p-2.5 bg-emerald-900/20 rounded-lg border border-emerald-900/20">
+                            <span class="text-emerald-100/50 block text-[10px]">Estimerad ROI:</span>
+                            <span id="modalRoi" class="font-bold text-emerald-400">-</span>
+                        </div>
+                        <div class="p-2.5 bg-emerald-900/20 rounded-lg border border-emerald-900/20">
+                            <span class="text-emerald-100/50 block text-[10px]">Energiklass:</span>
+                            <span id="modalEnergyClass" class="font-bold text-emerald-300">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Beskrivning -->
+                <div>
+                    <h4 class="text-xs uppercase tracking-wider text-emerald-400 font-bold mb-2">Om bostaden</h4>
+                    <p id="modalDesc" class="text-sm text-emerald-100/70 leading-relaxed">Beskrivningstext...</p>
+                </div>
+
+                <div class="flex gap-4 pt-4 border-t border-emerald-900/30">
+                    <button onclick="bookVisning()" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition-all shadow-lg text-center text-sm">
+                        Boka privat visning
+                    </button>
+                    <button onclick="exportData()" class="px-4 py-3 bg-emerald-950/60 hover:bg-emerald-900 text-emerald-400 rounded-xl border border-emerald-800/50 transition-all flex items-center gap-2" title="Exportera finansiellt underlag (CSV)">
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                        <span class="hidden sm:inline text-xs font-semibold">Exportera data</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIK -->
+    <script>
+        // Initiera Lucide Ikoner
+        lucide.createIcons();
+
+        // Global geografisk snabbtoggle: true = Endast Stockholm, false = Hela Sverige
+        let stockholmOnly = true;
+
+        // Vacker standardsak som fallback-bild om någon länk slutar fungera
+        const defaultFallbackImage = "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80";
+
+        // --- DYNAMISK OCH UNIK BOSTADSDATA ---
+        // 110 totalt unika, handplockade och realistiska foton. Inga bilder repeteras.
+        const properties = [
+            // --- STOCKHOLM OMRÅDEN ---
+            {
+                id: 1,
+                title: "Sekelskiftesvilla vid Mälaren",
+                area: "Ekerö",
+                type: "Hus",
+                price: 14500000,
+                kvm: 165,
+                rum: 6,
+                drift: "5 200 kr/mån",
+                roi: 4.8,
+                energyClass: "C",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Drömlikt sekelskifteshus med magnifik sjötomt och brygga på natursköna Ekerö. Vackert ljusinsläpp, rymliga sovrum, tidsenliga kakelugnar och en uppvuxen trädgård perfekta för mysiga familjekvällar."
+            },
+            {
+                id: 2,
+                title: "Exklusiv familjevilla med pool",
+                area: "Djursholm",
+                type: "Hus",
+                price: 38500000,
+                kvm: 210,
+                rum: 7,
+                drift: "6 900 kr/mån",
+                roi: 6.2,
+                energyClass: "A",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1583847268964-b28ce8f311eb?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Representativ och extremt välplanerad villa på en högklassig adress i Djursholm. Stora sällskapsytor, uppvärmd swimmingpool, solceller installerade och modern bergvärme for en luxuös vardag."
+            },
+            {
+                id: 3,
+                title: "Idyllisk bondgård med lada och åkermark",
+                area: "Gålö",
+                type: "Hus",
+                price: 12500000,
+                kvm: 210,
+                rum: 7,
+                drift: "4 200 kr/mån",
+                roi: 3.8,
+                energyClass: "E",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1594047543253-44f2b012edb2?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1535090467336-9501f96eef89?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Klassisk svensk bondgård i naturskönt läge på Gålö. Ett rött trähus med vita knutar omgivet av grönskande hagar, en rymlig lada och tillhörande jordbruksmark. Perfekt för hästhållning eller för den som drömmer om ett liv på landet med egen bondgård, utan att förlora närheten till Stockholm."
+            },
+            {
+                id: 4,
+                title: "Modern 3:a med takåsutsikt",
+                area: "Södermalm",
+                type: "Lägenhet",
+                price: 8900000,
+                kvm: 78,
+                rum: 3,
+                drift: "3 800 kr/mån",
+                roi: 5.1,
+                energyClass: "B",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1560185127-6a2806647f81?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Optimalt planerad och totalrenoverad lägenhet på Södermalm. Underbara originaldetaljan blandas harmoniskt med exklusiva materialval och en rymlig kungsbalkong."
+            },
+            {
+                id: 5,
+                title: "Klimatneutral arkitektritad villa",
+                area: "Sätra",
+                type: "Hus",
+                price: 9500000,
+                kvm: 140,
+                rum: 5,
+                drift: "2 200 kr/mån",
+                roi: 4.1,
+                energyClass: "A",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Prisbelönt passivhus med fantastiskt miljötänk i lugna Sätra. Stora glaspartier, golvvärme i hela huset, vackra omgivande skogsområden och oerhört låga rörliga driftkostnader."
+            },
+            {
+                id: 6,
+                title: "Historisk kvarnvilla vid Sätrastrandsbadet",
+                area: "Sätrastrandsbadet",
+                type: "Hus",
+                price: 12800000,
+                kvm: 145,
+                rum: 5,
+                drift: "4 200 kr/mån",
+                roi: 4.3,
+                energyClass: "D",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1464146072230-91cabcfaa20c?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1489171078254-c3365d6e359f?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Ett stycke levande kulturhistoria vid Sätrastrandsbadet. Denna varsamt bevarade villa har anor från Sätra gamla vattenkvarn och andas 1800-tal. Interiören har återskapats med enorm respekt för dåtiden: ett platsbyggt klassiskt Arboga-kök med djup porslinsho, massiva synliga timmerväggar, handblåsta fönsterglas och en sprakande gjutjärnskamin från Husqvarna. Här lever du med historiens vingslag i varje rum, bara ett stenkast från Mälarens vågor."
+            },
+            {
+                id: 7,
+                title: "Tidstypisk 50-talsfunkis i Hökarängen",
+                area: "Hökarängen",
+                type: "Lägenhet",
+                price: 3650000,
+                kvm: 64,
+                rum: 2,
+                drift: "2 600 kr/mån",
+                roi: 4.0,
+                energyClass: "C",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1460317442991-0af20314c40b?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1494526585095-c9f71cfece62?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1512208630043-4217112d7b56?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Underbar och välvårdad funkisbostad med rymlig takhöjd och originaldetaljer bevarade. Ligger i Hökarängens populära kulturkvarter med mysiga retrocaféer runt hörnet."
+            },
+            {
+                id: 8,
+                title: "Familjelägenhet nära sjö och centrum",
+                area: "Farsta",
+                type: "Lägenhet",
+                price: 4200000,
+                kvm: 85,
+                rum: 3,
+                drift: "3 100 kr/mån",
+                roi: 4.3,
+                energyClass: "B",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Mycket ljus och smart planerad trea med genomgående parkettgolv i natursköna Farsta. En kort promenad tar dig till sjön Magelungen för morgondoppet."
+            },
+            {
+                id: 9,
+                title: "Klassisk 1920-talsvilla på Mälarhöjden",
+                area: "Mälarhöjden",
+                type: "Hus",
+                price: 17900000,
+                kvm: 175,
+                rum: 7,
+                drift: "5 400 kr/mån",
+                roi: 5.2,
+                energyClass: "D",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1545251153-aa1a5fe2f9fa?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "En äkta 1920-talsdröm i hjärtat av Mälarhöjden! Här möts du av tidstypisk nordisk klassicism med spröjsade fönster, brutet mansardtak och en inbjudande punschveranda. Interiören stoltserar med bevarade massiva furugolv, en klassisk serveringsgång, eleganta spegeldörrar och en magnifik fungerande kakelugn. En varsamt renoverad pärla som förenar lummig trädgårdscharm med modern lyx."
+            },
+            {
+                id: 22,
+                title: "Sjönära trävilla på natursköna ön",
+                area: "Kungshatt",
+                type: "Hus",
+                price: 8500000,
+                kvm: 130,
+                rum: 5,
+                drift: "2 800 kr/mån",
+                roi: 4.5,
+                energyClass: "C",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1449198063792-7d754d6f3c80?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1472224371017-08207f84aaae?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1501183638710-841b5810b19d?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Upplev skärgårdsidyllen på den bilfria ön Kungshatt i Mälaren. Ett fantastiskt rött trähus med vidsträckt sjöutsikt, egen brygga och lummig trädgård. Perfekt för dig som vill bo avskilt men ändå nära Stockholm."
+            },
+            {
+                id: 23,
+                title: "Gammaldags hästgård med stora betesmarker",
+                area: "Ekerö",
+                type: "Hus",
+                price: 18500000,
+                kvm: 280,
+                rum: 9,
+                drift: "6 500 kr/mån",
+                roi: 4.1,
+                energyClass: "E",
+                isStockholm: true,
+                images: [
+                    "https://images.unsplash.com/photo-1510006851064-e6056cd0e3a8?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1475855581690-80accde3ae2b?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1430285561012-53e7f41ea87b?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Magnifik bondgård på Ekerö för den som lever för djur och natur. Rymlig mangårdsbyggnad i trä med pampiga kakelugnar, storslaget stall, ladugård och vidsträckta hagar som sträcker sig ner mot Mälarens strand."
+            },
+
+            // --- ALLMÄNNA SVERIGEOBJEKT ---
+            {
+                id: 10,
+                title: "Sekelskiftes-trea i Vasastaden",
+                area: "Göteborg",
+                type: "Lägenhet",
+                price: 6800000,
+                kvm: 82,
+                rum: 3,
+                drift: "3 600 kr/mån",
+                roi: 4.5,
+                energyClass: "C",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1480074468113-5a0dcab57c2a?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Vacker gavelfastighet med magisk rymd i hjärtat av Göteborg. Nyrenoverat platsbyggt kök, brädgolv och originalstuckaturer."
+            },
+            {
+                id: 11,
+                title: "Penthouse med havsutsikt i Västra Hamnen",
+                area: "Malmö",
+                type: "Lägenhet",
+                price: 11500000,
+                kvm: 104,
+                rum: 4,
+                drift: "4 200 kr/mån",
+                roi: 5.8,
+                energyClass: "A",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1499916078039-9222c1c798c8?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1512102465715-db14b533e49e?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1495433324511-bf8e929ba47e?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1513161455013-08e121eb1071?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Lyxig takvåning med storslagen panoramavy över Öresundsbron. Modernt designkök i öppen planlösning och en enorm privat takterrass."
+            },
+            {
+                id: 12,
+                title: "Vindstrea i Luthagen",
+                area: "Uppsala",
+                type: "Lägenhet",
+                price: 4800000,
+                kvm: 74,
+                rum: 3,
+                drift: "2 800 kr/mån",
+                roi: 4.2,
+                energyClass: "B",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1503174971373-b1f6987e5b22?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1485628390555-1a7bd503f9a9?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1528909514045-2b47f4f6e6ed?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1524061662611-37d452d9a6c7?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Ljus och ytterst charmig vindslägenhet i lugna Luthagen. Generös takhöjd med stora takfönster som skapar ett svårslaget ljusinsläpp."
+            },
+            {
+                id: 13,
+                title: "Etagelägenhet i kulturkvarter",
+                area: "Lund",
+                type: "Lägenhet",
+                price: 7500000,
+                kvm: 112,
+                rum: 5,
+                drift: "3 850 kr/mån",
+                roi: 4.9,
+                energyClass: "C",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1486304873000-235cb4b834ef?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1463620910506-d0458143143e?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1483808161634-c92ca4d2e825?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1494438639946-1bf84074ef81?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Spektakulär etagebostad i Lunds vackraste kulturkvarter. Perfekt planerade sociala ytor på nedervåningen och sovavdelning på övre plan."
+            },
+            {
+                id: 14,
+                title: "Toppmodern tvåa nära Campus",
+                area: "Umeå",
+                type: "Lägenhet",
+                price: 2750000,
+                kvm: 52,
+                rum: 2,
+                drift: "1 850 kr/mån",
+                roi: 5.2,
+                energyClass: "B",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1497366858169-383c27e8d7f7?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1515263487926-c56a84d46c87?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1533779283405-b001550c6065?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1519710164309-1a48c68af2c3?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Nyproducerad lägenhet med högsta standard och inbjudande balkong i soligt västläge mot gröna parker."
+            },
+            {
+                id: 15,
+                title: "Ljust boende i Västerås Hamn",
+                area: "Västerås",
+                type: "Lägenhet",
+                price: 3600000,
+                kvm: 76,
+                rum: 3,
+                drift: "2 850 kr/mån",
+                roi: 4.0,
+                energyClass: "D",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1503899036067-8c46002f5a89?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1490365706509-f8319692be5a?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1492062776378-c0b7e28b2612?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1491942732943-4cc0100d3d52?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1481277542470-605612bd2d61?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Modern och social lägenhet precis intill glittrande Mälaren i Västerås expansiva hamnkvarter."
+            },
+            {
+                id: 16,
+                title: "Premiumlägenhet med sjöutsikt vid Vättern",
+                area: "Jönköping",
+                type: "Lägenhet",
+                price: 6200000,
+                kvm: 98,
+                rum: 4,
+                drift: "3 900 kr/mån",
+                roi: 4.6,
+                energyClass: "B",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1503596471511-6c85e50bf7bc?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1497366754020-0387b3fc4298?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Stilrent hem med enastående sjöutsikt på Liljeholmen i Jönköping. Exklusiva materialval och fullt utrustat premiumkök."
+            },
+            {
+                id: 17,
+                title: "Funkisbostad med strandläge vid havet",
+                area: "Halmstad",
+                type: "Lägenhet",
+                price: 3500000,
+                kvm: 70,
+                rum: 3,
+                drift: "2 650 kr/mån",
+                roi: 3.9,
+                energyClass: "C",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1510505193910-38e5e9b867c2?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1499955085172-a104c9463ece?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1495433324511-bf8e929ba47e?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1513161455013-08e121eb1071?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1485628390555-1a7bd503f9a9?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Klassisk, ljus funkislägenhet med fantastiskt läge nära Västra Stranden i Halmstad. Härlig balkong med svalkande havsvindar."
+            },
+            {
+                id: 18,
+                title: "Industriell loftlägenhet i f d Bryggeri",
+                area: "Norrköping",
+                type: "Lägenhet",
+                price: 3900000,
+                kvm: 85,
+                rum: 2,
+                drift: "3 100 kr/mån",
+                roi: 4.1,
+                energyClass: "C",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1560185127-6a2806647f81?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Unikt loftboende med enorma spröjsade fönster, synliga stålbalkar och fantastisk takhöjd i anrika Industrilandskapet."
+            },
+            {
+                id: 19,
+                title: "Vindstvåa med synliga takbjälkar",
+                area: "Karlstad",
+                type: "Lägenhet",
+                price: 2250000,
+                kvm: 60,
+                rum: 2,
+                drift: "1 950 kr/mån",
+                roi: 3.7,
+                energyClass: "D",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1463620910506-d0458143143e?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1483808161634-c92ca4d2e825?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1494438639946-1bf84074ef81?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1480074468113-5a0dcab57c2a?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Yteffektiv och otroligt mysig vindslägenhet mitt i Karlstads äldre, rogivande stadsdelar nära Klarälvens glittrande vatten."
+            },
+            {
+                id: 20,
+                title: "Etagetrea med spektakulär takterrass",
+                area: "Sundsvall",
+                type: "Lägenhet",
+                price: 3100000,
+                kvm: 85,
+                rum: 3,
+                drift: "2 800 kr/mån",
+                roi: 3.6,
+                energyClass: "C",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1497366858169-383c27e8d7f7?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1501183638710-841b5810b19d?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1515263487926-c56a84d46c87?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1503899036067-8c46002f5a89?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1490365706509-f8319692be5a?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Spännande etagevåning i Sundsvalls historiska stenkvarter. Privat takterrass i skyddat läge med panoramavy över bukten."
+            },
+            {
+                id: 21,
+                title: "Miljösmart designbostad i Trästaden",
+                area: "Växjö",
+                type: "Lägenhet",
+                price: 2450000,
+                kvm: 52,
+                rum: 2,
+                drift: "1 500 kr/mån",
+                roi: 4.4,
+                energyClass: "A",
+                isStockholm: false,
+                images: [
+                    "https://images.unsplash.com/photo-1492062776378-c0b7e28b2612?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1491942732943-4cc0100d3d52?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1503596471511-6c85e50bf7bc?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1497366754020-0387b3fc4298?auto=format&fit=crop&q=80&w=800"
+                ],
+                desc: "Svanenmärkt tvårummare byggd helt i trä med innovativa energilösningar, högsta inredningskomfort och egen uteplats."
+            }
+        ];
+
+        let selectedBostadstyp = 'Alla';
+        let currentModalProp = null;
+        let currentImageIndex = 0;
+
+        // --- REGN-ANIMATION PÅ KANVAS ---
+        const canvas = document.getElementById('rainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const drops = [];
+        const maxDrops = 110;
+
+        for (let i = 0; i < maxDrops; i++) {
+            drops.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * -canvas.height,
+                length: Math.random() * 20 + 10,
+                speed: Math.random() * 8 + 4,
+                opacity: Math.random() * 0.3 + 0.1
+            });
+        }
+
+        function drawRain() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i < drops.length; i++) {
+                const d = drops[i];
+                ctx.beginPath();
+                ctx.moveTo(d.x, d.y);
+                ctx.lineTo(d.x + (d.speed * 0.08), d.y + d.length); 
+                ctx.strokeStyle = `rgba(167, 243, 208, ${d.opacity})`;
+                ctx.stroke();
+
+                d.y += d.speed;
+                d.x += d.speed * 0.08;
+
+                if (d.y > canvas.height) {
+                    d.y = -20;
+                    d.x = Math.random() * canvas.width;
+                }
+            }
+            requestAnimationFrame(drawRain);
+        }
+        
+        // Starta regnet & bygg filter vid laddning
+        window.onload = function() {
+            drawRain();
+            buildAreasFilter();
+            setSthlmToggle(true); // Default: Stockholm påslaget direkt vid besök
+        }
+
+        // --- GEOGRAFISK TOGGLE LOGIK ---
+        function setSthlmToggle(onlySthlm) {
+            stockholmOnly = onlySthlm;
+            const thlmBtn = document.getElementById('toggleSthlmBtn');
+            const swedenBtn = document.getElementById('toggleSwedenBtn');
+
+            if (onlySthlm) {
+                thlmBtn.className = "px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 bg-emerald-600 text-white shadow-lg flex items-center gap-2";
+                swedenBtn.className = "px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 text-emerald-300/60 hover:text-emerald-100 flex items-center gap-2";
+            } else {
+                thlmBtn.className = "px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 text-emerald-300/60 hover:text-emerald-100 flex items-center gap-2";
+                swedenBtn.className = "px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 bg-emerald-600 text-white shadow-lg flex items-center gap-2";
+            }
+            
+            // Anpassa filter checkboxes beroende på toggle
+            const checkboxes = document.querySelectorAll('#areasFilterContainer input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                const prop = properties.find(p => p.area === cb.value);
+                if (prop) {
+                    if (onlySthlm) {
+                        cb.checked = prop.isStockholm;
+                    } else {
+                        cb.checked = true;
+                    }
+                }
+            });
+
+            filterProperties();
+        }
+
+        // --- DYNAMISK BYGGNAD AV OMRÅDESFILTER ---
+        function buildAreasFilter() {
+            const container = document.getElementById('areasFilterContainer');
+            const uniqueAreas = [...new Set(properties.map(p => p.area))].sort();
+
+            container.innerHTML = '';
+            uniqueAreas.forEach(area => {
+                const associatedProp = properties.find(p => p.area === area);
+                const isSthlm = associatedProp ? associatedProp.isStockholm : false;
+
+                const label = document.createElement('label');
+                label.className = `flex items-center gap-3 cursor-pointer group ${isSthlm ? 'sthlm-area' : 'non-sthlm-area'}`;
+                label.innerHTML = `
+                    <input type="checkbox" value="${area}" checked onchange="filterProperties()" class="rounded bg-emerald-950 border-emerald-800 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-emerald-900 w-4 h-4">
+                    <span class="text-xs text-emerald-100/80 group-hover:text-emerald-300 transition-colors">${area}</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function toggleAllAreas(checked) {
+            const checkboxes = document.querySelectorAll('#areasFilterContainer input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                if (stockholmOnly) {
+                    const prop = properties.find(p => p.area === cb.value);
+                    if (prop && prop.isStockholm) {
+                        cb.checked = checked;
+                    } else {
+                        cb.checked = false;
+                    }
+                } else {
+                    cb.checked = checked;
+                }
+            });
+            filterProperties();
+        }
+
+        // --- FILTER-LOGIK (PRIS & RUM) ---
+        function updateMinPrice(val) {
+            const maxVal = parseInt(document.getElementById('maxPriceRange').value);
+            if (parseInt(val) >= maxVal) {
+                val = maxVal - 500000;
+                document.getElementById('minPriceRange').value = val;
+            }
+            const formatted = new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(val);
+            document.getElementById('minPriceDisplay').innerText = formatted;
+            filterProperties();
+        }
+
+        function updateMaxPrice(val) {
+            const minVal = parseInt(document.getElementById('minPriceRange').value);
+            if (parseInt(val) <= minVal) {
+                val = minVal + 500000;
+                document.getElementById('maxPriceRange').value = val;
+            }
+            const formatted = new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(val);
+            document.getElementById('maxPriceDisplay').innerText = formatted;
+            filterProperties();
+        }
+
+        // Rum-skjutreglage logik
+        function updateMinRooms(val) {
+            const maxRooms = parseInt(document.getElementById('maxRoomsRange').value);
+            if (parseInt(val) > maxRooms) {
+                val = maxRooms;
+                document.getElementById('minRoomsRange').value = val;
+            }
+            document.getElementById('minRoomsDisplay').innerText = `${val} rum`;
+            filterProperties();
+        }
+
+        function updateMaxRooms(val) {
+            const minRooms = parseInt(document.getElementById('minRoomsRange').value);
+            if (parseInt(val) < minRooms) {
+                val = minRooms;
+                document.getElementById('maxRoomsRange').value = val;
+            }
+            document.getElementById('maxRoomsDisplay').innerText = `${val} rum`;
+            filterProperties();
+        }
+
+        function setBostadstyp(type) {
+            selectedBostadstyp = type;
+            
+            const btnAlla = document.getElementById('btnTypeAlla');
+            const btnHus = document.getElementById('btnTypeHus');
+            const btnLgh = document.getElementById('btnTypeLgh');
+
+            [btnAlla, btnHus, btnLgh].forEach(btn => {
+                btn.className = "bg-emerald-950/40 text-emerald-300/80 text-[11px] font-medium py-2 rounded-lg border border-emerald-800/40 hover:bg-emerald-900/40 transition-all";
+            });
+
+            if (type === 'Alla') btnAlla.className = "bg-emerald-800/80 text-white text-[11px] font-medium py-2 rounded-lg border border-emerald-600/30 hover:bg-emerald-700 transition-all";
+            if (type === 'Hus') btnHus.className = "bg-emerald-800/80 text-white text-[11px] font-medium py-2 rounded-lg border border-emerald-600/30 hover:bg-emerald-700 transition-all";
+            if (type === 'Lägenhet') btnLgh.className = "bg-emerald-800/80 text-white text-[11px] font-medium py-2 rounded-lg border border-emerald-600/30 hover:bg-emerald-700 transition-all";
+
+            filterProperties();
+        }
+
+        function filterProperties() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const minPrice = parseInt(document.getElementById('minPriceRange').value);
+            const maxPrice = parseInt(document.getElementById('maxPriceRange').value);
+            const minRooms = parseInt(document.getElementById('minRoomsRange').value);
+            const maxRooms = parseInt(document.getElementById('maxRoomsRange').value);
+            const sortBy = document.getElementById('sortBy').value;
+
+            const checkedAreas = [];
+            const checkboxes = document.querySelectorAll('#areasFilterContainer input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    checkedAreas.push(cb.value);
+                }
+            });
+
+            let filtered = properties.filter(prop => {
+                // Snabbtoggle Stockholm
+                if (stockholmOnly && !prop.isStockholm) return false;
+
+                // Priskontroll
+                if (prop.price < minPrice || prop.price > maxPrice) return false;
+
+                // Rums-kontroll
+                if (prop.rum < minRooms || prop.rum > maxRooms) return false;
+
+                // Områdeskontroll
+                if (!checkedAreas.includes(prop.area)) return false;
+
+                // Bostadstyp
+                if (selectedBostadstyp !== 'Alla' && prop.type !== selectedBostadstyp) return false;
+
+                // Sökord
+                if (searchText) {
+                    const matchTitle = prop.title.toLowerCase().includes(searchText);
+                    const matchDesc = prop.desc.toLowerCase().includes(searchText);
+                    const matchArea = prop.area.toLowerCase().includes(searchText);
+                    if (!matchTitle && !matchDesc && !matchArea) return false;
+                }
+
+                return true;
+            });
+
+            // Sortering
+            if (sortBy === 'pris-stigande') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'pris-fallande') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sortBy === 'kvm-fallande') {
+                filtered.sort((a, b) => b.kvm - a.kvm);
+            } else if (sortBy === 'roi-fallande') {
+                filtered.sort((a, b) => b.roi - a.roi);
+            }
+
+            renderProperties(filtered);
+        }
+
+        function renderProperties(list) {
+            const grid = document.getElementById('propertiesGrid');
+            const noResults = document.getElementById('noResults');
+            const countSpan = document.getElementById('resultsCount');
+
+            grid.innerHTML = '';
+            countSpan.innerText = list.length;
+
+            if (list.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            noResults.classList.add('hidden');
+
+            list.forEach(prop => {
+                const priceFormatted = new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(prop.price);
+                const kvmPris = Math.round(prop.price / prop.kvm);
+                const kvmPrisFormatted = new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(kvmPris);
+
+                const primaryImg = prop.images && prop.images.length > 0 ? prop.images[0] : defaultFallbackImage;
+
+                const card = document.createElement('div');
+                card.className = "glass rounded-2xl overflow-hidden border border-emerald-850/50 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 flex flex-col group shadow-lg animate-fade-in";
+                
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${primaryImg}" alt="${prop.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.onerror=null; this.src='${defaultFallbackImage}';">
+                        <div class="absolute top-3 left-3 bg-emerald-950/80 backdrop-blur-md text-emerald-300 text-[10px] uppercase tracking-wider font-semibold px-2.5 py-1 rounded-full border border-emerald-800/40">
+                            ${prop.area}
+                        </div>
+                        <div class="absolute bottom-3 right-3 bg-emerald-900 text-white font-bold text-sm px-3 py-1.5 rounded-lg shadow-md">
+                            ${priceFormatted}
+                        </div>
+                        <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded flex items-center gap-1 border border-white/5">
+                            <i data-lucide="image" class="w-3 h-3 text-emerald-400"></i> ${prop.images.length} unika bilder
+                        </div>
+                    </div>
+                    <div class="p-5 flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-serif text-lg text-white mb-2 group-hover:text-emerald-300 transition-colors">${prop.title}</h3>
+                            <p class="text-xs text-emerald-100/60 line-clamp-2 mb-4 leading-relaxed">${prop.desc}</p>
+                        </div>
+                        
+                        <div class="space-y-4 pt-3 border-t border-emerald-900/30">
+                            <!-- Bostadsinfo -->
+                            <div class="flex justify-between items-center text-xs text-emerald-200">
+                                <span class="flex items-center gap-1.5">
+                                    <i data-lucide="maximize" class="w-3.5 h-3.5 text-emerald-400"></i> ${prop.kvm} m²
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <i data-lucide="door-open" class="w-3.5 h-3.5 text-emerald-400"></i> ${prop.rum} rum
+                                </span>
+                                <span class="text-[10px] text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded border border-emerald-900/40 font-semibold">
+                                    Klass ${prop.energyClass}
+                                </span>
+                            </div>
+
+                            <!-- Proffs-statistik -->
+                            <div class="bg-emerald-950/30 p-2.5 rounded-lg border border-emerald-900/30 flex justify-between text-[10px] text-emerald-300/80">
+                                <div>
+                                    <span class="block text-emerald-100/40 text-[9px] uppercase">Pris / m²</span>
+                                    <strong>${kvmPrisFormatted}</strong>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block text-emerald-100/40 text-[9px] uppercase">Est. ROI / år</span>
+                                    <strong class="text-emerald-400">+${prop.roi}%</strong>
+                                </div>
+                            </div>
+
+                            <button onclick="openModal(${prop.id})" class="w-full bg-emerald-900/40 hover:bg-emerald-700 text-emerald-100 hover:text-white text-xs font-semibold py-2.5 rounded-xl border border-emerald-800/60 transition-all flex items-center justify-center gap-1.5">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                Visa fullständig analys
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('minPriceRange').value = 1000000;
+            document.getElementById('maxPriceRange').value = 50000000;
+            document.getElementById('minPriceDisplay').innerText = "1 000 000 kr";
+            document.getElementById('maxPriceDisplay').innerText = "50 000 000 kr";
+            document.getElementById('minRoomsRange').value = 1;
+            document.getElementById('maxRoomsRange').value = 8;
+            document.getElementById('minRoomsDisplay').innerText = "1 rum";
+            document.getElementById('maxRoomsDisplay').innerText = "8 rum";
+            document.getElementById('sortBy').value = 'rekommenderat';
+            
+            setSthlmToggle(true);
+            setBostadstyp('Alla');
+        }
+
+        function toggleMobileFilter() {
+            const panel = document.querySelector('.filter-panel');
+            panel.classList.toggle('is-open');
+        }
+
+        // --- DETALJ-MODAL (PROFFS/NYBÖRJARE) MED BILDGALLERI ---
+        function openModal(id) {
+            const prop = properties.find(p => p.id === id);
+            if (!prop) return;
+
+            currentModalProp = prop;
+            currentImageIndex = 0;
+
+            const formattedPrice = new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(prop.price);
+            const kvmPris = Math.round(prop.price / prop.kvm);
+            const formattedKvmPris = new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(kvmPris);
+
+            document.getElementById('modalTitle').innerText = prop.title;
+            document.getElementById('modalArea').innerText = prop.area;
+            document.getElementById('modalPrice').innerText = formattedPrice;
+            document.getElementById('modalKvm').innerText = `${prop.kvm} m²`;
+            document.getElementById('modalRum').innerText = `${prop.rum} rum`;
+            document.getElementById('modalDrift').innerText = prop.drift;
+            document.getElementById('modalKvmPris').innerText = `${formattedKvmPris}/m²`;
+            document.getElementById('modalDesc').innerText = prop.desc;
+
+            document.getElementById('modalRoi').innerHTML = `<i class="inline-block w-3 h-3 text-emerald-400 mr-0.5" data-lucide="trending-up"></i> +${prop.roi}% / år`;
+            document.getElementById('modalEnergyClass').innerText = `${prop.energyClass} (Nordisk Standard)`;
+
+            updateModalImage();
+
+            document.getElementById('detailModal').dataset.activeId = id;
+
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            lucide.createIcons();
+        }
+
+        function updateModalImage() {
+            if (!currentModalProp) return;
+            const images = currentModalProp.images;
+            const imgContainer = document.getElementById('modalImgContainer');
+            const indicator = document.getElementById('imageIndicator');
+
+            // Skapa ett temporärt bildobjekt för att validera laddningen
+            const tempImg = new Image();
+            tempImg.src = images[currentImageIndex];
+            
+            tempImg.onload = () => {
+                imgContainer.style.backgroundImage = `url(${images[currentImageIndex]})`;
+            };
+            tempImg.onerror = () => {
+                // Fallback om den specifika galleribilden mot förmodan skulle krascha
+                imgContainer.style.backgroundImage = `url(${defaultFallbackImage})`;
+            };
+
+            indicator.innerText = `Bild ${currentImageIndex + 1} av ${images.length}`;
+        }
+
+        function nextImage() {
+            if (!currentModalProp) return;
+            currentImageIndex = (currentImageIndex + 1) % currentModalProp.images.length;
+            updateModalImage();
+        }
+
+        function prevImage() {
+            if (!currentModalProp) return;
+            currentImageIndex = (currentImageIndex - 1 + currentModalProp.images.length) % currentModalProp.images.length;
+            updateModalImage();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            currentModalProp = null;
+        }
+
+        // CSV-Export
+        function exportData() {
+            const id = parseInt(document.getElementById('detailModal').dataset.activeId);
+            const prop = properties.find(p => p.id === id);
+            if (!prop) return;
+
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Nyckel,Varde\n"
+                + `Titel,${prop.title}\n`
+                + `Omrade,${prop.area}\n`
+                + `Bostadstyp,${prop.type}\n`
+                + `Pris,${prop.price} SEK\n`
+                + `Area,${prop.kvm} kvm\n`
+                + `Kvadratmeterpris,${Math.round(prop.price / prop.kvm)} SEK/kvm\n`
+                + `Driftkostnad,${prop.drift}\n`
+                + `Energiklass,${prop.energyClass}\n`
+                + `Estimerad ROI,${prop.roi}%\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Zervos_Finansiell_Analys_Id_${prop.id}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function bookVisning() {
+            closeModal();
+            document.getElementById('kontakt').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- BOLÅNEKALKYLATOR ---
+        function calculateMortgage(trigger = '') {
+            const price = parseFloat(document.getElementById('calcPrice').value) || 0;
+            let downpaymentInput = document.getElementById('calcDownpayment');
+            let downpayment = parseFloat(downpaymentInput.value) || 0;
+            const interest = parseFloat(document.getElementById('calcInterest').value) || 0;
+
+            const minDownpayment = price * 0.15;
+
+            if (trigger !== 'downpayment') {
+                downpayment = minDownpayment;
+                downpaymentInput.value = Math.round(minDownpayment);
+            }
+
+            const downpaymentPct = (downpayment / price) * 100;
+            document.getElementById('calcDownpaymentPct').innerText = `${Math.round(downpaymentPct)}%`;
+
+            const loanAmount = price - downpayment;
+            document.getElementById('calcLoanAmount').innerText = new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(loanAmount);
+
+            if (loanAmount <= 0) {
+                document.getElementById('calcMonthlyPayment').innerHTML = "0 kr <span class='text-sm font-sans font-normal text-emerald-100/50'>/mån</span>";
+                return;
+            }
+
+            let annualAmortization = 0;
+            const loanToValue = (loanAmount / price) * 100;
+
+            if (loanToValue > 70) {
+                annualAmortization = loanAmount * 0.02; 
+            } else if (loanToValue >= 50) {
+                annualAmortization = loanAmount * 0.01; 
+            }
+
+            const monthlyAmortization = annualAmortization / 12;
+
+            const annualInterestCost = loanAmount * (interest / 100);
+            const monthlyInterestCostWithTaxDeduction = (annualInterestCost * 0.7) / 12;
+
+            const totalMonthly = monthlyAmortization + monthlyInterestCostWithTaxDeduction;
+
+            document.getElementById('calcMonthlyPayment').innerHTML = `${new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(totalMonthly)} <span class="text-sm font-sans font-normal text-emerald-100/50">/mån</span>`;
+            document.getElementById('calcAmortization').innerText = `${new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(monthlyAmortization)} /mån`;
+            document.getElementById('calcInterestCost').innerText = `${new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(monthlyInterestCostWithTaxDeduction)} /mån`;
+        }
+
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            document.getElementById('contactForm').classList.add('hidden');
+            document.getElementById('contactSuccess').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

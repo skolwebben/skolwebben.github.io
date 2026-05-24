@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Läxhjälp</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E8B57;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .subject-btn, .option-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: calc(100% - 16px);
+            box-sizing: border-box;
+        }
+
+        .subject-btn:hover, .option-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #quiz-section {
+            margin-top: 20px;
+        }
+
+        #question-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            min-height: 24px;
+        }
+
+        .correct { color: #4CAF50; }
+        .incorrect { color: #F44336; }
+
+        #next-btn, #restart-btn {
+            background-color: #2196F3;
+            margin-top: 20px;
+        }
+
+        #next-btn:hover, #restart-btn:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📚 Min Läxhjälp</h1>
+        
+        <div id="subject-selection">
+            <p>Välj ett ämne att plugga på:</p>
+            <button class="subject-btn" onclick="startQuiz('matematik')">Matematik</button>
+            <button class="subject-btn" onclick="startQuiz('svenska')">Svenska</button>
+            <button class="subject-btn" onclick="startQuiz('historia')">Historia</button>
+            <button class="subject-btn" onclick="startQuiz('naturkunskap')">Naturkunskap</button>
+        </div>
+
+        <div id="quiz-section" class="hidden">
+            <h2 id="current-subject-title">Ämne</h2>
+            <p>Fråga <span id="question-number">1</span> av <span id="total-questions">3</span></p>
+            <div id="question-text">Här kommer frågan...</div>
+            
+            <div id="options-container">
+                </div>
+
+            <div id="feedback"></div>
+            
+            <button id="next-btn" class="subject-btn hidden" onclick="nextQuestion()">Nästa fråga</button>
+        </div>
+
+        <div id="result-section" class="hidden">
+            <h2>Bra jobbat! 🎉</h2>
+            <p>Du fick <span id="score">0</span> av <span id="max-score">0</span> rätt.</p>
+            <button id="restart-btn" class="subject-btn" onclick="resetApp()">Tillbaka till start</button>
+        </div>
+    </div>
+
+    <script>
+        // Databas med frågor för varje ämne
+        const quizData = {
+            matematik: [
+                { q: "Vad är 7 * 8?", options: ["54", "56", "64", "48"], answer: "56" },
+                { q: "Vad är 25% av 200?", options: ["25", "50", "75", "100"], answer: "50" },
+                { q: "Vad är kvadratroten ur 81?", options: ["7", "8", "9", "10"], answer: "9" }
+            ],
+            svenska: [
+                { q: "Vilken ordklass tillhör ordet 'hoppa'?", options: ["Substantiv", "Adjektiv", "Verb", "Adverb"], answer: "Verb" },
+                { q: "Vad kallas ord som betyder tvärtom (t.ex. stor/liten)?", options: ["Synonymer", "Antonymer", "Homonymer", "Pronomen"], answer: "Antonymer" },
+                { q: "Vilket skiljetecken avslutar en vanlig påståendemening?", options: ["Frågetecken", "Utropstecken", "Komma", "Punkt"], answer: "Punkt" }
+            ],
+            historia: [
+                { q: "Vilket år startade franska revolutionen?", options: ["1776", "1789", "1812", "1914"], answer: "1789" },
+                { q: "Vad kallades skeppet som sjönk på sin hemresa 1628?", options: ["Vasa", "Kronan", "Götheborg", "Bounty"], answer: "Vasa" },
+                { q: "Under vilken tidsperiod levde vikingarna?", options: ["500-talet", "800- till 1000-talet", "1300-talet", "1500-talet"], answer: "800- till 1000-talet" }
+            ],
+            naturkunskap: [
+                { q: "Vad kallas processen där växter skapar syre och socker?", options: ["Cellandning", "Fotosyntes", "Avdunstning", "Osmos"], answer: "Fotosyntes" },
+                { q: "Vilken gas utgör den största delen av jordens atmosfär?", options: ["Syre", "Koldioxid", "Kväve", "Väte"], answer: "Kväve" },
+                { q: "Vilket är det hårdaste naturliga materialet på jorden?", options: ["Guld", "Sten", "Järn", "Diamant"], answer: "Diamant" }
+            ]
+        };
+
+        // Variabler för att hålla koll på spelet
+        let currentSubject = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // HTML-element
+        const subjectSelection = document.getElementById('subject-selection');
+        const quizSection = document.getElementById('quiz-section');
+        const resultSection = document.getElementById('result-section');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Starta quizet baserat på ämne
+        function startQuiz(subject) {
+            currentSubject = subject;
+            currentQuestions = [...quizData[subject]]; // Kopiera arrayen för att blanda om man vill
+            currentQuestionIndex = 0;
+            score = 0;
+
+            document.getElementById('current-subject-title').innerText = subject.charAt(0).toUpperCase() + subject.slice(1);
+            document.getElementById('total-questions').innerText = currentQuestions.length;
+
+            subjectSelection.classList.add('hidden');
+            resultSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        // Ladda in aktuell fråga
+        function loadQuestion() {
+            feedback.innerText = "";
+            nextBtn.classList.add('hidden');
+            optionsContainer.innerHTML = "";
+            
+            document.getElementById('question-number').innerText = currentQuestionIndex + 1;
+
+            const currentQ = currentQuestions[currentQuestionIndex];
+            questionText.innerText = currentQ.q;
+
+            // Skapa knappar för svarsalternativen
+            currentQ.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.innerText = option;
+                btn.classList.add('option-btn');
+                btn.onclick = () => checkAnswer(option, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // Kontrollera om svaret är rätt
+        function checkAnswer(selectedOption, buttonElement) {
+            const currentQ = currentQuestions[currentQuestionIndex];
+            
+            // Inaktivera alla knappar efter att man valt
+            const allButtons = optionsContainer.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (selectedOption === currentQ.answer) {
+                feedback.innerText = "✅ Rätt svar!";
+                feedback.className = "correct";
+                buttonElement.style.backgroundColor = "#4CAF50";
+                score++;
+            } else {
+                feedback.innerText = `❌ Fel! Rätt svar var: ${currentQ.answer}`;
+                feedback.className = "incorrect";
+                buttonElement.style.backgroundColor = "#F44336";
+                
+                // Markera rätt svar grönt också
+                allButtons.forEach(btn => {
+                    if(btn.innerText === currentQ.answer) {
+                        btn.style.backgroundColor = "#4CAF50";
+                    }
+                });
+            }
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        // Gå till nästa fråga eller visa resultat
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Visa slutresultatet
+        function showResults() {
+            quizSection.classList.add('hidden');
+            resultSection.classList.remove('hidden');
+            
+            document.getElementById('score').innerText = score;
+            document.getElementById('max-score').innerText = currentQuestions.length;
+        }
+
+        // Återställ appen till startsidan
+        function resetApp() {
+            resultSection.classList.add('hidden');
+            subjectSelection.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

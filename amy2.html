@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hangyodons Fiskeäventyr</title>
+    <!-- Tailwind CSS för snygg design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            touch-action: pan-y; 
+            overflow: hidden;
+            background: linear-gradient(135deg, #bae6fd 0%, #e0f2fe 100%);
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Spelcontainer -->
+    <div class="max-w-lg w-full space-y-3 z-10">
+        
+        <!-- Header / Poäng och Tid -->
+        <div class="flex justify-between items-center px-2">
+            <div>
+                <h1 class="text-3xl font-black text-sky-500 tracking-wider uppercase drop-shadow-[0_1.5px_0px_rgba(2,132,199,1)]">
+                    Hangyodon Fiske 🐟
+                </h1>
+                <p class="text-sky-800/80 text-xs font-semibold">Hjälp Hangyodon att fiska upp sina vänner!</p>
+            </div>
+            
+            <!-- Resultatpaneler -->
+            <div class="flex gap-2">
+                <div class="glass-panel px-3 py-1.5 rounded-xl text-center min-w-[70px]">
+                    <span class="text-[10px] uppercase font-bold text-sky-700 block -mb-1">Poäng</span>
+                    <span id="scoreDisplay" class="text-xl font-black text-sky-600">0</span>
+                </div>
+                <div class="glass-panel px-3 py-1.5 rounded-xl text-center min-w-[70px]">
+                    <span class="text-[10px] uppercase font-bold text-rose-600 block -mb-1">Tid kvar</span>
+                    <span id="timerDisplay" class="text-xl font-black text-rose-500">60</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spelyta (Canvas-container) -->
+        <div class="relative w-full aspect-[4/5] glass-panel rounded-2xl shadow-xl overflow-hidden border-4 border-sky-300">
+            <!-- Canvas -->
+            <canvas id="gameCanvas" width="600" height="750" class="block w-full h-full"></canvas>
+            
+            <!-- Overlay för Start / Game Over -->
+            <div id="overlay" class="absolute inset-0 bg-sky-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center transition-opacity duration-300 z-20">
+                <!-- Söt SVG på Hangyodon i en badring -->
+                <svg viewBox="0 0 100 100" class="w-24 h-24 mb-4 drop-shadow-[0_0_15px_rgba(56,189,248,0.6)] animate-bounce">
+                    <!-- Badring -->
+                    <ellipse cx="50" cy="65" rx="30" ry="12" fill="#f43f5e" stroke="#be185d" stroke-width="2"/>
+                    <ellipse cx="50" cy="65" rx="15" ry="6" fill="#0c4a6e" />
+                    <!-- Hangyodon Kropp -->
+                    <path d="M 50 25 C 65 25, 72 38, 72 55 C 72 65, 65 72, 50 72 C 35 72, 28 65, 28 55 C 28 38, 35 25, 50 25 Z" fill="#6bc5c2" stroke="#378484" stroke-width="2"/>
+                    <path d="M 50 26 C 45 10, 55 10, 50 26" fill="#6bc5c2" stroke="#378484" stroke-width="1.5" />
+                    <!-- Ögon -->
+                    <circle cx="42" cy="45" r="8" fill="white" stroke="#378484" stroke-width="1.5"/>
+                    <circle cx="43" cy="45" r="3" fill="black"/>
+                    <circle cx="58" cy="45" r="8" fill="white" stroke="#378484" stroke-width="1.5"/>
+                    <circle cx="57" cy="45" r="3" fill="black"/>
+                    <!-- Läppar -->
+                    <ellipse cx="50" cy="58" rx="10" ry="5" fill="#ff9ebb" stroke="#378484" stroke-width="1.5"/>
+                    <line x1="41" y1="58" x2="59" y2="58" stroke="#378484" stroke-width="1"/>
+                </svg>
+
+                <h2 id="overlayTitle" class="text-3xl font-black text-sky-300 mb-2 tracking-wider">HANGYODONS FISKE</h2>
+                <p id="overlayText" class="text-sky-100/90 text-sm max-w-[280px] mb-6">
+                    Sänk ner kroken och fånga fiskarna! Undvik tunga stövlar och skräp.
+                </p>
+                <button id="startBtn" class="bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-white font-black py-3 px-8 rounded-full text-lg shadow-lg border-b-4 border-blue-700 active:border-b-0 transition-all transform hover:scale-105 active:scale-95">
+                    Starta Äventyret!
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobila kontroller -->
+        <div class="grid grid-cols-3 gap-3 p-3 glass-panel rounded-2xl mx-auto max-w-[320px] md:opacity-50 md:hover:opacity-100 transition-opacity">
+            <button id="btnLeft" class="control-btn aspect-square bg-sky-100 hover:bg-sky-200 active:bg-sky-400 rounded-xl flex items-center justify-center text-sky-600 transition-colors border-b-4 border-sky-300 active:border-b-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button id="btnAction" class="control-btn aspect-square bg-rose-400 hover:bg-rose-300 active:bg-rose-500 rounded-xl flex flex-col items-center justify-center text-white transition-colors border-b-4 border-rose-600 active:border-b-0 font-bold text-xs uppercase tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="mb-0.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                Fiska
+            </button>
+            <button id="btnRight" class="control-btn aspect-square bg-sky-100 hover:bg-sky-200 active:bg-sky-400 rounded-xl flex items-center justify-center text-sky-600 transition-colors border-b-4 border-sky-300 active:border-b-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+        
+    </div>
+
+    <!-- Söta bubbel-effekter i bakgrunden utanför spelet -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+        <div class="absolute bg-white/30 border border-white/40 rounded-full w-8 h-8 left-[10%] bottom-[20%] animate-pulse"></div>
+        <div class="absolute bg-white/20 border border-white/30 rounded-full w-12 h-12 right-[15%] top-[15%] animate-pulse"></div>
+        <div class="absolute bg-white/30 border border-white/40 rounded-full w-6 h-6 left-[40%] top-[8%] animate-pulse"></div>
+    </div>
+
+    <script>
+        // --- Webb-ljud (Syntetiska ljudeffekter med Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'drop') {
+                // Sänkande krok-ljud
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.5);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'catch') {
+                // När något nappar
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(300, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'score') {
+                // Lyckat fiske!
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'trash') {
+                // Surt ljud vid skräp
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.linearRampToValueAtTime(60, now + 0.3);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        // --- Spelinställningar & Variabler ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const overlay = document.getElementById('overlay');
+        const overlayTitle = document.getElementById('overlayTitle');
+        const overlayText = document.getElementById('overlayText');
+        const startBtn = document.getElementById('startBtn');
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let score = 0;
+        let timeLeft = 60;
+        let isGameRunning = false;
+        let gameTimer;
+        let animationFrameId;
+
+        // Kontroller
+        const keys = { left: false, right: false };
+
+        // --- Spelobjekt ---
+
+        // Hangyodon och hans båt
+        const boat = {
+            x: width / 2,
+            y: 110, // Vattenlinjen är vid y = 140
+            width: 90,
+            height: 45,
+            speed: 5.5,
+            direction: 1, // 1 = Höger, -1 = Vänster (för animation av Hangyodons blick)
+
+            update() {
+                if (keys.left) {
+                    this.x -= this.speed;
+                    this.direction = -1;
+                }
+                if (keys.right) {
+                    this.x += this.speed;
+                    this.direction = 1;
+                }
+                // Håll båten inom skärmen
+                if (this.x < this.width / 2) this.x = this.width / 2;
+                if (this.x > width - this.width / 2) this.x = width - this.width / 2;
+            },
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // --- Rita båten (gullig träbåt) ---
+                ctx.fillStyle = '#fdba74'; // Ljust trä (Tailwind orange-300)
+                ctx.strokeStyle = '#c2410c'; // Mörkare kant
+                ctx.lineWidth = 3;
+
+                ctx.beginPath();
+                ctx.moveTo(-this.width / 2 - 10, -5);
+                ctx.lineTo(this.width / 2 + 10, -5);
+                ctx.quadraticCurveTo(this.width / 2, this.height, 0, this.height);
+                ctx.quadraticCurveTo(-this.width / 2, this.height, -this.width / 2 - 10, -5);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Detaljer på båten (Träådror)
+                ctx.strokeStyle = '#ea580c';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(-this.width / 2 + 5, 12);
+                ctx.lineTo(this.width / 2 - 5, 12);
+                ctx.moveTo(-this.width / 2 + 15, 26);
+                ctx.lineTo(this.width / 2 - 15, 26);
+                ctx.stroke();
+
+                // --- Rita Hangyodon inuti båten ---
+                ctx.save();
+                ctx.scale(this.direction, 1); // Vänd ansiktet åt hållet man åker
+
+                const hx = -10; // Lite offset så han sitter bra
+                const hy = -12;
+
+                // Ryggfena (Fin)
+                ctx.fillStyle = '#6bc5c2';
+                ctx.strokeStyle = '#378484';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(hx - 12, hy - 25);
+                ctx.quadraticCurveTo(hx - 22, hy - 45, hx - 5, hy - 25);
+                ctx.fill();
+                ctx.stroke();
+
+                // Kropp / Huvud
+                ctx.fillStyle = '#6bc5c2'; // Hangyodons signaturfärg (Turkos)
+                ctx.beginPath();
+                ctx.arc(hx, hy - 12, 22, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Stora ögon
+                ctx.fillStyle = 'white';
+                // Bakre öga
+                ctx.beginPath();
+                ctx.arc(hx + 10, hy - 18, 9, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                // Främre öga
+                ctx.beginPath();
+                ctx.arc(hx - 2, hy - 18, 9, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Pupiller (Gör att han tittar lite snett framåt)
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(hx + 11, hy - 18, 3, 0, Math.PI * 2);
+                ctx.arc(hx - 1, hy - 18, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Gula kinder
+                ctx.fillStyle = 'rgba(253, 224, 71, 0.4)';
+                ctx.beginPath();
+                ctx.arc(hx - 11, hy - 10, 4, 0, Math.PI * 2);
+                ctx.arc(hx + 17, hy - 10, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Hans ikoniska runda rosa läppar
+                ctx.fillStyle = '#ff9ebb';
+                ctx.beginPath();
+                ctx.ellipse(hx + 5, hy - 4, 11, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(hx - 5, hy - 4);
+                ctx.lineTo(hx + 15, hy - 4);
+                ctx.stroke();
+
+                ctx.restore();
+
+                // --- Fiske-spö ---
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                // Spöt pekar alltid bakåt/åt sidan lite snyggt
+                if (this.direction === 1) {
+                    ctx.moveTo(10, -20);
+                    ctx.lineTo(this.width / 2 + 25, -55);
+                } else {
+                    ctx.moveTo(-10, -20);
+                    ctx.lineTo(-this.width / 2 - 25, -55);
+                }
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        };
+
+        // Fiskekroken
+        const hook = {
+            x: width / 2,
+            y: 130,
+            startY: 130,
+            radius: 12,
+            speed: 8,
+            state: 'idle', // 'idle', 'dropping', 'reeling'
+            caughtItem: null,
+
+            update() {
+                // Följ båtens x-koordinat när den är ledig
+                if (this.state === 'idle') {
+                    // Justera krokens start-x beroende på vilket håll spöt pekar
+                    const offset = boat.direction === 1 ? boat.width / 2 + 25 : -boat.width / 2 - 25;
+                    this.x = boat.x + offset;
+                    this.y = this.startY;
+                } else if (this.state === 'dropping') {
+                    this.y += this.speed;
+                    // Vänd om vid botten av havet
+                    if (this.y >= height - 40) {
+                        this.state = 'reeling';
+                    }
+                } else if (this.state === 'reeling') {
+                    // Reela in lite långsammare om vi bär på en tung stövel
+                    const currentReelSpeed = (this.caughtItem && this.caughtItem.type === 'boot') ? this.speed * 0.4 : this.speed;
+                    this.y -= currentReelSpeed;
+                    
+                    if (this.y <= this.startY) {
+                        this.y = this.startY;
+                        this.state = 'idle';
+                        
+                        // Kolla om vi fick upp något till ytan!
+                        if (this.caughtItem) {
+                            harvestCatch(this.caughtItem);
+                            this.caughtItem = null;
+                        }
+                    }
+                }
+
+                // Om vi bär på en fångst, uppdatera dess position till kroken
+                if (this.caughtItem) {
+                    this.caughtItem.x = this.x;
+                    this.caughtItem.y = this.y + 15;
+                }
+            },
+
+            draw() {
+                // 1. Rita fiskelinan från spötoppen till kroken
+                const offset = boat.direction === 1 ? boat.width / 2 + 25 : -boat.width / 2 - 25;
+                const rodTipX = boat.x + offset;
+                const rodTipY = boat.y - 55;
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(rodTipX, rodTipY);
+                // Svag kurva på linan om den är slapp (idle)
+                if (this.state === 'idle') {
+                    ctx.quadraticCurveTo(rodTipX + 5, (rodTipY + this.y)/2, this.x, this.y);
+                } else {
+                    ctx.lineTo(this.x, this.y);
+                }
+                ctx.stroke();
+
+                // 2. Rita själva metallkroken
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                ctx.strokeStyle = '#94a3b8'; // Silver/Grå
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(0, -10);
+                ctx.lineTo(0, 10);
+                ctx.arc(5, 10, 5, Math.PI, 0, true);
+                ctx.lineTo(10, 5);
+                ctx.stroke();
+
+                ctx.restore();
+            },
+
+            drop() {
+                if (this.state === 'idle') {
+                    this.state = 'dropping';
+                    playSound('drop');
+                }
+            }
+        };
+
+        // Lista med aktiva fiskar och föremål
+        let seaItems = [];
+
+        // Definitioner för de olika sakerna som simmar i havet
+        const itemTypes = {
+            fish1: { score: 10, speed: 2, color: '#f43f5e', label: 'Röd Fisk', isBonus: false },
+            fish2: { score: 20, speed: 3, color: '#0ea5e9', label: 'Blå Fisk', isBonus: false },
+            gold: { score: 50, speed: 4.5, color: '#fbbf24', label: 'Guldfisk', isBonus: true },
+            sayuri: { score: 100, speed: 2.5, color: '#ec4899', label: 'Sayuri 🐙', isBonus: true },
+            boot: { score: -15, speed: 1.2, color: '#475569', label: 'Gammal Stövel 🥾', isTrash: true }
+        };
+
+        // Funktion för att skapa ett havsobjekt
+        function spawnItem() {
+            const types = Object.keys(itemTypes);
+            // Viktad sannolikhet så att vanliga fiskar är vanligast, Sayuri och stövlar mer sällsynta
+            const rand = Math.random();
+            let selectedType = 'fish1';
+
+            if (rand < 0.40) {
+                selectedType = 'fish1';
+            } else if (rand < 0.70) {
+                selectedType = 'fish2';
+            } else if (rand < 0.82) {
+                selectedType = 'boot';
+            } else if (rand < 0.93) {
+                selectedType = 'gold';
+            } else {
+                selectedType = 'sayuri';
+            }
+
+            const info = itemTypes[selectedType];
+            const fromLeft = Math.random() < 0.5;
+            
+            // Djupnivå (under vattenytan, mellan y=200 och y=700)
+            const y = Math.random() * (height - 300) + 220;
+
+            seaItems.push({
+                type: selectedType,
+                x: fromLeft ? -50 : width + 50,
+                y: y,
+                vx: fromLeft ? info.speed : -info.speed,
+                width: selectedType === 'sayuri' ? 44 : 40,
+                height: selectedType === 'sayuri' ? 44 : 26,
+                angle: 0,
+                label: info.label,
+                score: info.score,
+                isBonus: info.isBonus,
+                isTrash: info.isTrash,
+                caught: false,
+                isLeft: !fromLeft
+            });
+        }
+
+        // --- Kollisionsdetektering och hantering ---
+        function checkCollisions() {
+            if (hook.state !== 'dropping' || hook.caughtItem) return;
+
+            for (let item of seaItems) {
+                if (item.caught) continue;
+
+                // Enkel cirkel/box-kollision
+                const dx = hook.x - item.x;
+                const dy = hook.y - item.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < hook.radius + item.width / 2) {
+                    // Vi fick ett napp!
+                    item.caught = true;
+                    hook.caughtItem = item;
+                    hook.state = 'reeling';
+                    
+                    if (item.isTrash) {
+                        playSound('trash');
+                    } else {
+                        playSound('catch');
+                    }
+                    break;
+                }
+            }
+        }
+
+        // När vi lyckas veva upp något till båten
+        function harvestCatch(item) {
+            score += item.score;
+            if (score < 0) score = 0; // Inga minuspoäng totalt
+            scoreDisplay.textContent = score;
+
+            // Trigger liten snygg visuell effekt (t.ex. text på skärmen)
+            createScorePop(item.x, boat.y - 40, item.score >= 0 ? `+${item.score}` : `${item.score}`, item.score >= 0 ? '#10b981' : '#ef4444');
+
+            if (item.score > 0) {
+                playSound('score');
+            }
+
+            // Ta bort den från den aktiva listan
+            seaItems = seaItems.filter(i => i !== item);
+        }
+
+        // Söta flygande poängsiffror
+        let popTexts = [];
+        function createScorePop(x, y, text, color) {
+            popTexts.push({ x, y, text, color, alpha: 1, life: 40 });
+        }
+
+        // Bubbeleffekter i vattnet
+        let bubbles = [];
+        function createWaterBubble() {
+            bubbles.push({
+                x: Math.random() * width,
+                y: height + 10,
+                radius: Math.random() * 5 + 2,
+                speed: Math.random() * 2 + 1,
+                sway: Math.random() * Math.PI * 2
+            });
+        }
+
+        // --- Ritmetoder för havsdjuren ---
+
+        function drawFish(ctx, x, y, width, height, color, isLeft) {
+            ctx.save();
+            ctx.translate(x, y);
+            if (!isLeft) ctx.scale(-1, 1);
+
+            // Kropp (enkel ellips)
+            ctx.fillStyle = color;
+            ctx.strokeStyle = '#023e8a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Stjärtfena (triangel bakåt)
+            ctx.beginPath();
+            ctx.moveTo(-width / 2 + 3, 0);
+            ctx.lineTo(-width / 2 - 12, -height / 2 - 2);
+            ctx.lineTo(-width / 2 - 12, height / 2 + 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Sött öga framåt
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(width / 4, -3, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(width / 4 + 1, -3, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawSayuri(ctx, x, y, width) {
+            // Hangyodons bläckfiskkompis Sayuri (Rosa, söt bläckfisk)
+            ctx.save();
+            ctx.translate(x, y);
+
+            ctx.fillStyle = '#f43f5e'; // Klarrosa
+            ctx.strokeStyle = '#9f1239';
+            ctx.lineWidth = 2;
+
+            // Tentakler under kroppen
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.arc(i * 10, 10, 6, 0, Math.PI, false);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Huvud (rund klockform)
+            ctx.beginPath();
+            ctx.arc(0, -4, width / 2 - 2, Math.PI, 0);
+            ctx.quadraticCurveTo(width / 2 - 2, 8, 0, 8);
+            ctx.quadraticCurveTo(-width / 2 + 2, 8, -width / 2 + 2, -4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Ögon
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(-5, -2, 2.5, 0, Math.PI * 2);
+            ctx.arc(5, -2, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Söt pussmun / rund mun
+            ctx.fillStyle = '#ffe4e6';
+            ctx.strokeStyle = '#9f1239';
+            ctx.beginPath();
+            ctx.arc(0, 3, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawBoot(ctx, x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.fillStyle = '#64748b'; // Sliten gråblå
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2.5;
+
+            // Stövelform
+            ctx.beginPath();
+            ctx.moveTo(-10, -18);
+            ctx.lineTo(10, -18);
+            ctx.lineTo(10, 2);
+            ctx.lineTo(22, 10);
+            ctx.lineTo(18, 18);
+            ctx.lineTo(-12, 18);
+            ctx.lineTo(-10, 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Lite lera på stöveln
+            ctx.fillStyle = '#78350f';
+            ctx.beginPath();
+            ctx.arc(-2, 12, 4, 0, Math.PI * 2);
+            ctx.arc(10, 14, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // --- Spel-loopen ---
+
+        function update() {
+            boat.update();
+            hook.update();
+
+            // Chans att spawna nya saker (mer sällan om det är fullt)
+            if (seaItems.length < 8 && Math.random() < 0.02) {
+                spawnItem();
+            }
+
+            // Chans att skapa bakgrundsbubblor
+            if (Math.random() < 0.08) {
+                createWaterBubble();
+            }
+
+            // Uppdatera simmande fiskar
+            for (let i = seaItems.length - 1; i >= 0; i--) {
+                let item = seaItems[i];
+                if (!item.caught) {
+                    item.x += item.vx;
+                    item.angle += 0.05; // För snygg svaje-effekt
+
+                    // Ta bort om de simmar utanför skärmen
+                    if (item.vx > 0 && item.x > width + 60) {
+                        seaItems.splice(i, 1);
+                    } else if (item.vx < 0 && item.x < -60) {
+                        seaItems.splice(i, 1);
+                    }
+                }
+            }
+
+            // Uppdatera bubblor
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                let b = bubbles[i];
+                b.y -= b.speed;
+                b.sway += 0.05;
+                b.x += Math.sin(b.sway) * 0.5;
+
+                if (b.y < 140) { // Försvinn vid vattenytan
+                    bubbles.splice(i, 1);
+                }
+            }
+
+            // Uppdatera flygande poängtexter
+            for (let i = popTexts.length - 1; i >= 0; i--) {
+                let p = popTexts[i];
+                p.y -= 1;
+                p.alpha -= 1 / p.life;
+                if (p.alpha <= 0) {
+                    popTexts.splice(i, 1);
+                }
+            }
+
+            checkCollisions();
+        }
+
+        function draw() {
+            // 1. Rensa hela canvasen
+            ctx.clearRect(0, 0, width, height);
+
+            // 2. Himmel (Ljusblå/rosa solnedgång/morgon-gradient)
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, 140);
+            skyGradient.addColorStop(0, '#bae6fd'); // Tailwind sky-200
+            skyGradient.addColorStop(1, '#e0f2fe'); // Tailwind sky-100
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, width, 140);
+
+            // En söt, rund, gul sol på himlen
+            ctx.fillStyle = '#fef08a'; // Ljusgul
+            ctx.beginPath();
+            ctx.arc(100, 60, 25, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Lite moln
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.beginPath();
+            ctx.arc(420, 50, 15, 0, Math.PI * 2);
+            ctx.arc(440, 45, 20, 0, Math.PI * 2);
+            ctx.arc(460, 50, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 3. Havet (Djupblå vatten-gradient)
+            const waterGradient = ctx.createLinearGradient(0, 140, 0, height);
+            waterGradient.addColorStop(0, '#38bdf8'); // Mellanblå
+            waterGradient.addColorStop(0.3, '#0284c7'); // Djupblå
+            waterGradient.addColorStop(1, '#0c4a6e'); // Mycket mörk marinblå i botten
+            ctx.fillStyle = waterGradient;
+            ctx.fillRect(0, 140, width, height - 140);
+
+            // Vågor i vattenbrynet
+            ctx.fillStyle = '#0284c7';
+            ctx.beginPath();
+            for (let i = 0; i <= width; i += 20) {
+                const waveY = 140 + Math.sin(i * 0.05 + Date.now() * 0.003) * 4;
+                if (i === 0) ctx.moveTo(i, waveY);
+                else ctx.lineTo(i, waveY);
+            }
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.fill();
+
+            // 4. Rita bubblor i bakgrunden
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+            bubbles.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // 5. Rita havets botten (Sand och tång)
+            ctx.fillStyle = '#eab308'; // Gul sand
+            ctx.beginPath();
+            ctx.ellipse(width / 2, height, width / 2 + 50, 30, 0, Math.PI, 0);
+            ctx.fill();
+
+            // Sjögräs/Tång
+            ctx.strokeStyle = '#15803d';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            for (let x = 30; x < width; x += 80) {
+                ctx.beginPath();
+                ctx.moveTo(x, height - 5);
+                ctx.quadraticCurveTo(x + Math.sin(Date.now() * 0.001 + x) * 10, height - 40, x + Math.sin(Date.now() * 0.001 + x) * 5, height - 70);
+                ctx.stroke();
+            }
+
+            // 6. Rita havsdjuren och föremålen
+            seaItems.forEach(item => {
+                // Lägg till en svag, söt rotation på simmande fiskar
+                const swayY = item.y + Math.sin(item.angle) * 3;
+
+                if (item.type === 'sayuri') {
+                    drawSayuri(ctx, item.x, swayY, item.width);
+                } else if (item.type === 'boot') {
+                    drawBoot(ctx, item.x, swayY);
+                } else {
+                    const info = itemTypes[item.type];
+                    drawFish(ctx, item.x, swayY, item.width, item.height, info.color, item.isLeft);
+                }
+            });
+
+            // 7. Rita spelaren och kroken
+            boat.draw();
+            hook.draw();
+
+            // 8. Rita flygande poängsiffror
+            popTexts.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.font = 'bold 24px Fredoka, sans-serif';
+                ctx.textAlign = 'center';
+                // Vit kant för bättre läsbarhet
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 4;
+                ctx.strokeText(p.text, p.x, p.y);
+                ctx.fillText(p.text, p.x, p.y);
+                ctx.restore();
+            });
+        }
+
+        // Huvudloopen
+        function gameLoop() {
+            if (!isGameRunning) return;
+
+            update();
+            draw();
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        // --- Timer och Start / Stopp ---
+
+        function initGame() {
+            score = 0;
+            timeLeft = 60;
+            scoreDisplay.textContent = score;
+            timerDisplay.textContent = timeLeft;
+            seaItems = [];
+            bubbles = [];
+            popTexts = [];
+
+            // Spawn-startfiskar
+            for (let i = 0; i < 5; i++) {
+                spawnItem();
+                // Sprid ut dem längs skärmen i början
+                seaItems[i].x = Math.random() * (width - 100) + 50;
+            }
+
+            // Starta om klockan
+            clearInterval(gameTimer);
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // Dölj start-skärmen
+            overlay.classList.add('hidden');
+            isGameRunning = true;
+
+            cancelAnimationFrame(animationFrameId);
+            gameLoop();
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameTimer);
+            cancelAnimationFrame(animationFrameId);
+
+            overlayTitle.textContent = "FISKETUREN KLAR!";
+            overlayTitle.classList.replace('text-sky-300', 'text-yellow-300');
+            overlayText.textContent = `Vilken fantastisk dag till sjöss! Du samlade ihop hela ${score} poäng med Hangyodon! 🌟`;
+            startBtn.textContent = "Spela igen!";
+            overlay.classList.remove('hidden');
+        }
+
+        // --- Kontroller & Event Listeners ---
+
+        // Knappar för start/omstart
+        startBtn.addEventListener('click', initGame);
+
+        // Tangentbordsstyrning
+        document.addEventListener('keydown', (e) => {
+            if (["ArrowLeft", "a", "A"].includes(e.key)) keys.left = true;
+            if (["ArrowRight", "d", "D"].includes(e.key)) keys.right = true;
+            if (["ArrowDown", "s", "S", " "].includes(e.key)) {
+                e.preventDefault(); // Hindra skrollning på blanksteg
+                hook.drop();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (["ArrowLeft", "a", "A"].includes(e.key)) keys.left = false;
+            if (["ArrowRight", "d", "D"].includes(e.key)) keys.right = false;
+        });
+
+        // Touch- och musklick-event för mobila knappar
+        const setupMobileButton = (id, action) => {
+            const btn = document.getElementById(id);
+            
+            const startHandler = (e) => {
+                e.preventDefault();
+                action(true);
+            };
+            const endHandler = (e) => {
+                e.preventDefault();
+                action(false);
+            };
+
+            btn.addEventListener('touchstart', startHandler, { passive: false });
+            btn.addEventListener('touchend', endHandler);
+            btn.addEventListener('mousedown', startHandler);
+            btn.addEventListener('mouseup', endHandler);
+            btn.addEventListener('mouseleave', endHandler);
+        };
+
+        setupMobileButton('btnLeft', (isPressed) => { keys.left = isPressed; });
+        setupMobileButton('btnRight', (isPressed) => { keys.right = isPressed; });
+        
+        // Fiska-knappen behöver bara klickas/tryckas en gång för att droppa kroken
+        const actionBtn = document.getElementById('btnAction');
+        const triggerAction = (e) => {
+            e.preventDefault();
+            hook.drop();
+        };
+        actionBtn.addEventListener('touchstart', triggerAction, { passive: false });
+        actionBtn.addEventListener('mousedown', triggerAction);
+
+        // Rita en trevlig startvy innan spelet drar igång
+        for (let i = 0; i < 4; i++) {
+            spawnItem();
+            seaItems[i].x = Math.random() * (width - 100) + 50;
+        }
+        draw();
+
+    </script>
+</body>
+</html>

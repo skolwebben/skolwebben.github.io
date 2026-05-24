@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonders of the Deep: Jellyfish Facts</title>
+    <!-- Tailwind CSS för modern och responsiv design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts för snygg djuphavstypografi -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* Extremt mörkblå djuphavsbakgrund */
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Animationer för att efterlikna maneters pulserande rörelser */
+        @keyframes pulse-jelly {
+            0%, 100% {
+                transform: scale(1) translateY(0px) rotate(0deg);
+                filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.4));
+            }
+            50% {
+                transform: scale(1.05, 0.95) translateY(-15px) rotate(1deg);
+                filter: drop-shadow(0 0 25px rgba(236, 72, 153, 0.6));
+            }
+        }
+        
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-10px) translateX(5px); }
+        }
+
+        .jelly-animate {
+            animation: pulse-jelly 6s ease-in-out infinite;
+        }
+
+        .float-animate {
+            animation: float-slow 8s ease-in-out infinite;
+        }
+
+        /* Glasmorfism för kort och paneler */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glow-cyan:hover {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+            border-color: rgba(6, 182, 212, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .glow-pink:hover {
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.35);
+            border-color: rgba(236, 72, 153, 0.5);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-slate-200 overflow-x-hidden">
+
+    <!-- Dekorativa glödande djuphavs-orber i bakgrunden -->
+    <div class="absolute top-10 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-10 left-1/3 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none"></div>
+
+    <!-- 1. HERO SECTION -->
+    <header class="relative min-h-screen flex items-center justify-center px-4 md:px-8 border-b border-slate-900">
+        <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 py-12">
+            <!-- Text- och introduktionsdel -->
+            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                <span class="inline-block bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest">
+                    Ancient Wonders of the Ocean
+                </span>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-pink-300 leading-tight">
+                    The Mesmerizing World of Jellyfish
+                </h1>
+                <p class="text-slate-400 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    Drifting through the Earth's oceans for over 500 million years, jellyfish are among the oldest and most mysterious creatures on our planet. No brain, no heart, no bones—yet perfectly adapted to survive.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+                    <a href="#anatomy" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:scale-105">
+                        Explore Anatomy
+                    </a>
+                    <a href="#quiz" class="border border-slate-700 hover:border-pink-500 text-slate-300 hover:text-pink-400 font-bold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105">
+                        Take the Quiz
+                    </a>
+                </div>
+            </div>
+
+            <!-- Interaktiv animerad SVG-manet i hjälterutan -->
+            <div class="lg:col-span-5 flex justify-center items-center">
+                <div class="relative w-72 h-96 jelly-animate">
+                    <svg viewBox="0 0 200 300" class="w-full h-full">
+                        <!-- Kropp (Klockan / Paraplyet) -->
+                        <path d="M40,110 C40,40 160,40 160,110 C160,125 140,135 100,135 C60,135 40,125 40,110 Z" fill="url(#jellyGlow)" />
+                        <!-- Ljusreflektion på hatten -->
+                        <path d="M60,80 C70,60 130,60 140,80" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4" stroke-linecap="round" />
+                        
+                        <!-- Tentakler och munarmar -->
+                        <g stroke="url(#tentacleGlow)" stroke-width="3" stroke-linecap="round" fill="none">
+                            <!-- Vänster tentakler -->
+                            <path d="M60,130 Q50,180 70,220 T50,280" />
+                            <path d="M80,135 Q70,170 85,230 T75,290" />
+                            <!-- Höger tentakler -->
+                            <path d="M120,135 Q130,170 115,230 T125,290" />
+                            <path d="M140,130 Q150,180 130,220 T150,280" />
+                        </g>
+
+                        <!-- Fluffiga orala munarmar i mitten -->
+                        <g fill="url(#oralArmGlow)" opacity="0.8">
+                            <path d="M90,135 Q110,180 90,220 Q70,250 100,285 Q80,240 100,180 Z" />
+                            <path d="M110,135 Q90,180 110,220 Q130,250 100,285 Q120,240 100,180 Z" />
+                        </g>
+
+                        <!-- Definitioner av gradients för bioluminescens -->
+                        <defs>
+                            <linearGradient id="jellyGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.8" />
+                                <stop offset="100%" stop-color="#ec4899" stop-opacity="0.6" />
+                            </linearGradient>
+                            <linearGradient id="tentacleGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#ec4899" />
+                                <stop offset="50%" stop-color="#a855f7" />
+                                <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.2" />
+                            </linearGradient>
+                            <linearGradient id="oralArmGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#3b82f6" />
+                                <stop offset="100%" stop-color="#db2777" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. QUICK FACTS GRID -->
+    <section class="py-20 px-4 md:px-8 max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Mind-Blowing Jellyfish Facts</h2>
+            <p class="text-slate-400">Despite their simple biological structure, jellyfish are incredibly complex survivalists.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Kort 1: Inget hjärta/hjärna -->
+            <div class="glass-panel p-8 rounded-2xl glow-cyan transition-all duration-300 space-y-4">
+                <div class="w-12 h-12 bg-cyan-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-2xl font-bold">🧠</div>
+                <h3 class="text-xl font-bold text-white">No Brain or Heart</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Jellyfish are 95% water. They do not have a brain, heart, bones, or lungs. Instead, they navigate using a simple nerve net that detects light, gravity, and chemical changes in the water.
+                </p>
+            </div>
+
+            <!-- Kort 2: Odödlighet -->
+            <div class="glass-panel p-8 rounded-2xl glow-pink transition-all duration-300 space-y-4">
+                <div class="w-12 h-12 bg-pink-500/10 text-pink-400 rounded-xl flex items-center justify-center text-2xl font-bold">🔄</div>
+                <h3 class="text-xl font-bold text-white">Biological Immortality</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    The species <span class="italic text-pink-300">Turritopsis dohrnii</span> can reverse its aging process. When damaged or starving, it can revert back to its juvenile polyp stage, starting its life cycle all over again.
+                </p>
+            </div>
+
+            <!-- Kort 3: Ålder -->
+            <div class="glass-panel p-8 rounded-2xl glow-cyan transition-all duration-300 space-y-4">
+                <div class="w-12 h-12 bg-cyan-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-2xl font-bold">🦖</div>
+                <h3 class="text-xl font-bold text-white">Older than Dinosaurs</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Fossil evidence proves that jellyfish have drifted in our seas for more than 500 million years (possibly up to 700 million years), making them far older than dinosaurs and trees.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. INTERACTIVE ANATOMY SECTION -->
+    <section id="anatomy" class="py-20 px-4 md:px-8 border-y border-slate-900 bg-slate-950/40">
+        <div class="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Anatomi-beskrivning (Vänster) -->
+            <div class="lg:col-span-5 space-y-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Simplified Anatomy</h2>
+                <p class="text-slate-400">
+                    How does a creature without organs survive? Click on the different anatomical parts to discover how their simplistic yet deadly body works.
+                </p>
+
+                <!-- Anatomi-infokort som uppdateras dynamiskt med JS -->
+                <div id="anatomyInfoBox" class="glass-panel p-6 rounded-2xl border border-cyan-500/20 transition-all duration-300">
+                    <h3 id="anatomyTitle" class="text-xl font-bold text-cyan-400 mb-2">The Bell (Medusa)</h3>
+                    <p id="anatomyDesc" class="text-slate-300 text-sm leading-relaxed">
+                        The main dome-shaped body of the jellyfish. By contracting and relaxing the muscles in the bell, they force water out, propelling themselves forward in a pulsing motion.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interaktivt diagram (Höger) -->
+            <div class="lg:col-span-7 flex justify-center">
+                <div class="relative w-full max-w-[450px] aspect-[4/5] glass-panel rounded-3xl p-6 border border-slate-800">
+                    <!-- Manet-vektor med interaktiva klickpunkter -->
+                    <svg viewBox="0 0 200 250" class="w-full h-full">
+                        <!-- Huvudhatt -->
+                        <path id="part-bell" class="cursor-pointer transition-all duration-300 fill-cyan-500/20 stroke-cyan-400 hover:fill-cyan-500/40" stroke-width="3" d="M30,90 C30,20 170,20 170,90 C170,110 140,115 100,115 C60,115 30,110 30,90 Z" onclick="selectAnatomy('bell')" />
+                        
+                        <!-- Fluffiga munarmar -->
+                        <path id="part-arms" class="cursor-pointer transition-all duration-300 fill-pink-500/20 stroke-pink-400 hover:fill-pink-500/40" stroke-width="2.5" d="M85,115 Q105,160 85,200 Q70,230 100,240 Q80,210 100,150 Z" onclick="selectAnatomy('arms')" />
+                        <path id="part-arms-2" class="cursor-pointer transition-all duration-300 fill-pink-500/20 stroke-pink-400 hover:fill-pink-500/40" stroke-width="2.5" d="M115,115 Q95,160 115,200 Q130,230 100,240 Q120,210 100,150 Z" onclick="selectAnatomy('arms')" />
+
+                        <!-- Tunnare tentakler -->
+                        <path id="part-tentacles" class="cursor-pointer transition-all duration-300 stroke-purple-400 hover:stroke-purple-300 fill-none" stroke-width="2" d="M50,110 Q35,160 55,210 T40,245" onclick="selectAnatomy('tentacles')" />
+                        <path id="part-tentacles-2" class="cursor-pointer transition-all duration-300 stroke-purple-400 hover:stroke-purple-300 fill-none" stroke-width="2" d="M150,110 Q165,160 145,210 T160,245" onclick="selectAnatomy('tentacles')" />
+
+                        <!-- Klickbara punkter (Pins/Hotspots) -->
+                        <!-- Bell Pin -->
+                        <g class="cursor-pointer" onclick="selectAnatomy('bell')">
+                            <circle cx="100" cy="55" r="8" class="fill-cyan-500 animate-ping opacity-75" />
+                            <circle cx="100" cy="55" r="5" class="fill-cyan-400 stroke-white stroke-2" />
+                        </g>
+                        <!-- Tentacles Pin -->
+                        <g class="cursor-pointer" onclick="selectAnatomy('tentacles')">
+                            <circle cx="45" cy="150" r="8" class="fill-purple-500 animate-ping opacity-75" />
+                            <circle cx="45" cy="150" r="5" class="fill-purple-400 stroke-white stroke-2" />
+                        </g>
+                        <!-- Oral Arms Pin -->
+                        <g class="cursor-pointer" onclick="selectAnatomy('arms')">
+                            <circle cx="100" cy="180" r="8" class="fill-pink-500 animate-ping opacity-75" />
+                            <circle cx="100" cy="180" r="5" class="fill-pink-400 stroke-white stroke-2" />
+                        </g>
+                    </svg>
+
+                    <!-- Etiketter på diagrammet -->
+                    <div class="absolute top-[22%] left-[53%] transform -translate-x-1/2 text-xs font-bold bg-slate-900/90 border border-cyan-500/30 px-2.5 py-1 rounded-full text-cyan-300">
+                        1. The Bell
+                    </div>
+                    <div class="absolute top-[58%] left-[16%] text-xs font-bold bg-slate-900/90 border border-purple-500/30 px-2.5 py-1 rounded-full text-purple-300">
+                        2. Tentacles
+                    </div>
+                    <div class="absolute top-[72%] left-[55%] transform -translate-x-1/2 text-xs font-bold bg-slate-900/90 border border-pink-500/30 px-2.5 py-1 rounded-full text-pink-300">
+                        3. Oral Arms
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 4. SPECIES GALLERY -->
+    <section class="py-20 px-4 md:px-8 max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-pink-400 text-xs font-semibold uppercase tracking-wider block mb-2">Ocean Biodiversity</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Stunning Jellyfish Species</h2>
+            <p class="text-slate-400">Discover some of the ocean's most remarkable species. <strong class="text-cyan-400">Click on any card</strong> to reveal deep-sea details!</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Box Jellyfish -->
+            <div onclick="showSpeciesDetail('box')" class="glass-panel cursor-pointer rounded-2xl overflow-hidden border border-slate-800 flex flex-col justify-between hover:-translate-y-2 hover:border-cyan-500 transition-all duration-300 group shadow-lg">
+                <div class="p-6 space-y-4">
+                    <span class="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                        Extremely Venomous
+                    </span>
+                    <h3 class="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">Box Jellyfish</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Arguably the most venomous marine creature on Earth. Its sting can cause cardiac arrest, paralysis, and death in humans within mere minutes.
+                    </p>
+                </div>
+                <div class="bg-slate-900/50 p-4 border-t border-slate-800 text-xs font-semibold text-cyan-400 flex justify-between">
+                    <span>Habitat: Indo-Pacific</span>
+                    <span>Class: Cubozoa</span>
+                </div>
+            </div>
+
+            <!-- Lion's Mane Jellyfish -->
+            <div onclick="showSpeciesDetail('lions_mane')" class="glass-panel cursor-pointer rounded-2xl overflow-hidden border border-slate-800 flex flex-col justify-between hover:-translate-y-2 hover:border-pink-500 transition-all duration-300 group shadow-lg">
+                <div class="p-6 space-y-4">
+                    <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                        Gigantic Size
+                    </span>
+                    <h3 class="text-xl font-bold text-white group-hover:text-pink-300 transition-colors">Lion's Mane</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        One of the largest known species of jellyfish. Its bell can grow up to 2 meters (7 feet) in diameter with tentacles stretching over 36 meters (120 feet) long!
+                    </p>
+                </div>
+                <div class="bg-slate-900/50 p-4 border-t border-slate-800 text-xs font-semibold text-cyan-400 flex justify-between">
+                    <span>Habitat: Arctic Seas</span>
+                    <span>Class: Scyphozoa</span>
+                </div>
+            </div>
+
+            <!-- Moon Jellyfish -->
+            <div onclick="showSpeciesDetail('moon')" class="glass-panel cursor-pointer rounded-2xl overflow-hidden border border-slate-800 flex flex-col justify-between hover:-translate-y-2 hover:border-cyan-500 transition-all duration-300 group shadow-lg">
+                <div class="p-6 space-y-4">
+                    <span class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                        Mild Sting
+                    </span>
+                    <h3 class="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">Moon Jellyfish</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Recognizable by its translucent bell and four horseshoe-shaped gonads visible in the center. Its sting is incredibly mild and harmless to humans.
+                    </p>
+                </div>
+                <div class="bg-slate-900/50 p-4 border-t border-slate-800 text-xs font-semibold text-cyan-400 flex justify-between">
+                    <span>Habitat: Worldwide</span>
+                    <span>Class: Scyphozoa</span>
+                </div>
+            </div>
+
+            <!-- Crystal Jellyfish -->
+            <div onclick="showSpeciesDetail('crystal')" class="glass-panel cursor-pointer rounded-2xl overflow-hidden border border-slate-800 flex flex-col justify-between hover:-translate-y-2 hover:border-pink-500 transition-all duration-300 group shadow-lg">
+                <div class="p-6 space-y-4">
+                    <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                        Bioluminescent
+                    </span>
+                    <h3 class="text-xl font-bold text-white group-hover:text-pink-300 transition-colors">Crystal Jelly</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Famous for its bioluminescence. It is the species from which scientists isolated the Green Fluorescent Protein (GFP), a major breakthrough in medicine.
+                    </p>
+                </div>
+                <div class="bg-slate-900/50 p-4 border-t border-slate-800 text-xs font-semibold text-cyan-400 flex justify-between">
+                    <span>Habitat: North America</span>
+                    <span>Class: Hydrozoa</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. SPECIES DETAILS MODAL (POPUP) -->
+    <div id="speciesModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="max-w-xl w-full glass-panel rounded-3xl p-6 md:p-8 border border-slate-700/60 shadow-2xl relative transform scale-95 transition-transform duration-300" id="speciesModalCard">
+            <!-- Close Button -->
+            <button onclick="closeSpeciesDetail()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900/50 hover:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all">✕</button>
+
+            <!-- Modal Content -->
+            <div class="space-y-6">
+                <div>
+                    <span id="modalSpeciesClass" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">Class Info</span>
+                    <h3 id="modalSpeciesTitle" class="text-3xl font-extrabold text-white mt-3">Species Name</h3>
+                    <p id="modalSpeciesHabitat" class="text-slate-400 text-sm italic mt-1">Habitat</p>
+                </div>
+
+                <!-- Detailed Information Blocks -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs uppercase font-bold text-cyan-400 block mb-1">Primary Diet</span>
+                        <p id="modalSpeciesDiet" class="text-slate-300 text-sm">Diet info goes here.</p>
+                    </div>
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs uppercase font-bold text-pink-400 block mb-1">Sting Treatment</span>
+                        <p id="modalSpeciesSting" class="text-slate-300 text-sm">Treatment info goes here.</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-cyan-500/10 to-pink-500/10 p-5 rounded-2xl border border-pink-500/10 space-y-2">
+                    <span class="text-xs uppercase font-extrabold text-pink-300 tracking-wider flex items-center gap-1">✨ Fun Fact</span>
+                    <p id="modalSpeciesFunFact" class="text-slate-200 text-sm leading-relaxed">Fun fact info goes here.</p>
+                </div>
+            </div>
+
+            <button onclick="closeSpeciesDetail()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-sm transition-all mt-6">
+                Back to Deep-Sea Exploration
+            </button>
+        </div>
+    </div>
+
+    <!-- 6. INTERACTIVE QUIZ SECTION -->
+    <section id="quiz" class="py-20 px-4 md:px-8 border-t border-slate-900 bg-slate-950/25">
+        <div class="max-w-xl mx-auto glass-panel rounded-3xl border border-pink-500/20 p-8 shadow-2xl relative">
+            <!-- Dekoration: Liten flytande manet i hörnet -->
+            <div class="absolute -top-12 -right-8 w-16 h-16 opacity-30 float-animate">
+                <svg viewBox="0 0 100 100">
+                    <ellipse cx="50" cy="40" rx="25" ry="18" fill="#ec4899" />
+                    <path d="M40,55 Q35,75 45,90 M60,55 Q65,75 55,90" fill="none" stroke="#ec4899" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <div class="text-center mb-8">
+                <span class="text-pink-400 text-xs font-bold uppercase tracking-widest block mb-1">Knowledge Check</span>
+                <h2 class="text-3xl font-extrabold text-white">Jellyfish Mini-Quiz</h2>
+                <p class="text-slate-400 text-sm mt-1">Test your new deep sea knowledge!</p>
+            </div>
+
+            <!-- Quiz behållare -->
+            <div id="quizContainer" class="space-y-6">
+                <!-- Frågorna laddas och hanteras med JS -->
+                <div id="questionBox" class="space-y-4">
+                    <span id="questionNumber" class="text-cyan-400 text-xs uppercase font-bold tracking-widest block">Question 1 of 3</span>
+                    <h3 id="questionText" class="text-lg font-bold text-white leading-snug">
+                        <!-- Fråga -->
+                    </h3>
+                    <div id="optionsGrid" class="grid grid-cols-1 gap-3">
+                        <!-- Svarsknappar -->
+                    </div>
+                </div>
+
+                <!-- Resultat och feedback -->
+                <div id="quizFeedback" class="h-6 text-center text-sm font-semibold opacity-0 transition-opacity">
+                    <!-- Feedback -->
+                </div>
+            </div>
+
+            <!-- Resultatskärm när man är färdig -->
+            <div id="resultScreen" class="hidden text-center space-y-6 py-4">
+                <div class="w-16 h-16 bg-cyan-500/10 text-cyan-400 rounded-full flex items-center justify-center mx-auto text-3xl">🌊</div>
+                <h3 class="text-2xl font-bold text-white">Quiz Completed!</h3>
+                <p class="text-slate-300 text-sm">
+                    You scored <span id="finalScore" class="font-extrabold text-cyan-400 text-lg">0</span> out of 3.
+                </p>
+                <p id="resultMessage" class="text-slate-400 text-xs max-w-sm mx-auto leading-relaxed">
+                    Great effort! The ocean holds infinite secrets to discover.
+                </p>
+                <button onclick="resetQuiz()" class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. FOOTER -->
+    <footer class="py-12 border-t border-slate-900 bg-slate-950 px-4 text-center">
+        <div class="max-w-6xl mx-auto space-y-4">
+            <div class="flex justify-center items-center gap-2">
+                <span class="text-cyan-400 text-xl font-bold">🐙</span>
+                <span class="font-display font-bold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400">JELLYFISH EXPLORER</span>
+            </div>
+            <p class="text-slate-500 text-xs">
+                Designed to spread awareness about marine biodiversity. Always protect our oceans.
+            </p>
+            <p class="text-slate-600 text-[10px] uppercase tracking-widest">
+                &copy; 2026 Jellyfish Facts. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Web Audio API (Enkla syntetiska ljudeffekter för klick och quiz) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                // Ett mjukt bubbelljud för klick
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'correct') {
+                // Glad ton vid rätt svar
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'wrong') {
+                // Låg ton vid fel svar
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+
+        // --- INTERAKTIVT ANATOMI-DIAGRAM ---
+        const anatomyData = {
+            bell: {
+                title: "The Bell (Medusa)",
+                desc: "The main dome-shaped body of the jellyfish. By contracting and relaxing the muscles in the bell, they force water out, propelling themselves forward in a pulsing motion."
+            },
+            tentacles: {
+                title: "The Tentacles",
+                desc: "Lined with thousands of specialized stinging cells called nematocysts. Used for capturing prey and defending against predators. They can stretch extremely long and are often highly venomous."
+            },
+            arms: {
+                title: "Oral Arms",
+                desc: "Located near the mouth under the center of the bell. They are thick, frilly tentacles that help the jellyfish move captured food up to its mouth and aid in initial digestion."
+            }
+        };
+
+        function selectAnatomy(part) {
+            playSound('click');
+            const data = anatomyData[part];
+            
+            // Uppdaterar texten i informationsboxen med en snabb fadingeffekt
+            const infoBox = document.getElementById('anatomyInfoBox');
+            infoBox.style.opacity = '0';
+            
+            setTimeout(() => {
+                document.getElementById('anatomyTitle').textContent = data.title;
+                document.getElementById('anatomyDesc').textContent = data.desc;
+                infoBox.style.opacity = '1';
+            }, 150);
+
+            // Ändrar färgaktivitet på de valda diagramdelarna
+            ['part-bell', 'part-arms', 'part-arms-2', 'part-tentacles', 'part-tentacles-2'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.remove('stroke-cyan-300', 'stroke-pink-300', 'stroke-purple-300');
+            });
+
+            if (part === 'bell') {
+                document.getElementById('part-bell').classList.add('stroke-cyan-300');
+            } else if (part === 'arms') {
+                document.getElementById('part-arms').classList.add('stroke-pink-300');
+                document.getElementById('part-arms-2').classList.add('stroke-pink-300');
+            } else if (part === 'tentacles') {
+                document.getElementById('part-tentacles').classList.add('stroke-purple-300');
+                document.getElementById('part-tentacles-2').classList.add('stroke-purple-300');
+            }
+        }
+
+        // --- SPECIELLA ART-DETALJER (Datalager för rutorna) ---
+        const speciesDetails = {
+            box: {
+                title: "Box Jellyfish",
+                class: "Class: Cubozoa",
+                habitat: "Oceania & Indo-Pacific coasts",
+                diet: "Small fish, shrimp, and other tiny crustaceans.",
+                sting: "Vinegar must be applied instantly. Seek emergency medical attention immediately. Do not use fresh water, as it causes remaining cells to release more venom.",
+                funFact: "Unlike other jellyfish that drift aimlessly, Box Jellyfish can actively swim at speeds up to 4 knots and have 24 complex eyes arranged in clusters around their bell."
+            },
+            lions_mane: {
+                title: "Lion's Mane Jellyfish",
+                class: "Class: Scyphozoa",
+                habitat: "Cold waters of the Arctic and North Atlantic Oceans",
+                diet: "Small fish, zooplankton, and other smaller jellyfish.",
+                sting: "Vinegar first, then soak in hot water (42-45°C) to neutralize the proteins. It is incredibly painful but rarely fatal to humans.",
+                funFact: "Their countless tentacles are so thin and closely packed that they resemble a lion's glorious mane, trapping prey like a massive ocean-drift spider web."
+            },
+            moon: {
+                title: "Moon Jellyfish",
+                class: "Class: Scyphozoa",
+                habitat: "Coasts and temperate oceans worldwide",
+                diet: "Plankton, small mollusks, and crustacean larvae.",
+                sting: "Very mild, usually harmless. Wash with vinegar or salt water if irritation occurs.",
+                funFact: "They are highly popular in public aquariums worldwide because they luminesce wonderfully under color-shifting LED lights and are extremely resilient."
+            },
+            crystal: {
+                title: "Crystal Jellyfish",
+                class: "Class: Hydrozoa",
+                habitat: "Coasts of North America & North Pacific",
+                diet: "Copepods, larval fish, and even other hydromedusae.",
+                sting: "Harmless to humans; their microscopic stingers cannot penetrate human skin.",
+                funFact: "This species is famous for its bioluminescence. It is the original source of Green Fluorescent Protein (GFP), a discovery that revolutionized medical science and won the Nobel Prize in Chemistry in 2008!"
+            }
+        };
+
+        function showSpeciesDetail(speciesKey) {
+            playSound('click');
+            const data = speciesDetails[speciesKey];
+            if (!data) return;
+
+            // Fyll i data i popup-fönstret
+            document.getElementById('modalSpeciesTitle').textContent = data.title;
+            document.getElementById('modalSpeciesClass').textContent = data.class;
+            document.getElementById('modalSpeciesHabitat').textContent = `Main Habitat: ${data.habitat}`;
+            document.getElementById('modalSpeciesDiet').textContent = data.diet;
+            document.getElementById('modalSpeciesSting').textContent = data.sting;
+            document.getElementById('modalSpeciesFunFact').textContent = data.funFact;
+
+            // Öppna med snygg animation
+            const modal = document.getElementById('speciesModal');
+            const card = document.getElementById('speciesModalCard');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeSpeciesDetail() {
+            playSound('click');
+            const modal = document.getElementById('speciesModal');
+            const card = document.getElementById('speciesModalCard');
+            
+            modal.style.opacity = '0';
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // --- MINI-QUIZ ---
+        const quizData = [
+            {
+                question: "How long have jellyfish lived in the Earth's oceans?",
+                options: ["Over 500 million years", "Around 65 million years", "Just 10 million years"],
+                correct: 0
+            },
+            {
+                question: "Which of these is NOT present in a jellyfish's body?",
+                options: ["Nerve Net", "Stinging Cells", "Brain and Heart"],
+                correct: 2
+            },
+            {
+                question: "Which jellyfish species can technically live forever?",
+                options: ["Crystal Jellyfish", "The Immortal Jellyfish (Turritopsis dohrnii)", "Box Jellyfish"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let isWaiting = false;
+
+        function loadQuestion() {
+            isWaiting = false;
+            const feedback = document.getElementById('quizFeedback');
+            feedback.style.opacity = '0';
+
+            const currentData = quizData[currentQuestionIdx];
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestionIdx + 1} of 3`;
+            document.getElementById('questionText').textContent = currentData.question;
+
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+
+            currentData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-slate-900/60 hover:bg-slate-800 text-slate-200 font-medium py-3.5 px-5 rounded-xl border border-slate-800 text-left text-sm transition-all hover:border-pink-500/50 hover:scale-[1.01]";
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx, clickedBtn) {
+            if (isWaiting) return;
+            isWaiting = true;
+
+            const correctIdx = quizData[currentQuestionIdx].correct;
+            const optionsGrid = document.getElementById('optionsGrid');
+            const allButtons = optionsGrid.querySelectorAll('button');
+
+            // Inaktiverar alla knappar för att förhindra dubbelklick
+            allButtons.forEach(btn => btn.disabled = true);
+
+            const feedback = document.getElementById('quizFeedback');
+
+            if (selectedIdx === correctIdx) {
+                score++;
+                clickedBtn.classList.add('border-emerald-500', 'bg-emerald-500/10', 'text-emerald-400');
+                feedback.textContent = "Correct! ✨";
+                feedback.className = "h-6 text-center text-sm font-bold text-emerald-400 transition-opacity duration-300";
+                playSound('correct');
+            } else {
+                clickedBtn.classList.add('border-rose-500', 'bg-rose-500/10', 'text-rose-400');
+                allButtons[correctIdx].classList.add('border-emerald-500', 'text-emerald-400');
+                feedback.textContent = "That is incorrect.";
+                feedback.className = "h-6 text-center text-sm font-bold text-rose-400 transition-opacity duration-300";
+                playSound('wrong');
+            }
+
+            feedback.style.opacity = '1';
+
+            // Laddar nästa fråga eller visar slutresultatet efter en stund
+            setTimeout(() => {
+                currentQuestionIdx++;
+                if (currentQuestionIdx < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1800);
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = score;
+
+            let msg = "";
+            if (score === 3) {
+                msg = "Perfect score! You are officially a Jellyfish Expert of the Deep!";
+            } else if (score >= 1) {
+                msg = "Good job! You've learned some fascinating facts about jellyfish today.";
+            } else {
+                msg = "No worries! The deep ocean is full of mysteries. Give it another try!";
+            }
+            document.getElementById('resultMessage').textContent = msg;
+        }
+
+        function resetQuiz() {
+            playSound('click');
+            currentQuestionIdx = 0;
+            score = 0;
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // Initierar första frågan i quizet på start
+        loadQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1344 @@
+﻿<!DOCTYPE html>
+<html lang="sv" class="h-full bg-slate-50 text-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Nutrition | Premium Träningskosttillskott</title>
+    <!-- Tailwind CSS för modern och snabb styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons för snygga, moderna ikoner -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar för snyggare estetik i ljust tema */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-full">
+
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logotyp -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="filterCategory('all')">
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
+                        <i data-lucide="dumbbell" class="h-6 w-6 text-white stroke-[2.5]"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">APEX</span>
+                        <span class="text-xs block text-slate-500 font-semibold tracking-widest uppercase">Nutrition</span>
+                    </div>
+                </div>
+
+
+                <!-- Sökfält (Desktop) -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <div class="relative w-full">
+                        <input type="text" id="searchInput" oninput="handleSearch(event)" placeholder="Sök efter protein, kreatin, PWO..." class="w-full bg-slate-100 border border-slate-200 rounded-full py-2.5 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-slate-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Navigationslänkar, Login-status & Kundvagn -->
+                <div class="flex items-center space-x-4">
+                    <!-- Google inloggningsindikator -->
+                    <div id="googleUserStatus" class="hidden items-center space-x-2 bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200">
+                        <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span id="googleUserEmail" class="text-xs font-semibold text-slate-700">användare@gmail.com</span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">10% AKTIV</span>
+                    </div>
+
+
+                    <button id="headerLoginBtn" onclick="openGoogleModal()" class="text-xs font-bold text-slate-700 hover:text-emerald-600 bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-full transition-colors flex items-center space-x-2">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                        <span>Få 10% rabatt</span>
+                    </button>
+
+
+                    <button onclick="toggleCart()" class="relative p-2.5 text-slate-700 hover:text-emerald-600 hover:bg-slate-100 rounded-full transition-all focus:outline-none">
+                        <i data-lucide="shopping-cart" class="h-6 w-6"></i>
+                        <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs h-5 w-5 rounded-full flex items-center justify-center border-2 border-white transition-transform scale-0">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- MOBIL SÖKBAR -->
+    <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3">
+        <div class="relative w-full">
+            <input type="text" id="mobileSearchInput" oninput="handleSearch(event)" placeholder="Sök kosttillskott..." class="w-full bg-slate-100 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="search" class="h-4 w-4 text-slate-400"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- HJÄLTE-BANNER -->
+    <section class="relative bg-gradient-to-b from-emerald-50/60 via-teal-50/20 to-white py-16 overflow-hidden border-b border-slate-100">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_120%,rgba(16,185,129,0.08),transparent_60%)]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span> GMAIL-KAMPANJ: LOGGA IN & FÅ 10% RABATT DIREKT!
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight">
+                        Bränsle för dina <br>
+                        <span class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">största resultat</span>
+                    </h1>
+                    <p class="text-slate-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0">
+                        Upptäck svensktillverkade kosttillskott av absolut högsta kvalitet. Labbsäkrade ingredienser, fantastiska smaker och snabb leverans direkt till dörren.
+                    </p>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+                        <button onclick="scrollToProducts()" class="px-8 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                            Utforska Sortimentet
+                        </button>
+                        <div class="flex items-center space-x-2 text-slate-500 text-sm py-2">
+                            <i data-lucide="truck" class="h-4 w-4 text-emerald-500"></i>
+                            <span>Fri frakt över 500 kr</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Veckans Deal -->
+                <div class="lg:col-span-5 hidden lg:flex justify-center relative">
+                    <div class="w-80 h-96 rounded-3xl bg-white border border-slate-200/80 p-6 flex flex-col justify-between relative overflow-hidden shadow-xl shadow-slate-100/80 group">
+                        <div class="absolute -right-20 -top-20 w-48 h-48 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all duration-500"></div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-emerald-600 tracking-widest uppercase">Veckans Deal</span>
+                            <span class="bg-red-100 text-red-800 border border-red-200 text-[10px] font-extrabold px-2.5 py-1 rounded">SPARA 20%</span>
+                        </div>
+                        
+                        <!-- Riktig, snygg fitness-shaker bild för kampanjkortet -->
+                        <div class="my-auto flex justify-center items-center relative h-48 w-full overflow-hidden rounded-2xl bg-slate-50">
+                            <img src="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&auto=format&fit=crop&q=85" alt="Sport shaker med träningsdryck" class="object-cover h-full w-full rounded-2xl shadow-sm transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.outerHTML=`<div class='flex items-center justify-center h-full w-full bg-slate-50 text-slate-400'><i data-lucide='package' class='w-12 h-12'></i></div>`"/>
+                        </div>
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-slate-850">Apex Supernova PWO</h3>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-baseline space-x-1.5">
+                                    <span class="text-xl font-black text-emerald-600">279 kr</span>
+                                    <span class="text-xs text-slate-400 line-through">349 kr</span>
+                                </div>
+                                <button onclick="quickAdd(3)" class="bg-emerald-500 hover:bg-emerald-400 text-white p-2 rounded-xl transition-colors">
+                                    <i data-lucide="plus" class="h-4 w-4 stroke-[3]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- HUVUDINNEHÅLL -->
+    <main id="products-section" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- KATEGORIER & SORTERING -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-8 border-b border-slate-200">
+            <!-- Kategoriknappar -->
+            <div class="flex flex-wrap gap-2 overflow-x-auto pb-2 md:pb-0" id="categoryContainer">
+                <!-- Genereras via JS -->
+            </div>
+
+
+            <!-- Sortering -->
+            <div class="flex items-center space-x-3 self-end md:self-auto">
+                <span class="text-xs text-slate-500 font-medium whitespace-nowrap">Sortera efter:</span>
+                <select id="sortSelect" onchange="handleSort()" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
+                    <option value="popular">Populärast</option>
+                    <option value="price-asc">Pris: Lågt till Högt</option>
+                    <option value="price-desc">Pris: Högt till Lågt</option>
+                </select>
+            </div>
+        </div>
+
+
+        <!-- PRODUKT-GRID -->
+        <div class="mt-8">
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Produkterna renderas här via JS -->
+            </div>
+            
+            <!-- Ingen produkt hittades (fallback) -->
+            <div id="noResults" class="hidden text-center py-20">
+                <div class="bg-white border border-slate-200 rounded-3xl p-8 max-w-sm mx-auto space-y-4 shadow-sm">
+                    <div class="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+                        <i data-lucide="search" class="h-6 w-6"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800">Inga träffar hittades</h3>
+                    <p class="text-slate-500 text-sm">Prova att söka på något annat eller ändra ditt filterval.</p>
+                    <button onclick="resetFilters()" class="text-xs text-emerald-600 font-bold hover:underline">Rensa filter & sök</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- FÖRDELAR -->
+    <section class="bg-white border-t border-slate-200 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+                        <i data-lucide="shield-check" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base">Högsta Kvalitetsgaranti</h4>
+                        <p class="text-xs text-slate-500 mt-1">Alla råvaror är noggrant kvalitetssäkrade och laboratorietestade för din trygghet.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+                        <i data-lucide="zap" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base">Snabb Leverans 1-3 Dagar</h4>
+                        <p class="text-xs text-slate-500 mt-1">Vi packar och skickar din order inom 24 timmar. Fri frakt vid köp över 500 kr.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+                        <i data-lucide="heart-handshake" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base">Svensktillverkat</h4>
+                        <p class="text-xs text-slate-500 mt-1">Formulerat och tillverkat i moderna, GMP-certifierade anläggningar i Sverige.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-12 text-slate-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-emerald-500/10 p-1.5 rounded-lg border border-emerald-500/20">
+                            <i data-lucide="dumbbell" class="h-4 w-4 text-emerald-400"></i>
+                        </div>
+                        <span class="text-base font-bold text-white tracking-tight">APEX Nutrition</span>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed">
+                        Vi skapar kosttillskott för atleter som vägrar kompromissa med kvalitet och prestation.
+                    </p>
+                </div>
+                <div>
+                    <h5 class="font-bold text-white uppercase tracking-widest mb-4">Produkter</h5>
+                    <ul class="space-y-2.5">
+                        <li><a href="#" onclick="filterCategory('protein')" class="hover:text-emerald-400 transition-colors">Protein</a></li>
+                        <li><a href="#" onclick="filterCategory('kreatin')" class="hover:text-emerald-400 transition-colors">Kreatin</a></li>
+                        <li><a href="#" onclick="filterCategory('pwo')" class="hover:text-emerald-400 transition-colors">PWO</a></li>
+                        <li><a href="#" onclick="filterCategory('vitaminer')" class="hover:text-emerald-400 transition-colors">Vitamins & Minerals</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-white uppercase tracking-widest mb-4">Kundservice</h5>
+                    <ul class="space-y-2.5">
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors">Frågor & Svar</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors">Köpvillkor</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors">Returer</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors">Kontakta oss</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-white uppercase tracking-widest mb-4">Nyhetsbrev</h5>
+                    <p class="text-slate-300 mb-3">Få 10% rabatt på ditt första köp samt tips & artiklar.</p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Din e-post" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 w-full text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500">
+                        <button onclick="showToast('Tack för din prenumeration!')" class="bg-emerald-500 hover:bg-emerald-400 text-white px-4 rounded-xl font-bold">OK</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-slate-500">
+                <p>&copy; 2026 APEX Nutrition AB. Alla rättigheter reserverade.</p>
+                <div class="flex space-x-4">
+                    <span class="hover:text-slate-300 cursor-pointer">Integritetspolicy</span>
+                    <span class="hover:text-slate-300 cursor-pointer">Cookies</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- GMAIL LOGIN POPUP MODAL (10% RABATTKAMPANJ) -->
+    <div id="googleLoginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300">
+        <!-- Backdrop -->
+        <div onclick="closeGoogleModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        
+        <!-- Box -->
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full relative z-10 overflow-hidden shadow-2xl p-8 text-center space-y-6">
+            <button onclick="closeGoogleModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-full transition-colors">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+
+
+            <!-- Välkomstgåva / ikon -->
+            <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100 relative">
+                <i data-lucide="gift" class="h-10 w-10"></i>
+                <span class="-top-1 -right-1 absolute bg-red-500 text-white font-extrabold text-[10px] h-6 w-11 rounded-full flex items-center justify-center border-2 border-white uppercase tracking-wider">-10%</span>
+            </div>
+            
+            <div class="space-y-2">
+                <h3 class="text-2xl font-black text-slate-950">Få 10% rabatt på köpet!</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">Logga in med din Gmail för att aktivera din exklusiva rabattkod på hela vårt sortiment av träningskosttillskott.</p>
+            </div>
+
+
+            <div id="googleLoginActionArea" class="space-y-4">
+                <div class="space-y-3">
+                    <!-- Google knapp -->
+                    <button onclick="startGoogleLoginSimulation()" class="w-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold py-3.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center space-x-3 active:scale-[0.98]">
+                        <!-- Google "G" SVG Icon -->
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.859-3.578-7.859-8s3.53-8 7.859-8c2.46 0 4.105 1.025 5.047 1.926l3.258-3.133C18.29 1.844 15.53 1 12.24 1c-6.077 0-11 4.923-11 11s4.923 11 11 11c6.34 0 10.556-4.456 10.556-10.742 0-.72-.078-1.272-.172-1.973h-10.384z"/>
+                        </svg>
+                        <span>Logga in med Google</span>
+                    </button>
+                </div>
+                <p class="text-[10px] text-slate-400">Genom att logga in godkänner du våra medlemsvillkor och integritetspolicy.</p>
+            </div>
+
+
+            <!-- Visas vid inloggnings-simulering -->
+            <div id="googleSuccessArea" class="hidden space-y-4 py-4">
+                <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-center space-y-2">
+                    <p class="text-sm font-bold text-emerald-800">Inloggning lyckades!</p>
+                    <p class="text-xs text-slate-600">Din 10% rabattkod har aktiverats och lagts till i din varukorg automatiskt.</p>
+                    <div class="inline-block bg-white border border-emerald-200 px-4 py-2 rounded-xl text-emerald-600 font-black tracking-widest uppercase mt-2">
+                        GMAIL10
+                    </div>
+                </div>
+                <button onclick="closeGoogleModal()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3 rounded-xl transition-all">
+                    Börja shoppa med 10% rabatt
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- KUNDVAGN -->
+    <div id="cartPanel" class="fixed inset-0 z-50 pointer-events-none overflow-hidden transition-all opacity-0 invisible duration-300">
+        <!-- Backdrop -->
+        <div id="cartBackdrop" onclick="toggleCart()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm pointer-events-auto transition-opacity"></div>
+        
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10 pointer-events-auto">
+            <div id="cartContent" class="w-screen max-w-md transform translate-x-full transition-transform duration-300 ease-in-out bg-white border-l border-slate-200 shadow-2xl flex flex-col">
+                <div class="px-6 py-6 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                    <div class="flex items-center space-x-2.5">
+                        <i data-lucide="shopping-cart" class="text-emerald-600 h-5 w-5"></i>
+                        <h2 class="text-lg font-bold text-slate-850">Din Kundvagn</h2>
+                    </div>
+                    <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors">
+                        <i data-lucide="x" class="h-5 w-5"></i>
+                    </button>
+                </div>
+
+
+                <!-- Varukorgslista -->
+                <div id="cartList" class="flex-grow overflow-y-auto px-6 py-4 space-y-4">
+                    <!-- Fylls i dynamiskt -->
+                </div>
+
+
+                <!-- Rabattkod fält -->
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 space-y-2">
+                    <div class="flex gap-2">
+                        <input type="text" id="discountInput" placeholder="Ange rabattkod (t.ex. GMAIL10)" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs w-full uppercase placeholder-slate-400 text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                        <button onclick="applyDiscount()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-emerald-600 px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 transition-colors">Använd</button>
+                    </div>
+                    <div id="discountFeedback" class="text-xs font-semibold hidden"></div>
+                </div>
+
+
+                <!-- Summering och utcheckning -->
+                <div class="px-6 py-6 border-t border-slate-200 bg-slate-50 space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-slate-500 text-sm">
+                            <span>Delsumma:</span>
+                            <span id="cartSubtotal">0 kr</span>
+                        </div>
+                        <div id="discountRow" class="flex justify-between text-emerald-600 text-sm hidden">
+                            <span>Rabatt:</span>
+                            <span id="cartDiscount">-0 kr</span>
+                        </div>
+                        <div class="flex justify-between text-slate-500 text-sm">
+                            <span>Frakt:</span>
+                            <span id="cartShipping">0 kr</span>
+                        </div>
+                        <div class="flex justify-between text-slate-900 font-bold text-base pt-2 border-t border-slate-200">
+                            <span>Totalsumma:</span>
+                            <span id="cartTotal" class="text-emerald-600 font-extrabold text-lg">0 kr</span>
+                        </div>
+                    </div>
+                    
+                    <button id="checkoutBtn" onclick="openCheckout()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-extrabold py-3.5 rounded-xl hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 text-sm">
+                        <span>Gå till kassan</span>
+                        <i data-lucide="arrow-right" class="h-4 w-4 stroke-[2.5]"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PRODUKTDETALJER MODAL -->
+    <div id="productModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300">
+        <!-- Backdrop -->
+        <div onclick="closeModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        
+        <!-- Modalbox -->
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full relative overflow-hidden z-10 flex flex-col md:flex-row shadow-2xl">
+            <!-- Stängknapp -->
+            <button onclick="closeModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 bg-slate-100 p-1.5 rounded-full z-20 hover:bg-slate-200 transition-colors">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+
+
+            <!-- Produktbild i modalen -->
+            <div class="w-full md:w-1/2 bg-slate-50 p-6 flex items-center justify-center relative min-h-[250px] md:min-h-auto border-r border-slate-100 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/5 to-transparent"></div>
+                <div id="modalProductImg" class="relative z-10 w-full h-full flex items-center justify-center">
+                    <!-- Bild eller SVG genereras här -->
+                </div>
+            </div>
+
+
+            <!-- Produktinfo -->
+            <div class="w-full md:w-1/2 p-8 flex flex-col justify-between space-y-6">
+                <div class="space-y-4">
+                    <span id="modalProductCategory" class="text-[10px] font-extrabold tracking-widest text-emerald-600 uppercase">KATEGORI</span>
+                    <h2 id="modalProductName" class="text-2xl font-black text-slate-900">Produktnamn</h2>
+                    <div class="flex items-center space-x-1">
+                        <i data-lucide="star" class="h-4 w-4 fill-amber-400 stroke-amber-400"></i>
+                        <span id="modalProductRating" class="text-sm font-bold text-slate-750">4.9</span>
+                        <span class="text-xs text-slate-400">(154 recensioner)</span>
+                    </div>
+                    <p id="modalProductDesc" class="text-slate-500 text-sm leading-relaxed">Beskrivning av produkten.</p>
+                    
+                    <!-- Egenskaber / Specifikationer -->
+                    <div class="pt-2">
+                        <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Instruktion & Innehåll:</div>
+                        <ul id="modalProductSpecs" class="space-y-1.5 text-xs text-slate-600">
+                            <!-- JS sätter specifikationer här -->
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="space-y-4 pt-4 border-t border-slate-150">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-400">Pris inklusive moms</span>
+                        <span id="modalProductPrice" class="text-2xl font-extrabold text-slate-900">0 kr</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50 px-2">
+                            <button onclick="decrementModalQty()" class="p-2 text-slate-500 hover:text-slate-800 transition-colors"><i data-lucide="minus" class="h-4 w-4"></i></button>
+                            <span id="modalQtyVal" class="w-8 text-center text-sm font-bold text-slate-800">1</span>
+                            <button onclick="incrementModalQty()" class="p-2 text-slate-500 hover:text-slate-800 transition-colors"><i data-lucide="plus" class="h-4 w-4"></i></button>
+                        </div>
+                        <button id="modalAddBtn" class="flex-grow bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-xl transition-all hover:scale-[1.02] flex items-center justify-center space-x-2 text-sm">
+                            <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                            <span>Lägg till i kundvagn</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- KASSA -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300">
+        <!-- Backdrop -->
+        <div onclick="closeCheckout()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        
+        <!-- Kassabox -->
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-lg w-full relative z-10 overflow-hidden shadow-2xl flex flex-col">
+            <!-- Stängknapp -->
+            <button onclick="closeCheckout()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 bg-slate-100 p-1.5 rounded-full z-20 hover:bg-slate-200 transition-colors">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+
+
+            <!-- Kassa Header -->
+            <div class="px-6 py-6 border-b border-slate-200 bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-850">Utcheckning & Kassa</h3>
+                <p class="text-xs text-slate-500 mt-1">Vänligen fyll i dina uppgifter för att slutföra ditt simulerade köp.</p>
+            </div>
+
+
+            <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" class="p-6 space-y-4 overflow-y-auto max-h-[80vh]">
+                <!-- Personuppgifter -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Mottagaruppgifter</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-500 uppercase font-semibold">Förnamn</label>
+                            <input type="text" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-500 uppercase font-semibold">Efternamn</label>
+                            <input type="text" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-slate-500 uppercase font-semibold">Gatuadress</label>
+                        <input type="text" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-500 uppercase font-semibold">Postnummer</label>
+                            <input type="text" placeholder="123 45" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-500 uppercase font-semibold">Ort</label>
+                            <input type="text" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-500 uppercase font-semibold">E-postadress</label>
+                            <input type="email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-500 uppercase font-semibold">Mobiltelefon</label>
+                            <input type="tel" placeholder="070-123 45 67" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Frakt och Betalmetod -->
+                <div class="space-y-3 pt-4 border-t border-slate-200">
+                    <h4 class="text-xs font-bold text-emerald-600 uppercase tracking-wider font-semibold">Betalningsmetod</h4>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="border border-slate-200 bg-slate-50 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-emerald-500/50 transition-colors">
+                            <input type="radio" name="payment" value="swish" checked class="sr-only">
+                            <i data-lucide="smartphone" class="h-4 w-4 text-emerald-600"></i>
+                            <span class="text-[10px] font-bold text-slate-600">Swish</span>
+                        </label>
+                        <label class="border border-slate-200 bg-slate-50 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-emerald-500/50 transition-colors">
+                            <input type="radio" name="payment" value="kort" class="sr-only">
+                            <i data-lucide="credit-card" class="h-4 w-4 text-emerald-600"></i>
+                            <span class="text-[10px] font-bold text-slate-600">Kort</span>
+                        </label>
+                        <label class="border border-slate-200 bg-slate-50 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-emerald-500/50 transition-colors">
+                            <input type="radio" name="payment" value="faktura" class="sr-only">
+                            <i data-lucide="file-text" class="h-4 w-4 text-emerald-600"></i>
+                            <span class="text-[10px] font-bold text-slate-600">Klarna</span>
+                        </label>
+                    </div>
+                </div>
+
+
+                <!-- Slutgiltig Summering -->
+                <div class="bg-slate-50 p-4 rounded-xl space-y-1.5 text-xs text-slate-500">
+                    <div class="flex justify-between">
+                        <span>Att betala:</span>
+                        <span id="checkoutTotalVal" class="text-slate-800 font-extrabold text-sm">0 kr</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Beräknad leveranstid:</span>
+                        <span class="text-emerald-600 font-semibold">Imorgon (Express)</span>
+                    </div>
+                </div>
+
+
+                <!-- Köp-knapp -->
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-extrabold py-3.5 rounded-xl hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 text-sm">
+                    <i data-lucide="lock" class="h-4 w-4"></i>
+                    <span>Slutför Beställning</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ORDERBEKRÄFTELSE MODAL -->
+    <div id="orderConfirmationModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300">
+        <!-- Backdrop -->
+        <div onclick="closeConfirmation()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        
+        <!-- Box -->
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full relative z-10 overflow-hidden shadow-2xl p-8 text-center space-y-6">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100">
+                <i data-lucide="check-circle" class="h-8 w-8 stroke-[2.5]"></i>
+            </div>
+            
+            <div class="space-y-2">
+                <h3 class="text-2xl font-black text-slate-900">Tack för din beställning!</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">Ditt simulerade köp har genomförts utan problem. Vi har skickat en orderbekräftelse till din angivna e-postadress.</p>
+            </div>
+
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-left space-y-2 text-xs">
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Ordernummer:</span>
+                    <span class="font-bold text-slate-800 uppercase">#APX-78249</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Beräknad leverans:</span>
+                    <span class="font-bold text-emerald-600">1-2 Arbetsdagar</span>
+                </div>
+            </div>
+
+
+            <button onclick="closeConfirmation()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-xl transition-all border border-slate-200">
+                Stäng & Fortsätt Handla
+            </button>
+        </div>
+    </div>
+
+
+    <!-- TOAST NOTIFIKATIONSSYSTEM -->
+    <div id="toast" class="fixed bottom-6 left-6 z-50 bg-white border border-slate-200 text-slate-800 px-4 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 max-w-sm pointer-events-none transform translate-y-20 opacity-0 transition-all duration-300">
+        <div class="bg-emerald-50 p-1.5 rounded-lg text-emerald-600">
+            <i data-lucide="check" class="h-4 w-4 stroke-[3]"></i>
+        </div>
+        <span id="toastMessage" class="text-xs font-semibold">Produkt tillagd!</span>
+    </div>
+
+
+
+
+    <!-- JAVASCRIPT KOD -->
+    <script>
+        // PRODUKTDATABAS (Tränande kosttillskott med korrekta och skarpa bildreferenser)
+        const products = [
+            {
+                id: 1,
+                name: "Apex Ultra Whey Protein",
+                category: "protein",
+                price: 299,
+                rating: 4.8,
+                shortDesc: "Premium vassleprotein med optimal aminosyraprofil för snabb återhämtning.",
+                desc: "Apex Ultra Whey är tillverkat av högkvalitativt svenskt mjölkråvara. Det har ett extremt högt proteininnehåll och minimalt med kolhydrater och fett. Perfekt direkt efter träningspasset.",
+                image: "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "24g rent protein per portion",
+                    "Endast 1.2g kolhydrater",
+                    "Blandas direkt utan klumpar",
+                    "Smak: Klassisk Chokladmilkshake",
+                    "Vikt: 1000g"
+                ],
+                svgColor: "#3b82f6"
+            },
+            {
+                id: 2,
+                name: "Micronized Creatine Monohydrate",
+                category: "kreatin",
+                price: 199,
+                rating: 4.9,
+                shortDesc: "100% mikroniserat kreatinmonohydrat för ökad styrka och explosivitet.",
+                desc: "Ett vetenskapligt bevisat tillskott för att öka din fysiska prestation vid kortvarig, högintensiv träning. Vårt kreatin är extremt mikroniserat för ultimat löslighet i vatten.",
+                image: "https://images.unsplash.com/photo-1611536326696-b52be8ea4c55?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "100% rent kreatinmonohydrat",
+                    "Ökar ATP-produktionen och styrka",
+                    "Helt smaklöst - lätt att blanda",
+                    "Inga onödiga tillsatser",
+                    "Vikt: 500g (100 portioner)"
+                ],
+                svgColor: "#10b981"
+            },
+            {
+                id: 3,
+                name: "Apex Supernova PWO",
+                category: "pwo",
+                price: 349,
+                rating: 4.7,
+                shortDesc: "Högdoserad Pre-Workout som ger extrem energi, fokus och muskelpump.",
+                desc: "Känn kraften direkt. Supernova kombinerar citrullin, beta-alanin, koffein och teanin i vetenskapliga doser för att ge dig brutalt fokus utan energidippar efteråt.",
+                image: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "4000mg L-Citrullin för extrem pump",
+                    "3200mg Beta-alanin för maximal uthållighet",
+                    "300mg Koffein för rå energi",
+                    "Smak: Surt Äpple",
+                    "Vikt: 400g (33 portioner)"
+                ],
+                svgColor: "#f59e0b"
+            },
+            {
+                id: 4,
+                name: "Daily Multi-Vitamin Athletic",
+                category: "vitaminer",
+                price: 149,
+                rating: 4.6,
+                shortDesc: "Skräddarsytt komplex av vitaminer och mineraler anpassat för aktiva individer.",
+                desc: "Stärk immunförsvaret och optimera din ämnesomsättning. Innehåller höga doser av viktiga näringsämnen som tränande människor ofta förbrukar i högre takt.",
+                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "Fullspektrum vitaminer (A, C, D3, E, B-komplex)",
+                    "Innehåller kelaterad Zink och Magnesium",
+                    "Antioxidanter för minskad oxidativ stress",
+                    "En tablett om dagen räcker",
+                    "Innehåll: 90 kapslar (3 månaders förbrukning)"
+                ],
+                svgColor: "#ec4899"
+            },
+            {
+                id: 5,
+                name: "Apex Night ZMA Recovery",
+                category: "vitaminer",
+                price: 179,
+                rating: 4.7,
+                shortDesc: "Högkvalitativ blandning av Zink, Magnesium och B6 för djupare sömn.",
+                desc: "Djupare sömn innebär snabbare återhämtning och bättre hormonproduktion. Vårt ZMA-tillskott använder biotillgängliga källor för maximal absorption.",
+                image: "https://images.unsplash.com/photo-1607619056574-7b8d304f3c6f?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "Högabsorberande Magnesiumaspartat",
+                    "Zinkpikolinat för optimalt testosteronstöd",
+                    "Vitamin B6 för bästa upptag",
+                    "Tas 30-60 minuter före sänggående",
+                    "Innehåll: 90 vegetabiliska kapslar"
+                ],
+                svgColor: "#8b5cf6"
+            },
+            {
+                id: 6,
+                name: "VegaPea & Rice Vegan Protein",
+                category: "protein",
+                price: 319,
+                rating: 4.5,
+                shortDesc: "Växtbaserat protein från ärter och ris. Lättsmält och 100% fritt från soja.",
+                desc: "Ett veganskt proteintillskott som smakar fantastiskt. Genom att kombinera risprotein och ärtprotein skapar vi en fullständig aminosyraprofil perfekt för muskeltillväxt.",
+                image: "https://images.unsplash.com/photo-1610970881699-44a5587caaec?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "21g protein per skopa",
+                    "Sötad med naturlig stevia",
+                    "Helt fri från gluten, laktos och soja",
+                    "Smak: Krämig Vanilj",
+                    "Vikt: 900g"
+                ],
+                svgColor: "#14b8a6"
+            },
+            {
+                id: 7,
+                name: "Essential BCAA 2:1:1 Elite",
+                category: "protein",
+                price: 229,
+                rating: 4.8,
+                shortDesc: "Grenade aminosyror som motverkar muskelnedbrytning under hårda pass.",
+                desc: "Perfekt aminosyradryck att smutta på under dina träningspass för ökad energinivå och muskelbevarande effekt. Innehåller snabbupptagliga aminosyror.",
+                image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "Klassisk 2:1:1 fördelning av Leucin, Isoleucin och Valin",
+                    "Berikad med L-Glutamin för immunförsvaret",
+                    "Sockerfri med frisk smak",
+                    "Smak: Blue Raspberry",
+                    "Vikt: 350g"
+                ],
+                svgColor: "#ef4444"
+            },
+            {
+                id: 8,
+                name: "Ultra Omega-3 Premium",
+                category: "vitaminer",
+                price: 129,
+                rating: 4.9,
+                shortDesc: "Högkoncentrerade omega-3 fettsyror från hållbart fiske för hjärta och leder.",
+                desc: "Håll igång dina leder och främja hjärnans och hjärtats funktioner. Vår fiskolja renas noggrant för att garantera frihet från tungmetaller.",
+                image: "https://images.unsplash.com/photo-1626202378290-7527653063f2?w=600&auto=format&fit=crop&q=85",
+                specs: [
+                    "Hög dos av EPA (330mg) och DHA (220mg) per kapsel",
+                    "Stödjer kardiovaskulär hälsa",
+                    "Skonsam för magen",
+                    "Hållbart anskaffade råvaror",
+                    "Innehåll: 120 kapslar"
+                ],
+                svgColor: "#f43f5e"
+            }
+        ];
+
+
+        // APPTILLSTÅND (STATE)
+        let cart = [];
+        let activeCategory = 'all';
+        let searchQuery = '';
+        let currentSort = 'popular';
+        let discountApplied = null;
+        const discountCodes = {
+            'APEX10': 0.10,
+            'MUSKLER20': 0.20,
+            'GMAIL10': 0.10
+        };
+
+
+        // Modal State
+        let activeProductModal = null;
+        let activeProductQty = 1;
+        let isUserLoggedInWithGoogle = false;
+
+
+        // INITIERING AV APPARATEN
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderCategories();
+            renderProducts();
+            updateCartUI();
+
+
+            // Öppna Google-login popupen automatiskt efter 1.2 sekunder
+            setTimeout(() => {
+                if (!isUserLoggedInWithGoogle) {
+                    openGoogleModal();
+                }
+            }, 1200);
+        });
+
+
+        // GENERERA KATEGORIKNAPPAR
+        function renderCategories() {
+            const categories = [
+                { id: 'all', name: 'Alla' },
+                { id: 'protein', name: 'Protein' },
+                { id: 'kreatin', name: 'Kreatin' },
+                { id: 'pwo', name: 'PWO' },
+                { id: 'vitaminer', name: 'Vitaminer & Mineraler' }
+            ];
+
+
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = categories.map(cat => {
+                const isActive = activeCategory === cat.id;
+                const activeClasses = "bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold border-transparent shadow-md shadow-emerald-500/10";
+                const inactiveClasses = "bg-white hover:bg-slate-50 text-slate-700 border-slate-200";
+                
+                return `
+                    <button onclick="filterCategory('${cat.id}')" class="px-5 py-2.5 rounded-xl border text-xs font-semibold tracking-wide transition-all ${isActive ? activeClasses : inactiveClasses}">
+                        ${cat.name}
+                    </button>
+                `;
+            }).join('');
+        }
+
+
+        // GENERERA FALLBACK SVG OM EN BILD SKULLE GÅ SÖNDER (Säkerhetsgaranti)
+        function getSvgFallback(productId, color) {
+            return `
+                <svg class="w-20 h-28 drop-shadow-[0_8px_16px_rgba(16,185,129,0.1)]" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="20" y="25" width="60" height="90" rx="12" fill="url(#paint_linear_fallback_${productId})" />
+                    <rect x="15" y="10" width="70" height="15" rx="6" fill="${color}" />
+                    <rect x="35" y="5" width="30" height="5" rx="2.5" fill="#e2e8f0" />
+                    <rect x="25" y="45" width="50" height="25" rx="4" fill="#ffffff" opacity="0.9" stroke="#cbd5e1" stroke-width="1" />
+                    <text x="50" y="60" fill="${color}" font-size="7" font-weight="bold" text-anchor="middle">APEX</text>
+                    <defs>
+                        <linearGradient id="paint_linear_fallback_${productId}" x1="50" y1="25" x2="50" y2="115" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#ffffff"/>
+                            <stop offset="1" stop-color="#f1f5f9"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            `;
+        }
+
+
+        // JAVASCRIPT GRADUAL IMAGE FALLBACK HANDLER
+        function handleImageError(imgElement, productId, color) {
+            imgElement.onerror = null; // Förhindra oändlig loop
+            const wrapper = imgElement.parentElement;
+            if (wrapper) {
+                wrapper.innerHTML = getSvgFallback(productId, color);
+            }
+        }
+
+
+        // GENERERA PRODUKTER I RASTER (GRID)
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const noResults = document.getElementById('noResults');
+            
+            // Filtrering
+            let filtered = products.filter(p => {
+                const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      p.shortDesc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+
+            // Sortering
+            if (currentSort === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (currentSort === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else {
+                filtered.sort((a, b) => b.rating - a.rating);
+            }
+
+
+            // Visa/Dölj tomma resultat
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                grid.classList.remove('hidden');
+                noResults.classList.add('hidden');
+            }
+
+
+            grid.innerHTML = filtered.map(product => {
+                return `
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col justify-between hover:border-emerald-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                        
+                        <!-- Produktbild/Illustration -->
+                        <div class="relative bg-slate-100 rounded-xl mb-4 flex items-center justify-center h-48 cursor-pointer overflow-hidden border border-slate-150" onclick="openProductModal(${product.id})">
+                            <span class="absolute top-2.5 left-2.5 bg-white/95 border border-slate-200 text-[9px] font-extrabold px-2.5 py-1 rounded text-emerald-600 tracking-wider uppercase shadow-sm z-10">
+                                ${product.category}
+                            </span>
+                            
+                            <!-- Högupplöst, kontextuell livsstilsbild med felhantering -->
+                            <img src="${product.image}" 
+                                 alt="${product.name}" 
+                                 class="object-cover h-full w-full rounded-xl transition-transform duration-500 group-hover:scale-105" 
+                                 onerror="handleImageError(this, ${product.id}, '${product.svgColor}')" />
+                        </div>
+
+
+                        <!-- Produkttext och omdöme -->
+                        <div class="space-y-2 cursor-pointer" onclick="openProductModal(${product.id})">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-1">
+                                    <i data-lucide="star" class="h-3 w-3 fill-amber-400 stroke-amber-400"></i>
+                                    <span class="text-xs font-bold text-slate-700">${product.rating}</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 font-semibold bg-slate-50 px-1.5 py-0.5 rounded text-slate-500">Premium kvalitet</span>
+                            </div>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate">${product.name}</h3>
+                            <p class="text-xs text-slate-500 line-clamp-2">${product.shortDesc}</p>
+                        </div>
+
+
+                        <!-- Pris & Lägg i varukorg -->
+                        <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-base font-extrabold text-slate-900">${product.price} kr</span>
+                            <button onclick="quickAdd(${product.id})" class="bg-slate-100 hover:bg-emerald-500 text-slate-700 hover:text-white p-2.5 rounded-xl transition-all active:scale-[0.9] flex items-center justify-center">
+                                <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            lucide.createIcons();
+        }
+
+
+        // KATEGORIFILTRERING
+        function filterCategory(catId) {
+            activeCategory = catId;
+            renderCategories();
+            renderProducts();
+        }
+
+
+        // SÖKHANTERING
+        function handleSearch(event) {
+            searchQuery = event.target.value;
+            document.getElementById('searchInput').value = searchQuery;
+            document.getElementById('mobileSearchInput').value = searchQuery;
+            renderProducts();
+        }
+
+
+        // SORTERINGHANTERING
+        function handleSort() {
+            currentSort = document.getElementById('sortSelect').value;
+            renderProducts();
+        }
+
+
+        // RENSA FILTER
+        function resetFilters() {
+            activeCategory = 'all';
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            renderCategories();
+            renderProducts();
+        }
+
+
+        // GOOGLE INLOGGNINGSPREVENTIV POPUP
+        function openGoogleModal() {
+            const modal = document.getElementById('googleLoginModal');
+            modal.classList.remove('invisible', 'opacity-0');
+        }
+
+
+        // Stäng Google-login fönstret
+        function closeGoogleModal() {
+            const modal = document.getElementById('googleLoginModal');
+            modal.classList.add('invisible', 'opacity-0');
+        }
+
+
+        function startGoogleLoginSimulation() {
+            const actionArea = document.getElementById('googleLoginActionArea');
+            
+            // Visa laddningsindikator
+            actionArea.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-6 space-y-3">
+                    <div class="animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
+                    <p class="text-xs text-slate-500">Ansluter säkert till Google Accounts...</p>
+                </div>
+            `;
+
+
+            setTimeout(() => {
+                isUserLoggedInWithGoogle = true;
+                
+                document.getElementById('googleLoginActionArea').classList.add('hidden');
+                document.getElementById('googleSuccessArea').classList.remove('hidden');
+
+
+                document.getElementById('headerLoginBtn').classList.add('hidden');
+                document.getElementById('googleUserStatus').classList.remove('hidden');
+                document.getElementById('googleUserStatus').classList.add('flex');
+
+
+                discountApplied = {
+                    code: 'GMAIL10',
+                    percent: 0.10
+                };
+                
+                const discInput = document.getElementById('discountInput');
+                if (discInput) {
+                    discInput.value = 'GMAIL10';
+                    applyDiscount();
+                }
+                
+                updateCartUI();
+                showToast("Inloggad! 10% rabattkod GMAIL10 har aktiverats!");
+            }, 1500);
+        }
+
+
+        // KUNDVAGNSLOGIK
+        function toggleCart() {
+            const panel = document.getElementById('cartPanel');
+            const content = document.getElementById('cartContent');
+            
+            if (panel.classList.contains('invisible')) {
+                panel.classList.remove('invisible', 'opacity-0');
+                content.classList.remove('translate-x-full');
+            } else {
+                panel.classList.add('invisible', 'opacity-0');
+                content.classList.add('translate-x-full');
+            }
+        }
+
+
+        function quickAdd(productId) {
+            addToCart(productId, 1);
+        }
+
+
+        function addToCart(productId, qty) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+
+            const existingItem = cart.find(item => item.product.id === productId);
+            if (existingItem) {
+                existingItem.quantity += qty;
+            } else {
+                cart.push({
+                    product,
+                    quantity: qty
+                });
+            }
+
+
+            updateCartUI();
+            showToast(`${product.name} tillagd i varukorgen.`);
+        }
+
+
+        function changeCartQuantity(productId, change) {
+            const item = cart.find(i => i.product.id === productId);
+            if (!item) return;
+
+
+            item.quantity += change;
+            if (item.quantity <= 0) {
+                cart = cart.filter(i => i.product.id !== productId);
+            }
+            updateCartUI();
+        }
+
+
+        function applyDiscount() {
+            const codeInput = document.getElementById('discountInput').value.trim().toUpperCase();
+            const feedback = document.getElementById('discountFeedback');
+            
+            if (discountCodes[codeInput]) {
+                discountApplied = {
+                    code: codeInput,
+                    percent: discountCodes[codeInput]
+                };
+                feedback.textContent = `Rabattkod aktiverad: ${discountApplied.percent * 100}% rabatt!`;
+                feedback.className = "text-xs font-semibold text-emerald-600 block";
+            } else {
+                discountApplied = null;
+                feedback.textContent = "Ogiltig eller utgången rabattkod.";
+                feedback.className = "text-xs font-semibold text-red-500 block";
+            }
+            updateCartUI();
+        }
+
+
+        function updateCartUI() {
+            const cartList = document.getElementById('cartList');
+            const badge = document.getElementById('cartCountBadge');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.classList.remove('scale-0');
+                badge.classList.add('scale-100');
+            } else {
+                badge.classList.remove('scale-100');
+                badge.classList.add('scale-0');
+            }
+
+
+            if (cart.length === 0) {
+                cartList.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                        <div class="h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                            <i data-lucide="shopping-basket" class="h-6 w-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">Din kundvagn är tom</p>
+                            <p class="text-xs text-slate-500 mt-1">Gör dig redo för nästa pass med rätt produkter.</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('checkoutBtn').disabled = true;
+                document.getElementById('checkoutBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                document.getElementById('checkoutBtn').disabled = false;
+                document.getElementById('checkoutBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+                
+                cartList.innerHTML = cart.map(item => {
+                    return `
+                        <div class="flex items-center space-x-4 bg-slate-50 border border-slate-150 p-3 rounded-2xl">
+                            <!-- Mini-bild med fallback -->
+                            <div class="h-14 w-14 bg-white rounded-xl flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden">
+                                <img src="${item.product.image}" 
+                                     alt="${item.product.name}" 
+                                     class="object-cover h-full w-full rounded-xl"
+                                     onerror="this.onerror=null; this.outerHTML=getSvgFallback(${item.product.id}, '${item.product.svgColor}')" />
+                            </div>
+                            
+                            <!-- Information -->
+                            <div class="flex-grow min-w-0">
+                                <h4 class="text-xs font-bold text-slate-800 truncate">${item.product.name}</h4>
+                                <span class="text-xs text-emerald-600 font-bold">${item.product.price} kr/st</span>
+                            </div>
+
+
+                            <!-- Mängdkontroll -->
+                            <div class="flex flex-col items-end justify-between space-y-2">
+                                <div class="flex items-center space-x-1.5 border border-slate-200 rounded-lg bg-white p-0.5 shadow-sm">
+                                    <button onclick="changeCartQuantity(${item.product.id}, -1)" class="p-1 text-slate-400 hover:text-slate-800 transition-colors"><i data-lucide="minus" class="h-3 w-3"></i></button>
+                                    <span class="text-xs font-bold text-slate-800 w-5 text-center">${item.quantity}</span>
+                                    <button onclick="changeCartQuantity(${item.product.id}, 1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i data-lucide="plus" class="h-3 w-3"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+            let discountAmount = 0;
+            if (discountApplied) {
+                discountAmount = Math.round(subtotal * discountApplied.percent);
+                document.getElementById('discountRow').classList.remove('hidden');
+                document.getElementById('cartDiscount').textContent = `-${discountAmount} kr`;
+            } else {
+                document.getElementById('discountRow').classList.add('hidden');
+            }
+
+
+            const shipping = (subtotal - discountAmount >= 500 || subtotal === 0) ? 0 : 49;
+            const total = subtotal - discountAmount + shipping;
+
+
+            document.getElementById('cartSubtotal').textContent = `${subtotal} kr`;
+            document.getElementById('cartShipping').textContent = shipping === 0 ? "Fri frakt" : `${shipping} kr`;
+            document.getElementById('cartTotal').textContent = `${total} kr`;
+            document.getElementById('checkoutTotalVal').textContent = `${total} kr`;
+
+
+            lucide.createIcons();
+        }
+
+
+        // PRODUKT MODAL KONTROLLERS
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+
+            activeProductModal = product;
+            activeProductQty = 1;
+
+
+            document.getElementById('modalProductName').textContent = product.name;
+            document.getElementById('modalProductCategory').textContent = product.category;
+            document.getElementById('modalProductRating').textContent = product.rating;
+            document.getElementById('modalProductDesc').textContent = product.desc;
+            document.getElementById('modalProductPrice').textContent = `${product.price} kr`;
+            document.getElementById('modalQtyVal').textContent = activeProductQty;
+
+
+            // Skapa modal illustrationen/bilden med fallback
+            document.getElementById('modalProductImg').innerHTML = `
+                <img src="${product.image}" 
+                     alt="${product.name}" 
+                     class="object-cover rounded-2xl max-h-64 md:max-h-80 w-full shadow-lg"
+                     onerror="this.onerror=null; this.outerHTML=getSvgFallback(${product.id}, '${product.svgColor}')" />
+            `;
+
+
+            document.getElementById('modalProductSpecs').innerHTML = product.specs.map(spec => `
+                <li class="flex items-center space-x-2">
+                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                    <span>${spec}</span>
+                </li>
+            `).join('');
+
+
+            const addBtn = document.getElementById('modalAddBtn');
+            addBtn.onclick = () => {
+                addToCart(product.id, activeProductQty);
+                closeModal();
+            };
+
+
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('invisible', 'opacity-0');
+            
+            lucide.createIcons();
+        }
+
+
+        function closeModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.add('invisible', 'opacity-0');
+        }
+
+
+        function incrementModalQty() {
+            activeProductQty++;
+            document.getElementById('modalQtyVal').textContent = activeProductQty;
+        }
+
+
+        function decrementModalQty() {
+            if (activeProductQty > 1) {
+                activeProductQty--;
+                document.getElementById('modalQtyVal').textContent = activeProductQty;
+            }
+        }
+
+
+        // KASSA MODAL KONTROLLERS
+        function openCheckout() {
+            toggleCart();
+            const checkout = document.getElementById('checkoutModal');
+            checkout.classList.remove('invisible', 'opacity-0');
+        }
+
+
+        function closeCheckout() {
+            const checkout = document.getElementById('checkoutModal');
+            checkout.classList.add('invisible', 'opacity-0');
+        }
+
+
+        function handlePlaceOrder(event) {
+            event.preventDefault();
+            closeCheckout();
+            
+            const conf = document.getElementById('orderConfirmationModal');
+            conf.classList.remove('invisible', 'opacity-0');
+            
+            cart = [];
+            
+            if (!isUserLoggedInWithGoogle) {
+                discountApplied = null;
+                document.getElementById('discountInput').value = '';
+                document.getElementById('discountFeedback').classList.add('hidden');
+            }
+            updateCartUI();
+        }
+
+
+        function closeConfirmation() {
+            const conf = document.getElementById('orderConfirmationModal');
+            conf.classList.add('invisible', 'opacity-0');
+        }
+
+
+        // TOAST MEDDELANDEN
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgSpan = document.getElementById('toastMessage');
+            
+            msgSpan.textContent = message;
+            
+            clearTimeout(toastTimeout);
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+
+        function scrollToProducts() {
+            document.getElementById('products-section').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

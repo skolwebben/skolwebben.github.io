@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanrio Detektivmysterium! 🍓🔍</title>
+    <!-- Importerar Tailwind CSS för modern och responsiv layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle, #ffe4e6 0%, #fbcfe8 100%);
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(244, 63, 94, 0.3);
+            border-radius: 10px;
+        }
+
+        /* Söta svävande animationer för detaljer */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4 md:p-8 text-slate-800">
+
+    <!-- Huvudbehållare -->
+    <div class="max-w-4xl w-full glass-panel rounded-3xl shadow-2xl border-4 border-pink-300 p-6 flex flex-col gap-6 relative overflow-hidden min-h-[620px]">
+        
+        <!-- HEADER -->
+        <div id="gameHeader" class="hidden flex justify-between items-center border-b-2 border-pink-200 pb-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-pink-500 tracking-wide uppercase drop-shadow-[0_1.5px_0px_rgba(219,39,119,1)]">
+                    Detektivbyrån 🔍
+                </h1>
+                <p class="text-xs md:text-sm text-pink-700/80 font-bold">Mysteriet med den stulna Jordgubbspajen</p>
+            </div>
+            
+            <!-- Anteckningsbok-knapp -->
+            <button id="btnNotebook" class="bg-rose-400 hover:bg-rose-300 border-b-4 border-rose-600 active:border-b-0 text-white font-black py-2 px-4 rounded-xl text-xs md:text-sm flex items-center gap-2 transition-all">
+                📓 Anteckningsbok (<span id="clueCount">0</span>/4)
+            </button>
+        </div>
+
+        <!-- 1. INTRODUKTIONSSKÄRM -->
+        <div id="view-intro" class="flex flex-col items-center text-center py-6 gap-6 max-w-lg mx-auto">
+            <div class="w-28 h-28 floating-icon">
+                <!-- Hello Kitty Förstoringsglas SVG -->
+                <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+                    <circle cx="45" cy="45" r="30" fill="none" stroke="#f43f5e" stroke-width="8"/>
+                    <line x1="66" y1="66" x2="90" y2="90" stroke="#f43f5e" stroke-width="10" stroke-linecap="round"/>
+                    <path d="M 33 22 Q 25 5 45 12 Z" fill="white" stroke="#333" stroke-width="2"/>
+                    <path d="M 72 32 Q 85 15 72 20 Z" fill="white" stroke="#333" stroke-width="2"/>
+                    <circle cx="80" cy="20" r="6" fill="#f43f5e"/>
+                </svg>
+            </div>
+            
+            <h2 class="text-3xl md:text-4xl font-black text-pink-500 tracking-wide drop-shadow-[0_1.5px_0px_rgba(219,39,119,1)]">
+                SANRIO WHODUNNIT!
+            </h2>
+            
+            <div class="space-y-3 text-slate-700 font-medium text-sm md:text-base bg-white/50 p-4 rounded-2xl border border-pink-100">
+                <p>🌸 Välkommen till Jordgubbsslottet! Hello Kitty bjöd in sina vänner på ett mysigt te-party, men katastrofen har slagit till...</p>
+                <p class="font-bold text-rose-500">Den legendariska Gyllene Jordgubbspajen har blivit stulen direkt från ugnen kl 14:00!</p>
+                <p>Någon av gästerna ljuger. Som slottets mästerdetektiv måste du undersöka rummen, samla ledtrådar, förhöra misstänkta och peka ut tjuven!</p>
+            </div>
+
+            <button id="btnStartGame" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-black py-4 px-8 rounded-2xl text-lg shadow-lg border-b-4 border-rose-700 active:border-b-0 transform hover:scale-102 active:scale-98 transition-all">
+                Börja utredningen! 🔎
+            </button>
+        </div>
+
+        <!-- 2. HUVUDMENY / KARTA & UTREDNINGSNAVIGERING -->
+        <div id="view-main" class="hidden flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+            
+            <!-- KARTA (Vänster sida - 7/12 delar) -->
+            <div class="md:col-span-7 flex flex-col gap-3">
+                <h3 class="font-black text-lg text-pink-600 flex items-center gap-1.5">
+                    🏰 Välj ett rum att genomsöka:
+                </h3>
+                
+                <!-- Interaktiv Slottsskiss (Grid-baserad karta) -->
+                <div class="grid grid-cols-2 gap-3 flex-1 min-h-[280px]">
+                    <!-- KÖKET -->
+                    <button id="room-kitchen" class="relative group rounded-2xl overflow-hidden border-3 border-pink-200 bg-amber-50/40 hover:bg-pink-100/30 hover:border-pink-400 transition-all p-4 flex flex-col justify-between items-start text-left shadow-sm">
+                        <span class="absolute top-2 right-2 text-2xl group-hover:scale-110 transition-transform">🍳</span>
+                        <div>
+                            <span class="text-xs uppercase font-bold text-pink-500 block mb-0.5">Brottsplatsen</span>
+                            <h4 class="font-black text-lg text-slate-800">Köket</h4>
+                        </div>
+                        <span id="badge-kitchen" class="text-[10px] font-bold bg-amber-400 text-slate-800 px-2 py-0.5 rounded-full hidden">Sökt! ✔</span>
+                    </button>
+
+                    <!-- TE-SALONGEN -->
+                    <button id="room-tearoom" class="relative group rounded-2xl overflow-hidden border-3 border-pink-200 bg-rose-50/40 hover:bg-pink-100/30 hover:border-pink-400 transition-all p-4 flex flex-col justify-between items-start text-left shadow-sm">
+                        <span class="absolute top-2 right-2 text-2xl group-hover:scale-110 transition-transform">🍰</span>
+                        <div>
+                            <span class="text-xs uppercase font-bold text-pink-500 block mb-0.5">Te-bordet</span>
+                            <h4 class="font-black text-lg text-slate-800">Te-salongen</h4>
+                        </div>
+                        <span id="badge-tearoom" class="text-[10px] font-bold bg-amber-400 text-slate-800 px-2 py-0.5 rounded-full hidden">Sökt! ✔</span>
+                    </button>
+
+                    <!-- BIBLIOTEKET -->
+                    <button id="room-library" class="relative group rounded-2xl overflow-hidden border-3 border-pink-200 bg-sky-50/40 hover:bg-pink-100/30 hover:border-pink-400 transition-all p-4 flex flex-col justify-between items-start text-left shadow-sm">
+                        <span class="absolute top-2 right-2 text-2xl group-hover:scale-110 transition-transform">📚</span>
+                        <div>
+                            <span class="text-xs uppercase font-bold text-pink-500 block mb-0.5">Sömnhörna</span>
+                            <h4 class="font-black text-lg text-slate-800">Biblioteket</h4>
+                        </div>
+                        <span id="badge-library" class="text-[10px] font-bold bg-amber-400 text-slate-800 px-2 py-0.5 rounded-full hidden">Sökt! ✔</span>
+                    </button>
+
+                    <!-- TRÄDGÅRDEN -->
+                    <button id="room-garden" class="relative group rounded-2xl overflow-hidden border-3 border-pink-200 bg-emerald-50/40 hover:bg-pink-100/30 hover:border-pink-400 transition-all p-4 flex flex-col justify-between items-start text-left shadow-sm">
+                        <span class="absolute top-2 right-2 text-2xl group-hover:scale-110 transition-transform">🌸</span>
+                        <div>
+                            <span class="text-xs uppercase font-bold text-pink-500 block mb-0.5">Trädgård & Damm</span>
+                            <h4 class="font-black text-lg text-slate-800">Trädgården</h4>
+                        </div>
+                        <span id="badge-garden" class="text-[10px] font-bold bg-amber-400 text-slate-800 px-2 py-0.5 rounded-full hidden">Sökt! ✔</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MISSTÄNKTA (Höger sida - 5/12 delar) -->
+            <div class="md:col-span-5 flex flex-col gap-3">
+                <h3 class="font-black text-lg text-pink-600 flex items-center gap-1.5">
+                    👥 Förhör de misstänkta gästerna:
+                </h3>
+                
+                <div class="flex flex-col gap-2 flex-1 justify-between overflow-y-auto custom-scrollbar max-h-[320px] md:max-h-none pr-1">
+                    <!-- Suspect Buttons -->
+                    <div id="suspectsList" class="space-y-2"></div>
+                    
+                    <!-- Slutgiltig anklagelseknapp -->
+                    <button id="btnGoAccuse" class="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white font-black py-3 px-4 rounded-2xl text-base shadow-md border-b-4 border-indigo-700 active:border-b-0 transition-all flex items-center justify-center gap-1.5">
+                        👑 Lös Mysteriet & Anklaga!
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. DETALJERAD RUMSUTFORSKNING -->
+        <div id="view-room" class="hidden flex-1 flex flex-col gap-4">
+            <div class="flex justify-between items-center border-b border-pink-100 pb-2">
+                <h3 id="roomTitle" class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                    <!-- Rumsnamn -->
+                </h3>
+                <button id="btnExitRoom" class="bg-slate-200 hover:bg-slate-300 font-bold py-1.5 px-3 rounded-lg text-xs md:text-sm text-slate-700">
+                    ⬅ Tillbaka till kartan
+                </button>
+            </div>
+
+            <!-- Interaktiv sökzon -->
+            <div id="roomSearchArea" class="relative w-full aspect-[16/9] bg-slate-100 rounded-2xl border-4 border-slate-300 overflow-hidden shadow-inner flex items-center justify-center">
+                <!-- Ledtrådar och dekorationer genereras här -->
+            </div>
+            
+            <p class="text-center text-xs text-slate-500 font-semibold italic">Klicka på intressanta föremål i rummet för att söka efter dolda bevis!</p>
+        </div>
+
+        <!-- 4. FORHÖRSDIALOG -->
+        <div id="view-interrogation" class="hidden flex-1 flex flex-col gap-4">
+            <div class="flex justify-between items-center border-b border-pink-100 pb-2">
+                <h3 id="interrogateTitle" class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                    <!-- Karaktärsnamn -->
+                </h3>
+                <button id="btnExitInterrogate" class="bg-slate-200 hover:bg-slate-300 font-bold py-1.5 px-3 rounded-lg text-xs md:text-sm text-slate-700">
+                    ⬅ Tillbaka till kartan
+                </button>
+            </div>
+
+            <!-- Förhörslayout -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 items-stretch">
+                <!-- Porträtt -->
+                <div class="bg-white/50 rounded-2xl border border-pink-100 p-4 flex flex-col items-center justify-center shadow-sm">
+                    <div id="suspectPortrait" class="w-32 h-32 md:w-40 md:h-40">
+                        <!-- Sätts dynamiskt -->
+                    </div>
+                    <div id="suspectProfile" class="text-center mt-3">
+                        <!-- Info -->
+                    </div>
+                </div>
+
+                <!-- Chattfönster och frågor -->
+                <div class="md:col-span-2 flex flex-col bg-white/40 rounded-2xl border border-pink-100 p-4 justify-between gap-4">
+                    <!-- Meddelandefönster -->
+                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 max-h-[180px] space-y-3" id="chatWindow">
+                        <!-- Dialog -->
+                    </div>
+
+                    <!-- Frågor att ställa -->
+                    <div class="border-t border-pink-100 pt-3 flex flex-col gap-2" id="questionOptions">
+                        <!-- Knappar för frågor -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. ANKLAGELSESKÄRM -->
+        <div id="view-accuse" class="hidden flex-1 flex flex-col gap-4">
+            <div class="flex justify-between items-center border-b border-pink-100 pb-2">
+                <h3 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                    ⚖️ Den Slutgiltiga Anklagelsen
+                </h3>
+                <button id="btnExitAccuse" class="bg-slate-200 hover:bg-slate-300 font-bold py-1.5 px-3 rounded-lg text-xs md:text-sm text-slate-700">
+                    ⬅ Fortsätt undersöka
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-1">
+                <!-- Välj Gärningsman -->
+                <div class="bg-white/50 rounded-2xl border border-pink-100 p-4 flex flex-col gap-3">
+                    <h4 class="font-black text-pink-600">Vem stal pajen? 🧐</h4>
+                    <div class="grid grid-cols-1 gap-2 flex-1 overflow-y-auto custom-scrollbar pr-1 max-h-[250px]" id="accuseSuspectsList">
+                        <!-- Genereras i JS -->
+                    </div>
+                </div>
+
+                <!-- Välj Bevis -->
+                <div class="bg-white/50 rounded-2xl border border-pink-100 p-4 flex flex-col gap-3 justify-between">
+                    <div>
+                        <h4 class="font-black text-pink-600 mb-3">Vilken ledtråd krossar tjuvens alibi? 📓</h4>
+                        <div class="grid grid-cols-1 gap-2 overflow-y-auto custom-scrollbar max-h-[180px]" id="accuseEvidenceList">
+                            <!-- Genereras i JS -->
+                        </div>
+                    </div>
+
+                    <!-- Bekräfta -->
+                    <button id="btnFinalAccuse" class="w-full bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 text-white font-black py-3.5 px-6 rounded-2xl text-lg shadow-lg border-b-4 border-red-800 active:border-b-0 transition-all flex items-center justify-center gap-1.5">
+                        📣 Avge din anklagelse!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. SLUTRESULTAT / EPILOG -->
+        <div id="view-ending" class="hidden flex flex-col items-center text-center py-6 gap-6 max-w-lg mx-auto">
+            <div class="w-24 h-24" id="endingIcon">
+                <!-- Fylls dynamiskt -->
+            </div>
+
+            <h2 id="endingTitle" class="text-3xl font-black tracking-wide drop-shadow"></h2>
+            
+            <div id="endingText" class="space-y-3 text-slate-700 font-medium text-sm md:text-base bg-white/60 p-5 rounded-2xl border border-pink-100">
+                <!-- Fylls dynamiskt -->
+            </div>
+
+            <button id="btnRestart" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-black py-4 px-8 rounded-2xl text-lg shadow-lg border-b-4 border-rose-700 active:border-b-0 transition-all">
+                Spela igen! 🔄
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ANTECKNINGSBOK MODAL -->
+    <div id="notebookModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl border-4 border-rose-300 max-w-md w-full p-6 shadow-2xl flex flex-col gap-4 transform scale-95 transition-transform duration-200" id="notebookCard">
+            <div class="flex justify-between items-center border-b-2 border-rose-100 pb-2">
+                <h3 class="text-xl font-black text-rose-500 flex items-center gap-1.5">📓 Detektivens Anteckningsbok</h3>
+                <button id="btnCloseNotebook" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+
+            <div class="space-y-4 flex-1 overflow-y-auto custom-scrollbar max-h-[300px] pr-1">
+                <!-- Insamlade ledtrådar -->
+                <div>
+                    <h4 class="font-black text-slate-700 text-sm uppercase tracking-wider mb-2">Insamlade Ledtrådar:</h4>
+                    <div id="notebookCluesList" class="space-y-1.5">
+                        <!-- Ledtrådar fylls i -->
+                    </div>
+                </div>
+
+                <!-- Slutsatser / Pusseltrådar -->
+                <div class="border-t border-rose-100 pt-3">
+                    <h4 class="font-black text-slate-700 text-sm uppercase tracking-wider mb-2">Vittnesmål & observationer:</h4>
+                    <ul class="list-disc list-inside text-xs text-slate-600 space-y-1">
+                        <li>Gärningsmannen slog till exakt kl 14:00.</li>
+                        <li>Cinnamoroll hävdar att han var i sitt café och bakade ostört hela eftermiddagen.</li>
+                        <li>Cinnamoroll påstår att Keroppi såg honom i caféet kl 13:50.</li>
+                        <li>My Melody såg en vit figur med stora öron sväva utanför köksfönstret runt kl 14:00.</li>
+                        <li>Pompompurin fäller mycket gula hårstrån naturligt, men var han i köket kl 14:00?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button id="btnCloseNotebookBtn" class="w-full bg-rose-400 hover:bg-rose-300 border-b-4 border-rose-600 active:border-b-0 text-white font-bold py-2.5 rounded-xl text-sm transition-all">
+                Stäng boken
+            </button>
+        </div>
+    </div>
+
+    <!-- SÖTA LILLA DIALOGEN FÖR LEDTRÅDS-NAPPAR -->
+    <div id="clueFoundToast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-rose-500 text-white font-bold px-6 py-3 rounded-full shadow-lg border-2 border-white flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        ✨ <span>Du hittade en ny ledtråd!</span>
+    </div>
+
+    <script>
+        // --- LJUDEFFEKTER (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'clue') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'success') {
+                // Fanfar
+                [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.type = 'triangle';
+                    o.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    g.gain.setValueAtTime(0.12, now + idx * 0.08);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.4);
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.start(now + idx * 0.08);
+                    o.stop(now + idx * 0.08 + 0.4);
+                });
+            } else if (type === 'fail') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.3);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        // --- ALLA SANRIO-KARAKTÄRER (SVG) ---
+        const charSvgs = {
+            hello_kitty: `
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <path d="M 25 35 Q 15 15 40 25 Z" fill="white" stroke="#333" stroke-width="4" stroke-linejoin="round" />
+                <path d="M 75 35 Q 85 15 60 25 Z" fill="white" stroke="#333" stroke-width="4" stroke-linejoin="round" />
+                <ellipse cx="50" cy="55" rx="42" ry="32" fill="white" stroke="#333" stroke-width="4" />
+                <g transform="translate(72, 32)">
+                    <circle cx="0" cy="0" r="8" fill="#f43f5e" stroke="#333" stroke-width="3" />
+                    <path d="M 0 0 Q -15 -10 -10 6 Z" fill="#f43f5e" stroke="#333" stroke-width="2.5" />
+                    <path d="M 0 0 Q 15 -10 10 6 Z" fill="#f43f5e" stroke="#333" stroke-width="2.5" />
+                </g>
+                <ellipse cx="36" cy="55" rx="3.5" ry="5" fill="#222" />
+                <ellipse cx="64" cy="55" rx="3.5" ry="5" fill="#222" />
+                <ellipse cx="50" cy="62" rx="4.5" ry="3" fill="#facc15" />
+                <line x1="15" y1="52" x2="4" y2="49" stroke="#333" stroke-width="3" stroke-linecap="round" />
+                <line x1="15" y1="58" x2="2" y2="58" stroke="#333" stroke-width="3" stroke-linecap="round" />
+                <line x1="15" y1="64" x2="4" y2="67" stroke="#333" stroke-width="3" stroke-linecap="round" />
+                <line x1="85" y1="52" x2="96" y2="49" stroke="#333" stroke-width="3" stroke-linecap="round" />
+                <line x1="85" y1="58" x2="98" y2="58" stroke="#333" stroke-width="3" stroke-linecap="round" />
+                <line x1="85" y1="64" x2="96" y2="67" stroke="#333" stroke-width="3" stroke-linecap="round" />
+            </svg>
+            `,
+            pompompurin: `
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <ellipse cx="50" cy="60" rx="42" ry="32" fill="#fef08a" stroke="#78350f" stroke-width="4" />
+                <path d="M 16 48 C 6 48, 8 76, 20 66 Z" fill="#fef08a" stroke="#78350f" stroke-width="3.5" />
+                <path d="M 84 48 C 94 48, 92 76, 80 66 Z" fill="#fef08a" stroke="#78350f" stroke-width="3.5" />
+                <ellipse cx="50" cy="28" rx="16" ry="7" fill="#78350f" stroke="#451a03" stroke-width="3.5" />
+                <rect x="48" y="21" width="4" height="6" fill="#78350f" />
+                <circle cx="36" cy="56" r="3" fill="#78350f" />
+                <circle cx="64" cy="56" r="3" fill="#78350f" />
+                <ellipse cx="50" cy="61" rx="3.5" ry="2" fill="#78350f" />
+                <path d="M 46 63 Q 50 67 54 63" fill="none" stroke="#78350f" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="26" cy="62" r="4" fill="#f43f5e" opacity="0.3" />
+                <circle cx="74" cy="62" r="4" fill="#f43f5e" opacity="0.3" />
+            </svg>
+            `,
+            cinnamoroll: `
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <ellipse cx="50" cy="55" rx="38" ry="28" fill="white" stroke="#1d4ed8" stroke-width="4" />
+                <path d="M 22 45 C -4 42, -2 78, 20 60 Z" fill="white" stroke="#1d4ed8" stroke-width="4" stroke-linejoin="round" />
+                <path d="M 78 45 C 104 42, 102 78, 80 60 Z" fill="white" stroke="#1d4ed8" stroke-width="4" stroke-linejoin="round" />
+                <circle cx="38" cy="54" r="3.5" fill="#3b82f6" />
+                <circle cx="62" cy="54" r="3.5" fill="#3b82f6" />
+                <path d="M 48 60 Q 50 63 52 60" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" />
+                <ellipse cx="32" cy="59" rx="6" ry="3.5" fill="#fbcfe8" />
+                <ellipse cx="68" cy="59" rx="6" ry="3.5" fill="#fbcfe8" />
+            </svg>
+            `,
+            kuromi: `
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <!-- Svart jester-hatt -->
+                <path d="M 12 50 C 12 18, 88 18, 88 50 Z" fill="#1e293b" stroke="#0f172a" stroke-width="4" />
+                <path d="M 12 50 Q -5 20 20 30 Z" fill="#1e293b" stroke="#0f172a" stroke-width="3" />
+                <path d="M 88 50 Q 105 20 80 30 Z" fill="#1e293b" stroke="#0f172a" stroke-width="3" />
+                <circle cx="16" cy="27" r="4" fill="#ec4899" />
+                <circle cx="84" cy="27" r="4" fill="#ec4899" />
+                <!-- Ansikte -->
+                <ellipse cx="50" cy="58" rx="36" ry="28" fill="white" stroke="#1e293b" stroke-width="4" />
+                <!-- Rosa skalle på mössan -->
+                <g transform="translate(50, 32)">
+                    <circle cx="0" cy="0" r="7" fill="#f43f5e" />
+                    <rect x="-4" y="4" width="8" height="5" fill="#f43f5e" />
+                    <circle cx="-2.5" cy="-1" r="1.5" fill="black" />
+                    <circle cx="2.5" cy="-1" r="1.5" fill="black" />
+                    <line x1="-1.5" y1="4" x2="-1.5" y2="7" stroke="black" stroke-width="1" />
+                    <line x1="1.5" y1="4" x2="1.5" y2="7" stroke="black" stroke-width="1" />
+                </g>
+                <!-- Sneddfasade busiga ögon -->
+                <path d="M 32 50 Q 38 48 42 54" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" />
+                <ellipse cx="37" cy="55" rx="3.5" ry="5.5" fill="black" />
+                <path d="M 68 50 Q 62 48 58 54" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" />
+                <ellipse cx="63" cy="55" rx="3.5" ry="5.5" fill="black" />
+                <!-- Snett leende -->
+                <path d="M 45 66 Q 50 69 55 64" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" />
+                <ellipse cx="28" cy="62" rx="4" ry="2" fill="#fda4af" />
+                <ellipse cx="72" cy="62" rx="4" ry="2" fill="#fda4af" />
+            </svg>
+            `,
+            my_melody: `
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <!-- Rosa luva -->
+                <ellipse cx="50" cy="52" rx="40" ry="34" fill="#ec4899" stroke="#9d174d" stroke-width="4" />
+                <path d="M 22 36 Q 10 5 32 20 Z" fill="#ec4899" stroke="#9d174d" stroke-width="4" stroke-linejoin="round" />
+                <path d="M 78 36 Q 90 5 68 20 Z" fill="#ec4899" stroke="#9d174d" stroke-width="4" stroke-linejoin="round" />
+                <!-- Ansiktshål -->
+                <ellipse cx="50" cy="58" rx="28" ry="22" fill="white" stroke="#9d174d" stroke-width="3.5" />
+                <!-- Blomma -->
+                <g transform="translate(28, 40)">
+                    <circle cx="0" cy="0" r="6" fill="#facc15" stroke="#ca8a04" stroke-width="2" />
+                    <circle cx="0" cy="-10" r="5" fill="white" />
+                    <circle cx="10" cy="0" r="5" fill="white" />
+                    <circle cx="0" cy="10" r="5" fill="white" />
+                    <circle cx="-10" cy="0" r="5" fill="white" />
+                </g>
+                <!-- Ansikte -->
+                <ellipse cx="40" cy="57" rx="3" ry="4.5" fill="#333" />
+                <ellipse cx="60" cy="57" rx="3" ry="4.5" fill="#333" />
+                <ellipse cx="50" cy="62" rx="4" ry="2.5" fill="#facc15" />
+                <path d="M 46 66 Q 50 69 54 66" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+            `,
+            keroppi: `
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <!-- Grön groda -->
+                <ellipse cx="50" cy="56" rx="42" ry="30" fill="#22c55e" stroke="#15803d" stroke-width="4" />
+                <!-- Gigantiska vita ögon -->
+                <circle cx="34" cy="36" r="16" fill="white" stroke="#15803d" stroke-width="4" />
+                <circle cx="34" cy="36" r="4.5" fill="black" />
+                <circle cx="66" cy="36" r="16" fill="white" stroke="#15803d" stroke-width="4" />
+                <circle cx="66" cy="36" r="4.5" fill="black" />
+                <!-- Rosa kinder -->
+                <circle cx="18" cy="58" r="6" fill="#f43f5e" opacity="0.4" />
+                <circle cx="82" cy="58" r="6" fill="#f43f5e" opacity="0.4" />
+                <!-- V-mun -->
+                <path d="M 44 58 L 50 64 L 56 58" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            `
+        };
+
+        // --- SPEL-DATA ---
+        const suspects = {
+            pompompurin: {
+                id: 'pompompurin',
+                name: 'Pompompurin',
+                role: 'Den hungrige kompisen',
+                description: 'Älskar pudding och godsaker. Hittades djupt sovande i biblioteket.',
+                avatar: charSvgs.pompompurin,
+                intro: 'Gäsp... Hej detektiven! Jag har sovit hela eftermiddagen i biblioteket och drömt om pudding. Paj? Jag har inte rört någon paj, jag svär! Jag däckade efter att ha hjälpt till med förberedelserna.',
+                dialogue: {
+                    alibi: 'Jag gick till biblioteket för att vila runt kl 13:30. Kuromi satt där inne och läste, hon såg mig däcka i den stora soffan direkt. Jag vaknade inte förrän te-klockan ringde!',
+                    clues: 'Va? Gula hårstrån i köket? Jaha, det! Jag hjälpte Hello Kitty i köket kl 13:00 med att rensa och skölja alla jordgubbar. Det var säkert då jag råkade fälla lite hårstrån. Men kl 14:00 låg jag definitivt och snarkade i soffan!'
+                }
+            },
+            cinnamoroll: {
+                id: 'cinnamoroll',
+                name: 'Cinnamoroll',
+                role: 'Den fluffige bagaren',
+                description: 'Äger sitt eget café. Kan flyga tack vare sina enorma öron. Luktar alltid sött av nybakat.',
+                avatar: charSvgs.cinnamoroll,
+                intro: 'Hej! Åh nej, är Hello Kittys fantastiska jordgubbspaj borta? Vilken katastrof! Jag har varit så otroligt upptagen med att baka på mitt eget café hela dagen...',
+                dialogue: {
+                    alibi: 'Jag var helt själv på mitt eget café och gräddade kanelbullar fram till kl 14:30. Jag kom hit direkt efter det. Keroppi kan faktiskt bekräfta att jag var på caféet, han kom förbi dit kl 13:50 för att låna en handduk!',
+                    clues: 'Hittade du ett fluffigt vitt fjun och doft av kanel vid köksfönstret? Det låter märkligt... Kaneldoft sprider sig väl lätt i vinden från mitt café? Och fluffiga vita fjun finns det väl gott om i slottet? Det bevisar ingenting!'
+                }
+            },
+            kuromi: {
+                id: 'kuromi',
+                name: 'Kuromi',
+                role: 'Den busiga rebellen',
+                description: 'Älskar bus och detektivromaner. Håller alltid koll på sin omgivning.',
+                avatar: charSvgs.kuromi,
+                intro: 'Hehe, ett riktigt mysterium! Det här är precis som i mina favoritböcker. Vad vill du veta, detektiven? Jag har skrivit i min dagbok hela dagen.',
+                dialogue: {
+                    alibi: 'Jag satt i biblioteket och läste en spännande roman och skrev i min hemliga dagbok från kl 13:30 till te-bjudningen började. Jag satt precis bredvid soffan där Pompompurin sov. Han däckade kl 13:30 och snarkade så högt att jag knappt kunde koncentrera mig. Han rörde sig inte en millimeter!',
+                    clues: 'Hittade du en rosa rosett i trädgården? Den är definitivt inte min, jag bär bara min tuffa svarta jester-hatt! Men jag såg My Melody plocka jordgubbar där ute tidigare. Hon såg ganska stressad ut.'
+                }
+            },
+            my_melody: {
+                id: 'my_melody',
+                name: 'My Melody',
+                role: 'Den blommiga optimisten',
+                description: 'Alltid glad och snäll. Älskar att plocka blommor och bär i trädgården.',
+                avatar: charSvgs.my_melody,
+                intro: 'Hej fina detektiven! Hoppas du kan hitta pajen, Hello Kitty blev så himla ledsen. Jag hjälper gärna till med allt jag kan!',
+                dialogue: {
+                    alibi: 'Jag var ute i trädgården nästan hela eftermiddagen och plockade färska jordgubbar och blommor till te-bordet. Jag råkade nog tappa min rosa rosett i jordgubbslandet när jag sträckte mig efter de finaste bären...',
+                    clues: 'Hörde du? Exakt kl 14:00, precis när jag plockade bär nära köksväggen, hörde jag ett svischande ljud ovanför mig. När jag tittade upp såg jag en rund vit skugga med enorma flygande öron susa rakt förbi det öppna köksfönstret! Det gick jättefort!'
+                }
+            },
+            keroppi: {
+                id: 'keroppi',
+                name: 'Keroppi',
+                role: 'Den energiske simmaren',
+                description: 'Älskar att hoppa och simma i dammen. Blir lätt lerig om fötterna.',
+                avatar: charSvgs.keroppi,
+                intro: 'Kero kero! Hej kompis! Jag har haft en superrolig dag vid dammen! Hoppas vi kan lösa det här tråkiga mysteriet så vi kan fika.',
+                dialogue: {
+                    alibi: 'Jag simmade i dammen fram till kl 13:45. Mina fötter var superleriga, så jag sprang snabbt över stigen till Cinnamorolls café för att låna en handduk kl 13:50. Men Cinnamorolls café var helt tomt och låst! Det var konstigt eftersom han påstår att han var där. Jag fick ta en handduk från baksidan själv och sprang sedan hit och satte mig i te-salongen kl 13:55.',
+                    clues: 'Gröna leriga fotspår? Ja, de är garanterat mina! De leder från dammen och bort mot caféet. Men jag lämnade dem långt före kl 14:00, för från kl 13:55 satt jag i te-salongen och pratade med Hello Kitty!'
+                }
+            }
+        };
+
+        const rooms = {
+            kitchen: {
+                id: 'kitchen',
+                name: 'Köket (Brottsplatsen)',
+                icon: '🍳',
+                bg: '#fef3c7',
+                interactiveItems: [
+                    { id: 'stove', name: 'Ugnen', label: 'En tom, fortfarande varm pajform står kvar på gallret. Pajen stals exakt kl 14:00.', x: '25%', y: '45%', icon: '🔥' },
+                    { id: 'window', name: 'Köksfönstret', label: 'Fönstret står vidöppet... På fönsterhaken sitter ett litet vitt fluffigt fjun fast, och det doftar starkt av nybakad kanel vid karmen! Fluffigt vitt fjun & kaneldoft (Ledtråd hittad!)', x: '75%', y: '25%', icon: '🪟', clue: { id: 'clue_cinnamon', text: 'Vitt fluffigt fjun och doft av kanel på det öppna fönstret.' } },
+                    { id: 'floor', name: 'Köksbänken', label: 'På bänken ligger några små gula hårstrån spridda nära jordgubbsskålarna.', x: '50%', y: '65%', icon: '🐱', clue: { id: 'clue_yellow_hair', text: 'Gula hårstrån funna på köksbänken.' } }
+                ]
+            },
+            tearoom: {
+                id: 'tearoom',
+                name: 'Te-salongen',
+                icon: '🍰',
+                bg: '#ffe4e6',
+                interactiveItems: [
+                    { id: 'table', name: 'Te-bordet', label: 'Te-bordet är fint dukat. Keroppi sitter här vid en kopp te.', x: '50%', y: '50%', icon: '🫖' },
+                    { id: 'keroppi_alibi', name: 'Keroppis plats', label: 'Keroppi sitter här. Hello Kitty bekräftar: "Ja, Keroppi kom in till mig i te-salongen kl 13:55, alldeles blöt, och har suttit här med mig sedan dess!"', x: '65%', y: '55%', icon: '🐸' },
+                    { id: 'kitty_host', name: 'Hello Kitty', label: 'Hello Kitty suckar: "Min vackra gyllene paj... Den försvann precis när ugnsklockan ringde kl 14:00! Pompompurin hjälpte mig att rensa jordgubbar här i köket kl 13:00, men han gick för att lägga sig i biblioteket direkt efter."', x: '20%', y: '50%', icon: '🎀' }
+                ]
+            },
+            library: {
+                id: 'library',
+                name: 'Biblioteket',
+                icon: '📚',
+                bg: '#e0f2fe',
+                interactiveItems: [
+                    { id: 'sofa', name: 'Den stora soffan', label: 'Soffan är alldeles nedsjunken. Pompompurin snarkar högt med stängda ögon.', x: '35%', y: '60%', icon: '🛋️' },
+                    { id: 'bookshelf', name: 'Bokhyllan', label: 'Fylld med gamla deckarböcker och mysiga romaner.', x: '75%', y: '40%', icon: '📖' }
+                ]
+            },
+            garden: {
+                id: 'garden',
+                name: 'Trädgården',
+                icon: '🌸',
+                bg: '#d1fae5',
+                interactiveItems: [
+                    { id: 'pond', name: 'Dammen', label: 'Vattnet är alldeles krusigt. Någon har nyligen tagit ett bad här.', x: '20%', y: '65%', icon: '🌊' },
+                    { id: 'bush', name: 'Jordgubbslandet', label: 'Mellan de gröna bladen hittar du en söt rosa rosett som fastnat i gräset! Rosa rosett (Ledtråd hittad!)', x: '80%', y: '70%', icon: '🍓', clue: { id: 'clue_pink_bow', text: 'En rosa rosett tappad i jordgubbslandet.' } },
+                    { id: 'path', name: 'Stigen', label: 'Ett par gröna, leriga fotspår leder från dammen och bort mot utgången till caféet. Gröna fotspår (Ledtråd hittad!)', x: '50%', y: '45%', icon: '👣', clue: { id: 'clue_muddy_prints', text: 'Gröna leriga fotspår på trädgårdsstigen.' } }
+                ]
+            }
+        };
+
+        // --- SPEL-TILLSTÅND (State) ---
+        const state = {
+            view: 'intro',
+            foundClues: [], // ID på hittade ledtrådar
+            interrogated: [], // ID på förhörda misstänkta
+            activeRoom: null,
+            activeSuspect: null,
+            accusedSuspect: null,
+            accusedEvidence: null
+        };
+
+        // --- UI OCH VY-HANTERING ---
+        function switchView(viewName) {
+            // Dölj alla vyer
+            document.getElementById('view-intro').classList.add('hidden');
+            document.getElementById('view-main').classList.add('hidden');
+            document.getElementById('view-room').classList.add('hidden');
+            document.getElementById('view-interrogation').classList.add('hidden');
+            document.getElementById('view-accuse').classList.add('hidden');
+            document.getElementById('view-ending').classList.add('hidden');
+
+            // Visa vald vy
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            state.view = viewName;
+
+            // Visa header om vi inte är i intro eller epilog
+            if (viewName !== 'intro' && viewName !== 'ending') {
+                document.getElementById('gameHeader').classList.remove('hidden');
+            } else {
+                document.getElementById('gameHeader').classList.add('hidden');
+            }
+        }
+
+        // --- MEDDELANDEN & TOASTS ---
+        function showClueToast(text) {
+            const toast = document.getElementById('clueFoundToast');
+            toast.querySelector('span').textContent = text;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            playSound('clue');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // --- ANTECKNINGSBOK ---
+        const btnNotebook = document.getElementById('btnNotebook');
+        const btnCloseNotebook = document.getElementById('btnCloseNotebook');
+        const btnCloseNotebookBtn = document.getElementById('btnCloseNotebookBtn');
+        const notebookModal = document.getElementById('notebookModal');
+        const notebookCard = document.getElementById('notebookCard');
+        const notebookCluesList = document.getElementById('notebookCluesList');
+        const clueCount = document.getElementById('clueCount');
+
+        function openNotebook() {
+            playSound('click');
+            notebookCluesList.innerHTML = '';
+            
+            if (state.foundClues.length === 0) {
+                notebookCluesList.innerHTML = '<p class="text-xs text-slate-400 italic">Inga ledtrådar hittade ännu. Sök igenom rummen!</p>';
+            } else {
+                state.foundClues.forEach(clueId => {
+                    // Hitta ledtrådstext
+                    let clueText = '';
+                    if (clueId === 'clue_cinnamon') clueText = '🌾 Vitt fluffigt fjun & kaneldoft vid fönstret';
+                    if (clueId === 'clue_yellow_hair') clueText = '🐱 Gula hårstrån på köksbänken';
+                    if (clueId === 'clue_pink_bow') clueText = '🎀 En rosa rosett i jordgubbslandet';
+                    if (clueId === 'clue_muddy_prints') clueText = '👣 Gröna leriga fotspår på stigen';
+
+                    const item = document.createElement('div');
+                    item.className = 'bg-rose-50 border border-rose-100 rounded-xl p-2.5 text-xs font-bold text-rose-800 flex items-center gap-1.5';
+                    item.innerHTML = `<span>✨</span> ${clueText}`;
+                    notebookCluesList.appendChild(item);
+                });
+            }
+
+            notebookModal.classList.remove('hidden');
+            setTimeout(() => {
+                notebookCard.classList.remove('scale-95');
+                notebookCard.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeNotebook() {
+            playSound('click');
+            notebookCard.classList.remove('scale-100');
+            notebookCard.classList.add('scale-95');
+            setTimeout(() => {
+                notebookModal.classList.add('hidden');
+            }, 150);
+        }
+
+        btnNotebook.addEventListener('click', openNotebook);
+        btnCloseNotebook.addEventListener('click', closeNotebook);
+        btnCloseNotebookBtn.addEventListener('click', closeNotebook);
+
+        // --- SKAPA ELEMENT DYNAMISKT ---
+
+        // Skapa listan med misstänkta på huvudskärmen
+        const suspectsList = document.getElementById('suspectsList');
+        function renderSuspects() {
+            suspectsList.innerHTML = '';
+            Object.values(suspects).forEach(suspect => {
+                const isInterrogated = state.interrogated.includes(suspect.id);
+                const btn = document.createElement('button');
+                btn.className = 'w-full bg-white hover:bg-pink-50 border-2 border-pink-100 rounded-2xl p-3 flex items-center justify-between text-left transition-all hover:scale-[1.01] active:scale-[0.99] shadow-sm';
+                
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-pink-100/50 rounded-xl border border-pink-200 p-1 flex items-center justify-center">
+                            ${suspect.avatar}
+                        </div>
+                        <div>
+                            <h4 class="font-black text-slate-800 text-sm md:text-base">${suspect.name}</h4>
+                            <p class="text-[11px] text-pink-600 font-bold">${suspect.role}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold ${isInterrogated ? 'text-emerald-500' : 'text-slate-400 bg-slate-100 px-2 py-1 rounded-lg'}">
+                        ${isInterrogated ? 'Förhörd! ✔' : 'Förhör'}
+                    </span>
+                `;
+
+                btn.addEventListener('click', () => {
+                    playSound('click');
+                    startInterrogation(suspect.id);
+                });
+                suspectsList.appendChild(btn);
+            });
+        }
+
+        // --- UTFORSKA RUM ---
+        function enterRoom(roomId) {
+            playSound('click');
+            const room = rooms[roomId];
+            state.activeRoom = roomId;
+
+            document.getElementById('roomTitle').innerHTML = `${room.icon} ${room.name}`;
+            const searchArea = document.getElementById('roomSearchArea');
+            searchArea.innerHTML = '';
+            searchArea.style.backgroundColor = room.bg;
+
+            // Lägg till bakgrundseffekt i rummen
+            searchArea.innerHTML += `
+                <div class="absolute inset-0 opacity-10 pointer-events-none flex flex-wrap justify-around items-center p-8">
+                    <span class="text-8xl">${room.icon}</span>
+                    <span class="text-8xl">${room.icon}</span>
+                </div>
+            `;
+
+            // Skapa de interaktiva sakerna i rummet
+            room.interactiveItems.forEach(item => {
+                const button = document.createElement('button');
+                button.className = 'absolute transform -translate-x-1/2 -translate-y-1/2 group flex flex-col items-center gap-1 z-10 transition-all active:scale-90';
+                button.style.left = item.x;
+                button.style.top = item.y;
+
+                // Om det är en ledtråd och vi redan hittat den, dämpa ikonen
+                const isClueHittad = item.clue && state.foundClues.includes(item.clue.id);
+
+                button.innerHTML = `
+                    <div class="w-14 h-14 bg-white/95 rounded-full border-3 border-pink-300 group-hover:border-pink-500 shadow-md flex items-center justify-center text-3xl transition-transform group-hover:scale-110 relative">
+                        <span>${item.icon}</span>
+                        ${item.clue && !isClueHittad ? '<span class="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full animate-ping"></span>' : ''}
+                    </div>
+                    <span class="bg-slate-800/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">${item.name}</span>
+                `;
+
+                button.addEventListener('click', () => {
+                    handleItemClick(item);
+                });
+
+                searchArea.appendChild(button);
+            });
+
+            switchView('room');
+        }
+
+        function handleItemClick(item) {
+            playSound('click');
+
+            // Kontrollera om det finns en ledtråd kopplad
+            if (item.clue) {
+                if (!state.foundClues.includes(item.clue.id)) {
+                    state.foundClues.push(item.clue.id);
+                    clueCount.textContent = state.foundClues.length;
+                    
+                    // Markera rummet som "sökt" om alla ledtrådar i rummet är hittade
+                    checkRoomCompleted();
+
+                    showClueToast(`Hittade ledtråd: ${item.name}!`);
+                    
+                    // Uppdatera rummets visning
+                    enterRoom(state.activeRoom);
+                    return;
+                }
+            }
+
+            // Standardinfo i en dialogbox
+            showSimpleModal(item.name, item.label);
+        }
+
+        function checkRoomCompleted() {
+            // Kontrollera om det aktiva rummets ledtrådar är hittade
+            const room = rooms[state.activeRoom];
+            const allCluesInRoom = room.interactiveItems.filter(i => i.clue).map(i => i.clue.id);
+            const allFound = allCluesInRoom.every(id => state.foundClues.includes(id));
+
+            if (allFound && allCluesInRoom.length > 0) {
+                document.getElementById(`badge-${state.activeRoom}`).classList.remove('hidden');
+            }
+        }
+
+        // --- ENKEL PROMPT MODAL ---
+        function showSimpleModal(title, text) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]';
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl border-4 border-pink-300 max-w-sm w-full p-6 shadow-2xl text-center transform scale-100 transition-all">
+                    <h3 class="text-xl font-black text-pink-500 mb-2">${title}</h3>
+                    <p class="text-slate-600 text-sm mb-6">${text}</p>
+                    <button class="w-full bg-pink-400 hover:bg-pink-300 border-b-4 border-pink-600 active:border-b-0 text-white font-bold py-2 rounded-xl text-sm transition-all">
+                        Okej!
+                    </button>
+                </div>
+            `;
+            
+            modal.querySelector('button').addEventListener('click', () => {
+                playSound('click');
+                modal.remove();
+            });
+            document.body.appendChild(modal);
+        }
+
+        // --- FÖRHÖR ---
+        function startInterrogation(suspectId) {
+            state.activeSuspect = suspectId;
+            const suspect = suspects[suspectId];
+
+            if (!state.interrogated.includes(suspectId)) {
+                state.interrogated.push(suspectId);
+                renderSuspects();
+            }
+
+            document.getElementById('interrogateTitle').innerHTML = `👥 Förhör med ${suspect.name}`;
+            document.getElementById('suspectPortrait').innerHTML = suspect.avatar;
+            document.getElementById('suspectProfile').innerHTML = `
+                <h4 class="font-black text-slate-800 text-sm">${suspect.name}</h4>
+                <p class="text-[11px] text-pink-600 font-bold">${suspect.role}</p>
+                <p class="text-[10px] text-slate-400 italic mt-1">${suspect.description}</p>
+            `;
+
+            // Rensa chattfönster och lägg till välkomstmeddelande
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.innerHTML = '';
+            addChatMessage(suspect.name, suspect.intro, 'suspect');
+
+            // Ladda frågorna
+            renderQuestions(suspect);
+
+            switchView('interrogation');
+        }
+
+        function addChatMessage(sender, text, type) {
+            const chatWindow = document.getElementById('chatWindow');
+            const bubble = document.createElement('div');
+            
+            if (type === 'suspect') {
+                bubble.className = 'flex flex-col items-start gap-1';
+                bubble.innerHTML = `
+                    <span class="text-[10px] font-bold text-pink-600">${sender}</span>
+                    <div class="bg-pink-100 border border-pink-200 text-slate-800 text-xs md:text-sm py-2 px-3 rounded-2xl rounded-tl-none max-w-[85%] font-medium">
+                        ${text}
+                    </div>
+                `;
+            } else {
+                bubble.className = 'flex flex-col items-end gap-1';
+                bubble.innerHTML = `
+                    <span class="text-[10px] font-bold text-slate-500">Du (Detektiv)</span>
+                    <div class="bg-slate-800 text-white text-xs md:text-sm py-2 px-3 rounded-2xl rounded-tr-none max-w-[85%] font-medium">
+                        ${text}
+                    </div>
+                `;
+            }
+
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function renderQuestions(suspect) {
+            const options = document.getElementById('questionOptions');
+            options.innerHTML = '';
+
+            // 1. Fråga om Alibi
+            const btnAlibi = document.createElement('button');
+            btnAlibi.className = 'w-full bg-white hover:bg-pink-50 text-pink-600 font-bold py-2 px-4 rounded-xl border border-pink-200 text-xs text-left transition-all';
+            btnAlibi.textContent = `❓ "Vad gjorde du runt kl 14:00?"`;
+            btnAlibi.addEventListener('click', () => {
+                playSound('click');
+                addChatMessage('Detektiv', 'Vad gjorde du runt kl 14:00?', 'player');
+                btnAlibi.disabled = true;
+                btnAlibi.classList.add('opacity-50', 'cursor-not-allowed');
+                setTimeout(() => {
+                    addChatMessage(suspect.name, suspect.dialogue.alibi, 'suspect');
+                }, 500);
+            });
+            options.appendChild(btnAlibi);
+
+            // 2. Fråga om ledtrådar
+            const btnClues = document.createElement('button');
+            btnClues.className = 'w-full bg-white hover:bg-pink-50 text-pink-600 font-bold py-2 px-4 rounded-xl border border-pink-200 text-xs text-left transition-all';
+            btnClues.textContent = `❓ "Har du sett något misstänkt eller vet något om bevisen?"`;
+            btnClues.addEventListener('click', () => {
+                playSound('click');
+                addChatMessage('Detektiv', 'Har du sett något misstänkt eller vet något om bevisen?', 'player');
+                btnClues.disabled = true;
+                btnClues.classList.add('opacity-50', 'cursor-not-allowed');
+                setTimeout(() => {
+                    addChatMessage(suspect.name, suspect.dialogue.clues, 'suspect');
+                }, 500);
+            });
+            options.appendChild(btnClues);
+        }
+
+        // --- ACCUSATION (ANKLAGELSE) ---
+        function renderAccuseScreen() {
+            const list = document.getElementById('accuseSuspectsList');
+            list.innerHTML = '';
+
+            // Lista alla misstänkta med radioknappar
+            Object.values(suspects).forEach(suspect => {
+                const label = document.createElement('label');
+                label.className = 'flex items-center gap-3 p-3 bg-white/70 rounded-xl border border-pink-100 hover:border-pink-300 cursor-pointer transition-all select-none';
+                
+                label.innerHTML = `
+                    <input type="radio" name="culprit" value="${suspect.id}" class="w-5 h-5 accent-pink-500">
+                    <div class="w-10 h-10 bg-pink-100/50 rounded-lg p-1">
+                        ${suspect.avatar}
+                    </div>
+                    <div>
+                        <h5 class="font-black text-xs md:text-sm text-slate-800">${suspect.name}</h5>
+                        <p class="text-[10px] text-pink-600 font-bold">${suspect.role}</p>
+                    </div>
+                `;
+
+                label.addEventListener('click', () => {
+                    state.accusedSuspect = suspect.id;
+                });
+                list.appendChild(label);
+            });
+
+            // Lista alla ledtrådar som bevis
+            const evidenceList = document.getElementById('accuseEvidenceList');
+            evidenceList.innerHTML = '';
+
+            if (state.foundClues.length === 0) {
+                evidenceList.innerHTML = '<p class="text-xs text-slate-400 italic">Du har inte hittat några ledtrådar ännu. Leta i rummen!</p>';
+            } else {
+                state.foundClues.forEach(clueId => {
+                    let clueText = '';
+                    if (clueId === 'clue_cinnamon') clueText = '🌾 Fluffigt vitt fjun & kaneldoft vid fönstret';
+                    if (clueId === 'clue_yellow_hair') clueText = '🐱 Gula hårstrån i köket';
+                    if (clueId === 'clue_pink_bow') clueText = '🎀 Rosa rosett i jordgubbslandet';
+                    if (clueId === 'clue_muddy_prints') clueText = '👣 Gröna fotspår på stigen';
+
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center gap-2.5 p-2.5 bg-white/70 rounded-xl border border-pink-100 hover:border-pink-300 cursor-pointer transition-all select-none text-xs font-bold text-slate-700';
+                    
+                    label.innerHTML = `
+                        <input type="radio" name="evidence" value="${clueId}" class="w-4 h-4 accent-pink-500">
+                        <span>${clueText}</span>
+                    `;
+
+                    label.addEventListener('click', () => {
+                        state.accusedEvidence = clueId;
+                    });
+                    evidenceList.appendChild(label);
+                });
+            }
+        }
+
+        function checkSolution() {
+            if (!state.accusedSuspect || !state.accusedEvidence) {
+                showSimpleModal("Varning! 🧐", "Du måste välja både en misstänkt och en ledtråd innan du kan avge din anklagelse!");
+                playSound('fail');
+                return;
+            }
+
+            // LÖSNINGEN:
+            // Tjuven är Cinnamoroll!
+            // Rätt bevis är: clue_cinnamon (Vitt fjun och kaneldoft vid fönstret)
+            // Varför? Han påstod att Keroppi såg honom kl 13:50 på caféet, men Keroppi avslöjade att caféet var tomt!
+            // Han flyger med sina öron (vilket My Melody såg) och doftar kanel.
+
+            const isCorrect = (state.accusedSuspect === 'cinnamoroll' && state.accusedEvidence === 'clue_cinnamon');
+
+            const iconArea = document.getElementById('endingIcon');
+            const titleArea = document.getElementById('endingTitle');
+            const textArea = document.getElementById('endingText');
+
+            if (isCorrect) {
+                playSound('success');
+                iconArea.innerHTML = charSvgs.cinnamoroll;
+                titleArea.textContent = "HELT RÄTT! 🎉🍰";
+                titleArea.className = "text-3xl font-black text-emerald-500 mb-2 tracking-wide drop-shadow";
+                textArea.innerHTML = `
+                    <p class="font-bold text-emerald-600">Mästerligt detektivarbete! Du löste gåtan!</p>
+                    <p class="mt-2 text-xs md:text-sm text-slate-700">När du presenterar beviset <strong>Fluffigt vitt fjun och kaneldoft</strong> och krossar <strong>Cinnamorolls</strong> falska alibi, börjar hans stora öron darra nervöst:</p>
+                    <p class="italic bg-white/80 p-3 rounded-xl border-2 border-emerald-100 mt-2 text-xs">
+                        "Åh... du kom på mig! Jag trodde mitt alibi med Keroppi var perfekt. Men det är sant, jag flög iväg kl 13:50 till slottets köksfönster. Doften av Hello Kittys magiska jordgubbspaj var så otroligt stark och god att jag bara tappade kontrollen... Jag ville ta en tugga för inspiration, men råkade flyga iväg med hela pajen! Förlåt så hemskt mycket!"
+                    </p>
+                    <p class="mt-2 text-xs">Cinnamoroll lämnar generat tillbaka pajen och erbjuder sig att baka massor av goda kanelbullar till hela slottet som försoningsgåva. Hello Kitty ler varmt och bjuder in alla till ett fantastiskt och glatt te-party. Mysteriet är löst! 🌸</p>
+                `;
+            } else {
+                playSound('fail');
+                
+                // Anpassad hjälp beroende på vad spelaren valde fel
+                let failTips = "Tänk på tiderna! Stölden skedde kl 14:00. Kontrollera vem som har ett alibi som faktiskt spricker efter Keroppis vittnesmål.";
+                if (state.accusedSuspect === 'pompompurin') {
+                    failTips = "Pompompurin fällde mycket riktigt gula hårstrån, men Hello Kitty bekräftar att han hjälpte till i köket långt innan stölden (kl 13:00). Kuromi såg honom dessutom sova djupt under hela eftermiddagen!";
+                } else if (state.accusedSuspect === 'keroppi') {
+                    failTips = "De gröna fotspåren tillhör Keroppi, men han simmade bara i dammen. Hello Kitty bekräftar att Keroppi satt bredvid henne i te-salongen från kl 13:55, så han var inte i köket kl 14:00!";
+                } else if (state.accusedSuspect === 'my_melody') {
+                    failTips = "My Melody tappade sin rosa rosett i trädgården när hon plockade bär, men hon var vittnet som såg det flygande vita väsendet utanför fönstret kl 14:00!";
+                } else if (state.accusedSuspect === 'kuromi') {
+                    failTips = "Kuromi satt i biblioteket och skrev i sin hemliga dagbok bredvid den snarkande Pompompurin under hela stöldtillfället.";
+                }
+
+                iconArea.innerHTML = `
+                    <svg viewBox="0 0 100 100" class="w-full h-full text-rose-500">
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="8"/>
+                        <line x1="35" y1="35" x2="65" y2="65" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+                        <line x1="65" y1="35" x2="35" y2="65" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+                    </svg>
+                `;
+                titleArea.textContent = "FEL ANKLAGELSE... 😢";
+                titleArea.className = "text-3xl font-black text-rose-500 mb-2 tracking-wide drop-shadow";
+                textArea.innerHTML = `
+                    <p class="font-bold text-rose-600">Aj då! Din anklagelse höll inte i domstolen!</p>
+                    <p class="mt-2 text-xs md:text-sm text-slate-700">${failTips}</p>
+                    <p class="mt-4 text-xs font-bold text-slate-500">Gå tillbaka till anteckningsboken, läs igenom de misstänktas vittnesmål en gång till och gör ett nytt försök!</p>
+                `;
+            }
+
+            switchView('ending');
+        }
+
+        // --- BIND EVENT LISTENERS ---
+        document.getElementById('btnStartGame').addEventListener('click', () => {
+            playSound('click');
+            switchView('main');
+            renderSuspects();
+        });
+
+        // Rum-navigering
+        document.getElementById('room-kitchen').addEventListener('click', () => enterRoom('kitchen'));
+        document.getElementById('room-tearoom').addEventListener('click', () => enterRoom('tearoom'));
+        document.getElementById('room-library').addEventListener('click', () => enterRoom('library'));
+        document.getElementById('room-garden').addEventListener('click', () => enterRoom('garden'));
+
+        document.getElementById('btnExitRoom').addEventListener('click', () => {
+            playSound('click');
+            switchView('main');
+        });
+
+        document.getElementById('btnExitInterrogate').addEventListener('click', () => {
+            playSound('click');
+            switchView('main');
+        });
+
+        document.getElementById('btnGoAccuse').addEventListener('click', () => {
+            playSound('click');
+            renderAccuseScreen();
+            switchView('accuse');
+        });
+
+        document.getElementById('btnExitAccuse').addEventListener('click', () => {
+            playSound('click');
+            switchView('main');
+        });
+
+        document.getElementById('btnFinalAccuse').addEventListener('click', checkSolution);
+
+        document.getElementById('btnRestart').addEventListener('click', () => {
+            playSound('click');
+            // Återställ tillstånd
+            state.foundClues = [];
+            state.interrogated = [];
+            state.activeRoom = null;
+            state.activeSuspect = null;
+            state.accusedSuspect = null;
+            state.accusedEvidence = null;
+            clueCount.textContent = '0';
+
+            // Dölj alla "Sökt!"-badges på kartan
+            document.getElementById('badge-kitchen').classList.add('hidden');
+            document.getElementById('badge-tearoom').classList.add('hidden');
+            document.getElementById('badge-library').classList.add('hidden');
+            document.getElementById('badge-garden').classList.add('hidden');
+
+            switchView('main');
+            renderSuspects();
+        });
+    </script>
+</body>
+</html>
