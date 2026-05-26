@@ -1,0 +1,983 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Ballerinans Perfekta Dans</title>
+   <!-- Tailwind CSS för modern och lyxig design -->
+   <script src="https://cdn.tailwindcss.com"></script>
+   <!-- Google Fonts för elegant typografi -->
+   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Poppins', sans-serif;
+           background-color: #0b0205;
+           overflow: hidden;
+           user-select: none;
+       }
+       h1, h2, .serif-font {
+           font-family: 'Playfair Display', serif;
+       }
+      
+       /* Teaterscen specialeffekter */
+       .stage-gradient {
+           background: radial-gradient(circle at 50% 20%, #3a1c28 0%, #11040a 80%);
+       }
+       .spotlight {
+           background: conic-gradient(from 150deg at 50% 0%, rgba(255, 225, 180, 0.15) 0deg, rgba(255, 225, 180, 0) 60deg);
+           pointer-events: none;
+       }
+
+
+       /* Vacker CSS-animerad Ballerina */
+       #ballerina {
+           transition: left 0.1s linear;
+       }
+      
+       /* Ballerina kroppsdelar och grundposer */
+       .ballerina-body {
+           position: relative;
+           width: 60px;
+           height: 110px;
+       }
+       .head {
+           position: absolute;
+           top: 0;
+           left: 20px;
+           width: 20px;
+           height: 20px;
+           background: #ffd1b3;
+           border-radius: 50%;
+       }
+       .hair-bun {
+           position: absolute;
+           top: -6px;
+           left: 25px;
+           width: 10px;
+           height: 10px;
+           background: #5c3a21;
+           border-radius: 50%;
+       }
+       .torso {
+           position: absolute;
+           top: 18px;
+           left: 22px;
+           width: 16px;
+           height: 35px;
+           background: #ff85a2;
+           border-radius: 8px 8px 4px 4px;
+       }
+       .tutu {
+           position: absolute;
+           top: 40px;
+           left: 5px;
+           width: 50px;
+           height: 18px;
+           background: rgba(255, 182, 193, 0.85);
+           border-radius: 50%;
+           box-shadow: 0 4px 10px rgba(255, 105, 180, 0.5);
+           transform-origin: center;
+           transition: transform 0.2s;
+       }
+       .arm-l, .arm-r {
+           position: absolute;
+           top: 20px;
+           width: 8px;
+           height: 30px;
+           background: #ffd1b3;
+           border-radius: 4px;
+           transform-origin: top center;
+           transition: transform 0.2s;
+       }
+       .arm-l {
+           left: 15px;
+           transform: rotate(30deg);
+       }
+       .arm-r {
+           right: 15px;
+           transform: rotate(-30deg);
+       }
+       .leg-l, .leg-r {
+           position: absolute;
+           top: 53px;
+           width: 7px;
+           height: 48px;
+           background: #ffd1b3;
+           border-radius: 3px;
+           transform-origin: top center;
+           transition: transform 0.2s;
+       }
+       .leg-l {
+           left: 21px;
+       }
+       .leg-r {
+           right: 21px;
+       }
+
+
+       /* Ballerina animationer vid olika rörelser */
+       .dancing .tutu {
+           animation: tutuFlutter 0.6s infinite alternate ease-in-out;
+       }
+       .dancing .arm-l {
+           transform: rotate(140deg);
+           animation: armSwayL 2s infinite alternate ease-in-out;
+       }
+       .dancing .arm-r {
+           transform: rotate(-140deg);
+           animation: armSwayR 2s infinite alternate ease-in-out;
+       }
+       .dancing .leg-l {
+           animation: legSwayL 0.8s infinite alternate ease-in-out;
+       }
+       .dancing .leg-r {
+           animation: legSwayR 0.8s infinite alternate ease-in-out;
+       }
+
+
+       /* Hoppande animation */
+       .jumping .tutu {
+           transform: scaleY(0.7) scaleX(1.1);
+       }
+       .jumping .arm-l {
+           transform: rotate(170deg) translate(-2px, -2px);
+       }
+       .jumping .arm-r {
+           transform: rotate(-170deg) translate(2px, -2px);
+       }
+       .jumping .leg-l {
+           transform: rotate(60deg);
+       }
+       .jumping .leg-r {
+           transform: rotate(-60deg);
+       }
+
+
+       /* Snurrande animation (Pirouett) */
+       .spinning {
+           animation: pirouette 0.5s infinite linear;
+       }
+
+
+       /* Träffad animation */
+       .stumble {
+           animation: shake 0.5s ease-in-out;
+       }
+       .stumble .arm-l { transform: rotate(-40deg); }
+       .stumble .arm-r { transform: rotate(40deg); }
+       .stumble .leg-l { transform: rotate(-20deg); }
+       .stumble .leg-r { transform: rotate(20deg); }
+
+
+       /* CSS Keyframes */
+       @keyframes tutuFlutter {
+           0% { transform: scaleY(1); }
+           100% { transform: scaleY(0.85) translateY(-1px); }
+       }
+       @keyframes armSwayL {
+           0% { transform: rotate(120deg); }
+           100% { transform: rotate(160deg); }
+       }
+       @keyframes armSwayR {
+           0% { transform: rotate(-160deg); }
+           100% { transform: rotate(-120deg); }
+       }
+       @keyframes legSwayL {
+           0% { transform: rotate(-5deg); }
+           100% { transform: rotate(15deg); }
+       }
+       @keyframes legSwayR {
+           0% { transform: rotate(15deg); }
+           100% { transform: rotate(-5deg); }
+       }
+       @keyframes pirouette {
+           0% { transform: rotateY(0deg); }
+           100% { transform: rotateY(360deg); }
+       }
+       @keyframes shake {
+           0%, 100% { transform: translateX(0) rotate(0deg); }
+           20% { transform: translateX(-10px) rotate(-5deg); }
+           40% { transform: translateX(10px) rotate(5deg); }
+           60% { transform: translateX(-5px) rotate(-3deg); }
+           80% { transform: translateX(5px) rotate(3deg); }
+       }
+
+
+       /* Partikeleffekt för rosenblad */
+       .rose-petal {
+           position: absolute;
+           background: radial-gradient(circle, #ff4d6d 0%, #ff0a36 100%);
+           border-radius: 50% 0 50% 50%;
+           pointer-events: none;
+           opacity: 0.85;
+           transform-origin: center;
+       }
+   </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+
+   <!-- Huvudbehållare för spelet -->
+   <div id="game-container" class="relative w-full max-w-4xl h-[600px] overflow-hidden rounded-2xl border-4 border-[#52132b] shadow-2xl bg-[#0b0205] flex flex-col justify-between">
+      
+       <!-- ================= STARTMENY / INSTRUKTIONER ================= -->
+       <div id="start-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/95 px-8 text-center transition-all duration-300">
+           <!-- Teaterridåer som dekor på sidorna -->
+           <div class="absolute left-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-r from-[#5a0f1d] to-[#1e0307] border-r-2 border-amber-500/30"></div>
+           <div class="absolute right-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-l from-[#5a0f1d] to-[#1e0307] border-l-2 border-amber-500/30"></div>
+          
+           <div class="max-w-xl mx-auto z-10 space-y-6">
+               <span class="text-pink-400 font-semibold tracking-[0.2em] text-xs md:text-sm uppercase block">En klassisk balettutmaning</span>
+               <h1 class="text-4xl md:text-6xl text-amber-100 font-bold leading-tight">Ballerinans Perfekta Dans</h1>
+              
+               <div class="p-5 bg-[#1a0810]/90 border border-pink-900/40 rounded-xl space-y-3 text-left text-pink-100/90 text-xs md:text-sm leading-relaxed">
+                   <p class="font-semibold text-amber-200 text-base md:text-lg text-center mb-1">Instruktioner & Spelregler</p>
+                   <ul class="space-y-2 list-disc pl-5">
+                       <li>Styr ballerinan med <strong class="text-pink-300">VÄNSTER (A)</strong> och <strong class="text-pink-300">HÖGER (D)</strong> pilstang (eller pekskärmsknapparna).</li>
+                       <li>Hoppa med <strong class="text-pink-300">UPP (W / Space)</strong>-pilen för att ta dig över fallande hinder!</li>
+                       <li>Undvik nedfallande scenutrustning som <strong class="text-red-400">tunga sandsäckar (📦)</strong>, <strong class="text-yellow-300">sprakande strålkastare (💡)</strong> och <strong class="text-yellow-400">haltande bananskal (🍌)</strong>.</li>
+                       <li>Håll uppe din <strong class="text-green-300">Graciösitet (hälsa)</strong>. Blir du träffad förlorar du din balans!</li>
+                       <li>Föreställningen varar i exakt <strong class="text-amber-300">1 minut (60 sekunder)</strong>. Överlev hela dansen för en stående ovation!</li>
+                   </ul>
+               </div>
+
+
+               <div class="pt-2 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                   <button id="start-btn" class="px-8 py-4 bg-gradient-to-r from-pink-600 to-rose-700 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-full shadow-lg shadow-pink-900/50 hover:scale-105 active:scale-95 transition-all text-lg duration-200 cursor-pointer">
+                       Börja Föreställningen 🩰
+                   </button>
+                   <button id="audio-toggle-btn" class="px-6 py-4 bg-[#2b101c] border border-pink-900/40 hover:bg-[#3d1829] text-pink-200 font-semibold rounded-full hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer">
+                       Ljud: <span id="audio-status">Av</span> 🔇
+                   </button>
+               </div>
+           </div>
+       </div>
+
+
+       <!-- ================= SPELPLAN / SCEN ================= -->
+       <div id="game-stage" class="relative w-full h-[500px] stage-gradient overflow-hidden">
+           <!-- Bakgrunds-ljusstrålar (Spotlights) -->
+           <div class="spotlight absolute top-0 left-1/4 w-[150%] h-[150%] origin-top -translate-x-1/2 rotate-12"></div>
+           <div class="spotlight absolute top-0 right-1/4 w-[150%] h-[150%] origin-top translate-x-1/2 -rotate-12"></div>
+
+
+           <!-- Elegant teater-scenridå bakom scenen -->
+           <div class="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#400713] to-transparent opacity-60"></div>
+          
+           <!-- Trägolv-effekt nertill -->
+           <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#261017] to-[#120509] border-t border-[#4f1f31]">
+               <div class="absolute top-1 left-0 right-0 h-[2px] bg-amber-500/20"></div>
+               <!-- Planklinjer -->
+               <div class="w-full h-full opacity-10 flex justify-between px-10">
+                   <div class="w-[1px] h-full bg-white"></div>
+                   <div class="w-[1px] h-full bg-white"></div>
+                   <div class="w-[1px] h-full bg-white"></div>
+                   <div class="w-[1px] h-full bg-white"></div>
+                   <div class="w-[1px] h-full bg-white"></div>
+               </div>
+           </div>
+
+
+           <!-- HINDER-BEHÅLLARE -->
+           <div id="obstacles-container" class="absolute inset-0 pointer-events-none"></div>
+
+
+           <!-- BALLERINA-KARAKTÄR -->
+           <div id="ballerina-wrapper" class="absolute bottom-16 left-[50%] -translate-x-1/2 pointer-events-none" style="transform: translateX(-50%);">
+               <div id="ballerina" class="ballerina-body dancing">
+                   <div class="hair-bun"></div>
+                   <div class="head"></div>
+                   <div class="torso"></div>
+                   <div class="tutu"></div>
+                   <div class="arm-l"></div>
+                   <div class="arm-r"></div>
+                   <div class="leg-l"></div>
+                   <div class="leg-r"></div>
+               </div>
+           </div>
+
+
+           <!-- ROSEBLADSPARTIKLAR -->
+           <div id="particles-container" class="absolute inset-0 pointer-events-none"></div>
+       </div>
+
+
+       <!-- ================= HUD (GRÄNSSNITT UNDER SPEL) ================= -->
+       <div id="game-hud" class="h-[100px] bg-[#1a0711] border-t-2 border-[#52132b] px-6 py-3 flex items-center justify-between z-20">
+           <!-- Graciösitet (Hälsa) -->
+           <div class="flex flex-col w-1/3">
+               <div class="flex justify-between mb-1 text-xs md:text-sm">
+                   <span class="text-pink-300 font-medium">Graciösitet</span>
+                   <span id="health-text" class="text-pink-100 font-bold">100%</span>
+               </div>
+               <div class="w-full bg-[#3d1326] rounded-full h-3 overflow-hidden border border-pink-900/30">
+                   <div id="health-bar" class="bg-gradient-to-r from-rose-500 to-pink-500 h-full w-full transition-all duration-150"></div>
+               </div>
+           </div>
+
+
+           <!-- Tid kvar (60-sekunders timer) -->
+           <div class="flex flex-col items-center">
+               <span class="text-amber-200 text-xs tracking-wider uppercase">Föreställningstid</span>
+               <span id="timer-display" class="text-3xl font-bold text-amber-100 serif-font">1:00</span>
+           </div>
+
+
+           <!-- Aktuell Dansstil / Poäng -->
+           <div class="text-right flex flex-col w-1/3">
+               <span class="text-pink-400 text-xs">Publikens Jubel</span>
+               <span id="score-display" class="text-xl font-bold text-white serif-font">0</span>
+           </div>
+       </div>
+
+
+       <!-- ================= MOBILKONTROLLER (visas vid touch/mobil) ================= -->
+       <div id="mobile-controls" class="absolute bottom-28 left-0 right-0 flex justify-between px-6 z-30 pointer-events-none opacity-0 transition-opacity duration-300">
+           <div class="flex gap-4 pointer-events-auto">
+               <button id="btn-left" class="w-14 h-14 bg-pink-950/80 border border-pink-500/30 text-pink-100 rounded-full active:bg-pink-700 flex items-center justify-center text-2xl font-bold">←</button>
+               <button id="btn-right" class="w-14 h-14 bg-pink-950/80 border border-pink-500/30 text-pink-100 rounded-full active:bg-pink-700 flex items-center justify-center text-2xl font-bold">→</button>
+           </div>
+           <button id="btn-jump" class="w-16 h-14 bg-amber-950/80 border border-amber-500/30 text-amber-100 rounded-full active:bg-amber-700 flex items-center justify-center text-sm font-bold pointer-events-auto">HOPP</button>
+       </div>
+
+
+       <!-- ================= SLUTSKÄRM (VINST / FÖRLUST) ================= -->
+       <div id="end-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/95 px-8 text-center hidden">
+           <div class="max-w-md mx-auto space-y-6">
+               <div id="end-icon" class="text-7xl">🏆</div>
+               <h2 id="end-title" class="text-4xl font-bold text-amber-100">Stående Ovation!</h2>
+               <p id="end-message" class="text-pink-200/90 text-sm md:text-base">Du dansade genom hela numret på ett helt perfekt och graciöst sätt. Teatern kokar av applåder!</p>
+              
+               <div class="bg-[#240c17] p-4 rounded-xl border border-pink-900/40">
+                   <p class="text-xs text-pink-400 uppercase tracking-wider">Ditt Slutbetyg</p>
+                   <p id="end-rating" class="text-2xl font-bold text-amber-300 mt-1 font-serif">Prima Ballerina Assoluta</p>
+                   <p class="text-sm text-pink-200 mt-2">Poäng: <span id="end-score" class="font-bold text-white">0</span></p>
+               </div>
+
+
+               <button id="restart-btn" class="px-8 py-4 bg-gradient-to-r from-pink-600 to-rose-700 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-full shadow-lg transition-all transform hover:scale-105 cursor-pointer">
+                   Dansa Igen 🩰
+               </button>
+           </div>
+       </div>
+
+
+   </div>
+
+
+   <script>
+       // ================= INSTÄLLNINGAR & STATE =================
+       const GAME_DURATION = 60; // 1 minuts speltid i sekunder
+       let state = {
+           isPlaying: false,
+           timeLeft: GAME_DURATION,
+           health: 100,
+           score: 0,
+           ballerinaX: 50, // Procentuellt (0-100) av spelplanen
+           ballerinaY: 0,  // Nuvarande höjd över marken (för hopp)
+           isJumping: false,
+           jumpVelocity: 0,
+           isSpinning: false,
+           isStumbling: false,
+           lastTime: 0,
+           keys: {},
+           obstacles: [],
+           particles: [],
+           audioOn: false,
+           audioContext: null,
+           melodyInterval: null
+       };
+
+
+       // DOM Referenser
+       const startScreen = document.getElementById('start-screen');
+       const endScreen = document.getElementById('end-screen');
+       const startBtn = document.getElementById('start-btn');
+       const audioToggleBtn = document.getElementById('audio-toggle-btn');
+       const audioStatus = document.getElementById('audio-status');
+       const restartBtn = document.getElementById('restart-btn');
+       const gameStage = document.getElementById('game-stage');
+       const ballerinaWrapper = document.getElementById('ballerina-wrapper');
+       const ballerina = document.getElementById('ballerina');
+       const obstaclesContainer = document.getElementById('obstacles-container');
+       const particlesContainer = document.getElementById('particles-container');
+       const healthBar = document.getElementById('health-bar');
+       const healthText = document.getElementById('health-text');
+       const timerDisplay = document.getElementById('timer-display');
+       const scoreDisplay = document.getElementById('score-display');
+       const mobileControls = document.getElementById('mobile-controls');
+
+
+       // Mobil-knapparna
+       const btnLeft = document.getElementById('btn-left');
+       const btnRight = document.getElementById('btn-right');
+       const btnJump = document.getElementById('btn-jump');
+
+
+       // Typer av hinder som faller ner
+       const OBSTACLE_TYPES = [
+           {
+               name: 'sandsack',
+               emoji: '📦',
+               speedMultiplier: 1.0,
+               damage: 25,
+               points: 150,
+               size: 38,
+               class: 'sandbag'
+           },
+           {
+               name: 'stralkastare',
+               emoji: '💡',
+               speedMultiplier: 1.3,
+               damage: 20,
+               points: 200,
+               size: 34,
+               class: 'spotlight-hazard'
+           },
+           {
+               name: 'bananskal',
+               emoji: '🍌',
+               speedMultiplier: 1.1,
+               damage: 15,
+               points: 100,
+               size: 30,
+               class: 'banana'
+           }
+       ];
+
+
+       // ================= LJUDGENERERING (Svanesjön - Web Audio API) =================
+       function initAudio() {
+           if (!state.audioContext) {
+               state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+           }
+       }
+
+
+       function playTone(freq, duration, type = 'sine', volume = 0.1) {
+           if (!state.audioOn || !state.audioContext) return;
+           try {
+               // Skapa oscillatorer och noder säkert
+               const osc = state.audioContext.createOscillator();
+               const gain = state.audioContext.createGain();
+              
+               osc.type = type;
+               osc.frequency.setValueAtTime(freq, state.audioContext.currentTime);
+              
+               gain.gain.setValueAtTime(volume, state.audioContext.currentTime);
+               gain.gain.exponentialRampToValueAtTime(0.00001, state.audioContext.currentTime + duration);
+              
+               osc.connect(gain);
+               gain.connect(state.audioContext.destination);
+              
+               osc.start();
+               osc.stop(state.audioContext.currentTime + duration);
+           } catch (e) {
+               console.log("Audio error", e);
+           }
+       }
+
+
+       function playHitSound() {
+           playTone(150, 0.4, 'triangle', 0.2);
+           playTone(80, 0.5, 'sawtooth', 0.15);
+       }
+
+
+       function playJumpSound() {
+           playTone(440, 0.15, 'sine', 0.1);
+           setTimeout(() => playTone(659, 0.2, 'sine', 0.08), 80);
+       }
+
+
+       function playWinSound() {
+           const fanfare = [523, 659, 783, 1046];
+           fanfare.forEach((f, i) => {
+               setTimeout(() => playTone(f, 0.6, 'triangle', 0.15), i * 150);
+           });
+       }
+
+
+       // Klassisk Svanesjön-melodi för musikbox-atmosfär
+       const melody = [
+           { f: 494, d: 0.5 }, { f: 587, d: 0.5 }, { f: 659, d: 0.5 }, { f: 698, d: 0.5 },
+           { f: 784, d: 1.0 }, { f: 698, d: 0.5 }, { f: 659, d: 0.5 }, { f: 587, d: 1.0 },
+           { f: 494, d: 0.5 }, { f: 587, d: 0.5 }, { f: 659, d: 0.5 }, { f: 698, d: 0.5 },
+           { f: 880, d: 1.0 }, { f: 784, d: 1.0 }, { f: 659, d: 1.5 }
+       ];
+       let melodyIndex = 0;
+
+
+       function startMusic() {
+           if (state.melodyInterval) clearInterval(state.melodyInterval);
+           if (!state.audioOn) return;
+          
+           state.melodyInterval = setInterval(() => {
+               if (!state.isPlaying) return;
+               const note = melody[melodyIndex];
+               playTone(note.f / 2, note.d * 0.8, 'sine', 0.08);
+               melodyIndex = (melodyIndex + 1) % melody.length;
+           }, 600);
+       }
+
+
+       function stopMusic() {
+           if (state.melodyInterval) {
+               clearInterval(state.melodyInterval);
+               state.melodyInterval = null;
+           }
+       }
+
+
+       // ================= INPUTHANTERING =================
+       window.addEventListener('keydown', (e) => {
+           if (!state.isPlaying) return;
+           state.keys[e.key] = true;
+           if (e.key === 'ArrowUp' || e.key === ' ' || e.key === 'w') {
+               triggerJump();
+           }
+       });
+
+
+       window.addEventListener('keyup', (e) => {
+           state.keys[e.key] = false;
+       });
+
+
+       // Touchstöd och upptäckt av touch för mobila enheter
+       window.addEventListener('touchstart', function detectTouch() {
+           mobileControls.style.opacity = '1';
+           window.removeEventListener('touchstart', detectTouch, false);
+       }, false);
+
+
+       btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); state.keys['ArrowLeft'] = true; });
+       btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); state.keys['ArrowLeft'] = false; });
+       btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); state.keys['ArrowRight'] = true; });
+       btnRight.addEventListener('touchend', (e) => { e.preventDefault(); state.keys['ArrowRight'] = false; });
+       btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); triggerJump(); });
+
+
+       // ================= SPELFUNKTIONER =================
+       function triggerJump() {
+           if (!state.isJumping && state.isPlaying && !state.isStumbling) {
+               state.isJumping = true;
+               state.jumpVelocity = 14;
+               playJumpSound();
+               ballerina.classList.remove('dancing');
+               ballerina.classList.add('jumping');
+           }
+       }
+
+
+       function triggerStumble() {
+           state.isStumbling = true;
+           ballerina.classList.remove('dancing', 'jumping', 'spinning');
+           ballerina.classList.add('stumble');
+           playHitSound();
+
+
+           setTimeout(() => {
+               state.isStumbling = false;
+               ballerina.classList.remove('stumble');
+               if (state.isPlaying) {
+                   ballerina.classList.add('dancing');
+               }
+           }, 600);
+       }
+
+
+       // Skapa rosenbladspartiklar när man gör piruett eller vinner
+       function spawnPetal(x, y) {
+           const petal = document.createElement('div');
+           petal.className = 'rose-petal';
+           const size = Math.random() * 8 + 6;
+           petal.style.width = `${size}px`;
+           petal.style.height = `${size}px`;
+           petal.style.left = `${x}px`;
+           petal.style.top = `${y}px`;
+          
+           const angle = Math.random() * 360;
+           const velocityX = (Math.random() - 0.5) * 4;
+           const velocityY = Math.random() * 2 + 1;
+           const rotSpeed = (Math.random() - 0.5) * 10;
+          
+           particlesContainer.appendChild(petal);
+           state.particles.push({
+               element: petal,
+               x, y,
+               vx: velocityX,
+               vy: velocityY,
+               angle,
+               rotSpeed,
+               opacity: 0.85
+           });
+       }
+
+
+       function updateParticles() {
+           for (let i = state.particles.length - 1; i >= 0; i--) {
+               const p = state.particles[i];
+               p.x += p.vx;
+               p.y += p.vy;
+               p.angle += p.rotSpeed;
+               p.opacity -= 0.01;
+
+
+               p.element.style.transform = `translate(${p.x - p.element.offsetLeft}px, ${p.y - p.element.offsetTop}px) rotate(${p.angle}deg)`;
+               p.element.style.opacity = p.opacity;
+
+
+               if (p.opacity <= 0 || p.y > 550) {
+                   p.element.remove();
+                   state.particles.splice(i, 1);
+               }
+           }
+       }
+
+
+       // Skapa slumpmässiga fallande hinder
+       function spawnObstacle() {
+           if (!state.isPlaying) return;
+
+
+           const type = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
+           const size = type.size;
+           const startX = Math.random() * (gameStage.clientWidth - size);
+          
+           const obstacleElem = document.createElement('div');
+           obstacleElem.className = `absolute text-center select-none ${type.class}`;
+           obstacleElem.style.fontSize = `${size}px`;
+           obstacleElem.style.width = `${size}px`;
+           obstacleElem.style.height = `${size}px`;
+           obstacleElem.style.left = `${startX}px`;
+           obstacleElem.style.top = `-50px`;
+           obstacleElem.style.zIndex = "10";
+           obstacleElem.textContent = type.emoji;
+          
+           if (type.name === 'stralkastare') {
+               obstacleElem.style.animation = 'tutuFlutter 0.4s infinite alternate ease-in-out';
+           }
+
+
+           obstaclesContainer.appendChild(obstacleElem);
+
+
+           state.obstacles.push({
+               element: obstacleElem,
+               type: type,
+               x: startX,
+               y: -50,
+               width: size,
+               height: size,
+               speed: (Math.random() * 2.5 + 2.5) * type.speedMultiplier,
+               isCleaned: false
+           });
+       }
+
+
+       // Huvuduppdateringen av fysik och spelobjekt (Spelloopen)
+       function updateGame(timestamp) {
+           if (!state.isPlaying) return;
+
+
+           if (!state.lastTime) state.lastTime = timestamp;
+           const delta = timestamp - state.lastTime;
+           state.lastTime = timestamp;
+
+
+           // 1. Styrning av Ballerina
+           const moveSpeed = 0.8;
+           if (state.keys['ArrowLeft'] || state.keys['a'] || state.keys['A']) {
+               state.ballerinaX = Math.max(5, state.ballerinaX - moveSpeed);
+               ballerina.style.transform = 'scaleX(-1)';
+           }
+           if (state.keys['ArrowRight'] || state.keys['d'] || state.keys['D']) {
+               state.ballerinaX = Math.min(95, state.ballerinaX + moveSpeed);
+               ballerina.style.transform = 'scaleX(1)';
+           }
+
+
+           // Slumpmässiga piruetter under framfart
+           if ((state.keys['ArrowLeft'] || state.keys['ArrowRight'] || state.keys['a'] || state.keys['d']) && Math.random() < 0.05 && !state.isJumping && !state.isStumbling) {
+               state.isSpinning = true;
+               ballerina.classList.add('spinning');
+               const rect = ballerina.getBoundingClientRect();
+               const stageRect = gameStage.getBoundingClientRect();
+               spawnPetal(rect.left - stageRect.left + 30, rect.top - stageRect.top + 60);
+               setTimeout(() => {
+                   state.isSpinning = false;
+                   ballerina.classList.remove('spinning');
+               }, 400);
+           }
+
+
+           // 2. Hantera hoppfysik
+           if (state.isJumping) {
+               state.ballerinaY += state.jumpVelocity;
+               state.jumpVelocity -= 0.6; // Gravitation
+
+
+               if (state.ballerinaY <= 0) {
+                   state.ballerinaY = 0;
+                   state.isJumping = false;
+                   state.jumpVelocity = 0;
+                   ballerina.classList.remove('jumping');
+                   ballerina.classList.add('dancing');
+               }
+           }
+
+
+           // Uppdatera ballerinas visuella position
+           ballerinaWrapper.style.left = `${state.ballerinaX}%`;
+           ballerinaWrapper.style.transform = `translateX(-50%)`;
+           ballerina.style.transform = (state.keys['ArrowLeft'] || state.keys['a']) ? 'scaleX(-1)' : 'scaleX(1)';
+           ballerinaWrapper.style.bottom = `${64 + state.ballerinaY}px`; // 64px är scenens golvhöjd
+
+
+           // 3. Hantera fallande hinder och kollisioner
+           const ballerinaRect = {
+               x: ballerinaWrapper.offsetLeft - 25, // Centrera kollisionsträffen
+               y: gameStage.clientHeight - 130 - state.ballerinaY, // Höjdjustering för kollision i luften
+               width: 50,
+               height: 90
+           };
+
+
+           for (let i = state.obstacles.length - 1; i >= 0; i--) {
+               const obs = state.obstacles[i];
+               obs.y += obs.speed;
+               obs.element.style.top = `${obs.y}px`;
+
+
+               const obsRect = {
+                   x: obs.x,
+                   y: obs.y,
+                   width: obs.width,
+                   height: obs.height
+               };
+
+
+               // Om hindret träffar ballerina
+               if (
+                   obsRect.x < ballerinaRect.x + ballerinaRect.width &&
+                   obsRect.x + obsRect.width > ballerinaRect.x &&
+                   obsRect.y < ballerinaRect.y + ballerinaRect.height &&
+                   obsRect.y + obsRect.height > ballerinaRect.y
+               ) {
+                   if (!state.isStumbling) {
+                       state.health = Math.max(0, state.health - obs.type.damage);
+                       updateHUD();
+                       triggerStumble();
+
+
+                       if (state.health <= 0) {
+                           gameOver(false);
+                       }
+                   }
+                   obs.element.remove();
+                   state.obstacles.splice(i, 1);
+                   continue;
+               }
+
+
+               // Ta bort hinder som hamnat utanför scenen
+               if (obs.y > gameStage.clientHeight - 60) {
+                   if (!obs.isCleaned) {
+                       state.score += obs.type.points;
+                       updateHUD();
+                       obs.isCleaned = true;
+                       spawnPetal(obs.x + 10, gameStage.clientHeight - 70);
+                   }
+
+
+                   obs.element.style.opacity = '0';
+                   setTimeout(() => {
+                       obs.element.remove();
+                   }, 100);
+                   state.obstacles.splice(i, 1);
+               }
+           }
+
+
+           // Uppdatera rosenblad
+           updateParticles();
+
+
+           requestAnimationFrame(updateGame);
+       }
+
+
+       // ================= SPELETS STATUSÄNDRINGAR =================
+       function updateHUD() {
+           healthBar.style.width = `${state.health}%`;
+           healthText.textContent = `${state.health}%`;
+           scoreDisplay.textContent = state.score;
+
+
+           if (state.health < 40) {
+               healthBar.className = "bg-gradient-to-r from-red-600 to-rose-500 h-full transition-all duration-150";
+           } else {
+               healthBar.className = "bg-gradient-to-r from-rose-500 to-pink-500 h-full transition-all duration-150";
+           }
+       }
+
+
+       let gameTimerInterval = null;
+       let spawnInterval = null;
+
+
+       function startTimer() {
+           if (gameTimerInterval) clearInterval(gameTimerInterval);
+          
+           gameTimerInterval = setInterval(() => {
+               if (!state.isPlaying) return;
+              
+               state.timeLeft--;
+              
+               const mins = Math.floor(state.timeLeft / 60);
+               const secs = state.timeLeft % 60;
+               timerDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+
+               if (state.timeLeft % 10 === 0 && state.timeLeft > 0) {
+                   adjustDifficulty();
+               }
+
+
+               if (state.timeLeft <= 0) {
+                   gameOver(true);
+               }
+           }, 1000);
+       }
+
+
+       function adjustDifficulty() {
+           clearInterval(spawnInterval);
+           const currentSpeed = Math.max(300, 900 - (60 - state.timeLeft) * 12);
+           spawnInterval = setInterval(spawnObstacle, currentSpeed);
+       }
+
+
+       function startGame() {
+           // Säkerställ att ljud är redo
+           initAudio();
+          
+           // Dölj instruktioner ordentligt
+           startScreen.classList.add('hidden');
+           endScreen.classList.add('hidden');
+
+
+           // Återställ state
+           state.isPlaying = true;
+           state.timeLeft = GAME_DURATION;
+           state.health = 100;
+           state.score = 0;
+           state.ballerinaX = 50;
+           state.ballerinaY = 0;
+           state.isJumping = false;
+           state.isStumbling = false;
+          
+           // Rensa gamla objekt
+           obstaclesContainer.innerHTML = '';
+           state.obstacles = [];
+           particlesContainer.innerHTML = '';
+           state.particles = [];
+
+
+           // Återställ UI
+           timerDisplay.textContent = "1:00";
+           updateHUD();
+           ballerina.className = "ballerina-body dancing";
+
+
+           // Starta loops & musik
+           startMusic();
+           startTimer();
+           spawnInterval = setInterval(spawnObstacle, 900);
+          
+           state.lastTime = 0;
+           requestAnimationFrame(updateGame);
+       }
+
+
+       function gameOver(isWin) {
+           state.isPlaying = false;
+           stopMusic();
+           clearInterval(gameTimerInterval);
+           clearInterval(spawnInterval);
+
+
+           let rating = "";
+           let icon = "🎭";
+           let title = "";
+           let message = "";
+
+
+           if (isWin) {
+               icon = "🏆";
+               title = "Stående Ovation!";
+               message = "Helt fantastiskt! Du dansade perfekt under hela föreställningen och undvek varenda fara med sublim grace. Publiken kastar rosor på scenen!";
+              
+               if (state.health === 100) {
+                   rating = "Prima Ballerina Assoluta (Perfekt!) 👑";
+               } else if (state.health >= 70) {
+                   rating = "Solodansös 🩰";
+               } else {
+                   rating = "Kårdansös 🌸";
+               }
+               playWinSound();
+
+
+               for (let i = 0; i < 60; i++) {
+                   setTimeout(() => {
+                       spawnPetal(Math.random() * gameStage.clientWidth, Math.random() * (gameStage.clientHeight - 100));
+                   }, i * 30);
+               }
+           } else {
+               icon = "💔";
+               title = "Föreställningen Avbruten";
+               message = "Tyvärr förlorade du balansen på grund av de fallande föremålen. Men ge inte upp, övning ger färdighet!";
+               rating = "Andraelev under utbildning";
+               playTone(100, 0.8, 'sawtooth', 0.2);
+           }
+
+
+           document.getElementById('end-icon').textContent = icon;
+           document.getElementById('end-title').textContent = title;
+           document.getElementById('end-message').textContent = message;
+           document.getElementById('end-rating').textContent = rating;
+           document.getElementById('end-score').textContent = state.score;
+
+
+           endScreen.classList.remove('hidden');
+       }
+
+
+       // ================= KNAPPHÄNDELSER =================
+       startBtn.addEventListener('click', () => {
+           startGame();
+       });
+      
+       restartBtn.addEventListener('click', () => {
+           startGame();
+       });
+
+
+       audioToggleBtn.addEventListener('click', () => {
+           initAudio();
+           state.audioOn = !state.audioOn;
+           audioStatus.textContent = state.audioOn ? 'På' : 'Av';
+           audioToggleBtn.className = state.audioOn
+               ? "px-6 py-4 bg-pink-900/60 border border-pink-500 hover:bg-pink-800 text-white font-semibold rounded-full hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+               : "px-6 py-4 bg-[#2b101c] border border-pink-900/40 hover:bg-[#3d1829] text-pink-200 font-semibold rounded-full hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer";
+          
+           if (state.audioOn && state.isPlaying) {
+               startMusic();
+           } else {
+               stopMusic();
+           }
+       });
+   </script>
+</body>
+</html>

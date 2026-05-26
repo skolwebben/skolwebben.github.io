@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masken - Det Klassiska Ormspelet</title>
+    <!-- Tailwind CSS för modern och snabb styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts för både modern och retro-känsla -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome för ikoner -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0b0f19;
+        }
+        .retro-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+        /* Neon-effekter för en härlig arkad-känsla */
+        .neon-border {
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4), inset 0 0 15px rgba(34, 197, 94, 0.2);
+            border: 2px solid rgba(34, 197, 94, 0.6);
+        }
+        .neon-text-green {
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+        .neon-text-red {
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+        }
+        /* Anpassad rullningslist för toplistan */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, 0.5);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col items-center justify-between p-4 overflow-x-hidden">
+
+    <!-- Bakgrundsdekorationer -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#1f293710_1px,transparent_1px),linear-gradient(to_bottom,#1f293710_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+
+    <!-- Header -->
+    <header class="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center gap-4 z-10 my-2">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.6)]">
+                <i class="fa-solid fa-snake text-slate-900 text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold tracking-wider text-green-400 neon-text-green">MASKEN</h1>
+                <p class="text-xs text-slate-400 uppercase tracking-widest">Klassisk Arkad</p>
+            </div>
+        </div>
+        
+        <!-- Poängräknare -->
+        <div class="flex gap-6">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-xl px-5 py-2 flex flex-col items-center min-w-[100px] backdrop-blur-sm">
+                <span class="text-xs text-slate-400 uppercase tracking-wider">Poäng</span>
+                <span id="current-score" class="text-2xl font-bold text-green-400">0</span>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-xl px-5 py-2 flex flex-col items-center min-w-[100px] backdrop-blur-sm">
+                <span class="text-xs text-slate-400 uppercase tracking-wider">Rekord</span>
+                <span id="high-score" class="text-2xl font-bold text-yellow-400">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Huvudinnehåll -->
+    <main class="w-full max-w-4xl flex flex-col lg:flex-row gap-6 items-center justify-center z-10 my-auto">
+        
+        <!-- Vänster sida: Spelyta & Kontroller -->
+        <div class="flex flex-col items-center gap-4 w-full max-w-lg">
+            
+            <!-- Spelplan Containern -->
+            <div class="relative bg-slate-950 rounded-2xl p-2 neon-border overflow-hidden w-full aspect-square max-w-[450px]">
+                <canvas id="game-canvas" class="w-full h-full block rounded-lg bg-slate-950"></canvas>
+                
+                <!-- Start / Game Over Overlay -->
+                <div id="game-overlay" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-6 text-center transition-opacity duration-300">
+                    <div id="overlay-content" class="space-y-6">
+                        <h2 id="overlay-title" class="text-4xl font-bold text-green-400 neon-text-green">REDO?</h2>
+                        <p id="overlay-text" class="text-slate-300 max-w-xs mx-auto">
+                            Styr med piltangenterna eller WASD. Samla röda äpplen för att växa och få 5 poäng per äpple!
+                        </p>
+                        <button id="start-btn" class="px-8 py-3 bg-green-500 hover:bg-green-400 text-slate-950 font-bold rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(34,197,94,0.4)] tracking-wide">
+                            STARTA SPEL
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Touchkontroller -->
+            <div class="grid grid-cols-3 gap-2 w-48 sm:hidden mt-2">
+                <div></div>
+                <button id="btn-up" class="h-12 bg-slate-800/80 active:bg-green-500/30 border border-slate-700 rounded-xl flex items-center justify-center text-xl active:text-green-400">
+                    <i class="fa-solid fa-chevron-up"></i>
+                </button>
+                <div></div>
+                <button id="btn-left" class="h-12 bg-slate-800/80 active:bg-green-500/30 border border-slate-700 rounded-xl flex items-center justify-center text-xl active:text-green-400">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="h-12 flex items-center justify-center text-xs text-slate-500">STYR</div>
+                <button id="btn-right" class="h-12 bg-slate-800/80 active:bg-green-500/30 border border-slate-700 rounded-xl flex items-center justify-center text-xl active:text-green-400">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <div></div>
+                <button id="btn-down" class="h-12 bg-slate-800/80 active:bg-green-500/30 border border-slate-700 rounded-xl flex items-center justify-center text-xl active:text-green-400">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div></div>
+            </div>
+        </div>
+
+        <!-- Höger sida: Inställningar & Toplista -->
+        <div class="w-full lg:w-80 flex flex-col gap-4 self-stretch">
+            
+            <!-- Inställningar / Kontroller-status -->
+            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 backdrop-blur-sm flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <button id="mute-btn" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl flex items-center justify-center transition-colors">
+                        <i id="mute-icon" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <div>
+                        <p class="text-sm font-semibold">Ljud</p>
+                        <p id="mute-status" class="text-xs text-green-400">Aktiverat</p>
+                    </div>
+                </div>
+                <button id="reset-toplist-btn" class="text-xs text-red-400/80 hover:text-red-400 hover:underline transition-all">
+                    Nollställ toplista
+                </button>
+            </div>
+
+            <!-- Toplist-panel -->
+            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex-1 flex flex-col backdrop-blur-sm min-h-[300px]">
+                <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                    <h3 class="text-lg font-bold tracking-wider text-yellow-400 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy"></i> TOPLISTA
+                    </h3>
+                    <span class="text-xs text-slate-500 bg-slate-950 px-2 py-0.5 rounded-full">Topp 5</span>
+                </div>
+                
+                <!-- Listan -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                    <ol id="toplist-list" class="space-y-2.5">
+                        <!-- Genereras dynamiskt via JS -->
+                    </ol>
+                    <div id="no-scores-msg" class="hidden text-center text-slate-500 text-sm py-8">
+                        Inga resultat än. Bli den första att ta plats på listan!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal för Nytt Rekord (Namninmatning) -->
+    <div id="record-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-900 border border-yellow-500/50 rounded-2xl p-6 w-full max-w-sm text-center shadow-[0_0_30px_rgba(234,179,8,0.2)] transform scale-95 transition-transform duration-300" id="modal-card">
+            <div class="w-16 h-16 bg-yellow-500/10 border border-yellow-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-yellow-400 text-2xl animate-bounce">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-yellow-400 mb-1">Nytt Rekord!</h3>
+            <p class="text-sm text-slate-400 mb-4">Du fick <span id="modal-score" class="font-bold text-white">0</span> poäng och tog dig in på toplistan!</p>
+            
+            <form id="record-form" class="space-y-4">
+                <div>
+                    <label for="player-name" class="block text-xs uppercase tracking-wider text-slate-400 text-left mb-1.5 font-semibold">Ditt namn / Initialer</label>
+                    <input type="text" id="player-name" maxlength="10" placeholder="Skriv ditt namn..." required 
+                           class="w-full bg-slate-950 border border-slate-800 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 rounded-xl px-4 py-3 text-center text-lg font-bold text-white placeholder-slate-600 outline-none transition-all">
+                </div>
+                <button type="submit" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold rounded-xl transition-colors shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                    SPARA I TOPLISTAN
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-600 z-10 my-4">
+        <p>Använd piltangenter/WASD på dator eller tryckskärmsknappar på mobilen.</p>
+        <p class="mt-1">Masken &copy; 2026</p>
+    </footer>
+
+    <!-- JavaScript-kod för spelets logik -->
+    <script>
+        // --- SPELKONFIGURATION OCH STATER ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Sätt upplösning på canvas
+        const GRID_SIZE = 20; // 20x20 rutor
+        let cellSize; // Beräknas dynamiskt baserat på canvas storlek
+        
+        // Spelvariabler
+        let snake = [];
+        let apple = { x: 0, y: 0 };
+        let dx = 1; // Riktning i X-led
+        let dy = 0; // Riktning i Y-led
+        let nextDx = 1; // Nästa riktning (förhindrar dubbeltryck-kollisioner)
+        let nextDy = 0;
+        let score = 0;
+        let highScore = 0;
+        let gameInterval = null;
+        let isPlaying = false;
+        let isMuted = false;
+        let gameSpeed = 110; // Hastighet i ms per steg
+
+        // Audio Context för ljudeffekter (skapas vid första klick för att följa webbläsarregler)
+        let audioCtx = null;
+
+        // Elementreferenser
+        const currentScoreEl = document.getElementById('current-score');
+        const highScoreEl = document.getElementById('high-score');
+        const gameOverlay = document.getElementById('game-overlay');
+        const overlayTitle = document.getElementById('overlay-title');
+        const overlayText = document.getElementById('overlay-text');
+        const startBtn = document.getElementById('start-btn');
+        const toplistList = document.getElementById('toplist-list');
+        const noScoresMsg = document.getElementById('no-scores-msg');
+        
+        const muteBtn = document.getElementById('mute-btn');
+        const muteIcon = document.getElementById('mute-icon');
+        const muteStatus = document.getElementById('mute-status');
+        const resetToplistBtn = document.getElementById('reset-toplist-btn');
+
+        const recordModal = document.getElementById('record-modal');
+        const modalCard = document.getElementById('modal-card');
+        const recordForm = document.getElementById('record-form');
+        const playerNameInput = document.getElementById('player-name');
+        const modalScoreSpan = document.getElementById('modal-score');
+
+        // Mobilknappar
+        const btnUp = document.getElementById('btn-up');
+        const btnDown = document.getElementById('btn-down');
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+
+        // --- ENKELT LJUDSSYSTEM (Web Audio API) ---
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (isMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            // Om AudioContext är pausat (pga webbläsarrestriktioner), försök starta det
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'eat') {
+                // Snabbt pip uppåt vid mat-ätande
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(520, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.1); // A5
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'gameover') {
+                // Brummande ton nedåt vid krasch
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.linearRampToValueAtTime(80, now + 0.4); 
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+                osc.start(now);
+                osc.stop(now + 0.45);
+            } else if (type === 'click') {
+                // Klickljud vid menyval
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, now);
+                gainNode.gain.setValueAtTime(0.05, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+        }
+
+        // --- SKÄRM- OCH CANVASANPASSNING ---
+        function resizeCanvas() {
+            // Sätt canvas interna upplösning
+            const size = Math.min(canvas.parentElement.clientWidth - 16, 450);
+            canvas.width = size;
+            canvas.height = size;
+            cellSize = size / GRID_SIZE;
+            
+            // Rita om spelplanen om vi inte kör för att undvika tom skärm
+            if (!isPlaying) {
+                drawPlaceholder();
+            }
+        }
+
+        // Rita en snygg bakgrund i canvasen innan spelet startar
+        function drawPlaceholder() {
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Rita ett dekorativt rutnät
+            ctx.strokeStyle = 'rgba(34, 197, 94, 0.03)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= GRID_SIZE; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * cellSize, 0);
+                ctx.lineTo(i * cellSize, canvas.height);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(0, i * cellSize);
+                ctx.lineTo(canvas.width, i * cellSize);
+                ctx.stroke();
+            }
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        // Kör direkt efter rendering
+        setTimeout(resizeCanvas, 50);
+
+
+        // --- SPELLOGIK ---
+
+        function initGame() {
+            // Startläge för ormen (mitt på skärmen, 3 delar lång)
+            snake = [
+                { x: 10, y: 10 },
+                { x: 9, y: 10 },
+                { x: 8, y: 10 }
+            ];
+            
+            // Startriktning
+            dx = 1;
+            dy = 0;
+            nextDx = 1;
+            nextDy = 0;
+            
+            score = 0;
+            currentScoreEl.textContent = score;
+            
+            spawnApple();
+            isPlaying = true;
+            
+            // Dölj spelöverlägget
+            gameOverlay.classList.add('opacity-0');
+            setTimeout(() => {
+                gameOverlay.classList.add('hidden');
+            }, 300);
+
+            // Starta spel-loopen
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(update, gameSpeed);
+        }
+
+        // Placera äpplet på en ledig plats
+        function spawnApple() {
+            let validPosition = false;
+            while (!validPosition) {
+                apple.x = Math.floor(Math.random() * GRID_SIZE);
+                apple.y = Math.floor(Math.random() * GRID_SIZE);
+                
+                // Kontrollera att äpplet inte hamnar på ormen
+                validPosition = true;
+                for (let part of snake) {
+                    if (part.x === apple.x && part.y === apple.y) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Huvuduppdatering (körs varje frame)
+        function update() {
+            // Uppdatera riktningen till den senaste godkända inmatningen
+            dx = nextDx;
+            dy = nextDy;
+
+            // Beräkna maskens nya huvudposition
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // KOLLISION: Väggar
+            if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
+                gameOver();
+                return;
+            }
+
+            // KOLLISION: Sig själv (hoppa över sista biten om den rör sig bort)
+            for (let i = 0; i < snake.length - 1; i++) {
+                if (snake[i].x === head.x && snake[i].y === head.y) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            // Lägg till nya huvudet i början av ormen
+            snake.unshift(head);
+
+            // Ätit äpple?
+            if (head.x === apple.x && head.y === apple.y) {
+                score += 5;
+                currentScoreEl.textContent = score;
+                playSound('eat');
+                spawnApple();
+            } else {
+                // Ta bort sista delen om inget äpple äts
+                snake.pop();
+            }
+
+            // Rita upp allt på spelplanen
+            draw();
+        }
+
+        // Ritfunktion
+        function draw() {
+            // Rensa spelplan
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Rita rutnät bakom (subtilt)
+            ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < GRID_SIZE; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * cellSize, 0);
+                ctx.lineTo(i * cellSize, canvas.height);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(0, i * cellSize);
+                ctx.lineTo(canvas.width, i * cellSize);
+                ctx.stroke();
+            }
+
+            // Rita äpple (Rött med lite glöd och detalj)
+            const appleX = apple.x * cellSize + cellSize / 2;
+            const appleY = apple.y * cellSize + cellSize / 2;
+            const appleRadius = (cellSize / 2) * 0.85;
+
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(239, 68, 68, 0.6)';
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(appleX, appleY, appleRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Äppel-detaljer (litet blad/stjälk)
+            ctx.shadowBlur = 0; // Återställ skugga
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(appleX - 1, appleY - appleRadius - 1, 2, 3);
+
+            // Rita masken (Grön med gradient/nyansskillnad från huvud till svans)
+            snake.forEach((part, index) => {
+                const isHead = index === 0;
+                
+                // Variera färgnyans för att ge textur/djup
+                if (isHead) {
+                    ctx.fillStyle = '#4ade80'; // Ljusare grön för huvudet
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = 'rgba(34, 197, 94, 0.5)';
+                } else {
+                    ctx.fillStyle = '#16a34a'; // Mörkare grön för kroppen
+                    ctx.shadowBlur = 0;
+                }
+
+                const px = part.x * cellSize + 1.5;
+                const py = part.y * cellSize + 1.5;
+                const pSize = cellSize - 3;
+                const radius = isHead ? 6 : 4; // Rundade hörn för mjukare känsla
+
+                // Rita rundad rektangel för ormens delar
+                ctx.beginPath();
+                ctx.roundRect(px, py, pSize, pSize, radius);
+                ctx.fill();
+
+                // Rita ögon på huvudet
+                if (isHead) {
+                    ctx.fillStyle = '#0f172a';
+                    const eyeSize = cellSize * 0.15;
+                    const offset = cellSize * 0.25;
+
+                    // Anpassa ögonens placering efter riktning
+                    if (dx === 1) { // Höger
+                        ctx.fillRect(px + cellSize * 0.6, py + offset, eyeSize, eyeSize);
+                        ctx.fillRect(px + cellSize * 0.6, py + cellSize - offset - eyeSize, eyeSize, eyeSize);
+                    } else if (dx === -1) { // Vänster
+                        ctx.fillRect(px + cellSize * 0.2, py + offset, eyeSize, eyeSize);
+                        ctx.fillRect(px + cellSize * 0.2, py + cellSize - offset - eyeSize, eyeSize, eyeSize);
+                    } else if (dy === 1) { // Nedåt
+                        ctx.fillRect(px + offset, py + cellSize * 0.6, eyeSize, eyeSize);
+                        ctx.fillRect(px + cellSize - offset - eyeSize, py + cellSize * 0.6, eyeSize, eyeSize);
+                    } else if (dy === -1) { // Uppåt
+                        ctx.fillRect(px + offset, py + cellSize * 0.2, eyeSize, eyeSize);
+                        ctx.fillRect(px + cellSize - offset - eyeSize, py + cellSize * 0.2, eyeSize, eyeSize);
+                    }
+                }
+            });
+            
+            // Återställ skuggeffekt
+            ctx.shadowBlur = 0;
+        }
+
+        // Game Over-logik
+        function gameOver() {
+            isPlaying = false;
+            clearInterval(gameInterval);
+            playSound('gameover');
+
+            // Kontrollera om poängen kvalificerar sig till toplistan
+            if (checkToplistEligibility(score)) {
+                showRecordModal(score);
+            } else {
+                // Visa standard game over-skärm
+                overlayTitle.textContent = "GAME OVER";
+                overlayTitle.className = "text-4xl font-bold text-red-500 neon-text-red";
+                overlayText.innerHTML = `Du fick <span class="text-white font-bold">${score}</span> poäng.<br>Försök igen för att nå toplistan!`;
+                startBtn.textContent = "SPELA IGEN";
+                
+                gameOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    gameOverlay.classList.remove('opacity-0');
+                }, 50);
+            }
+        }
+
+
+        // --- INPUTHANTERING (TANGENTBORD & TOUCH) ---
+
+        function handleInput(key) {
+            if (!isPlaying) return;
+
+            switch (key) {
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    if (dy !== 1) { nextDx = 0; nextDy = -1; }
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    if (dy !== -1) { nextDx = 0; nextDy = 1; }
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    if (dx !== 1) { nextDx = -1; nextDy = 0; }
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    if (dx !== -1) { nextDx = 1; nextDy = 0; }
+                    break;
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            // Förhindra standardskrollning vid piltryck
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
+            handleInput(e.key);
+        });
+
+        // Event listeners för mobila styrknappar
+        btnUp.addEventListener('click', () => handleInput('ArrowUp'));
+        btnDown.addEventListener('click', () => handleInput('ArrowDown'));
+        btnLeft.addEventListener('click', () => handleInput('ArrowLeft'));
+        btnRight.addEventListener('click', () => handleInput('ArrowRight'));
+
+        // Swipe-stöd för touch-enheter på canvas
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isPlaying) return;
+            e.preventDefault(); // Stoppa rullning
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (!isPlaying) return;
+
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+
+            // Kontrollera om swipen var tillräckligt lång för att registreras
+            if (Math.abs(diffX) > 30 || Math.abs(diffY) > 30) {
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    // Horisontell swipe
+                    if (diffX > 0) handleInput('ArrowRight');
+                    else handleInput('ArrowLeft');
+                } else {
+                    // Vertikal swipe
+                    if (diffY > 0) handleInput('ArrowDown');
+                    else handleInput('ArrowUp');
+                }
+            }
+        }, { passive: true });
+
+
+        // --- TOPLISTA & LOCALSTORAGE SYSTEM ---
+
+        // Läs in toplistan
+        function getToplist() {
+            const stored = localStorage.getItem('masken_toplist');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch (e) {
+                    return [];
+                }
+            }
+            return [];
+        }
+
+        // Spara toplistan till localStorage
+        function saveToplist(list) {
+            localStorage.setItem('masken_toplist', JSON.stringify(list));
+            updateToplistUI();
+        }
+
+        // Kolla om en poäng tar sig in på topp 5
+        function checkToplistEligibility(score) {
+            if (score <= 0) return false;
+            const list = getToplist();
+            
+            // Om listan har färre än 5 spelare är alla nya poäng kvalificerade
+            if (list.length < 5) return true;
+            
+            // Kolla om spelaren slår listans sämsta poäng
+            const lowestScore = list[list.length - 1].score;
+            if (score > lowestScore) return true;
+
+            // Kolla om spelaren redan finns på listan och slår sitt EGET tidigare rekord
+            const lastSavedName = (localStorage.getItem('masken_last_name') || '').trim().toUpperCase();
+            if (lastSavedName) {
+                const existingEntry = list.find(item => item.name === lastSavedName);
+                if (existingEntry && score > existingEntry.score) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
+        // Lägg till eller uppdatera ett resultat på listan
+        function addToToplist(name, score) {
+            let list = getToplist();
+            const cleanName = name.trim().toUpperCase();
+
+            // Kontrollera om denna spelare redan har en plats på listan
+            const existingIndex = list.findIndex(item => item.name === cleanName);
+
+            if (existingIndex !== -1) {
+                // Spelaren finns redan. Uppdatera poängen endast om den nya poängen är bättre!
+                if (score > list[existingIndex].score) {
+                    list[existingIndex].score = score;
+                    list[existingIndex].date = new Date().toLocaleDateString('sv-SE');
+                }
+            } else {
+                // Spelaren finns inte sedan tidigare. Lägg till ny post.
+                list.push({ 
+                    name: cleanName, 
+                    score: score, 
+                    date: new Date().toLocaleDateString('sv-SE') 
+                });
+            }
+            
+            // Sortera: Högst poäng först
+            list.sort((a, b) => b.score - a.score);
+            
+            // Behåll endast topp 5 (unika) spelare
+            list = list.slice(0, 5);
+            
+            saveToplist(list);
+            
+            // Uppdatera det sparade All-time Highscoret i gränssnittet
+            if (list.length > 0) {
+                highScore = list[0].score;
+                highScoreEl.textContent = highScore;
+            }
+        }
+
+        // Uppdatera gränssnittet med toplistan
+        function updateToplistUI() {
+            const list = getToplist();
+            toplistList.innerHTML = '';
+
+            if (list.length > 0) {
+                highScore = list[0].score;
+                highScoreEl.textContent = highScore;
+            } else {
+                highScore = 0;
+                highScoreEl.textContent = 0;
+            }
+
+            if (list.length === 0) {
+                noScoresMsg.classList.remove('hidden');
+                return;
+            }
+
+            noScoresMsg.classList.add('hidden');
+
+            list.forEach((item, index) => {
+                const li = document.createElement('li');
+                
+                // Unika färger för guld, silver och brons
+                let medalClass = 'bg-slate-950 text-slate-400';
+                let rankText = `${index + 1}.`;
+                
+                if (index === 0) {
+                    medalClass = 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+                    rankText = '👑';
+                } else if (index === 1) {
+                    medalClass = 'bg-slate-300/10 text-slate-300 border border-slate-300/20';
+                } else if (index === 2) {
+                    medalClass = 'bg-amber-700/10 text-amber-500 border border-amber-700/20';
+                }
+
+                li.className = `flex items-center justify-between p-2.5 rounded-xl ${medalClass} transition-all duration-300 hover:scale-[1.01]`;
+                li.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 text-center font-bold text-sm">${rankText}</span>
+                        <span class="font-bold tracking-wide">${escapeHtml(item.name)}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-slate-500">${item.date}</span>
+                        <span class="font-bold text-green-400 bg-green-950/40 px-2.5 py-0.5 rounded-lg border border-green-500/10 text-sm">${item.score}p</span>
+                    </div>
+                `;
+                toplistList.appendChild(li);
+            });
+        }
+
+        // Hjälpfunktion för att förhindra XSS-sårbarheter i namninmatning
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        // --- NYTT REKORD MODAL ---
+
+        function showRecordModal(score) {
+            modalScoreSpan.textContent = score;
+            
+            // Hämta senast sparade namn från localStorage
+            const lastSavedName = localStorage.getItem('masken_last_name') || '';
+            playerNameInput.value = lastSavedName;
+            
+            // Visa modalen med en mjuk animation
+            recordModal.classList.remove('hidden');
+            setTimeout(() => {
+                recordModal.classList.remove('opacity-0');
+                modalCard.classList.remove('scale-95');
+                playerNameInput.focus();
+                
+                // Om det finns ett sparat namn, markera det så att användaren 
+                // snabbt kan skriva över det eller bara trycka på Enter för att spara
+                if (lastSavedName) {
+                    playerNameInput.select();
+                }
+            }, 50);
+        }
+
+        function hideRecordModal() {
+            recordModal.classList.add('opacity-0');
+            modalCard.classList.add('scale-95');
+            setTimeout(() => {
+                recordModal.classList.add('hidden');
+                
+                // Återställ speloverlayen så spelaren kan köra igen
+                overlayTitle.textContent = "BRA SPELAT!";
+                overlayTitle.className = "text-4xl font-bold text-green-400 neon-text-green";
+                overlayText.innerHTML = `Ditt resultat sparas i toplistan.<br>Kan du slå det igen?`;
+                startBtn.textContent = "SPELA IGEN";
+                
+                gameOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    gameOverlay.classList.remove('opacity-0');
+                }, 50);
+            }, 300);
+        }
+
+        // Hantera namninlämning
+        recordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = playerNameInput.value;
+            if (name.trim()) {
+                // Spara namnet i lokala minnet för nästa spelrunda
+                localStorage.setItem('masken_last_name', name.trim());
+                addToToplist(name, score);
+                hideRecordModal();
+            }
+        });
+
+
+        // --- GRÄNSSNITTS-EVENTLISTENERS ---
+
+        // Startknapp
+        startBtn.addEventListener('click', () => {
+            playSound('click');
+            initGame();
+        });
+
+        // Ljud på/av knapp
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            playSound('click');
+            if (isMuted) {
+                muteIcon.className = "fa-solid fa-volume-xmark";
+                muteStatus.textContent = "Avstängt";
+                muteStatus.className = "text-xs text-red-400";
+            } else {
+                muteIcon.className = "fa-solid fa-volume-high";
+                muteStatus.textContent = "Aktiverat";
+                muteStatus.className = "text-xs text-green-400";
+            }
+        });
+
+        // Nollställ toplista
+        resetToplistBtn.addEventListener('click', () => {
+            playSound('click');
+            if (confirm("Är du säker på att du vill nollställa hela toplistan? Detta går inte att ångra.")) {
+                localStorage.removeItem('masken_toplist');
+                localStorage.removeItem('masken_last_name'); // Nollställ även senast använt namn
+                updateToplistUI();
+            }
+        });
+
+
+        // --- STARTA VID LADDNING ---
+        // Hämta sparad toplista direkt för att visa nuvarande rekord
+        updateToplistUI();
+        drawPlaceholder();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hur väl känner du Isabell? - Quiz</title>
+    <!-- Tailwind CSS för en modern och snygg design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti för att fira bra resultat i slutet -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Egen scrollbar för sammanfattningslistan */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-violet-500 selection:text-white relative">
+
+    <!-- Lila och rosa ljus i bakgrunden -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-violet-900/15 blur-[120px]"></div>
+        <div class="absolute -bottom-[40%] -right-[20%] w-[80%] h-[80%] rounded-full bg-fuchsia-900/15 blur-[120px]"></div>
+    </div>
+
+    <!-- Huvudinnehåll -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8 z-10">
+        <div class="w-full max-w-2xl bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl relative">
+            
+            <!-- 1. STARTSKÄRM -->
+            <div id="start-screen" class="text-center space-y-8 py-4">
+                <div class="inline-flex p-4 rounded-3xl bg-violet-500/10 border border-violet-500/20 text-violet-400 mb-2">
+                    <!-- SVG-ikon: Stjärnor (Sparkles) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/><path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5Z"/><path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1Z"/></svg>
+                </div>
+                <div class="space-y-3">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                        Hur väl känner du <span class="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">Isabell</span>?
+                    </h1>
+                    <p class="text-slate-400 text-base sm:text-lg max-w-md mx-auto">
+                        Svara på 15 roliga frågor och se om du har stenkoll på Isabells favoritsaker, vanor och drömmar!
+                    </p>
+                </div>
+
+                <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800/80 max-w-xs mx-auto flex items-center justify-center gap-3">
+                    <div class="flex items-center gap-1.5 text-sm text-slate-300">
+                        <!-- SVG-ikon: Frågetecken -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-violet-400"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                        15 Frågor
+                    </div>
+                    <div class="h-4 w-[1px] bg-slate-800"></div>
+                    <div class="flex items-center gap-1.5 text-sm text-slate-300">
+                        <!-- SVG-ikon: Pokal -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-fuchsia-400"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/><path d="M12 2a6 6 0 0 1 6 6v1c0 2.2-1.8 4-4 4h-4a4 4 0 0 1-4-4V8a6 6 0 0 1 6-6z"/></svg>
+                        Flervalsquiz
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold rounded-2xl shadow-lg shadow-violet-500/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] inline-flex items-center justify-center gap-2 text-lg cursor-pointer">
+                    Starta Quizet 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                </button>
+            </div>
+
+            <!-- 2. QUIZSKÄRM (Dold vid start) -->
+            <div id="quiz-screen" class="hidden space-y-6">
+                <!-- Framsteg & Poäng -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs sm:text-sm font-medium text-slate-400">
+                        <span class="flex items-center gap-1.5">
+                            Fråga <span id="current-question-num" class="text-violet-400 font-bold">1</span> av 15
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            Poäng: <span id="current-score" class="text-emerald-400 font-bold">0</span>
+                        </span>
+                    </div>
+                    <!-- Förloppsindikator (Progress Bar) -->
+                    <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800/50">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-300 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Fråga -->
+                <div class="py-2">
+                    <h2 id="question-text" class="text-xl sm:text-2xl font-bold text-white leading-snug">
+                        Laddar fråga...
+                    </h2>
+                </div>
+
+                <!-- Alternativ (A, B, C, D) -->
+                <div class="grid grid-cols-1 gap-3.5" id="options-container">
+                    <!-- Knappar ritas ut med Javascript -->
+                </div>
+
+                <!-- Feedback och nästa-knapp -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-slate-800/80 gap-4 min-h-[80px]">
+                    <p id="feedback-message" class="text-sm font-medium text-slate-400 transition-all duration-300 leading-relaxed max-w-full sm:max-w-[70%]"></p>
+                    <button id="next-button" onclick="nextQuestion()" class="hidden w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-700 transition duration-200 inline-flex items-center justify-center gap-1.5 text-sm cursor-pointer self-end">
+                        Nästa fråga 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. RESULTATSKÄRM (Dold till slutet) -->
+            <div id="result-screen" class="hidden text-center space-y-8 py-2">
+                <div class="space-y-2">
+                    <div class="inline-flex p-4 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-2" id="result-icon-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/><path d="M12 2a6 6 0 0 1 6 6v1c0 2.2-1.8 4-4 4h-4a4 4 0 0 1-4-4V8a6 6 0 0 1 6-6z"/></svg>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-white">Resultat</h2>
+                    <p class="text-slate-400 text-sm max-w-sm mx-auto">Här ser du hur bra du känner Isabell!</p>
+                </div>
+
+                <!-- Resultatkort -->
+                <div class="bg-slate-950/60 border border-slate-800 rounded-3xl p-6 max-w-md mx-auto space-y-4">
+                    <div class="space-y-1">
+                        <div class="text-5xl font-black tracking-tight" id="score-fraction">
+                            <span class="text-violet-400">0</span><span class="text-slate-500">/15</span>
+                        </div>
+                        <div class="text-xs text-slate-500 uppercase tracking-widest font-semibold" id="score-percentage">0% Rätt</div>
+                    </div>
+                    <div class="h-[1px] bg-slate-800 w-3/4 mx-auto"></div>
+                    <div>
+                        <h4 class="font-bold text-white text-lg" id="result-title">Laddar resultat...</h4>
+                        <p class="text-slate-400 text-sm mt-1" id="result-description">Analyserar dina svar...</p>
+                    </div>
+                </div>
+
+                <!-- Knappar för att spela igen eller granska svar -->
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <button onclick="restartQuiz()" class="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold rounded-xl shadow-lg shadow-violet-500/10 transition-all duration-200 text-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        Spela igen
+                    </button>
+                    <button onclick="toggleSummary()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl border border-slate-700 transition duration-200 text-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        <span id="summary-btn-text">Visa mina svar</span>
+                    </button>
+                </div>
+
+                <!-- Sammanfattning av alla svar (Visas vid klick på knappen ovan) -->
+                <div id="summary-container" class="hidden text-left space-y-4 mt-8 pt-6 border-t border-slate-800 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                    <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-violet-400"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        Dina svar i detalj:
+                    </h3>
+                    <div id="summary-list" class="space-y-3">
+                        <!-- Svar listas här med hjälp av Javascript -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Sidfot -->
+    <footer class="py-6 border-t border-slate-950 z-10 bg-slate-950/40 backdrop-blur-sm text-center text-xs text-slate-500">
+        Quiz om Isabell &copy; 2026
+    </footer>
+
+    <!-- Spelmotor och Logik -->
+    <script>
+        // Array med alla 15 frågor (Du kan enkelt ändra frågor, svarsalternativ eller "correct" här)
+        const questions = [
+            {
+                question: "Vilken är Isabells absoluta favoritfärg?",
+                options: ["Rosa", "Skogsgrön", "Himmelsblå", "Lavendellila"],
+                correct: 3, // Index 3 = "Lavendellila" är rätt
+                funFact: "Lavendellila har varit Isabells absoluta favoritfärg i evigheter!"
+            },
+            {
+                question: "Hur startar Isabell helst sin morgon?",
+                options: [
+                    "Med en stor, rykande kopp kaffe",
+                    "Med en uppiggande kopp grönt te",
+                    "Med en löprunda i skogen",
+                    "Med att meditera"
+                ],
+                correct: 0,
+                funFact: "Jag är verkligen ingen morgonmänniska!"
+            },
+            {
+                question: "Vilka djur tog bella hand om på hennes familjs gård i uganda när hon var yngre?",
+                options: ["getar", "Grisar", "kossor", "höns"],
+                correct: 2,
+                funFact: "Jag älskar kossor!"
+            },
+            {
+                question: "Vilken årstid får Isabell att må som allra bäst?",
+                options: [
+                    "Våren, när allt börjar blomma",
+                    "Sommaren, med sena varma bad",
+                    "Hösten, när man kan mysa med te",
+                    "Vintern, när snön knastrar under skorna"
+                ],
+                correct: 2,
+                funFact: "Jag älskar att läsa inne på en kall höst."
+            },
+            {
+                question: "Vad gör Isabell helst på en helt ledig lördag?",
+                options: [
+                    "Plöjer en hel säsong av en spännande serie",
+                    "En stor acai bowl brunch med vänner",
+                    "Gör ett stenhårt pass på gymmet",
+                    "Pysslar med växter eller inredning hemma"
+                ],
+                correct: 1,
+                funFact: "Att träffa vänner och käka brunch är en drömlördag!"
+            },
+            {
+                question: "Om Isabell tvingas välja endast en maträtt resten av livet, vad blir det?",
+                options: ["Hemmagjorda tacos", "Fräsch och lyxig sushi", "Krämig pasta med parmesan", "Krispig napolitansk pizza"],
+                correct: 2,
+                funFact: "Italiensk pasta i alla dess former slår aldrig fel i min bok!"
+            },
+            {
+                question: "Vilken typ av dygnsrytm har Isabell?",
+                options: [
+                    "En pigg morgonmänniska som studsar upp kl 06:00",
+                    "En nattuggla som gör bäst ifrån sig på kvällen",
+                    "En klassisk mittemellan-person",
+                    "Det beror helt och hållet på om det finns kaffe eller inte"
+                ],
+                correct: 1,
+                funFact: "Jag har en tendens att bli som mest kreativ och pratglad framåt kvällskvisten!"
+            },
+            {
+                question: "Vilket är Isabells absoluta drömresmål?",
+                options: [
+                    "Skidresa i de schweiziska alperna",
+                    "Körsbärsblomning och kultur i Japan",
+                    "Tropisk sandstrand på Maldiverna",
+                    "Spännande storstadsweekend i New York"
+                ],
+                correct: 2,
+                funFact: "Att få uppleva en tropisk sandstrand på Maldiverna är drömmen!"
+            },
+            {
+                question: "Om Isabell fick välja en superkraft, vilken skulle det vara?",
+                options: [
+                    "Att kunna flyga fritt",
+                    "Att kunna läsa andras tankar",
+                    "Att kunna teleportera sig vart som helst",
+                    "Att kunna bli helt osynlig"
+                ],
+                correct: 2,
+                funFact: "Tänk att kunna slippa restider och bara teleportera sig till en strand i Italien på en sekund!"
+            },
+            {
+                question: "Vad väljer Isabell i godisskålen till fredagsmyset?",
+                options: [
+                    "Sura och salta nappar",
+                    "Allt som innehåller mjölkchoklad",
+                    "Krispiga chips med vitlöksdipp",
+                    "Saltlakrits i mängder"
+                ],
+                correct: 2,
+                funFact: "Det finns inget som slår choklad när sötsuget sätter in!"
+            },
+            {
+                question: "Vilken musikgenre spelas mest i Isabells hörlurar?",
+                options: [
+                    "Gammal klassisk rock",
+                    "Skön pop & aktuella hits",
+                    "lugn Soul och jazz musik",
+                    "Pumpande techno och house"
+                ],
+                correct: 2, 
+                funFact: "Soulmusik är den bästa genre som någonsin har uppfunnits!"
+            },
+            {
+                question: "Hur ser Isabells drömsemester ut?",
+                options: [
+                    "Ligga helt ostört på en solstol med en bok",
+                    "En aktiv semester med vandring och utmaningar",
+                    "En lyxig sparesa med god mat och avkoppling",
+                    "Camping under bar himmel och fiske i vildmarken"
+                ],
+                correct: 2,
+                funFact: "Spahotell, ansiktsbehandlingar och god mat är den ultimata drömmen för Isabell!"
+            },
+            {
+                question: "Vad är Isabell mest rädd för av följande saker?",
+                options: [
+                    "Små, snabba och håriga spindlar",
+                    "Extrema höjder och rangliga broar",
+                    "Trånga utrymmen (klaustrofobi)",
+                    "Djupt vatten där man inte ser botten"
+                ],
+                correct: 3,
+                funFact: "Tänk att bli uppäten av en mystisc varelse"
+            },
+            {
+                question: "Vilken typ av film eller serie kollar Isabell helst på?",
+                options: [
+                    "Rysliga thrillers eller skräckfilmer",
+                    "Lättsamma och mysiga romantiska komedier",
+                    "Episk fantasy som Harry Potter eller Sagan om Ringen",
+                    "Spännande dokumentärer om verkliga händelser"
+                ],
+                correct: 2,
+                funFact: "Jag älskar magiska världar och jag tackar aldrig nej till ett Harry Potter-maraton!"
+            },
+            {
+                question: "Vilken av följande egenskaper värdesätter Isabell allra mest hos en vän?",
+                options: [
+                    "Att man alltid är punktlig och håller tider",
+                    "Att man har exakt samma intressen",
+                    "Lojalitet, humor och att man kan prata om allt",
+                    "Att man gillar att festa och resa ofta"
+                ],
+                correct: 2,
+                funFact: "Lojalitet och att kunna skratta tillsammans tills man får ABS"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        // Starta spelet
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        // Ladda in en fråga
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            
+            // Uppdatera text och framstegsmätaren
+            document.getElementById('current-question-num').textContent = currentQuestion + 1;
+            document.getElementById('current-score').textContent = score;
+            
+            const progressPercent = (currentQuestion / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('question-text').textContent = q.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            document.getElementById('feedback-message').textContent = "";
+            document.getElementById('feedback-message').className = "text-sm font-medium text-slate-400";
+            document.getElementById('next-button').classList.add('hidden');
+
+            q.options.forEach((option, idx) => {
+                const button = document.createElement('button');
+                button.className = "w-full text-left p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-850/50 text-slate-200 hover:text-white font-medium transition-all duration-200 flex items-center justify-between group cursor-pointer text-sm sm:text-base";
+                button.onclick = () => selectOption(idx);
+                
+                const prefix = String.fromCharCode(65 + idx); // Skapar bokstäverna A, B, C, D
+                button.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:text-violet-400 group-hover:border-violet-500/30 transition-colors">${prefix}</span>
+                        <span>${option}</span>
+                    </div>
+                    <div class="icon-placeholder text-slate-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><circle cx="12" cy="12" r="10"/></svg>
+                    </div>
+                `;
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // Hantera val av svar
+        function selectOption(selectedIndex) {
+            const q = questions[currentQuestion];
+            const optionsContainer = document.getElementById('options-container');
+            const buttons = optionsContainer.getElementsByTagName('button');
+            
+            userAnswers.push({
+                question: q.question,
+                selectedOption: q.options[selectedIndex],
+                correctOption: q.options[q.correct],
+                isCorrect: selectedIndex === q.correct,
+                funFact: q.funFact
+            });
+
+            // Avaktivera alla svarsknappar och visa rätt/fel färg
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                buttons[i].classList.remove('hover:border-slate-700', 'hover:bg-slate-850/50');
+                buttons[i].classList.add('cursor-default');
+
+                const iconPlaceholder = buttons[i].querySelector('.icon-placeholder');
+                
+                if (i === q.correct) {
+                    buttons[i].className = "w-full text-left p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/50 text-emerald-200 font-medium flex items-center justify-between text-sm sm:text-base";
+                    iconPlaceholder.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-emerald-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+                } 
+                else if (i === selectedIndex) {
+                    buttons[i].className = "w-full text-left p-4 rounded-2xl bg-rose-950/40 border border-rose-500/50 text-rose-200 font-medium flex items-center justify-between text-sm sm:text-base";
+                    iconPlaceholder.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-rose-400"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+                }
+                else {
+                    buttons[i].classList.add('opacity-40');
+                }
+            }
+
+            // Visa feedback-text
+            const feedbackMessage = document.getElementById('feedback-message');
+            if (selectedIndex === q.correct) {
+                score++;
+                document.getElementById('current-score').textContent = score;
+                feedbackMessage.textContent = "Helt rätt! 🎉 " + q.funFact;
+                feedbackMessage.className = "text-sm font-medium text-emerald-400 leading-relaxed";
+            } else {
+                feedbackMessage.textContent = "Fel svar! 💡 " + q.funFact;
+                feedbackMessage.className = "text-sm font-medium text-rose-400 leading-relaxed";
+            }
+
+            document.getElementById('next-button').classList.remove('hidden');
+        }
+
+        // Gå till nästa fråga eller visa resultat
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Visa resultatskärmen och räkna ut omdöme
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('progress-bar').style.width = `100%`;
+
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('score-fraction').innerHTML = `<span class="text-violet-400">${score}</span><span class="text-slate-500">/15</span>`;
+            document.getElementById('score-percentage').textContent = `${percentage}% rätt`;
+
+            const resultTitle = document.getElementById('result-title');
+            const resultDesc = document.getElementById('result-description');
+            const iconContainer = document.getElementById('result-icon-container');
+
+            if (score === 15) {
+                resultTitle.textContent = "Isabells själsfrände! 👑";
+                resultDesc.textContent = "Helt otroligt! Du har fullständigt stenkoll på allt som rör Isabell. En sanna bästis!";
+                iconContainer.className = "inline-flex p-4 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-400 mb-2";
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2z"/></svg>`;
+                triggerConfetti(150);
+            } else if (score >= 11) {
+                resultTitle.textContent = "Bästis-material! ✨";
+                resultDesc.textContent = "Riktigt bra jobbat! Du känner Isabell fantastiskt väl och har koll på nästan allt.";
+                iconContainer.className = "inline-flex p-4 rounded-3xl bg-violet-500/10 border border-violet-500/20 text-violet-400 mb-2";
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+                triggerConfetti(80);
+            } else if (score >= 7) {
+                resultTitle.textContent = "God vän! 👍";
+                resultDesc.textContent = "Klart godkänt! Du har bra koll, men det finns helt klart lite kvar att upptäcka och fika om.";
+                iconContainer.className = "inline-flex p-4 rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-400 mb-2";
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`;
+            } else if (score >= 4) {
+                resultTitle.textContent = "Bekant ☕";
+                resultDesc.textContent = "Du har ett litet hum om vem Isabell är, men ni borde definitivt ses på en kaffe och snacka mer!";
+                iconContainer.className = "inline-flex p-4 rounded-3xl bg-slate-500/10 border border-slate-500/20 text-slate-400 mb-2";
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>`;
+            } else {
+                resultTitle.textContent = "Främling? 🕵️";
+                resultDesc.textContent = "Hoppsan! Kanske dags att boka in en heldag med Isabell och lära känna henne från grunden?";
+                iconContainer.className = "inline-flex p-4 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-400 mb-2";
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+            }
+
+            buildSummaryList();
+        }
+
+        // Generera den detaljerade sammanfattningslistan
+        function buildSummaryList() {
+            const summaryList = document.getElementById('summary-list');
+            summaryList.innerHTML = '';
+
+            userAnswers.forEach((ans, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-2xl border ${ans.isCorrect ? 'bg-emerald-950/20 border-emerald-500/20' : 'bg-rose-950/20 border-rose-500/20'} space-y-2`;
+                
+                item.innerHTML = `
+                    <div class="flex items-start gap-2.5">
+                        <span class="mt-0.5 flex-shrink-0">
+                            ${ans.isCorrect 
+                                ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-emerald-400"><polyline points="20 6 9 17 4 12"/></svg>' 
+                                : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-rose-400"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}
+                        </span>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-sm text-slate-200">${idx + 1}. ${ans.question}</h4>
+                            <p class="text-xs text-slate-400">Ditt svar: <span class="${ans.isCorrect ? 'text-emerald-400 font-medium' : 'text-rose-400 font-medium'}">${ans.selectedOption}</span></p>
+                            ${!ans.isCorrect ? `<p class="text-xs text-slate-400">Rätt svar: <span class="text-emerald-400 font-medium">${ans.correctOption}</span></p>` : ''}
+                            <p class="text-xs text-slate-400 italic mt-1 bg-slate-950/40 p-2 rounded-lg border border-slate-900">${ans.funFact}</p>
+                        </div>
+                    </div>
+                `;
+                summaryList.appendChild(item);
+            });
+        }
+
+        // Visa eller dölj sammanfattningen
+        function toggleSummary() {
+            const summaryContainer = document.getElementById('summary-container');
+            const summaryBtnText = document.getElementById('summary-btn-text');
+            
+            if (summaryContainer.classList.contains('hidden')) {
+                summaryContainer.classList.remove('hidden');
+                summaryBtnText.textContent = "Dölj mina svar";
+                setTimeout(() => {
+                    summaryContainer.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } else {
+                summaryContainer.classList.add('hidden');
+                summaryBtnText.textContent = "Visa mina svar";
+            }
+        }
+
+        // Starta om spelet
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('summary-container').classList.add('hidden');
+            document.getElementById('summary-btn-text').textContent = "Visa mina svar";
+            startQuiz();
+        }
+
+        // Konfetti-effekt
+        function triggerConfetti(particleCount) {
+            confetti({
+                particleCount: particleCount,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#a78bfa', '#f472b6', '#c084fc', '#60a5fa']
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Överlevnad: Öns Hemlighet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            overflow: hidden; /* Förhindra scrollning */
+            touch-action: none; /* Bättre touch-hantering */
+            background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+        }
+        #game-canvas {
+            image-rendering: pixelated;
+            cursor: crosshair;
+        }
+        /* Custom scrollbar för loggen och guiden */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+        
+        .floating-text {
+            animation: floatUp 2s ease-out forwards;
+            position: absolute;
+            pointer-events: none;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+            z-index: 50;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.25); }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center relative bg-sky-955">
+
+    <!-- Skärm 1: Skapa Karaktärer -->
+    <div id="creation-screen" class="absolute inset-0 bg-slate-900/95 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
+        <div class="bg-slate-800/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl max-w-2xl w-full border border-slate-700/60">
+            <h1 class="text-5xl font-black text-center text-emerald-400 mb-2 drop-shadow-lg">🌴 Öns Hemlighet 🌴</h1>
+            <p class="text-slate-400 text-center mb-6">Skapa dina överlevare. Välj noga, deras egenskaper avgör er framtid.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Skapande formulär -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-300">Namn</label>
+                        <input type="text" id="char-name" class="w-full bg-slate-700/60 border border-slate-600 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-white" placeholder="T.ex. Erik">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-300">Tröjfärg (Utseende)</label>
+                        <input type="color" id="char-color" class="w-full h-11 rounded-xl cursor-pointer bg-slate-700/60 border border-slate-600 p-1" value="#3b82f6">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-300">Egenskap</label>
+                        <select id="char-trait" class="w-full bg-slate-700/60 border border-slate-600 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-200">
+                            <option value="Snabb">🏃‍♂️ Snabb (Rör sig 50% snabbare)</option>
+                            <option value="Stark">💪 Stark (Hugger bäst & slåss bäst mot vilddjur)</option>
+                            <option value="Samlare">🍓 Samlare (Får mer mat per plock)</option>
+                            <option value="Byggare">🔨 Byggare (Färdigställer skydd mycket snabbare)</option>
+                        </select>
+                    </div>
+                    <button id="add-char-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg shadow-emerald-900/40">Lägg till karaktär</button>
+                </div>
+
+                <!-- Lista på karaktärer -->
+                <div class="bg-slate-905/70 rounded-2xl p-4 border border-slate-700/50 flex flex-col">
+                    <h2 class="text-lg font-bold mb-4 border-b border-slate-700/50 pb-2 text-emerald-300">Dina Överlevare (<span id="char-count">0</span>/3)</h2>
+                    <ul id="char-list" class="flex-1 space-y-2 overflow-y-auto min-h-[150px]">
+                        <li class="text-slate-500 text-sm italic" id="empty-char-msg">Inga karaktärer skapade ännu... Skapa minst 1 för att starta.</li>
+                    </ul>
+                    <button id="start-game-btn" class="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl transition opacity-50 cursor-not-allowed shadow-lg shadow-blue-900/40" disabled>Starta Äventyret</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skärm 2: Spelgränssnittet -->
+    <div id="game-screen" class="hidden w-full h-full flex flex-col">
+        <!-- Top Bar -->
+        <div class="h-16 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between px-6 shrink-0 shadow-md relative z-10">
+            <div class="flex gap-6 items-center">
+                <div class="flex items-center gap-2 text-xl bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-700/40" title="Trä"><span class="text-2xl">🪵</span> <span id="res-wood" class="font-bold">0</span></div>
+                <div class="flex items-center gap-2 text-xl bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-700/40" title="Sten"><span class="text-2xl">🪨</span> <span id="res-stone" class="font-bold">0</span></div>
+                <div class="flex items-center gap-2 text-xl bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-700/40" title="Mat"><span class="text-2xl">🥩</span> <span id="res-food" class="font-bold">0</span></div>
+            </div>
+            <div class="flex items-center gap-4 text-base">
+                <span class="font-bold bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/40 text-amber-400 flex items-center gap-1.5">🔫 Manuellt Gevär: <span class="text-emerald-400 text-xs">TRYCK [SPACE]</span></span>
+                <span id="game-time" class="font-mono bg-slate-950/80 border border-slate-800 px-4 py-1.5 rounded-xl text-emerald-400 font-bold shadow-inner">Dag 1 - 08:00</span>
+            </div>
+        </div>
+
+        <div class="flex-1 flex overflow-hidden relative">
+            <!-- Canvas Area -->
+            <div class="flex-1 relative" id="canvas-container">
+                <canvas id="game-canvas" class="w-full h-full block shadow-inner"></canvas>
+                <!-- Floating texts container -->
+                <div id="floating-texts" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
+            </div>
+
+            <!-- Sidebar med Fliksystem -->
+            <div class="w-80 bg-slate-900/95 border-l border-slate-800 flex flex-col z-10 shadow-2xl shrink-0">
+                <!-- Flikknappar -->
+                <div class="flex border-b border-slate-800 shrink-0">
+                    <button id="tab-btn-status" class="flex-1 py-3 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400 bg-slate-850/30 transition">🎮 Status & Bygg</button>
+                    <button id="tab-btn-guide" class="flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850/10 transition">📖 Handbok</button>
+                </div>
+
+                <!-- FLIK 1: STATUS & BYGG -->
+                <div id="tab-content-status" class="flex-1 flex flex-col min-h-0">
+                    <!-- Vald Karaktär -->
+                    <div class="p-4 border-b border-slate-800 flex flex-col h-[38%] overflow-y-auto">
+                        <h3 class="font-bold text-slate-400 uppercase text-xs tracking-wider mb-2">Vald Karaktär</h3>
+                        <div id="selected-char-info" class="flex-1 flex flex-col justify-center items-center text-center text-slate-500 text-sm">
+                            <span class="text-3xl mb-2">👤</span>
+                            Klicka på en gubbe på kartan eller styr den markerade med WASD/Pilar.
+                        </div>
+                    </div>
+                    
+                    <!-- Uppdragsmeny / Öns Gåta -->
+                    <div class="p-4 border-b border-slate-800 h-[22%] flex flex-col bg-purple-950/20">
+                        <h3 class="font-bold text-purple-400 uppercase text-xs tracking-wider mb-1 flex items-center gap-1">🔮 Öns Gåta (Uppdrag för kistan)</h3>
+                        <div id="quest-list" class="text-[11px] text-slate-300 space-y-1 overflow-y-auto flex-1 text-left">
+                            <div class="flex justify-between items-center" id="q1-row">
+                                <span>🪵 Samla 50 Trä:</span>
+                                <span id="q-wood" class="font-bold text-red-400">0/50</span>
+                            </div>
+                            <div class="flex justify-between items-center" id="q2-row">
+                                <span>🪨 Samla 50 Sten:</span>
+                                <span id="q-stone" class="font-bold text-red-400">0/50</span>
+                            </div>
+                            <div class="flex justify-between items-center" id="q3-row">
+                                <span>🐗 Dräp 1 Vildsvin:</span>
+                                <span id="q-beast" class="font-bold text-red-400">0/1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Byggmeny -->
+                    <div class="p-4 border-b border-slate-800 h-[25%] flex flex-col">
+                        <h3 class="font-bold text-slate-400 uppercase text-xs tracking-wider mb-1">Bygg (Välj & klicka på marken)</h3>
+                        <div class="space-y-1.5 overflow-y-auto flex-1 pr-1">
+                            <button class="build-btn w-full text-left bg-slate-800/80 hover:bg-slate-750 p-2 rounded-xl flex flex-col border border-slate-700/30 transition text-xs" data-type="fire" data-wood="10" data-stone="5">
+                                <div class="flex justify-between w-full font-bold text-slate-200">
+                                    <span>🔥 Lägereld</span> 
+                                    <span class="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-slate-300">10🪵 5🪨</span>
+                                </div>
+                                <span class="text-[10px] text-emerald-400 mt-0.5 leading-tight">Genererar värmande eld. Läker ❤️ Hälsa när man står nära!</span>
+                            </button>
+                            <button class="build-btn w-full text-left bg-slate-800/80 hover:bg-slate-750 p-2 rounded-xl flex flex-col border border-slate-700/30 transition text-xs" data-type="tent" data-wood="30" data-stone="0">
+                                <div class="flex justify-between w-full font-bold text-slate-200">
+                                    <span>⛺ Vindskydd</span> 
+                                    <span class="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-slate-300">30🪵</span>
+                                </div>
+                                <span class="text-[10px] text-emerald-400 mt-0.5 leading-tight">Enkelt skydd. Läker hälsa långsamt över tid.</span>
+                            </button>
+                            <button class="build-btn w-full text-left bg-slate-800/80 hover:bg-slate-750 p-2 rounded-xl flex flex-col border border-slate-700/30 transition text-xs" data-type="house" data-wood="80" data-stone="40">
+                                <div class="flex justify-between w-full font-bold text-slate-200">
+                                    <span>🏠 Trästuga</span> 
+                                    <span class="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-slate-300">80🪵 40🪨</span>
+                                </div>
+                                <span class="text-[10px] text-emerald-400 mt-0.5 leading-tight">Robust skydd. Läker hälsa extremt snabbt!</span>
+                            </button>
+                            <div id="build-mode-indicator" class="hidden text-[10px] text-yellow-400 font-bold animate-pulse text-center">Byggläge aktivt! Klicka på gräset.</div>
+                        </div>
+                    </div>
+
+                    <!-- Logg -->
+                    <div class="p-3 flex-1 flex flex-col min-h-0 bg-slate-950/40">
+                        <h3 class="font-bold text-slate-400 uppercase text-xs tracking-wider mb-1">Händelselogg</h3>
+                        <div id="action-log" class="flex-1 overflow-y-auto text-[11px] space-y-1 font-mono text-slate-300 pr-1 text-left">
+                            <div class="text-slate-500">> Välkommen till ön. Ge dina överlevare order.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FLIK 2: ÖVERLEVNADSGUIDE -->
+                <div id="tab-content-guide" class="hidden flex-1 p-5 overflow-y-auto space-y-5 text-left">
+                    <div>
+                        <h4 class="text-emerald-400 font-bold text-base mb-2 border-b border-emerald-900/40 pb-1 flex items-center gap-1">🎮 Hur man styr & strider</h4>
+                        <ul class="space-y-2 text-xs text-slate-300 leading-relaxed">
+                            <li>🖱️ <strong class="text-white">Välj överlevare:</strong> Klicka direkt på en gubbe på kartan. En blå markering <span class="text-sky-400 font-bold">▼</span> visar vem som är vald.</li>
+                            <li>⌨️ <strong class="text-white">Rör dig:</strong> Använd <strong class="bg-slate-800 px-1 py-0.5 rounded text-white font-bold text-[10px]">W, A, S, D</strong> eller <strong class="bg-slate-800 px-1 py-0.5 rounded text-white font-bold text-[10px]">Piltangenterna</strong> för att springa med den valda gubben.</li>
+                            <li>🐗 <strong class="text-rose-400 font-bold flex items-center gap-1">Skjut vilddjur manually [SPACE]:</strong> Vilddjur anfaller <strong class="text-rose-400">endast under natten (20:00–06:00)</strong>! När ett vildsvin dyker upp, styr din gubbe nära och tryck på <strong class="bg-red-600 px-1.5 py-0.5 rounded text-white font-bold text-[10px]">MELLANSLAG (SPACE)</strong> för att avfyra geväret! Det gör enorm skada.</li>
+                            <li>⎵ <strong class="text-white">Skörda & Drick [SPACE]:</strong> Om inga vilddjur är i närheten kan du använda <strong class="bg-slate-800 px-1.5 py-0.5 rounded text-white font-bold text-[10px]">MELLANSLAG</strong> för att hugga träd, krossa stenar, samla bär eller dricka vatten.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-emerald-400 font-bold text-base mb-2 border-b border-emerald-900/40 pb-1 flex items-center gap-1">❤️ Läka Hälsa</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Dina gubbar förlorar hälsa när de blir stångade av vildsvin eller skadas i stormar. För att läka dem bygger du helt enkelt en struktur och låter dem stå alldeles intill:
+                            <br>• <strong class="text-amber-400">Lägereld 🔥:</strong> Bra läkning över tid.
+                            <br>• <strong class="text-sky-400">Vindskydd ⛺:</strong> Långsam, stadig läkning.
+                            <br>• <strong class="text-emerald-400">Trästuga 🏠:</strong> Mycket snabb hälsoåterhämtning.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-purple-400 font-bold text-base mb-2 border-b border-purple-900/40 pb-1 flex items-center gap-1">🔮 Återupplivning (Kistan 📦)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Längst upp till vänster på ön finns en magisk kista. Om en överlevare dör lämnar de en gravsten 🪦. Om ni löser **Öns Gåta** genom att klara de tre uppdragen i sidomenyn, kan du skicka en levande överlevare till kistan för att återuppliva din fallna kamrat! Detta kan endast göras en gång per spel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Modal (Dilemman) -->
+    <div id="event-modal" class="hidden absolute inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-lg w-full border-2 border-amber-500 transform transition-all">
+            <h2 id="event-title" class="text-3xl font-bold text-amber-400 mb-4 flex items-center gap-2">⚠️ Händelse</h2>
+            <p id="event-desc" class="text-lg mb-6 leading-relaxed">...</p>
+            <div id="event-choices" class="space-y-3">
+                <!-- Knappar genereras här -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="hidden absolute inset-0 bg-red-950/95 z-[200] flex items-center justify-center p-4">
+        <div class="text-center max-w-md bg-slate-900/80 p-10 rounded-3xl border border-red-500/30 backdrop-blur-md shadow-2xl">
+            <h1 class="text-6xl font-black text-red-500 mb-4 tracking-wide drop-shadow-lg">STRANDSATT</h1>
+            <p class="text-2xl text-red-200 mb-6 font-semibold">Alla dina överlevare har dukat under.</p>
+            <p class="text-lg text-slate-300 mb-8">Ni lyckades hålla er vid liv i <span id="survived-days" class="font-bold text-emerald-400 text-2xl">0</span> dagar på ön.</p>
+            <button onclick="location.reload()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-4 px-10 rounded-2xl transition text-xl shadow-lg shadow-red-950/50 hover:scale-105 transform">Försök Igen</button>
+        </div>
+    </div>
+
+    <script>
+        /** ----- LJUDGENERATOR SYSTEM (Web Audio API) ----- **/
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 🏃‍♂️ Programmatiskt fotstegsljud
+        function playStepSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const bufferSize = audioCtx.sampleRate * 0.08; 
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(160, audioCtx.currentTime);
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.07);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start();
+        }
+
+        // 🪓 Programmatiskt yxhuggsljud
+        function playChopSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
+
+            const snap = audioCtx.createOscillator();
+            const snapGain = audioCtx.createGain();
+            snap.type = 'sine';
+            snap.frequency.setValueAtTime(800, audioCtx.currentTime);
+            snap.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
+            snapGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            snapGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            snap.connect(snapGain);
+            snapGain.connect(audioCtx.destination);
+            snap.start();
+            snap.stop(audioCtx.currentTime + 0.04);
+        }
+
+        // ⛏️ Programmatiskt stenhacksljud
+        function playMineSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1800, audioCtx.currentTime); 
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
+        }
+
+        // 💧 Programmatiskt svälj-ljud (Dricka vatten) - NU ETT RIKTIGT KLUNKHÄFTIGT SVÄLJLJUD
+        function playDrinkSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            
+            // Vi simulerar 2 stycken tydliga "svälj-klunkar" (gulps)
+            for (let i = 0; i < 2; i++) {
+                const playTime = now + i * 0.4;
+                
+                // Själva klunken/sväljningen (en dovare, djupt sjunkande våg)
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(200, playTime);
+                osc.frequency.exponentialRampToValueAtTime(85, playTime + 0.22);
+                
+                gain.gain.setValueAtTime(0.01, playTime);
+                gain.gain.linearRampToValueAtTime(0.18, playTime + 0.06);
+                gain.gain.exponentialRampToValueAtTime(0.001, playTime + 0.22);
+                
+                // Dovt filter efterliknar halsens insida
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(320, playTime);
+                
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start(playTime);
+                osc.stop(playTime + 0.22);
+                
+                // Ett litet "vått" klick i slutet av sväljningen (struplockets stängning)
+                const clickOsc = audioCtx.createOscillator();
+                const clickGain = audioCtx.createGain();
+                clickOsc.type = 'sine';
+                clickOsc.frequency.setValueAtTime(450, playTime + 0.13);
+                clickOsc.frequency.exponentialRampToValueAtTime(140, playTime + 0.18);
+                
+                clickGain.gain.setValueAtTime(0.06, playTime + 0.13);
+                clickGain.gain.exponentialRampToValueAtTime(0.001, playTime + 0.18);
+                
+                clickOsc.connect(clickGain);
+                clickGain.connect(audioCtx.destination);
+                
+                clickOsc.start(playTime + 0.13);
+                clickOsc.stop(playTime + 0.18);
+            }
+        }
+
+        // 🍖 Programmatiskt smask-ljud (Äta mat) - NU ETT RIKTIGT BLÖTT OCH SMASKIGT LJUD
+        function playEatSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            
+            // Vi spelar 4 stycken "smaskiga" tuggor med blöt fuktighet
+            for (let i = 0; i < 4; i++) {
+                const playTime = now + i * 0.18 + Math.random() * 0.03;
+                
+                // Det blöta smask-ljudet (sinus-våg med snabbt pitch-fall)
+                const wetOsc = audioCtx.createOscillator();
+                const wetGain = audioCtx.createGain();
+                wetOsc.type = 'sine';
+                wetOsc.frequency.setValueAtTime(520 + Math.random() * 180, playTime);
+                wetOsc.frequency.exponentialRampToValueAtTime(95, playTime + 0.07);
+                
+                wetGain.gain.setValueAtTime(0.25, playTime);
+                wetGain.gain.exponentialRampToValueAtTime(0.001, playTime + 0.07);
+                
+                wetOsc.connect(wetGain);
+                wetGain.connect(audioCtx.destination);
+                wetOsc.start(playTime);
+                wetOsc.stop(playTime + 0.07);
+
+                // Ett fuktigt bandpass-brus (saliv och läpprörelser)
+                const bufferSize = audioCtx.sampleRate * 0.05;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let j = 0; j < bufferSize; j++) {
+                    data[j] = Math.random() * 2 - 1;
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+
+                // Bandpassfilter med hög resonans skapar den "våta" smaskigheten
+                const bandpass = audioCtx.createBiquadFilter();
+                bandpass.type = 'bandpass';
+                bandpass.frequency.setValueAtTime(950, playTime);
+                bandpass.Q.setValueAtTime(5, playTime);
+
+                const noiseGain = audioCtx.createGain();
+                noiseGain.gain.setValueAtTime(0.12, playTime);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, playTime + 0.05);
+
+                noise.connect(bandpass);
+                bandpass.connect(noiseGain);
+                noiseGain.connect(audioCtx.destination);
+                
+                noise.start(playTime);
+                noise.stop(playTime + 0.05);
+            }
+        }
+
+        // 🔫 Programmatiskt skottljud (Gevär)
+        function playShotSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const bufferSize = audioCtx.sampleRate * 0.3;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(600, audioCtx.currentTime);
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start();
+        }
+
+        /** ----- TILLSTÅND OCH DATA ----- **/
+        const STATE = {
+            chars: [],
+            resources: { wood: 0, stone: 0, food: 20 },
+            nodes: [],
+            buildings: [],
+            beasts: [],
+            tombstones: [],
+            day: 1,
+            time: 8 * 60, // Startar 08:00 (i minuter)
+            selectedChar: null,
+            buildMode: null, // { type, woodCost, stoneCost }
+            isRunning: false,
+            lastTick: 0,
+            
+            // SPELLOGIK & EVENTS
+            beastsDefeated: 0, // Håller koll på hur många vildsvin vi dräpt
+            chest: { x: 100, y: 120, used: false, radius: 18 }, // Magiska kistan
+            activeShotLines: [] // Skottlinjer för geväret
+        };
+
+        // Enkel, robust tangentbordsmappning
+        const KEYS = { 
+            w: false, 
+            a: false, 
+            s: false, 
+            d: false, 
+            ArrowUp: false, 
+            ArrowDown: false, 
+            ArrowLeft: false, 
+            ArrowRight: false, 
+            " ": false 
+        };
+
+        const EVENT_LOG = [];
+
+        // Egenskaper
+        const TRAITS = {
+            'Snabb': { speedMult: 1.6, gatherMult: 1.0 },
+            'Stark': { speedMult: 1.0, gatherMult: 1.0, rockMult: 1.8 },
+            'Samlare': { speedMult: 1.0, gatherMult: 1.5, foodMult: 2.0 },
+            'Byggare': { speedMult: 1.0, gatherMult: 1.0, woodMult: 2.0 }
+        };
+
+        // DOM Element
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const UI = {
+            creation: document.getElementById('creation-screen'),
+            game: document.getElementById('game-screen'),
+            charName: document.getElementById('char-name'),
+            charColor: document.getElementById('char-color'),
+            charTrait: document.getElementById('char-trait'),
+            addCharBtn: document.getElementById('add-char-btn'),
+            charList: document.getElementById('char-list'),
+            charCount: document.getElementById('char-count'),
+            emptyMsg: document.getElementById('empty-char-msg'),
+            startBtn: document.getElementById('start-game-btn'),
+            resWood: document.getElementById('res-wood'),
+            resStone: document.getElementById('res-stone'),
+            resFood: document.getElementById('res-food'),
+            timeDisplay: document.getElementById('game-time'),
+            charInfo: document.getElementById('selected-char-info'),
+            log: document.getElementById('action-log'),
+            eventModal: document.getElementById('event-modal'),
+            eventTitle: document.getElementById('event-title'),
+            eventDesc: document.getElementById('event-desc'),
+            eventChoices: document.getElementById('event-choices'),
+            buildIndicator: document.getElementById('build-mode-indicator'),
+            floatingTexts: document.getElementById('floating-texts'),
+            gameOver: document.getElementById('game-over-modal'),
+            tabStatus: document.getElementById('tab-btn-status'),
+            tabGuide: document.getElementById('tab-btn-guide'),
+            contentStatus: document.getElementById('tab-content-status'),
+            contentGuide: document.getElementById('tab-content-guide'),
+            
+            // Uppdragsmätare i UI
+            qWood: document.getElementById('q-wood'),
+            qStone: document.getElementById('q-stone'),
+            qBeast: document.getElementById('q-beast'),
+            q1Row: document.getElementById('q1-row'),
+            q2Row: document.getElementById('q2-row'),
+            q3Row: document.getElementById('q3-row')
+        };
+
+        /** ----- FLIKSYSTEM LOGIK ----- **/
+        UI.tabStatus.addEventListener('click', () => {
+            UI.tabStatus.classList.add('border-emerald-500', 'text-emerald-400');
+            UI.tabStatus.classList.remove('border-transparent', 'text-slate-400');
+            UI.tabGuide.classList.remove('border-emerald-500', 'text-emerald-400');
+            UI.tabGuide.classList.add('border-transparent', 'text-slate-400');
+            
+            UI.contentStatus.classList.remove('hidden');
+            UI.contentGuide.classList.add('hidden');
+        });
+
+        UI.tabGuide.addEventListener('click', () => {
+            UI.tabGuide.classList.add('border-emerald-500', 'text-emerald-400');
+            UI.tabGuide.classList.remove('border-transparent', 'text-slate-400');
+            UI.tabStatus.classList.remove('border-emerald-500', 'text-emerald-400');
+            UI.tabStatus.classList.add('border-transparent', 'text-slate-400');
+            
+            UI.contentGuide.classList.remove('hidden');
+            UI.contentStatus.classList.add('hidden');
+        });
+
+        /** ----- KLASSER ----- **/
+        class Character {
+            constructor(name, color, trait, x, y) {
+                this.id = Math.random().toString(36).substr(2, 9);
+                this.name = name;
+                this.color = color;
+                this.trait = trait;
+                this.x = x;
+                this.y = y;
+                this.radius = 12;
+                
+                // Mätare
+                this.health = 100;
+                this.hunger = 100;
+                this.hydration = 100; 
+                this.deathCause = ""; 
+                
+                this.target = null; // {x, y, node}
+                this.actionTimer = 0;
+                this.shootCooldown = 0; // Skottcooldown för manuell strid
+                this.stepTimer = 0;     // Tidsräknare för fotstegsljud
+                this.state = 'IDLE'; // IDLE, MOVING, GATHERING, BUILDING
+                this.isDead = false;
+                this.facing = 1; // 1 för höger, -1 för vänster
+            }
+
+            update(dt) {
+                if (this.isDead) return;
+
+                // --- COOLDOWN UPPDATERING ---
+                if (this.shootCooldown > 0) {
+                    this.shootCooldown -= dt;
+                }
+
+                // --- BEHOV SOM MINSKAR ---
+                this.hunger -= 0.18 * dt; 
+                this.hydration -= 0.28 * dt; // Vätska tickar ner stadigt
+
+                // Begränsa mätarna så de inte går under 0
+                if (this.hunger < 0) this.hunger = 0;
+                if (this.hydration < 0) this.hydration = 0;
+
+                // --- LÄKNINGS-SYSTEM NÄRA STRUKTURER ---
+                let nearHealer = false;
+                STATE.buildings.forEach(b => {
+                    const dist = Math.hypot(this.x - b.x, this.y - b.y);
+                    if (b.type === 'fire' && dist < 85) {
+                        this.health = Math.min(100, this.health + 3.0 * dt); // Läker hälsa vid elden
+                        nearHealer = true;
+                        if (Math.random() < 0.02) {
+                            createFloatingText("❤️", this.x + (Math.random()*16-8), this.y - 15, "#ef4444");
+                        }
+                    }
+                    else if (b.type === 'tent' && dist < 60) {
+                        this.health = Math.min(100, this.health + 1.2 * dt); // Läker långsamt vid vindskyddet
+                        nearHealer = true;
+                        if (Math.random() < 0.008) {
+                            createFloatingText("❤️", this.x, this.y - 15, "#ef4444");
+                        }
+                    }
+                    else if (b.type === 'house' && dist < 65) {
+                        this.health = Math.min(100, this.health + 6.0 * dt); // Läker supersnabbt i stugan!
+                        nearHealer = true;
+                        if (Math.random() < 0.035) {
+                            createFloatingText("❤️", this.x + (Math.random()*16-8), this.y - 15, "#22c55e");
+                        }
+                    }
+                });
+
+                // Beräkna hastighetsdebuffs baserat på hunger och vätska
+                let speedPenalty = 1.0;
+                if (this.hunger <= 0) speedPenalty *= 0.6;     
+                if (this.hydration <= 0) speedPenalty *= 0.6;  
+
+                if (this.health <= 0) {
+                    this.die();
+                    return;
+                }
+
+                // --- TANGENTBORDSSTYRNING ---
+                let isKeyboardMoving = false;
+                if (STATE.selectedChar === this) {
+                    let kbDx = 0, kbDy = 0;
+                    if (KEYS['w'] || KEYS['ArrowUp']) kbDy -= 1;
+                    if (KEYS['s'] || KEYS['ArrowDown']) kbDy += 1;
+                    if (KEYS['a'] || KEYS['ArrowLeft']) kbDx -= 1;
+                    if (KEYS['d'] || KEYS['ArrowRight']) kbDx += 1;
+
+                    if (kbDx !== 0 || kbDy !== 0) {
+                        const len = Math.sqrt(kbDx*kbDx + kbDy*kbDy);
+                        let speed = 95 * TRAITS[this.trait].speedMult * speedPenalty; 
+
+                        this.x += (kbDx / len) * speed * dt;
+                        this.y += (kbDy / len) * speed * dt;
+                        
+                        // Gränser för ön
+                        this.x = Math.max(30, Math.min(canvas.width - 30, this.x));
+                        this.y = Math.max(30, Math.min(canvas.height - 30, this.y));
+
+                        this.state = 'MOVING';
+                        this.target = null; // Avbryt musklicksmål vid manuell styrning
+                        isKeyboardMoving = true;
+                        this.facing = kbDx > 0 ? 1 : (kbDx < 0 ? -1 : this.facing);
+                    }
+                }
+
+                // --- MUSKLICK-RÖRELSE & INTERAKTION ---
+                if (!isKeyboardMoving && this.target) {
+                    const dx = this.target.x - this.x;
+                    const dy = this.target.y - this.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+
+                    if (dist > 5) {
+                        this.state = 'MOVING';
+                        let speed = 55 * TRAITS[this.trait].speedMult * speedPenalty;
+
+                        this.x += (dx / dist) * speed * dt;
+                        this.y += (dy / dist) * speed * dt;
+                        this.facing = dx > 0 ? 1 : (dx < 0 ? -1 : this.facing);
+                    } else {
+                        // Framme vid målet
+                        if (this.target.node) {
+                            this.gather(this.target.node, dt);
+                        } else if (this.target.buildPlan) {
+                            this.build(this.target.buildPlan, dt);
+                        } else {
+                            this.state = 'IDLE';
+                            this.target = null; 
+                        }
+                    }
+                } else if (!isKeyboardMoving && !this.target) {
+                    this.state = 'IDLE';
+                }
+
+                // --- SPELA GÅNGLJUD (FOTSTEG) ---
+                if (this.state === 'MOVING' && STATE.selectedChar === this) {
+                    this.stepTimer += dt;
+                    // Fotstegstakt justeras baserat på karaktärens faktiska fart och egenskaper
+                    let stepInterval = 0.38 / TRAITS[this.trait].speedMult;
+                    if (this.stepTimer >= stepInterval) {
+                        this.stepTimer = 0;
+                        playStepSound();
+                    }
+                } else {
+                    this.stepTimer = 0;
+                }
+            }
+
+            gather(node, dt) {
+                this.state = 'GATHERING';
+                
+                this.facing = node.x > this.x ? 1 : -1;
+                
+                // Drick direkt från vattenkällor
+                if (node.type === 'water') {
+                    if (this.hydration < 100) {
+                        this.hydration = Math.min(100, this.hydration + 25 * dt);
+                        this.actionTimer += dt;
+                        if (this.actionTimer >= 0.45) { // Periodiskt slurpljud under drickandet
+                            this.actionTimer = 0;
+                            playDrinkSound();
+                            createFloatingText("💧 Slurp!", this.x, this.y - 15, "#38bdf8");
+                        }
+                    } else {
+                        logMessage(`${this.name} släckte törsten.`, 'success');
+                        this.target = null;
+                        this.state = 'IDLE';
+                    }
+                    return;
+                }
+
+                this.actionTimer += dt;
+                if (this.actionTimer >= 1.0) { // Varje sekund vid resursbrytning
+                    this.actionTimer = 0;
+                    
+                    let gatherPower = 10 * TRAITS[this.trait].gatherMult;
+                    if (node.type === 'tree') gatherPower *= (TRAITS[this.trait].woodMult || 1);
+                    if (node.type === 'rock') gatherPower *= (TRAITS[this.trait].rockMult || 1);
+
+                    node.health -= gatherPower;
+                    
+                    // Ljud för skörd och insamling
+                    let tool = '🍓';
+                    if (node.type === 'tree') {
+                        tool = '🪓';
+                        playChopSound(); // Träd-ljud
+                    } else if (node.type === 'rock') {
+                        tool = '⛏️';
+                        playMineSound(); // Sten-ljud
+                    } else if (node.type === 'bush') {
+                        playEatSound(); // Bärplock-ljud (smaskigt bärljud!)
+                    }
+
+                    createFloatingText(tool, this.x + (this.facing*15), this.y - 15);
+
+                    if (node.health <= 0) {
+                        let amount = Math.floor(Math.random() * 3) + 2;
+                        if (node.type === 'bush') amount *= (TRAITS[this.trait].foodMult || 1);
+
+                        if (node.type === 'tree') STATE.resources.wood += amount;
+                        if (node.type === 'rock') STATE.resources.stone += amount;
+                        if (node.type === 'bush') STATE.resources.food += Math.floor(amount);
+                        
+                        let resName = node.type === 'tree' ? 'Trä' : (node.type === 'rock' ? 'Sten' : 'Mat');
+                        let resColor = node.type === 'tree' ? '#f59e0b' : (node.type === 'rock' ? '#cbd5e1' : '#ef4444');
+                        createFloatingText(`+${Math.floor(amount)} ${resName}`, this.x, this.y - 30, resColor);
+                        
+                        logMessage(`${this.name} samlade ${resName}.`);
+                        updateResourcesUI();
+                        
+                        // Radera noden
+                        STATE.nodes = STATE.nodes.filter(n => n !== node);
+                        this.target = null;
+                        this.state = 'IDLE';
+
+                        // Spawnar ny nod om ett tag
+                        setTimeout(() => spawnNode(node.type), 15000);
+                    }
+                }
+            }
+
+            build(plan, dt) {
+                this.state = 'BUILDING';
+                this.actionTimer += dt;
+                
+                this.facing = plan.x > this.x ? 1 : -1;
+
+                if (this.actionTimer >= 0.5) { 
+                    this.actionTimer = 0;
+                    plan.progress += (this.trait === 'Byggare' ? 22 : 10);
+                    createFloatingText("🔨", this.x + (this.facing*15), this.y - 15);
+                    playMineSound(); // Hammarslag (återanvänder stakljudet med lite högre pitch för spik-känsla)
+
+                    if (plan.progress >= 100) {
+                        STATE.buildings.push({
+                            type: plan.type,
+                            x: plan.x,
+                            y: plan.y,
+                            radius: 20
+                        });
+                        logMessage(`${this.name} färdigställde en konstruktion!`, 'success');
+                        this.target = null;
+                        this.state = 'IDLE';
+                    }
+                }
+            }
+
+            die() {
+                this.isDead = true;
+                this.health = 0;
+                
+                const finalCause = this.deathCause || "Skador";
+                logMessage(`☠️ ${this.name} har dött till följd av ${finalCause}!`, 'error');
+                
+                // Spawna en gravsten där gubben föll
+                STATE.tombstones.push({
+                    name: this.name,
+                    color: this.color,
+                    trait: this.trait,
+                    cause: finalCause,
+                    x: this.x,
+                    y: this.y
+                });
+
+                // Avmarkera om gubben var vald
+                if (STATE.selectedChar === this) {
+                    STATE.selectedChar = null;
+                }
+                updateCharUI();
+                
+                // Kontrollera om spelet är över
+                if (STATE.chars.every(c => c.isDead)) {
+                    triggerGameOver();
+                }
+            }
+
+            draw(ctx) {
+                if (this.isDead) return;
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // Skugga under fötterna
+                ctx.fillStyle = 'rgba(0,0,0,0.25)';
+                ctx.beginPath();
+                ctx.ellipse(0, 14, this.radius + 2, this.radius/2, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                // Gånganimation
+                const isMoving = this.state === 'MOVING';
+                const walkCycle = isMoving ? Math.sin(Date.now() / 100) * 6 : 0;
+
+                ctx.fillStyle = '#1e293b'; 
+                ctx.beginPath(); ctx.arc(-4, 11 + walkCycle, 4.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4, 11 - walkCycle, 4.5, 0, Math.PI*2); ctx.fill();
+
+                // Kropp
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.roundRect(-this.radius, -this.radius, this.radius*2, this.radius*2 + 4, 8);
+                ctx.fill();
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // Ögon
+                const eyeOffset = this.facing * 3;
+                ctx.fillStyle = 'white';
+                ctx.beginPath(); ctx.arc(eyeOffset - 4, -4, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(eyeOffset + 4, -4, 4, 0, Math.PI*2); ctx.fill();
+                
+                ctx.fillStyle = '#0f172a'; 
+                ctx.beginPath(); ctx.arc(eyeOffset - 4 + (this.facing*1.5), -4, 2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(eyeOffset + 4 + (this.facing*1.5), -4, 2, 0, Math.PI*2); ctx.fill();
+
+                // Gevär på ryggen
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-this.facing * 10, 4);
+                ctx.lineTo(-this.facing * 2, -4);
+                ctx.stroke();
+
+                // Markering för vald överlevare
+                if (STATE.selectedChar === this) {
+                    ctx.strokeStyle = '#38bdf8'; 
+                    ctx.lineWidth = 2.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.arc(0, 5, this.radius + 10, 0, Math.PI*2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.font = '12px Nunito';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('▼', 0, -22);
+                }
+
+                // Namntag
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 11px Nunito';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(this.name, 0, -32);
+                ctx.shadowBlur = 0; 
+
+                // Akuta varningar över huvudet vid låg hälsa eller utmattning
+                let warningIcon = "";
+                if (this.health < 30) warningIcon = "💔";
+                else if (this.hunger <= 0) warningIcon = "🍖😴";
+                else if (this.hydration <= 0) warningIcon = "💧😴";
+                
+                if (warningIcon) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.fillText(warningIcon, 15, -20);
+                }
+
+                ctx.restore();
+            }
+        }
+
+        class ResourceNode {
+            constructor(type, x, y) {
+                this.type = type; // 'tree', 'rock', 'bush', 'water'
+                this.x = x;
+                this.y = y;
+                this.health = 100;
+                
+                if (type === 'tree') this.radius = 16;
+                if (type === 'rock') this.radius = 14;
+                if (type === 'bush') this.radius = 12;
+                if (type === 'water') this.radius = 15;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                const isTargeted = STATE.chars.some(c => c.target && c.target.node === this);
+                if (isTargeted) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius + 8, 0, Math.PI*2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // Skugga
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.beginPath();
+                ctx.ellipse(0, this.radius/2, this.radius + 2, this.radius/2, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                if (this.type === 'tree') {
+                    ctx.fillStyle = '#78350f'; 
+                    ctx.fillRect(-4, -5, 8, 15);
+                    ctx.fillStyle = '#15803d'; 
+                    ctx.beginPath(); ctx.arc(0, -12, 16, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#16a34a'; 
+                    ctx.beginPath(); ctx.arc(-4, -16, 10, 0, Math.PI*2); ctx.fill();
+                } 
+                else if (this.type === 'rock') {
+                    ctx.fillStyle = '#64748b'; 
+                    ctx.beginPath();
+                    ctx.moveTo(-12, 6); ctx.lineTo(-14, -4); ctx.lineTo(-4, -12);
+                    ctx.lineTo(8, -8); ctx.lineTo(14, 4); ctx.closePath();
+                    ctx.fill();
+                    ctx.fillStyle = '#94a3b8'; 
+                    ctx.beginPath();
+                    ctx.moveTo(-8, 4); ctx.lineTo(-10, -2); ctx.lineTo(-4, -8);
+                    ctx.lineTo(4, -5); ctx.closePath();
+                    ctx.fill();
+                }
+                else if (this.type === 'bush') {
+                    ctx.fillStyle = '#22c55e'; 
+                    ctx.beginPath(); ctx.arc(0, -2, 14, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#4ade80'; 
+                    ctx.beginPath(); ctx.arc(-4, -6, 8, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath(); ctx.arc(-6, -2, 2.5, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(6, 0, 2.5, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(2, -8, 2.5, 0, Math.PI*2); ctx.fill();
+                }
+                else if (this.type === 'water') {
+                    // Färskvattenkälla
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 11, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#0284c7';
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+                    
+                    // Pulserande ringar
+                    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 11 + Math.sin(Date.now() / 240) * 4, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                if (this.health < 100 && this.type !== 'water') {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    ctx.fillRect(-10, -this.radius - 12, 20, 4);
+                    ctx.fillStyle = '#facc15';
+                    ctx.fillRect(-10, -this.radius - 12, 20 * (this.health/100), 4);
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // AGGRESSIVT VILDDJUR 🐗 (Vildsvin)
+        class Beast {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.health = 80; 
+                this.maxHealth = 80;
+                this.speed = 45;
+                this.target = null;
+                this.state = 'WANDER'; 
+                this.wanderTimer = 0;
+                this.wanderDx = 0;
+                this.wanderDy = 0;
+                this.radius = 13;
+                this.attackTimer = 0;
+            }
+
+            update(dt) {
+                // Sök efter närmsta levande karaktär
+                let closestChar = null;
+                let minDist = 180; // Jaktradie
+                STATE.chars.forEach(c => {
+                    if (!c.isDead) {
+                        let dist = Math.hypot(this.x - c.x, this.y - c.y);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closestChar = c;
+                        }
+                    }
+                });
+
+                if (closestChar) {
+                    this.state = 'CHASE';
+                    this.target = closestChar;
+                } else {
+                    this.state = 'WANDER';
+                    this.target = null;
+                }
+
+                if (this.state === 'CHASE' && this.target) {
+                    let dx = this.target.x - this.x;
+                    let dy = this.target.y - this.y;
+                    let dist = Math.hypot(dx, dy);
+                    
+                    if (dist > 15) {
+                        this.x += (dx / dist) * this.speed * dt;
+                        this.y += (dy / dist) * this.speed * dt;
+                    } else {
+                        // Attackintervall
+                        this.attackTimer += dt;
+                        if (this.attackTimer >= 1.2) {
+                            this.attackTimer = 0;
+                            
+                            // SÄNKT: Skada på karaktärens hälsa är nu bara 5
+                            this.target.health -= 5;
+                            createFloatingText("💥 -5 ❤️", this.target.x, this.target.y, "#ef4444");
+                            logMessage(`🐗 Ett argt vildsvin stångade ${this.target.name}!`, 'error');
+                            playChopSound(); // Använder ett duns-ljud för skada
+
+                            if (this.target.health <= 0) {
+                                this.target.deathCause = "Vilddjursattack 🐗";
+                                this.target.die();
+                                this.target = null;
+                            }
+                        }
+                    }
+                } else {
+                    // Strosa omkring planlöst
+                    this.wanderTimer -= dt;
+                    if (this.wanderTimer <= 0) {
+                        this.wanderTimer = Math.random() * 3 + 2;
+                        let angle = Math.random() * Math.PI * 2;
+                        this.wanderDx = Math.cos(angle);
+                        this.wanderDy = Math.sin(angle);
+                    }
+                    this.x += this.wanderDx * 20 * dt;
+                    this.y += this.wanderDy * 20 * dt;
+
+                    this.x = Math.max(40, Math.min(canvas.width - 40, this.x));
+                    this.y = Math.max(40, Math.min(canvas.height - 40, this.y));
+                }
+
+                // Vilddjuret besegras
+                if (this.health <= 0) {
+                    STATE.resources.food += 25; 
+                    STATE.beastsDefeated++; 
+                    updateResourcesUI();
+                    updateQuestsUI();
+                    createFloatingText("+25 Mat 🥩", this.x, this.y, "#ef4444");
+                    logMessage("🐗 Ni besegrade vildsvinet och bärgade 25 enheter kött!", "success");
+                    
+                    // Radera ur tillstånd
+                    STATE.beasts = STATE.beasts.filter(b => b !== this);
+                    
+                    // Spawnar ett nytt vildsvin efter ett litet tag, men endast om det fortfarande är natt och Dag >= 3
+                    setTimeout(() => {
+                        const hour = Math.floor(STATE.time / 60);
+                        const isNight = (hour >= 20 || hour < 6);
+                        if (STATE.day >= 3 && isNight) spawnBeast();
+                    }, 25000);
+                }
+            }
+
+            draw(ctx) {
+                if (this.health <= 0) return;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.beginPath();
+                ctx.ellipse(0, 8, this.radius, this.radius/2, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.font = '22px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🐗', 0, 0);
+
+                if (this.health < this.maxHealth) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    ctx.fillRect(-12, -18, 24, 3);
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(-12, -18, 24 * (this.health/this.maxHealth), 3);
+                }
+
+                ctx.restore();
+            }
+        }
+
+        /** ----- KARTA & SPELMOTOR ----- **/
+        
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function initMap() {
+            resizeCanvas();
+            STATE.nodes = [];
+            STATE.buildings = [];
+            STATE.beasts = [];
+            STATE.tombstones = [];
+            STATE.beastsDefeated = 0;
+            STATE.chest.used = false;
+            
+            // Slumpmässig fyllning av resurser
+            for(let i=0; i<15; i++) spawnNode('tree');
+            for(let i=0; i<10; i++) spawnNode('rock');
+            for(let i=0; i<8; i++)  spawnNode('bush');
+            
+            // Färskvattenkällor
+            for(let i=0; i<3; i++)  spawnNode('water');
+            
+            // Placera ut den magiska kistan
+            STATE.chest.x = 100;
+            STATE.chest.y = 120;
+
+            updateQuestsUI();
+        }
+
+        function spawnNode(type) {
+            const margin = 60;
+            const x = margin + Math.random() * (canvas.width - margin*2);
+            const y = margin + Math.random() * (canvas.height - margin*2);
+            
+            // Förhindra spawn rakt på kistan
+            if (Math.hypot(x - STATE.chest.x, y - STATE.chest.y) < 60) {
+                spawnNode(type);
+                return;
+            }
+            STATE.nodes.push(new ResourceNode(type, x, y));
+        }
+
+        function spawnBeast() {
+            const margin = 100;
+            const x = margin + Math.random() * (canvas.width - margin*2);
+            const y = margin + Math.random() * (canvas.height - margin*2);
+            STATE.beasts.push(new Beast(x, y));
+        }
+
+        function drawMap() {
+            // Havet
+            ctx.fillStyle = '#0284c7'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Vågor i havet
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.4;
+            const waveOffset = (Date.now() / 1500) % (Math.PI * 2);
+            for(let i=0; i<6; i++) {
+                ctx.beginPath();
+                for(let x=0; x<canvas.width; x+=20) {
+                    const y = (i * 120) + 50 + Math.sin(x*0.02 + waveOffset + i) * 15;
+                    if(x===0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1.0;
+
+            // Ön (Sandstrand)
+            const margin = 20;
+            ctx.fillStyle = '#fde047'; 
+            ctx.shadowColor = 'rgba(0,0,0,0.4)';
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.roundRect(margin, margin, canvas.width - margin*2, canvas.height - margin*2, 45);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Gräs
+            ctx.fillStyle = '#4ade80'; 
+            ctx.beginPath();
+            ctx.roundRect(margin+18, margin+18, canvas.width - margin*2 - 36, canvas.height - margin*2 - 36, 35);
+            ctx.fill();
+            
+            // Dekorativa grässtrån
+            ctx.fillStyle = '#22c55e';
+            for(let i=0; i<30; i++) {
+                const gx = margin+30 + (Math.sin(i*74) * 0.5 + 0.5) * (canvas.width - margin*2 - 60);
+                const gy = margin+30 + (Math.cos(i*31) * 0.5 + 0.5) * (canvas.height - margin*2 - 60);
+                ctx.fillRect(gx, gy, 4, 10);
+                ctx.fillRect(gx-4, gy+3, 4, 7);
+            }
+
+            // RITA DEN MAGISKA KISTAN 📦
+            if (STATE.chest && !STATE.chest.used) {
+                ctx.save();
+                ctx.translate(STATE.chest.x, STATE.chest.y);
+                
+                // Skugga
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.beginPath();
+                ctx.ellipse(0, 10, 20, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Kistan
+                ctx.font = '28px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('📦', 0, 0);
+
+                // Kontrollera om uppdragen är färdiga (Nu 50 trä, 50 sten)
+                const questCompleted = STATE.resources.wood >= 50 && STATE.resources.stone >= 50 && STATE.beastsDefeated >= 1;
+                
+                if (questCompleted) {
+                    ctx.strokeStyle = 'rgba(168, 85, 247, 0.7)';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 26 + Math.sin(Date.now() / 150) * 4, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    ctx.fillStyle = '#c084fc';
+                    ctx.font = 'bold 9px Nunito';
+                    ctx.fillText('REDO 🔮', 0, -22);
+                } else {
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = 'bold 9px Nunito';
+                    ctx.fillText('LÅST 🔒', 0, -22);
+                }
+                ctx.restore();
+            }
+
+            // Rita gravstenar för fallna gubbar 🪦
+            STATE.tombstones.forEach(t => {
+                ctx.save();
+                ctx.translate(t.x, t.y);
+                
+                // Gravstenskropp
+                ctx.fillStyle = '#94a3b8';
+                ctx.beginPath();
+                ctx.roundRect(-10, -15, 20, 24, [6, 6, 0, 0]);
+                ctx.fill();
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.fillStyle = '#475569';
+                ctx.fillRect(-1, -11, 2, 10);
+                ctx.fillRect(-4, -8, 8, 2);
+
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 9px Nunito';
+                ctx.textAlign = 'center';
+                ctx.fillText(t.name, 0, 19);
+                
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '7px Nunito';
+                ctx.fillText(t.cause, 0, 27);
+                
+                ctx.restore();
+            });
+
+            // Byggnader
+            STATE.buildings.forEach(b => {
+                ctx.save();
+                ctx.translate(b.x, b.y);
+                
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 15, 25, 10, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.font = '36px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                if (b.type === 'fire') ctx.fillText('🔥', 0, 0);
+                if (b.type === 'tent') ctx.fillText('⛺', 0, 0);
+                if (b.type === 'house') ctx.fillText('🏠', 0, -5);
+                ctx.restore();
+            });
+
+            // Byggritningar
+            STATE.chars.forEach(c => {
+                if (c.target && c.target.buildPlan && c.target.buildPlan.progress < 100) {
+                    const b = c.target.buildPlan;
+                    ctx.save();
+                    ctx.translate(b.x, b.y);
+                    ctx.font = '30px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.globalAlpha = 0.5;
+                    if (b.type === 'fire') ctx.fillText('🔥', 0, 0);
+                    if (b.type === 'tent') ctx.fillText('⛺', 0, 0);
+                    if (b.type === 'house') ctx.fillText('🏠', 0, 0);
+                    
+                    ctx.globalAlpha = 1.0;
+                    ctx.fillStyle = 'black';
+                    ctx.fillRect(-15, -25, 30, 4);
+                    ctx.fillStyle = 'yellow';
+                    ctx.fillRect(-15, -25, 30 * (b.progress/100), 4);
+                    ctx.restore();
+                }
+            });
+
+            // Sortera efter Y för djupeffekt
+            const renderables = [...STATE.nodes, ...STATE.chars, ...STATE.beasts];
+            renderables.sort((a, b) => a.y - b.y);
+            renderables.forEach(r => r.draw(ctx));
+
+            // Rita skottlinjer
+            STATE.activeShotLines.forEach(line => {
+                ctx.save();
+                ctx.strokeStyle = `rgba(254, 240, 138, ${line.alpha})`; 
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#eab308';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(line.fromX, line.fromY);
+                ctx.lineTo(line.toX, line.toY);
+                ctx.stroke();
+                ctx.restore();
+            });
+            
+            // Natteffekt överlagring
+            const hour = Math.floor(STATE.time / 60);
+            if (hour >= 20 || hour < 6) {
+                let opacity = 0;
+                if (hour >= 20) opacity = (hour - 20) * 0.12; 
+                else opacity = (6 - hour) * 0.12; 
+                
+                ctx.fillStyle = `rgba(15, 23, 42, ${Math.min(0.55, opacity)})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function gameLoop(timestamp) {
+            if (!STATE.isRunning) return;
+            
+            const dt = (timestamp - STATE.lastTick) / 1000; 
+            STATE.lastTick = timestamp;
+
+            if (dt > 0.5) {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            updateTime(dt);
+            STATE.chars.forEach(c => c.update(dt));
+            STATE.beasts.forEach(b => b.update(dt));
+
+            // Bleka bort gevärsskottlinjer med tiden
+            STATE.activeShotLines.forEach(line => {
+                line.alpha -= 5 * dt;
+            });
+            STATE.activeShotLines = STATE.activeShotLines.filter(l => l.alpha > 0);
+
+            updateQuestsUI();
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawMap();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateTime(dt) {
+            const oldHour = Math.floor(STATE.time / 60);
+            STATE.time += dt * 10; 
+            const newHour = Math.floor(STATE.time / 60);
+            
+            if (STATE.time >= 24 * 60) {
+                STATE.time = 0;
+                STATE.day++;
+                logMessage(`☀️ Dag ${STATE.day} har börjat.`);
+                
+                if (Math.random() > 0.3) {
+                    triggerRandomEvent();
+                }
+            }
+
+            // --- SPELBALANS: NATTLIGA VILDDJUR LOGIK ---
+            const isNightNow = (newHour >= 20 || newHour < 6);
+            const wasNightBefore = (oldHour >= 20 || oldHour < 6);
+
+            // 1. När natten faller (kl 20:00) spawna vilddjur om Dag >= 3
+            if (isNightNow && !wasNightBefore && STATE.day >= 3) {
+                spawnBeast();
+                logMessage("🐗 Det skymmer... Vilddjuren vaknar ur sina nästen och letar efter byte!", "error");
+                createFloatingText("🐗 VILDDJUR AKTIVA!", canvas.width / 2 - 100, canvas.height / 2, "#f87171");
+            }
+
+            // 2. När morgonen gryr (kl 06:00) flyr alla vilddjur från ön
+            if (!isNightNow && wasNightBefore) {
+                if (STATE.beasts.length > 0) {
+                    logMessage("🌅 Solen stiger! Vilddjuren flyr tillbaka till sina djupa hålor.", "success");
+                    STATE.beasts.forEach(b => {
+                        createFloatingText("🏃‍♂️💨 Flyr!", b.x, b.y - 15, "#94a3b8");
+                    });
+                    STATE.beasts = []; // Töm listan helt på morgonen
+                }
+            }
+
+            // Slumpmässig nattspawn om det inte finns några djur och Dag >= 3
+            if (STATE.day >= 3 && isNightNow && STATE.beasts.length === 0 && Math.random() < 0.003) {
+                spawnBeast();
+                logMessage("🐗 Grenar knäcks i mörkret... Ett nytt vildsvin närmar sig!", "error");
+            }
+
+            const hours = Math.floor(STATE.time / 60).toString().padStart(2, '0');
+            const mins = Math.floor(STATE.time % 60).toString().padStart(2, '0');
+            UI.timeDisplay.textContent = `Dag ${STATE.day} - ${hours}:${mins}`;
+        }
+
+        /** ----- TANGENTBORD & INTERAKTION ----- **/
+
+        window.addEventListener('keydown', (e) => {
+            initAudio(); // Aktivera ljudmotorn på första tangenttrycket
+            window.focus();
+
+            const key = e.key.toLowerCase();
+            
+            if (key === 'w' || e.key === 'ArrowUp') { KEYS.w = true; KEYS.ArrowUp = true; }
+            if (key === 's' || e.key === 'ArrowDown') { KEYS.s = true; KEYS.ArrowDown = true; }
+            if (key === 'a' || e.key === 'ArrowLeft') { KEYS.a = true; KEYS.ArrowLeft = true; }
+            if (key === 'd' || e.key === 'ArrowRight') { KEYS.d = true; KEYS.ArrowRight = true; }
+            
+            // --- GEVÄR STRID MELLANSLAG [SPACE] ---
+            if (e.key === ' ') {
+                KEYS[' '] = true;
+                e.preventDefault(); // Stoppa sidscrolling
+
+                if (STATE.selectedChar && !STATE.selectedChar.isDead) {
+                    // Sök efter närmsta vilddjur
+                    let closestBeast = null;
+                    let minDist = 240; // Maximal räckvidd för geväret
+
+                    STATE.beasts.forEach(b => {
+                        let dist = Math.hypot(STATE.selectedChar.x - b.x, STATE.selectedChar.y - b.y);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closestBeast = b;
+                        }
+                    });
+
+                    // Om ett djur hittas i skottradien och cooldownen är 0, skjut!
+                    if (closestBeast && STATE.selectedChar.shootCooldown <= 0) {
+                        STATE.selectedChar.shootCooldown = 0.6; // Cooldown så man inte kan spamma ihjäl direkt
+                        
+                        let baseDmg = (STATE.selectedChar.trait === 'Stark') ? 30 : 15;
+                        let rifleBonus = 50; // Skada geväret gör mot djur
+                        let totalDmg = baseDmg + rifleBonus;
+
+                        closestBeast.health -= totalDmg;
+                        createFloatingText(`🔫 PANG! -${totalDmg}`, closestBeast.x, closestBeast.y - 10, "#facc15");
+                        logMessage(`🔫 ${STATE.selectedChar.name} sköt ett vildsvin för ${totalDmg} skada!`, 'success');
+                        playShotSound(); // SPELA GEVÄRSSKOTT
+
+                        // Skapa visuell laser/skottblixt
+                        STATE.activeShotLines.push({
+                            fromX: STATE.selectedChar.x,
+                            fromY: STATE.selectedChar.y,
+                            toX: closestBeast.x,
+                            toY: closestBeast.y,
+                            alpha: 1.0
+                        });
+
+                        // Vänd gubben mot vildsvinet
+                        STATE.selectedChar.facing = closestBeast.x > STATE.selectedChar.x ? 1 : -1;
+                        return; // Avbryt så vi inte samlar resurser samtidigt i samma knapptryck
+                    }
+
+                    // Om inget vilddjur är inom räckhåll, kolla om det finns resurser att skörda
+                    let closestNode = null;
+                    let nodeDist = 45; 
+                    for (let n of STATE.nodes) {
+                        const dist = Math.hypot(STATE.selectedChar.x - n.x, STATE.selectedChar.y - n.y);
+                        if (dist < nodeDist) {
+                            nodeDist = dist;
+                            closestNode = n;
+                        }
+                    }
+                    if (closestNode) {
+                        STATE.selectedChar.target = { x: closestNode.x, y: closestNode.y, node: closestNode };
+                    }
+                }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            
+            if (key === 'w' || e.key === 'ArrowUp') { KEYS.w = false; KEYS.ArrowUp = false; }
+            if (key === 's' || e.key === 'ArrowDown') { KEYS.s = false; KEYS.ArrowDown = false; }
+            if (key === 'a' || e.key === 'ArrowLeft') { KEYS.a = false; KEYS.ArrowLeft = false; }
+            if (key === 'd' || e.key === 'ArrowRight') { KEYS.d = false; KEYS.ArrowRight = false; }
+            
+            if (e.key === ' ') {
+                KEYS[' '] = false;
+            }
+        });
+
+        canvas.addEventListener('click', () => {
+            initAudio(); // Aktivera ljudmotorn
+            window.focus();
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            initAudio(); // Aktivera ljudmotorn
+            window.focus(); 
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Byggläge aktivt
+            if (STATE.buildMode && STATE.selectedChar) {
+                const b = STATE.buildMode;
+                if (STATE.resources.wood >= b.wood && STATE.resources.stone >= b.stone) {
+                    STATE.resources.wood -= b.wood;
+                    STATE.resources.stone -= b.stone;
+                    updateResourcesUI();
+
+                    STATE.selectedChar.target = {
+                        x: mouseX,
+                        y: mouseY,
+                        buildPlan: { type: b.type, x: mouseX, y: mouseY, progress: 0 }
+                    };
+                    logMessage(`${STATE.selectedChar.name} påbörjar bygget.`);
+                    cancelBuildMode();
+                } else {
+                    logMessage("För lite resurser för att bygga!", "error");
+                    cancelBuildMode();
+                }
+                return;
+            }
+
+            // Klickade man på en specifik karaktär?
+            let clickedChar = null;
+            for (let c of STATE.chars) {
+                if (c.isDead) continue;
+                const dx = mouseX - c.x;
+                const dy = mouseY - c.y;
+                if (Math.sqrt(dx*dx + dy*dy) <= c.radius + 10) {
+                    clickedChar = c;
+                    break;
+                }
+            }
+
+            if (clickedChar) {
+                STATE.selectedChar = clickedChar;
+                updateCharUI();
+                return;
+            }
+
+            // Klickade man på den magiska kistan?
+            if (!STATE.chest.used) {
+                const distToChest = Math.hypot(mouseX - STATE.chest.x, mouseY - STATE.chest.y);
+                if (distToChest < STATE.chest.radius + 10 && STATE.selectedChar) {
+                    STATE.selectedChar.target = { x: STATE.chest.x, y: STATE.chest.y, node: null };
+                    return;
+                }
+            }
+
+            // Om vi har en gubbe markerad, ge order till punkt
+            if (STATE.selectedChar && !STATE.selectedChar.isDead) {
+                let clickedNode = null;
+                for (let n of STATE.nodes) {
+                    const dx = mouseX - n.x;
+                    const dy = mouseY - n.y;
+                    if (Math.sqrt(dx*dx + dy*dy) <= n.radius + 12) { 
+                        clickedNode = n;
+                        break;
+                    }
+                }
+
+                if (clickedNode) {
+                    STATE.selectedChar.target = { x: clickedNode.x, y: clickedNode.y, node: clickedNode };
+                } else {
+                    STATE.selectedChar.target = { x: mouseX, y: mouseY, node: null };
+                    createRipple(mouseX, mouseY);
+                }
+            }
+        });
+
+        // Knappar för konstruktioner
+        document.querySelectorAll('.build-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                initAudio();
+                if (!STATE.selectedChar) {
+                    logMessage("Välj en överlevare först!");
+                    return;
+                }
+                const type = btn.getAttribute('data-type');
+                const wood = parseInt(btn.getAttribute('data-wood'));
+                const stone = parseInt(btn.getAttribute('data-stone'));
+
+                if (STATE.resources.wood >= wood && STATE.resources.stone >= stone) {
+                    STATE.buildMode = { type, wood, stone };
+                    UI.buildIndicator.classList.remove('hidden');
+                } else {
+                    logMessage("Inte tillräckligt med resurser.");
+                }
+            });
+        });
+
+        function cancelBuildMode() {
+            STATE.buildMode = null;
+            UI.buildIndicator.classList.add('hidden');
+        }
+
+        // Avbryt befallningar/byggläge med högerklick
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            if (STATE.buildMode) {
+                cancelBuildMode();
+            } else if (STATE.selectedChar) {
+                STATE.selectedChar = null;
+                updateCharUI();
+            }
+        });
+
+        function updateResourcesUI() {
+            UI.resWood.textContent = STATE.resources.wood;
+            UI.resStone.textContent = STATE.resources.stone;
+            UI.resFood.textContent = STATE.resources.food;
+        }
+
+        // UPPDATERA UPPDDRAGEN FÖR KISTAN
+        function updateQuestsUI() {
+            // Trä-uppdrag
+            if (STATE.resources.wood >= 50) {
+                UI.qWood.textContent = "KLAR! (50+)";
+                UI.qWood.className = "font-bold text-emerald-400";
+                UI.q1Row.className = "flex justify-between items-center opacity-60";
+            } else {
+                UI.qWood.textContent = `${STATE.resources.wood}/50`;
+                UI.qWood.className = "font-bold text-red-400";
+                UI.q1Row.className = "flex justify-between items-center";
+            }
+
+            // Sten-uppdrag
+            if (STATE.resources.stone >= 50) {
+                UI.qStone.textContent = "KLAR! (50+)";
+                UI.qStone.className = "font-bold text-emerald-400";
+                UI.q2Row.className = "flex justify-between items-center opacity-60";
+            } else {
+                UI.qStone.textContent = `${STATE.resources.stone}/50`;
+                UI.qStone.className = "font-bold text-red-400";
+                UI.q2Row.className = "flex justify-between items-center";
+            }
+
+            // Vildsvins-uppdrag
+            if (STATE.beastsDefeated >= 1) {
+                UI.qBeast.textContent = "KLAR! (1+)";
+                UI.qBeast.className = "font-bold text-emerald-400";
+                UI.q3Row.className = "flex justify-between items-center opacity-60";
+            } else {
+                UI.qBeast.textContent = `${STATE.beastsDefeated}/1`;
+                UI.qBeast.className = "font-bold text-red-400";
+                UI.q3Row.className = "flex justify-between items-center";
+            }
+        }
+
+        function updateCharUI() {
+            if (!STATE.selectedChar) {
+                UI.charInfo.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-slate-500 py-6">
+                        <span class="text-4xl mb-2">👤</span>
+                        <p>Klicka på en gubbe på kartan eller använd WASD/Pilar för att styra.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const c = STATE.selectedChar;
+            if (c.isDead) {
+                UI.charInfo.innerHTML = `<div class="text-red-500 font-bold text-lg">☠️ ${c.name} är död</div>`;
+                return;
+            }
+
+            // Kontrollera närhet till kistan för återupplivning
+            const distToChest = Math.hypot(c.x - STATE.chest.x, c.y - STATE.chest.y);
+            const questsCompleted = STATE.resources.wood >= 50 && STATE.resources.stone >= 50 && STATE.beastsDefeated >= 1;
+            const hasDeadAlly = STATE.tombstones.length > 0;
+            const canRevive = distToChest < 45 && questsCompleted && hasDeadAlly && !STATE.chest.used;
+
+            let reviveButtonHtml = "";
+            if (canRevive) {
+                reviveButtonHtml = `
+                    <button id="revive-btn" class="w-full mt-4 bg-purple-600 hover:bg-purple-500 text-white font-extrabold py-2.5 px-3 rounded-2xl transition shadow-lg shadow-purple-900/60 border border-purple-400 flex items-center justify-center gap-1 text-xs animate-bounce">
+                        🔮 Öppna Kistan & Reviva Kamrat!
+                    </button>
+                `;
+            } else if (distToChest < 45 && !STATE.chest.used) {
+                reviveButtonHtml = `
+                    <div class="mt-4 text-[10px] text-purple-300 bg-purple-950/40 p-2 rounded-xl border border-purple-800/40">
+                        🔒 Kistan är förseglad. Klara alla 3 uppdrag och se till att ha en fallen gubbe (gravsten 🪦) på ön för att låsa upp kistan.
+                    </div>
+                `;
+            }
+
+            // Bygg statusgränssnittet i sidopanelen
+            UI.charInfo.innerHTML = `
+                <div class="w-full text-left space-y-3.5">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <div>
+                            <span class="text-xl font-bold text-white flex items-center gap-2">
+                                <span class="inline-block w-4 h-4 rounded-full" style="background-color:${c.color}"></span>
+                                ${c.name}
+                            </span>
+                            <span class="text-xs text-emerald-400 font-bold bg-emerald-950/50 px-2 py-0.5 rounded-md mt-1 inline-block">${c.trait}</span>
+                        </div>
+                        <button id="feed-btn" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow-md shadow-amber-950/50 flex items-center gap-1">Ät Mat 🍖</button>
+                    </div>
+                    
+                    <!-- Hälsa (❤️) -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-300">
+                            <span class="flex items-center gap-1">❤️ Hälsa</span> <span>${Math.round(c.health)}%</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2.5 rounded-full mt-1 overflow-hidden border border-slate-800">
+                            <div class="bg-red-500 h-full rounded-full transition-all duration-300" style="width: ${c.health}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hunger (🍖) -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-300">
+                            <span class="flex items-center gap-1">🍖 Hunger</span> 
+                            <span class="${c.hunger < 25 ? 'text-red-400 animate-pulse font-extrabold' : ''}">${Math.round(c.hunger)}%</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2.5 rounded-full mt-1 overflow-hidden border border-slate-800">
+                            <div class="bg-amber-500 h-full rounded-full transition-all duration-300" style="width: ${c.hunger}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Vätska (💧) -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-300">
+                            <span class="flex items-center gap-1">💧 Vätska</span> 
+                            <span class="${c.hydration < 25 ? 'text-sky-400 animate-pulse font-extrabold' : ''}">${Math.round(c.hydration)}%</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2.5 rounded-full mt-1 overflow-hidden border border-slate-800">
+                            <div class="bg-sky-500 h-full rounded-full transition-all duration-300" style="width: ${c.hydration}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Knapp för återupplivning -->
+                    ${reviveButtonHtml}
+                </div>
+            `;
+
+            // Ät Mat-knappen
+            document.getElementById('feed-btn').addEventListener('click', () => {
+                initAudio();
+                if (STATE.resources.food > 0 && STATE.selectedChar.hunger < 100) {
+                    STATE.resources.food--;
+                    STATE.selectedChar.hunger = Math.min(100, STATE.selectedChar.hunger + 50);
+                    createFloatingText("+50 🍖", STATE.selectedChar.x, STATE.selectedChar.y - 20, "#eab308");
+                    playEatSound(); // SPELA ÄTLJUD (smaskande tuggor)
+                    updateResourcesUI();
+                    updateCharUI();
+                } else if (STATE.resources.food <= 0) {
+                    logMessage("Det finns ingen mat kvar i lagret! Skörda bär 🍓 eller fäll vildsvin 🐗.", "error");
+                } else {
+                    logMessage(`${STATE.selectedChar.name} är redan mätt och belåten!`, "info");
+                }
+            });
+
+            // Återuppliva-knappen
+            if (canRevive) {
+                document.getElementById('revive-btn').addEventListener('click', () => {
+                    performRevival();
+                });
+            }
+        }
+
+        // KÖR ÅTERUPPLIVNINGEN
+        function performRevival() {
+            if (STATE.tombstones.length === 0 || STATE.chest.used) return;
+
+            STATE.resources.wood -= 50;
+            STATE.resources.stone -= 50;
+            updateResourcesUI();
+
+            const fallen = STATE.tombstones[0];
+            
+            const restoredChar = new Character(fallen.name, fallen.color, fallen.trait, STATE.chest.x + 30, STATE.chest.y + 10);
+            STATE.chars.push(restoredChar);
+
+            STATE.tombstones = STATE.tombstones.filter(t => t !== fallen);
+            STATE.chest.used = true;
+
+            for(let i=0; i<8; i++) {
+                setTimeout(() => {
+                    createFloatingText("✨ MAGI ✨", STATE.chest.x + (Math.random()*40-20), STATE.chest.y - (Math.random()*40), "#c084fc");
+                }, i * 150);
+            }
+
+            logMessage("🔮 Underverk! Kistan öppnades och " + restoredChar.name + " återvände till de levandes skara!", "success");
+            
+            STATE.selectedChar = restoredChar;
+            updateCharUI();
+            updateQuestsUI();
+        }
+
+        // Loop för att löpande hålla hälsa/mätare färska i sidomenyn
+        setInterval(() => {
+            if (STATE.isRunning && STATE.selectedChar) {
+                const charHtmlStr = UI.charInfo.innerHTML;
+                if(charHtmlStr.includes('Hälsa')) {
+                   updateCharUI(); 
+                }
+            }
+        }, 1000);
+
+        function logMessage(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.textContent = `> ${msg}`;
+            if (type === 'error') div.classList.add('text-red-400', 'font-semibold');
+            else if (type === 'success') div.classList.add('text-emerald-400', 'font-semibold');
+            else if (type === 'event') div.classList.add('text-amber-400', 'font-bold');
+            
+            UI.log.appendChild(div);
+            UI.log.scrollTop = UI.log.scrollHeight;
+        }
+
+        function createFloatingText(text, x, y, color = 'white') {
+            const el = document.createElement('div');
+            el.className = 'floating-text';
+            el.textContent = text;
+            el.style.color = color;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            UI.floatingTexts.appendChild(el);
+            setTimeout(() => el.remove(), 2000);
+        }
+
+        function createRipple(x, y) {
+            const el = document.createElement('div');
+            el.style.position = 'absolute';
+            el.style.left = `${x-10}px`;
+            el.style.top = `${y-10}px`;
+            el.style.width = '20px';
+            el.style.height = '20px';
+            el.style.border = '2px solid rgba(255,255,255,0.5)';
+            el.style.borderRadius = '50%';
+            el.style.pointerEvents = 'none';
+            el.style.animation = 'ping 0.5s cubic-bezier(0, 0, 0.2, 1) forwards';
+            
+            el.animate([
+                { transform: 'scale(0.5)', opacity: 1 },
+                { transform: 'scale(2)', opacity: 0 }
+            ], { duration: 500, easing: 'ease-out' });
+
+            UI.floatingTexts.appendChild(el);
+            setTimeout(() => el.remove(), 500);
+        }
+
+        /** ----- DILEMMAN OCH HÄNDELSER ----- **/
+
+        const EVENTS = [
+            {
+                title: "Kraftig Storm",
+                desc: "Stormvindar piskar ön och lösa grenar flyger genom luften! Ni riskerar att träffas.",
+                options: [
+                    {
+                        text: "Sök omedelbart skydd i era stugor",
+                        action: () => {
+                            if (STATE.buildings.length > 0) {
+                                logMessage("Stormen tjöt utanför, men ni låg säkra i ert skydd.", "success");
+                            } else {
+                                logMessage("Ni saknade skydd! Grenar och bråte haglade över er och skadade era överlevare.", "error");
+                                STATE.chars.forEach(c => { if(!c.isDead) c.health -= 8; });
+                            }
+                        }
+                    },
+                    {
+                        text: "Arbeta vidare och riskera träffas",
+                        action: () => {
+                            logMessage("Ni lyckades samla in extra material, men flygande vrakdelar gav er lätta skråmor.", "error");
+                            STATE.resources.wood += 20;
+                            STATE.chars.forEach(c => { 
+                                if(!c.isDead) { c.health -= 5; c.hunger = Math.max(0, c.hunger - 15); } 
+                            });
+                            updateResourcesUI();
+                        }
+                    }
+                ]
+            },
+            {
+                title: "Vildsvinsflock",
+                desc: "Ett argt och bökande vildsvin har hittat in i erat förråd. Det stångar mot allt!",
+                options: [
+                    {
+                        text: "Gå till motattack (Skjut med geväret!)",
+                        action: () => {
+                            logMessage("Ni avfyrade era gevär och drev bort flocken lekande lätt! Kött bärgades.", "success");
+                            STATE.resources.wood += 0; // Håll fält intakt
+                            STATE.resources.food += 30;
+                            STATE.beastsDefeated++;
+                            updateResourcesUI();
+                            updateQuestsUI();
+                            playShotSound(); // Skottljud på event-val (NYTT)
+                        }
+                    },
+                    {
+                        text: "Låt dem äta ur ert förråd",
+                        action: () => {
+                            logMessage("Vildsvinen lämnade er oskadda men åt upp stora delar av er sparade mat.", "event");
+                            STATE.resources.food = Math.max(0, STATE.resources.food - 15);
+                            updateResourcesUI();
+                        }
+                    }
+                ]
+            },
+            {
+                title: "Strandsatt Trälåda",
+                desc: "Ett gammalt vrakgods i form av en förseglad trälåda har flutit upp på stranden.",
+                options: [
+                    {
+                        text: "Bryt nyfiket upp den",
+                        action: () => {
+                            if (Math.random() > 0.4) {
+                                logMessage("Lådan innehöll gamla plankor och spikar! Fantastiskt fynd.", "success");
+                                STATE.resources.wood += 20;
+                                STATE.resources.stone += 10;
+                                playMineSound(); // Spik/Trä-ljud (NYTT)
+                            } else {
+                                logMessage("Lådan dolde dolda faror. En skadlig sticka infekterade någon lindrigt.", "error");
+                                const alive = STATE.chars.filter(c=>!c.isDead);
+                                if(alive.length > 0) alive[0].health -= 8;
+                            }
+                            updateResourcesUI();
+                        }
+                    },
+                    {
+                        text: "Lämna lådan ifred på stranden",
+                        action: () => {
+                            logMessage("Ni beslutade er för att inte ta några onödiga risker.", "info");
+                        }
+                    }
+                ]
+            }
+        ];
+
+        function triggerRandomEvent() {
+            STATE.isRunning = false; 
+            
+            const ev = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+            UI.eventTitle.textContent = `⚠️ ${ev.title}`;
+            UI.eventDesc.textContent = ev.desc;
+            
+            UI.eventChoices.innerHTML = '';
+            ev.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg transition text-left border border-slate-600";
+                btn.textContent = opt.text;
+                btn.onclick = () => {
+                    UI.eventModal.classList.add('hidden');
+                    opt.action();
+                    STATE.lastTick = performance.now(); 
+                    STATE.isRunning = true;
+                    requestAnimationFrame(gameLoop);
+                };
+                UI.eventChoices.appendChild(btn);
+            });
+
+            UI.eventModal.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            STATE.isRunning = false;
+            document.getElementById('survived-days').textContent = STATE.day;
+            UI.gameOver.classList.remove('hidden');
+        }
+
+        /** ----- NYSKAPANDE & GAME START ----- **/
+        
+        UI.addCharBtn.addEventListener('click', () => {
+            initAudio(); // Förbered ljud
+            if (STATE.chars.length >= 3) return;
+            
+            const name = UI.charName.value.trim() || `Överlevare ${STATE.chars.length + 1}`;
+            const color = UI.charColor.value;
+            const trait = UI.charTrait.value;
+
+            const x = window.innerWidth / 2 + (Math.random()*40-20);
+            const y = window.innerHeight / 2 + (Math.random()*40-20);
+
+            const char = new Character(name, color, trait, x, y);
+            STATE.chars.push(char);
+
+            UI.emptyMsg.style.display = 'none';
+            const li = document.createElement('li');
+            li.className = "flex items-center justify-between bg-slate-800 p-2 rounded animate-fade-in";
+            li.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded-full border border-white" style="background-color: ${color}"></span>
+                    <span class="font-bold">${name}</span>
+                </div>
+                <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">${trait}</span>
+            `;
+            UI.charList.appendChild(li);
+
+            UI.charCount.textContent = STATE.chars.length;
+            UI.charName.value = '';
+
+            if (STATE.chars.length > 0) {
+                UI.startBtn.disabled = false;
+                UI.startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            if (STATE.chars.length >= 3) {
+                UI.addCharBtn.disabled = true;
+                UI.addCharBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                UI.addCharBtn.textContent = "Max antal uppnått";
+            }
+        });
+
+        UI.startBtn.addEventListener('click', () => {
+            if (STATE.chars.length === 0) return;
+            
+            UI.creation.classList.add('hidden');
+            UI.game.classList.remove('hidden');
+            
+            initMap();
+            updateResourcesUI();
+            
+            // Släpp ner karaktärerna i mitten av kartan
+            const centerMarginX = canvas.width / 2;
+            const centerMarginY = canvas.height / 2;
+            STATE.chars.forEach((c, i) => {
+                c.x = centerMarginX + (i * 35 - 35);
+                c.y = centerMarginY;
+            });
+
+            // Välj den första gubben automatiskt vid start
+            STATE.selectedChar = STATE.chars[0];
+            updateCharUI();
+
+            window.focus();
+
+            STATE.isRunning = true;
+            STATE.lastTick = performance.now();
+            requestAnimationFrame(gameLoop);
+            
+            logMessage("Ert skepp har förlist. Ni är strandsatta på en mystisk ö.", "event");
+            logMessage("Tips: Styra den markerade överlevaren med W, A, S, D eller pilarna!");
+            logMessage("Tack vare ert skeppsbrutna gevär 🔫 kan ni försvara er kraftfullt mot vilddjur.");
+            logMessage("Första 2 dagarna är säkra från djur. Etablera ert läger!");
+        });
+
+    </script>
+</body>
+</html>

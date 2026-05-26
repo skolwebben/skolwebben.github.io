@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gevärsskytten</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0f172a; /* Mörk bakgrund */
+            /* Använd ett sikte som muspekare för rätt känsla */
+            cursor: crosshair;
+            user-select: none;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-white font-sans">
+
+    <!-- UI Overlay (Poäng) -->
+    <div class="absolute top-4 left-4 z-10 select-none pointer-events-none">
+        <p class="text-xl text-gray-300 font-bold">Poäng: <span id="scoreEl" class="text-white text-3xl">0</span></p>
+    </div>
+
+    <!-- Startskärm -->
+    <div id="startScreen" class="absolute inset-0 flex items-center justify-center bg-black/80 z-20 transition-opacity duration-300">
+        <div class="bg-slate-800 p-8 rounded-xl text-center shadow-2xl max-w-md border border-slate-600">
+            <h1 class="text-4xl font-bold mb-4 text-blue-400">Gevärsskytten</h1>
+            <p class="mb-6 text-gray-300">Försvara dig! Klicka med musen för att skjuta ditt gevär mot fienderna.</p>
+            <div class="text-left mb-6 text-sm text-gray-400 space-y-2">
+                <p><span class="inline-block w-4 h-4 rounded-full bg-green-400 mr-2"></span> Grön: Vanlig fiende (Långsam)</p>
+                <p><span class="inline-block w-4 h-4 rounded-full bg-yellow-400 mr-2"></span> Gul: Snabb fiende (Måttlig)</p>
+                <p><span class="inline-block w-4 h-4 rounded-full bg-red-500 mr-2"></span> Röd: Tank (Mycket långsam, kräver flera skott)</p>
+            </div>
+            <button id="startBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors shadow-lg">
+                Starta spelet
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Over Skärm -->
+    <div id="gameOverScreen" class="absolute inset-0 flex items-center justify-center bg-black/80 z-20 hidden">
+        <div class="bg-slate-800 p-8 rounded-xl text-center shadow-2xl border border-red-500">
+            <h1 class="text-5xl font-bold mb-2 text-red-500">Spelet är slut!</h1>
+            <p class="mb-6 text-2xl text-gray-200">Din poäng: <span id="finalScore" class="font-bold text-white">0</span></p>
+            <button id="restartBtn" class="bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors shadow-lg">
+                Spela igen
+            </button>
+        </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // UI element
+        const scoreEl = document.getElementById('scoreEl');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalScoreEl = document.getElementById('finalScore');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // Sätt canvas-storlek till fönstrets storlek
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Uppdatera canvas om fönstret ändrar storlek
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Uppdatera spelarens position till mitten igen
+            if (player) {
+                player.x = canvas.width / 2;
+                player.y = canvas.height / 2;
+            }
+        });
+
+        // Musposition för att rikta geväret
+        let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        // Spelvariabler
+        let player;
+        let projectiles = [];
+        let enemies = [];
+        let particles = [];
+        let animationId;
+        let score = 0;
+        let spawnInterval;
+        let gameActive = false;
+
+        // Klass för spelaren
+        class Player {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+            }
+
+            draw() {
+                // Beräkna vinkel mot muspekaren för att rita geväret
+                const angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(angle);
+
+                // Rita geväret (en grå rektangel)
+                ctx.fillStyle = '#64748b'; // Slate 500
+                ctx.fillRect(0, -5, 40, 10);
+
+                // Rita själva spelaren (en cirkel)
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                // Lite detaljer på spelaren
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius - 5, 0, Math.PI * 2, false);
+                ctx.fillStyle = '#1d4ed8'; // Mörkare blå innercirkel
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        // Klass för projektiler (skott)
+        class Projectile {
+            constructor(x, y, radius, color, velocity) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.velocity = velocity;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                // Lägg till ett glödande sken
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+            }
+
+            update() {
+                this.draw();
+                // Återställ skugga så den inte påverkar andra element
+                ctx.shadowBlur = 0; 
+                this.x = this.x + this.velocity.x;
+                this.y = this.y + this.velocity.y;
+            }
+        }
+
+        // Klass för fiender
+        class Enemy {
+            constructor(x, y, radius, color, velocity, health, points) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.velocity = velocity;
+                this.health = health;
+                this.maxHealth = health;
+                this.points = points;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                // Om fienden har mer än 1 liv, rita en hälsomätare eller kontur
+                if (this.maxHealth > 1) {
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${this.health / this.maxHealth})`;
+                    ctx.stroke();
+                }
+            }
+
+            update() {
+                this.draw();
+                this.x = this.x + this.velocity.x;
+                this.y = this.y + this.velocity.y;
+            }
+        }
+
+        // Klass för partiklar (explosioner)
+        const friction = 0.98;
+        class Particle {
+            constructor(x, y, radius, color, velocity) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.velocity = velocity;
+                this.alpha = 1; // Genomskinlighet
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.draw();
+                // Friktion saktar ner partiklarna
+                this.velocity.x *= friction;
+                this.velocity.y *= friction;
+                this.x = this.x + this.velocity.x;
+                this.y = this.y + this.velocity.y;
+                this.alpha -= 0.01; // Blekna ut
+            }
+        }
+
+        // Initiera spelet
+        function init() {
+            player = new Player(canvas.width / 2, canvas.height / 2, 20, '#3b82f6'); // Blå spelare
+            projectiles = [];
+            enemies = [];
+            particles = [];
+            score = 0;
+            scoreEl.innerHTML = score;
+            gameActive = true;
+        }
+
+        // Funktion för att skapa fiender regelbundet
+        function spawnEnemies() {
+            spawnInterval = setInterval(() => {
+                if (!gameActive) return;
+
+                // Variera fiendetyper
+                let radius, color, speedMultiplier, health, points;
+                const randomType = Math.random();
+
+                if (randomType < 0.6) {
+                    // 60% chans: Vanlig fiende (Nu sänkt hastighet till hälften)
+                    radius = 15;
+                    color = '#4ade80'; // Grön
+                    speedMultiplier = 0.5; // Tidigare 1.0
+                    health = 1;
+                    points = 100;
+                } else if (randomType < 0.85) {
+                    // 25% chans: Snabb fiende (Nu sänkt hastighet till hälften)
+                    radius = 10;
+                    color = '#facc15'; // Gul
+                    speedMultiplier = 1.2; // Tidigare 2.5
+                    health = 1;
+                    points = 250;
+                } else {
+                    // 15% chans: Tank (Nu sänkt hastighet till hälften)
+                    radius = 30;
+                    color = '#ef4444'; // Röd
+                    speedMultiplier = 0.2; // Tidigare 0.4
+                    health = 5;
+                    points = 500;
+                }
+
+                let x, y;
+
+                // Slumpa startposition utanför skärmen
+                if (Math.random() < 0.5) {
+                    x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+                    y = Math.random() * canvas.height;
+                } else {
+                    x = Math.random() * canvas.width;
+                    y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+                }
+
+                // Beräkna vinkel mot spelaren
+                const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
+                
+                // Öka svårighetsgraden något över tid (baserat på poäng)
+                const difficultyBoost = 1 + (score / 5000);
+                const velocity = {
+                    x: Math.cos(angle) * speedMultiplier * difficultyBoost,
+                    y: Math.sin(angle) * speedMultiplier * difficultyBoost
+                };
+
+                enemies.push(new Enemy(x, y, radius, color, velocity, health, points));
+            }, 1000); // Skapa en ny fiende varje sekund
+        }
+
+        // Skjutmekanik (Klick)
+        window.addEventListener('mousedown', (e) => {
+            if (!gameActive) return;
+
+            // Räkna ut vinkeln från spelaren till musen
+            const angle = Math.atan2(e.clientY - player.y, e.clientX - player.x);
+            
+            // Hastighet på skottet
+            const speed = 15;
+            const velocity = {
+                x: Math.cos(angle) * speed,
+                y: Math.sin(angle) * speed
+            };
+
+            // Starta skottet från mynningen på "geväret" (ca 40 pixlar ut från centrum)
+            const startX = player.x + Math.cos(angle) * 40;
+            const startY = player.y + Math.sin(angle) * 40;
+
+            projectiles.push(new Projectile(startX, startY, 5, '#fbbf24', velocity)); // Gula skott
+        });
+
+        // Huvudloopen för spelet
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            
+            // Fyll bakgrunden med svag genomskinlighet för en snygg "svans"-effekt på rörelser
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            player.draw();
+
+            // Uppdatera partiklar (explosioner)
+            particles.forEach((particle, index) => {
+                if (particle.alpha <= 0) {
+                    particles.splice(index, 1);
+                } else {
+                    particle.update();
+                }
+            });
+
+            // Uppdatera projektiler
+            projectiles.forEach((projectile, pIndex) => {
+                projectile.update();
+
+                // Ta bort skott som åker utanför skärmen för att spara prestanda
+                if (
+                    projectile.x + projectile.radius < 0 ||
+                    projectile.x - projectile.radius > canvas.width ||
+                    projectile.y + projectile.radius < 0 ||
+                    projectile.y - projectile.radius > canvas.height
+                ) {
+                    setTimeout(() => {
+                        projectiles.splice(pIndex, 1);
+                    }, 0);
+                }
+            });
+
+            // Uppdatera fiender och hantera kollisioner
+            enemies.forEach((enemy, eIndex) => {
+                enemy.update();
+
+                // Kollision mellan Spelare och Fiende = Game Over
+                const distPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+                if (distPlayer - enemy.radius - player.radius < 1) {
+                    gameOver();
+                }
+
+                // Kollision mellan Projektil och Fiende
+                projectiles.forEach((projectile, pIndex) => {
+                    const distProjectile = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+
+                    // Om avståndet är mindre än radierna hoplagda = träff
+                    if (distProjectile - enemy.radius - projectile.radius < 1) {
+                        
+                        // Skapa explosionseffekt (partiklar)
+                        for (let i = 0; i < enemy.radius; i++) {
+                            particles.push(new Particle(
+                                projectile.x, 
+                                projectile.y, 
+                                Math.random() * 3, 
+                                enemy.color, 
+                                {
+                                    x: (Math.random() - 0.5) * (Math.random() * 8),
+                                    y: (Math.random() - 0.5) * (Math.random() * 8)
+                                }
+                            ));
+                        }
+
+                        // Minska fiendens hälsa
+                        enemy.health -= 1;
+
+                        if (enemy.health <= 0) {
+                            // Öka poäng
+                            score += enemy.points;
+                            scoreEl.innerHTML = score;
+
+                            // Ta bort fiende och projektil asynkront för att undvika grafikbuggar
+                            setTimeout(() => {
+                                enemies.splice(eIndex, 1);
+                                projectiles.splice(pIndex, 1);
+                            }, 0);
+                        } else {
+                            // Fienden överlever, men ta bort projektilen och gör fienden lite mindre
+                            enemy.radius -= 2;
+                            setTimeout(() => {
+                                projectiles.splice(pIndex, 1);
+                            }, 0);
+                        }
+                    }
+                });
+            });
+        }
+
+        // Avsluta spelet
+        function gameOver() {
+            gameActive = false;
+            cancelAnimationFrame(animationId);
+            clearInterval(spawnInterval);
+            
+            // Visa Game Over skärmen
+            finalScoreEl.innerText = score;
+            gameOverScreen.classList.remove('hidden');
+            
+            // Liten visuell "smäll" när man dör
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Knapp-events
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            init();
+            animate();
+            spawnEnemies();
+        });
+
+        restartBtn.addEventListener('click', () => {
+            gameOverScreen.classList.add('hidden');
+            init();
+            animate();
+            spawnEnemies();
+        });
+
+    </script>
+</body>
+</html>

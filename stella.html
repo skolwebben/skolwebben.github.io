@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Grand Prix 3D - Pro Racer</title>
+    <!-- Tailwind CSS för snabb och snygg F1-design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js för 3D-motor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts för F1-liknande typsnitt -->
+    <link href="https://fonts.googleapis.com/css2?family=Formula1:wght@400;700;900&family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0b0c;
+            color: #ffffff;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        /* F1-liknande typsnitts-ersättare för extra sportkänsla */
+        .f1-font {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Anpassad röd F1 färg */
+        .bg-f1-red {
+            background-color: #e10600;
+        }
+        .text-f1-red {
+            color: #e10600;
+        }
+        .border-f1-red {
+            borderColor: #e10600;
+        }
+        
+        /* Skarpa racing-kanter */
+        .f1-clip {
+            clip-path: polygon(0 0, 95% 0, 100% 100%, 0% 100%);
+        }
+        .f1-clip-btn {
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+
+        /* Dölj scrollbar */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Canvas-styling */
+        #game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="relative w-screen h-screen">
+
+    <!-- F1 APPLIKATIONENS BAKGRUNDSESTETIK -->
+    <div class="absolute inset-0 bg-radial-at-t from-[#1f1f24] to-[#09090b] z-0"></div>
+
+    <!-- START SKÄRM (INITIAL SETUP) -->
+    <div id="start-screen" class="absolute inset-0 z-50 flex flex-col justify-between p-6 overflow-y-auto bg-[#0b0b0c]/95 backdrop-blur-md">
+        <!-- Topp-banner likt F1-appen -->
+        <div class="flex items-center justify-between border-b-2 border-f1-red pb-4 w-full">
+            <div class="flex items-center gap-3">
+                <div class="bg-f1-red text-white px-3 py-1 font-black text-xl italic tracking-tighter">F1</div>
+                <div class="text-xs uppercase tracking-widest text-zinc-400 font-bold">Official Canvas Simulator</div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs text-zinc-400">SESSION STATUS</span>
+                <span class="block text-green-500 font-bold text-sm">● LIVE</span>
+            </div>
+        </div>
+
+        <!-- Huvudinnehåll -->
+        <div class="max-w-xl mx-auto w-full my-auto py-8">
+            <h1 class="f1-font text-4xl md:text-5xl italic text-white mb-2 text-center">GRAND PRIX <span class="text-f1-red">RIDER 3D</span></h1>
+            <p class="text-zinc-400 text-sm text-center mb-8">Undvik hinder, parera svängarna med centrifugalkraft och kör hem världsmästartiteln!</p>
+
+            <!-- Profilinställning -->
+            <div class="bg-[#15151c] border border-zinc-800 p-6 rounded-lg mb-6 shadow-xl">
+                <h2 class="text-xs uppercase text-zinc-400 font-bold tracking-widest mb-4">FÖRARPROFIL</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-xs text-zinc-400 mb-2">FÖRARNAMN</label>
+                    <input type="text" id="username-input" class="w-full bg-[#1e1e28] border border-zinc-700 focus:border-f1-red text-white font-bold p-3 rounded text-lg outline-none uppercase" placeholder="T.ex. HAMILTON" maxlength="15">
+                </div>
+
+                <!-- Status-tagg om man är World Champion -->
+                <div id="champion-badge" class="hidden bg-yellow-500/10 border border-yellow-500 text-yellow-500 px-3 py-2 rounded text-center font-bold text-xs tracking-wider flex items-center justify-center gap-2">
+                    🏆 OFFICIELL VÄRLDSMÄSTARE (WORLD CHAMPION)
+                </div>
+            </div>
+
+            <!-- SPELINSTÄLLNINGAR -->
+            <div class="space-y-4">
+                <!-- Välj Spelläge -->
+                <div>
+                    <span class="block text-xs text-zinc-400 font-bold tracking-widest mb-2">SPELLÄGE</span>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="setOpponentMode(false)" id="btn-solo" class="py-3 px-4 font-bold text-sm uppercase rounded border-2 border-f1-red bg-f1-red text-white transition duration-200">
+                            Köra Själv (Solo)
+                        </button>
+                        <button onclick="setOpponentMode(true)" id="btn-race" class="py-3 px-4 font-bold text-sm uppercase rounded border-2 border-zinc-700 bg-transparent text-zinc-300 hover:border-zinc-500 transition duration-200">
+                            Tävla (vs AI)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Välj Mästerskapstyp -->
+                <div>
+                    <span class="block text-xs text-zinc-400 font-bold tracking-widest mb-2">MÄSTERSKAP</span>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="setChampionshipType('classic')" id="btn-champ-classic" class="py-3 px-4 font-bold text-xs uppercase rounded border-2 border-f1-red bg-f1-red text-white transition duration-200 text-left">
+                            🏁 Klassisk GP
+                            <span class="block text-[10px] font-normal text-zinc-200 normal-case mt-1">Ett enskilt snabbt race på vald bana.</span>
+                        </button>
+                        <button onclick="setChampionshipType('world')" id="btn-champ-world" class="py-3 px-4 font-bold text-xs uppercase rounded border-2 border-zinc-700 bg-transparent text-zinc-300 hover:border-zinc-500 transition duration-200 text-left">
+                            🏆 World Championship
+                            <span class="block text-[10px] font-normal text-zinc-400 normal-case mt-1">Kvarts-, semi- & final för att bli Världsmästare.</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Välj Bana -->
+                <div>
+                    <span class="block text-xs text-zinc-400 font-bold tracking-widest mb-2">VÄLJ GRAND PRIX BANA (CA 1 MINUT PER RACE)</span>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                        <button id="track-monaco" onclick="selectTrack('monaco')" class="py-2 px-1 text-center font-bold uppercase rounded border border-f1-red bg-f1-red/10 text-white">
+                            🇲🇨 Monaco
+                        </button>
+                        <button id="track-vegas" onclick="selectTrack('vegas')" class="py-2 px-1 text-center font-bold uppercase rounded border border-zinc-800 bg-zinc-900/50 text-zinc-500 cursor-not-allowed" disabled>
+                            🔒 Las Vegas
+                        </button>
+                        <button id="track-miami" onclick="selectTrack('miami')" class="py-2 px-1 text-center font-bold uppercase rounded border border-zinc-800 bg-zinc-900/50 text-zinc-500 cursor-not-allowed" disabled>
+                            🔒 Miami
+                        </button>
+                        <button id="track-abudhabi" onclick="selectTrack('abudhabi')" class="py-2 px-1 text-center font-bold uppercase rounded border border-zinc-800 bg-zinc-900/50 text-zinc-500 cursor-not-allowed" disabled>
+                            🔒 Abu Dhabi
+                        </button>
+                    </div>
+                    <p id="unlock-hint" class="text-[10px] text-zinc-500 mt-2 text-center">Spela ditt första race för att låsa upp de övriga banorna!</p>
+                </div>
+            </div>
+
+            <!-- Start-knapp -->
+            <button onclick="startSimulation()" class="w-full mt-8 bg-f1-red hover:bg-[#c00500] text-white py-4 px-6 f1-font text-lg italic tracking-wider transition-all duration-300 transform hover:scale-105 shadow-lg shadow-red-600/20 flex items-center justify-center gap-2">
+                STARTA RACE <span class="text-xl">🏁</span>
+            </button>
+        </div>
+
+        <!-- Botten-sektion (Topplista + Statistik) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full border-t border-zinc-800 pt-6 mt-4">
+            <!-- Lokala Highscores -->
+            <div class="bg-[#111115] p-4 rounded border border-zinc-800">
+                <h3 class="text-xs uppercase font-bold text-f1-red mb-3 tracking-widest">🏆 TOPPLISTA (LEADERBOARD)</h3>
+                <div id="leaderboard-list" class="space-y-1.5 text-xs text-zinc-300">
+                    <!-- Fylls dynamiskt -->
+                    <p class="text-zinc-500 italic">Inga sparade tider än. Bli den första!</p>
+                </div>
+            </div>
+            
+            <!-- Spelkontroller & Info -->
+            <div class="bg-[#111115] p-4 rounded border border-zinc-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xs uppercase font-bold text-zinc-400 mb-3 tracking-widest">🎮 NYA KONTROLLER & SVÄNGAR</h3>
+                    <ul class="text-xs text-zinc-400 space-y-1.5 list-disc pl-4">
+                        <li>Håll <span class="text-white font-bold">W / UPP PIL</span> för att gasa framåt.</li>
+                        <li>När banan svänger trycks du utåt av <span class="text-f1-red font-bold">centrifugalkraften</span>!</li>
+                        <li>Du måste aktivt styra emot (<span class="text-white font-bold">A / D</span>) för att ligga kvar på asfalten.</li>
+                        <li>Om du glider ut i gräset (utanför röd/vita curbs) bromsas bilen ner kraftigt till max 80 km/h!</li>
+                    </ul>
+                </div>
+                <div class="text-[10px] text-zinc-600 mt-4 border-t border-zinc-900 pt-2">
+                    Simulatorn har uppdaterats med längre banor (ca 1 minuts körtid vid perfekt körning).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HUD (GAME IN-PLAY INTERFACE) -->
+    <div id="hud" class="hidden absolute inset-0 z-30 pointer-events-none flex flex-col justify-between p-4 md:p-6">
+        <!-- Topp-data-panel -->
+        <div class="flex justify-between items-start w-full">
+            <!-- Vänster: Förarinformation & Varv/Position -->
+            <div class="flex flex-col gap-2 pointer-events-auto">
+                <div class="bg-[#0b0b0c]/90 border-l-4 border-f1-red p-3 rounded-r shadow-xl flex items-center gap-4">
+                    <div>
+                        <span class="block text-[10px] text-zinc-400 tracking-wider">FÖRARE</span>
+                        <span id="hud-username" class="f1-font text-lg text-white">RACER</span>
+                    </div>
+                    <div id="hud-champ-crown" class="hidden text-xl">🏆</div>
+                </div>
+
+                <div class="bg-[#0b0b0c]/90 p-3 rounded shadow-xl grid grid-cols-2 gap-4 text-center">
+                    <div>
+                        <span class="block text-[9px] text-zinc-400 tracking-wider">MÄSTERSKAP</span>
+                        <span id="hud-champ-type" class="f1-font text-xs text-white">CLASSIC GP</span>
+                    </div>
+                    <div>
+                        <span class="block text-[9px] text-zinc-400 tracking-wider">BANA</span>
+                        <span id="hud-track-name" class="f1-font text-xs text-yellow-500">MONACO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mitten: Championship Progression -->
+            <div id="hud-tournament-flow" class="hidden bg-[#0b0b0c]/90 p-3 rounded shadow-xl text-center pointer-events-auto">
+                <span class="block text-[10px] text-zinc-400 tracking-wider">CHAMPIONSHIP STATUS</span>
+                <div class="flex items-center gap-2 mt-1">
+                    <span id="stage-quarter" class="text-xs px-2 py-0.5 rounded font-black bg-zinc-800 text-zinc-400">KVARTSFINAL</span>
+                    <span class="text-zinc-600">→</span>
+                    <span id="stage-semi" class="text-xs px-2 py-0.5 rounded font-black bg-zinc-800 text-zinc-400">SEMIFINAL</span>
+                    <span class="text-zinc-600">→</span>
+                    <span id="stage-final" class="text-xs px-2 py-0.5 rounded font-black bg-zinc-800 text-zinc-400">FINAL</span>
+                </div>
+            </div>
+
+            <!-- Höger: Tid, Hastighet och Distans samt Omstartsknapp -->
+            <div class="flex flex-col gap-3 items-end">
+                <div class="bg-[#0b0b0c]/90 p-4 rounded shadow-xl border-t border-r border-zinc-800 text-right min-w-[140px] pointer-events-auto">
+                    <div class="mb-2">
+                        <span class="block text-[9px] text-zinc-400 tracking-wider">HASTIGHET</span>
+                        <span id="hud-speed" class="f1-font text-2xl text-white">0</span> <span class="text-xs text-f1-red font-bold">KM/H</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="block text-[9px] text-zinc-400 tracking-wider">STRÄCKA</span>
+                        <span id="hud-distance" class="f1-font text-xl text-zinc-100">0</span> <span class="text-xs text-zinc-400">m</span>
+                    </div>
+                    <div>
+                        <span class="block text-[9px] text-zinc-400 tracking-wider">TID</span>
+                        <span id="hud-time" class="f1-font text-lg text-green-400 font-mono">0.00s</span>
+                    </div>
+                </div>
+                
+                <!-- Gnistrande Omstartsknapp i F1-applikationsstil -->
+                <button onclick="restartCurrentRace()" class="pointer-events-auto bg-[#1a1a24]/90 hover:bg-f1-red border border-zinc-700 hover:border-f1-red text-white px-4 py-2 rounded font-bold text-xs tracking-wider transition-all duration-200 flex items-center gap-1.5 shadow-lg">
+                    🔄 STARTA OM
+                </button>
+            </div>
+        </div>
+
+        <!-- Botten: Speciell Placering/Resultat-ticker i realtid -->
+        <div class="flex justify-between items-end w-full">
+            <!-- Vänster botten: Aktuell position om man kör mot AI -->
+            <div id="hud-position-box" class="hidden bg-[#0b0b0c]/90 p-3 rounded shadow-xl border-l-4 border-yellow-500 pointer-events-auto">
+                <span class="block text-[9px] text-zinc-400 tracking-wider">POSITION</span>
+                <span id="hud-pos-rank" class="f1-font text-3xl text-yellow-500 italic">1<span class="text-sm">/10</span></span>
+            </div>
+
+            <!-- Mobilkontroller -->
+            <div class="flex gap-4 pointer-events-auto md:hidden mx-auto mb-2">
+                <button id="touch-left" class="w-16 h-16 bg-zinc-800/80 active:bg-f1-red rounded-full flex items-center justify-center text-2xl font-black text-white border border-zinc-700 select-none">◀</button>
+                <div class="flex flex-col gap-2">
+                    <button id="touch-gas" class="w-16 h-10 bg-green-600/80 active:bg-green-500 rounded flex items-center justify-center text-sm font-black text-white border border-zinc-700 select-none">GAS</button>
+                    <button id="touch-brake" class="w-16 h-10 bg-red-600/80 active:bg-red-500 rounded flex items-center justify-center text-sm font-black text-white border border-zinc-700 select-none">BROMS</button>
+                </div>
+                <button id="touch-right" class="w-16 h-16 bg-zinc-800/80 active:bg-f1-red rounded-full flex items-center justify-center text-2xl font-black text-white border border-zinc-700 select-none">▶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPEL STATUS SKÄRMAR (PAUS, KRASCH, SEGER) -->
+    <div id="game-status-screen" class="hidden absolute inset-0 z-40 bg-[#0b0b0c]/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+        <div class="max-w-md w-full bg-[#15151c] border border-zinc-800 rounded-lg p-8 shadow-2xl relative overflow-hidden">
+            <!-- Estetiska hörn i rött -->
+            <div class="absolute top-0 left-0 w-2 h-20 bg-f1-red"></div>
+            <div class="absolute top-0 left-0 w-20 h-2 bg-f1-red"></div>
+            
+            <span id="status-subtitle" class="block text-xs text-zinc-400 font-bold tracking-widest mb-2 uppercase">RESULTAT</span>
+            <h2 id="status-title" class="f1-font text-3xl italic text-white mb-6">RACE COMPLETED</h2>
+
+            <div class="bg-[#1e1e28] p-4 rounded mb-6 text-left space-y-2">
+                <div class="flex justify-between border-b border-zinc-800 pb-1.5">
+                    <span class="text-xs text-zinc-400">FÖRARE:</span>
+                    <span id="status-driver" class="text-xs font-bold text-white uppercase">-</span>
+                </div>
+                <div class="flex justify-between border-b border-zinc-800 pb-1.5">
+                    <span class="text-xs text-zinc-400">GRAND PRIX BANA:</span>
+                    <span id="status-track" class="text-xs font-bold text-yellow-500 uppercase">-</span>
+                </div>
+                <div class="flex justify-between border-b border-zinc-800 pb-1.5">
+                    <span class="text-xs text-zinc-400">TID:</span>
+                    <span id="status-time" class="text-xs font-bold text-white font-mono">-</span>
+                </div>
+                <div class="flex justify-between border-b border-zinc-800 pb-1.5">
+                    <span class="text-xs text-zinc-400">DISTANS:</span>
+                    <span id="status-distance" class="text-xs font-bold text-zinc-300">-</span>
+                </div>
+                <div id="status-pos-row" class="flex justify-between border-b border-zinc-800 pb-1.5">
+                    <span class="text-xs text-zinc-400">SLUTPOSITION:</span>
+                    <span id="status-position" class="text-xs font-bold text-yellow-500">-</span>
+                </div>
+                <div id="tournament-outcome" class="hidden flex flex-col gap-1 p-2 bg-f1-red/10 border border-f1-red/30 rounded mt-2">
+                    <span class="text-[10px] text-f1-red font-bold tracking-wider uppercase">VÄRLDSMÄSTERSKAP UPPDATERING</span>
+                    <p id="tournament-message" class="text-xs text-zinc-200"></p>
+                </div>
+            </div>
+
+            <!-- Knappar -->
+            <div class="space-y-3">
+                <button id="status-action-btn" onclick="handleStatusAction()" class="w-full bg-f1-red hover:bg-[#c00500] text-white py-3 px-6 font-bold uppercase tracking-wider text-xs transition-colors">
+                    NÄSTA RUNDA / SPELA IGEN
+                </button>
+                <button onclick="returnToMainMenu()" class="w-full bg-[#2a2a35] hover:bg-zinc-700 text-zinc-300 py-3 px-6 font-bold uppercase tracking-wider text-xs transition-colors">
+                    HUVUDMENY 🏁
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANVAS FÖR TRE-D-GRAFIK -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- HUVUDSKRIPT - SPELMOTOR (THREE.JS) -->
+    <script>
+        // SPELSTATE / KONFIGURATION
+        let userProfile = {
+            username: "ANONYM RACER",
+            isWorldChampion: false,
+            hasPlayedOnce: false,
+            highscores: [] // Sparas i localStorage
+        };
+
+        // Inställda banlängder för att ge ca 1 minuts speltid (motsvarar runt 5400m till 7500m vid maxhastighet)
+        const TRACKS = {
+            monaco: { name: "Monaco GP", color: 0x3b82f6, roadColor: 0x27272a, length: 5400, turns: 0.15, difficulty: "Lätt" },
+            vegas: { name: "Las Vegas GP", color: 0xec4899, roadColor: 0x18181b, length: 6000, turns: 0.25, difficulty: "Medium" },
+            miami: { name: "Miami GP", color: 0x14b8a6, roadColor: 0x22252a, length: 6600, turns: 0.35, difficulty: "Svår" },
+            abudhabi: { name: "Abu Dhabi GP", color: 0xf59e0b, roadColor: 0x1e1e1e, length: 7500, turns: 0.40, difficulty: "Expert" }
+        };
+
+        let selectedTrackKey = "monaco";
+        let isOpponentMode = false; // true = race mot AI, false = solo
+        let championshipType = "classic"; // 'classic' eller 'world'
+        
+        // World Championship State
+        let tournamentStage = "quarter"; // 'quarter', 'semi', 'final'
+        
+        // Spelets fysik- och körtillstånd
+        let isPlaying = false;
+        let gameTime = 0;
+        let speed = 0; // Nuvarande hastighet (enheter per frame)
+        let distanceCovered = 0;
+        let playerX = 0; // Vänster/höger-position (-12 till +12 ungefär)
+        let playerY = 0.5;
+        let playerZ = 0; // Kommer att bli negativ (kör framåt längs -Z)
+        const maxSpeed = 1.5;
+        const acceleration = 0.02;
+        const friction = 0.008;
+        
+        // Styrkontroller
+        let keys = { ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false, KeyA: false, KeyD: false, KeyW: false, KeyS: false };
+        let touchSteer = 0; // -1 till 1
+        let touchGas = false;
+        let touchBrake = false;
+
+        // Three.js globala element
+        let scene, camera, renderer;
+        let mainCar;
+        let aiCars = [];
+        let trackSegments = [];
+        let obstacles = [];
+        let sceneryElements = [];
+        let ambientLight, dirLight;
+        
+        // Variabler för spel-loop
+        let lastFrameTime = 0;
+
+        // Läs in profil vid start
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+            updateUI();
+            initThreeJS();
+            animate();
+        });
+
+        // Hämta sparad data
+        function loadProfile() {
+            const saved = localStorage.getItem('f1_pro_racer_profile');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    userProfile.username = parsed.username || "RACER";
+                    userProfile.isWorldChampion = parsed.isWorldChampion || false;
+                    userProfile.hasPlayedOnce = parsed.hasPlayedOnce || false;
+                    userProfile.highscores = parsed.highscores || [];
+                } catch (e) {
+                    console.error("Fel vid laddning av profil:", e);
+                }
+            }
+            
+            document.getElementById('username-input').value = userProfile.username;
+            if (userProfile.isWorldChampion) {
+                document.getElementById('champion-badge').classList.remove('hidden');
+            }
+            
+            updateTrackLocks();
+            renderLeaderboard();
+        }
+
+        // Spara profil till webbläsaren
+        function saveProfile() {
+            localStorage.setItem('f1_pro_racer_profile', JSON.stringify(userProfile));
+        }
+
+        // Uppdatera banornas lås-status
+        function updateTrackLocks() {
+            const hasPlayed = userProfile.hasPlayedOnce;
+            
+            const list = ['vegas', 'miami', 'abudhabi'];
+            list.forEach(trackKey => {
+                const btn = document.getElementById(`track-${trackKey}`);
+                if (hasPlayed) {
+                    btn.disabled = false;
+                    btn.classList.remove('text-zinc-500', 'cursor-not-allowed', 'bg-zinc-900/50', 'border-zinc-800');
+                    btn.classList.add('text-zinc-200', 'hover:border-zinc-400', 'bg-zinc-800/30');
+                    // Ta bort hänglås-symbolen i texten
+                    if (btn.innerText.includes('🔒')) {
+                        btn.innerText = btn.innerText.replace('🔒 ', '🏎️ ');
+                    }
+                } else {
+                    btn.disabled = true;
+                }
+            });
+
+            if (hasPlayed) {
+                document.getElementById('unlock-hint').innerText = "Trevligt! Du har låst upp alla banor.";
+                document.getElementById('unlock-hint').classList.remove('text-zinc-500');
+                document.getElementById('unlock-hint').classList.add('text-green-500');
+            }
+        }
+
+        // Sätt inställningar för spelläge
+        function setOpponentMode(withOpponents) {
+            isOpponentMode = withOpponents;
+            const btnSolo = document.getElementById('btn-solo');
+            const btnRace = document.getElementById('btn-race');
+            
+            if (withOpponents) {
+                btnRace.className = "py-3 px-4 font-bold text-sm uppercase rounded border-2 border-f1-red bg-f1-red text-white transition duration-200";
+                btnSolo.className = "py-3 px-4 font-bold text-sm uppercase rounded border-2 border-zinc-700 bg-transparent text-zinc-300 hover:border-zinc-500 transition duration-200";
+            } else {
+                btnSolo.className = "py-3 px-4 font-bold text-sm uppercase rounded border-2 border-f1-red bg-f1-red text-white transition duration-200";
+                btnRace.className = "py-3 px-4 font-bold text-sm uppercase rounded border-2 border-zinc-700 bg-transparent text-zinc-300 hover:border-zinc-500 transition duration-200";
+            }
+        }
+
+        // Sätt mästerskapstyp
+        function setChampionshipType(type) {
+            championshipType = type;
+            const btnClassic = document.getElementById('btn-champ-classic');
+            const btnWorld = document.getElementById('btn-champ-world');
+            
+            if (type === 'world') {
+                btnWorld.className = "py-3 px-4 font-bold text-xs uppercase rounded border-2 border-f1-red bg-f1-red text-white transition duration-200 text-left";
+                btnClassic.className = "py-3 px-4 font-bold text-xs uppercase rounded border-2 border-zinc-700 bg-transparent text-zinc-300 hover:border-zinc-500 transition duration-200 text-left";
+                setOpponentMode(true);
+            } else {
+                btnClassic.className = "py-3 px-4 font-bold text-xs uppercase rounded border-2 border-f1-red bg-f1-red text-white transition duration-200 text-left";
+                btnWorld.className = "py-3 px-4 font-bold text-xs uppercase rounded border-2 border-zinc-700 bg-transparent text-zinc-300 hover:border-zinc-500 transition duration-200 text-left";
+            }
+        }
+
+        // Välj bana
+        function selectTrack(trackKey) {
+            selectedTrackKey = trackKey;
+            
+            // Återställ alla knappar
+            const tracksKeys = Object.keys(TRACKS);
+            tracksKeys.forEach(k => {
+                const btn = document.getElementById(`track-${k}`);
+                if (!btn.disabled) {
+                    btn.className = "py-2 px-1 text-center font-bold uppercase rounded border border-zinc-700 bg-transparent text-zinc-300";
+                }
+            });
+            
+            // Markera vald
+            const activeBtn = document.getElementById(`track-${trackKey}`);
+            activeBtn.className = "py-2 px-1 text-center font-bold uppercase rounded border border-f1-red bg-f1-red/10 text-white";
+        }
+
+        // Uppdatera gränssnittet i början
+        function updateUI() {
+            document.getElementById('hud-username').innerText = userProfile.username;
+            if (userProfile.isWorldChampion) {
+                document.getElementById('hud-champ-crown').classList.remove('hidden');
+            } else {
+                document.getElementById('hud-champ-crown').classList.add('hidden');
+            }
+        }
+
+        // Rita ut topplistan baserat på lokala värden
+        function renderLeaderboard() {
+            const listContainer = document.getElementById('leaderboard-list');
+            listContainer.innerHTML = '';
+            
+            if (!userProfile.highscores || userProfile.highscores.length === 0) {
+                listContainer.innerHTML = '<p class="text-zinc-500 italic">Inga sparade tider än. Kör ett race!</p>';
+                return;
+            }
+
+            const sorted = [...userProfile.highscores].sort((a, b) => a.time - b.time).slice(0, 5);
+            
+            sorted.forEach((score, index) => {
+                const row = document.createElement('div');
+                row.className = "flex justify-between items-center py-1 border-b border-zinc-900 last:border-0";
+                
+                const isWinner = score.isChampion ? "🏆 " : "";
+                
+                row.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-f1-red w-3">${index + 1}.</span>
+                        <span class="uppercase font-bold text-white">${isWinner}${score.name}</span>
+                        <span class="text-[9px] bg-zinc-800 px-1 py-0.2 text-zinc-400">${score.track.toUpperCase()}</span>
+                    </div>
+                    <div class="font-mono text-white font-bold">${score.time.toFixed(2)}s</div>
+                `;
+                listContainer.appendChild(row);
+            });
+        }
+
+        // STARTA SPELET / SIMULATORN
+        function startSimulation() {
+            const val = document.getElementById('username-input').value.trim();
+            if (val) {
+                userProfile.username = val.toUpperCase();
+            } else {
+                userProfile.username = "F1 SPEEDSTER";
+            }
+            saveProfile();
+            updateUI();
+
+            document.getElementById('hud-username').innerText = userProfile.username;
+            document.getElementById('hud-track-name').innerText = TRACKS[selectedTrackKey].name;
+            
+            if (championshipType === 'world') {
+                tournamentStage = "quarter";
+                document.getElementById('hud-champ-type').innerText = "W. CHAMPIONSHIP";
+                document.getElementById('hud-tournament-flow').classList.remove('hidden');
+                updateTournamentUI();
+            } else {
+                document.getElementById('hud-champ-type').innerText = "CLASSIC GP";
+                document.getElementById('hud-tournament-flow').classList.add('hidden');
+            }
+
+            if (isOpponentMode) {
+                document.getElementById('hud-position-box').classList.remove('hidden');
+            } else {
+                document.getElementById('hud-position-box').classList.add('hidden');
+            }
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('hud').classList.remove('hidden');
+
+            buildF1Track();
+            resetRace();
+            isPlaying = true;
+        }
+
+        // Uppdatera VM-visualiseringen
+        function updateTournamentUI() {
+            const sq = document.getElementById('stage-quarter');
+            const ss = document.getElementById('stage-semi');
+            const sf = document.getElementById('stage-final');
+            
+            sq.className = "text-xs px-2 py-0.5 rounded font-black bg-zinc-800 text-zinc-500";
+            ss.className = "text-xs px-2 py-0.5 rounded font-black bg-zinc-800 text-zinc-500";
+            sf.className = "text-xs px-2 py-0.5 rounded font-black bg-zinc-800 text-zinc-500";
+
+            if (tournamentStage === 'quarter') {
+                sq.className = "text-xs px-2 py-0.5 rounded font-black bg-f1-red text-white animate-pulse";
+            } else if (tournamentStage === 'semi') {
+                ss.className = "text-xs px-2 py-0.5 rounded font-black bg-f1-red text-white animate-pulse";
+                sq.className = "text-xs px-2 py-0.5 rounded font-black bg-green-900 text-green-300";
+            } else if (tournamentStage === 'final') {
+                sf.className = "text-xs px-2 py-0.5 rounded font-black bg-f1-red text-white animate-pulse";
+                sq.className = "text-xs px-2 py-0.5 rounded font-black bg-green-900 text-green-300";
+                ss.className = "text-xs px-2 py-0.5 rounded font-black bg-green-900 text-green-300";
+            }
+        }
+
+        // RETUR TILL MENYN
+        function returnToMainMenu() {
+            document.getElementById('game-status-screen').classList.add('hidden');
+            document.getElementById('hud').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            isPlaying = false;
+            
+            loadProfile();
+            updateUI();
+        }
+
+        // SPELMEKANIK, ÅTERSTÄLLNING & LIVE RESTART
+        function resetRace() {
+            speed = 0;
+            distanceCovered = 0;
+            playerX = 0;
+            playerZ = 0;
+            gameTime = 0;
+
+            if (mainCar) {
+                mainCar.position.set(0, playerY, 0);
+                mainCar.rotation.set(0, Math.PI, 0); // KORRIGERAT: Startar vänd 180 grader för att peka nedåt -Z (framåt)
+            }
+
+            spawnObstacles();
+            if (isOpponentMode) {
+                spawnAICars();
+            } else {
+                aiCars.forEach(c => scene.remove(c.mesh));
+                aiCars = [];
+            }
+        }
+
+        // Nystart under pågående race
+        function restartCurrentRace() {
+            buildF1Track();
+            resetRace();
+            isPlaying = true;
+            document.getElementById('game-status-screen').classList.add('hidden');
+        }
+
+        // SKAPA 3D-MILJÖ MED THREE.JS
+        function initThreeJS() {
+            const canvas = document.getElementById('game-canvas');
+            
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x050508);
+            scene.fog = new THREE.FogExp2(0x050508, 0.015);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(20, 40, -20); // Anpassad belysning för den omvända axeln
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            scene.add(dirLight);
+
+            mainCar = createF1Car(0xff0000); // Röd F1-bil till spelaren
+            scene.add(mainCar);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // SKAPA EN F1-BIL I 3D
+        function createF1Car(bodyColor) {
+            const carGroup = new THREE.Group();
+
+            const chassisGeo = new THREE.BoxGeometry(1.2, 0.3, 3.2);
+            const chassisMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.2 });
+            const chassis = new THREE.Mesh(chassisGeo, chassisMat);
+            chassis.position.y = 0.25;
+            chassis.castShadow = true;
+            carGroup.add(chassis);
+
+            const noseGeo = new THREE.BoxGeometry(0.7, 0.15, 1.4);
+            const nose = new THREE.Mesh(noseGeo, chassisMat);
+            nose.position.set(0, 0.18, 1.8);
+            nose.castShadow = true;
+            carGroup.add(nose);
+
+            const frontWingGeo = new THREE.BoxGeometry(2.0, 0.05, 0.35);
+            const wingMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5 });
+            const frontWing = new THREE.Mesh(frontWingGeo, wingMat);
+            frontWing.position.set(0, 0.1, 2.4);
+            frontWing.castShadow = true;
+            carGroup.add(frontWing);
+
+            const rearWingGeo = new THREE.BoxGeometry(1.8, 0.05, 0.45);
+            const rearWing = new THREE.Mesh(rearWingGeo, wingMat);
+            rearWing.position.set(0, 0.9, -1.5);
+            rearWing.castShadow = true;
+            carGroup.add(rearWing);
+
+            const rearWingSupportGeo = new THREE.BoxGeometry(0.1, 0.7, 0.1);
+            const supportL = new THREE.Mesh(rearWingSupportGeo, wingMat);
+            supportL.position.set(-0.3, 0.5, -1.4);
+            const supportR = supportL.clone();
+            supportR.position.x = 0.3;
+            carGroup.add(supportL, supportR);
+
+            const cockpitGeo = new THREE.SphereGeometry(0.4, 8, 8);
+            const cockpitMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1 });
+            const cockpit = new THREE.Mesh(cockpitGeo, cockpitMat);
+            cockpit.scale.set(1, 1, 1.8);
+            cockpit.position.set(0, 0.45, -0.2);
+            carGroup.add(cockpit);
+
+            const wheelGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.5, 12);
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+            
+            const positions = [
+                [-0.8, 0.22, 1.1],
+                [0.8, 0.22, 1.1],
+                [-0.85, 0.22, -1.0],
+                [0.85, 0.22, -1.0]
+            ];
+
+            positions.forEach(pos => {
+                const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+                wheel.rotation.z = Math.PI / 2;
+                wheel.position.set(pos[0], pos[1], pos[2]);
+                wheel.castShadow = true;
+                carGroup.add(wheel);
+            });
+
+            return carGroup;
+        }
+
+        // BYGG HELA BANAN MED SMIDIGA SVÄNGAR (BYGGS LÄNGS NEGATIVA Z)
+        function buildF1Track() {
+            trackSegments.forEach(seg => scene.remove(seg.mesh));
+            trackSegments = [];
+
+            sceneryElements.forEach(el => scene.remove(el));
+            sceneryElements = [];
+
+            const trackConfig = TRACKS[selectedTrackKey];
+            const segLength = 40;
+            const totalSegs = Math.ceil(trackConfig.length / segLength) + 5;
+            
+            for (let i = 0; i < totalSegs; i++) {
+                const segZ = -i * segLength; // Byggs i negativ riktning
+                
+                // Kurv-beräkning (Slumpmässiga men mjuka svängar baserade på vald svårighetsgrad)
+                const turnMultiplier = trackConfig.turns;
+                let curveX = Math.sin(i * 0.15) * 7 * turnMultiplier;
+                
+                // Lägg till extra sväng-variation för Las Vegas, Miami och Abu Dhabi
+                if (selectedTrackKey === 'vegas') {
+                    curveX += Math.cos(i * 0.08) * 12;
+                } else if (selectedTrackKey === 'miami') {
+                    curveX += Math.sin(i * 0.10) * 15 + Math.cos(i * 0.03) * 8;
+                } else if (selectedTrackKey === 'abudhabi') {
+                    curveX += Math.sin(i * 0.05) * 22 + Math.sin(i * 0.12) * 10;
+                } else {
+                    // Monaco (S-kurvor och hårnålar)
+                    curveX += Math.sin(i * 0.07) * 8;
+                }
+
+                // Väg-panel (Asfalt)
+                const roadGeo = new THREE.BoxGeometry(24, 0.2, segLength);
+                const roadMat = new THREE.MeshStandardMaterial({ 
+                    color: trackConfig.roadColor, 
+                    roughness: 0.8 
+                });
+                const roadMesh = new THREE.Mesh(roadGeo, roadMat);
+                roadMesh.position.set(curveX, 0, segZ);
+                roadMesh.receiveShadow = true;
+                scene.add(roadMesh);
+
+                // Curbs på sidorna (Röd/Vita banmarkeringar)
+                const curbGeo = new THREE.BoxGeometry(1.2, 0.3, segLength);
+                const isEven = i % 2 === 0;
+                const curbMat = new THREE.MeshStandardMaterial({ 
+                    color: isEven ? 0xe10600 : 0xffffff,
+                    roughness: 0.5
+                });
+
+                const curbL = new THREE.Mesh(curbGeo, curbMat);
+                curbL.position.set(curveX - 12, 0.05, segZ);
+                const curbR = new THREE.Mesh(curbGeo, curbMat);
+                curbR.position.set(curveX + 12, 0.05, segZ);
+                
+                scene.add(curbL);
+                scene.add(curbR);
+
+                trackSegments.push({
+                    index: i,
+                    x: curveX,
+                    z: segZ,
+                    mesh: roadMesh,
+                    curbL: curbL,
+                    curbR: curbR
+                });
+
+                // Lägg till F1-reklam och master på sidorna
+                if (i % 2 === 0) {
+                    createF1Scenery(curveX, segZ, trackConfig.color);
+                }
+            }
+        }
+
+        function createF1Scenery(roadX, roadZ, themeColor) {
+            const billboardGroup = new THREE.Group();
+            const legGeo = new THREE.BoxGeometry(0.2, 4, 0.2);
+            const legMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+            const leg = new THREE.Mesh(legGeo, legMat);
+            leg.position.y = 2;
+            billboardGroup.add(leg);
+
+            const boardGeo = new THREE.BoxGeometry(8, 2, 0.3);
+            const boardMat = new THREE.MeshStandardMaterial({ color: themeColor, roughness: 0.5 });
+            const board = new THREE.Mesh(boardGeo, boardMat);
+            board.position.y = 4;
+            billboardGroup.add(board);
+
+            const textPlatGeo = new THREE.BoxGeometry(7.6, 1.6, 0.35);
+            const textPlatMat = new THREE.MeshStandardMaterial({ color: 0x0c0c0f });
+            const textPlat = new THREE.Mesh(textPlatGeo, textPlatMat);
+            textPlat.position.set(0, 4, 0.02);
+            billboardGroup.add(textPlat);
+
+            billboardGroup.position.set(roadX + 16, 0, roadZ);
+            scene.add(billboardGroup);
+            sceneryElements.push(billboardGroup);
+
+            // Belysningsmast
+            const lightGroup = new THREE.Group();
+            const poleGeo = new THREE.CylinderGeometry(0.15, 0.3, 8, 8);
+            const pole = new THREE.Mesh(poleGeo, legMat);
+            pole.position.y = 4;
+            lightGroup.add(pole);
+
+            const spotlightGeo = new THREE.BoxGeometry(2, 0.5, 1);
+            const spotMat = new THREE.MeshStandardMaterial({ color: 0x555555, emissive: 0xffffff, emissiveIntensity: 0.8 });
+            const spotlight = new THREE.Mesh(spotlightGeo, spotMat);
+            spotlight.position.set(1, 8, 0);
+            spotlight.rotation.z = -0.3;
+            lightGroup.add(spotlight);
+
+            lightGroup.position.set(roadX - 16, 0, roadZ);
+            scene.add(lightGroup);
+            sceneryElements.push(lightGroup);
+        }
+
+        // GENERERA HINDER
+        function spawnObstacles() {
+            obstacles.forEach(o => scene.remove(o.mesh));
+            obstacles = [];
+
+            const trackConfig = TRACKS[selectedTrackKey];
+            const numObstacles = Math.floor(trackConfig.length / 65);
+
+            for (let i = 0; i < numObstacles; i++) {
+                const obsZ = -(200 + (i * 65) + Math.random() * 30); // Placera på negativ Z
+                if (Math.abs(obsZ) >= trackConfig.length - 150) break;
+
+                const seg = getSegmentAt(obsZ);
+                const roadX = seg ? seg.x : 0;
+                const offsetX = (Math.random() - 0.5) * 16;
+
+                const isBarrier = Math.random() > 0.45;
+                let obsMesh;
+
+                if (isBarrier) {
+                    const group = new THREE.Group();
+                    const partGeo = new THREE.BoxGeometry(3, 1.2, 1.5);
+                    const partMat = new THREE.MeshStandardMaterial({ color: 0xe10600, roughness: 0.7 });
+                    
+                    const part1 = new THREE.Mesh(partGeo, partMat);
+                    part1.castShadow = true;
+                    group.add(part1);
+
+                    const stripeGeo = new THREE.BoxGeometry(3.1, 0.3, 1.6);
+                    const stripeMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+                    const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+                    stripe.position.y = 0.2;
+                    group.add(stripe);
+
+                    group.position.set(roadX + offsetX, 0.6, obsZ);
+                    scene.add(group);
+                    obsMesh = group;
+                } else {
+                    const group = new THREE.Group();
+                    const coneGeo = new THREE.ConeGeometry(0.5, 1.4, 8);
+                    const coneMat = new THREE.MeshStandardMaterial({ color: 0xffa500, roughness: 0.3 });
+                    const cone = new THREE.Mesh(coneGeo, coneMat);
+                    cone.position.y = 0.7;
+                    cone.castShadow = true;
+                    group.add(cone);
+
+                    const baseGeo = new THREE.BoxGeometry(1.2, 0.1, 1.2);
+                    const baseMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+                    const base = new THREE.Mesh(baseGeo, baseMat);
+                    base.position.y = 0.05;
+                    group.add(base);
+
+                    group.position.set(roadX + offsetX, 0, obsZ);
+                    scene.add(group);
+                    obsMesh = group;
+                }
+
+                obstacles.push({
+                    x: roadX + offsetX,
+                    z: obsZ,
+                    type: isBarrier ? 'barrier' : 'cone',
+                    radius: isBarrier ? 2.2 : 1.2,
+                    mesh: obsMesh
+                });
+            }
+        }
+
+        // GENERERA MOTSTÅNDARE
+        function spawnAICars() {
+            aiCars.forEach(c => scene.remove(c.mesh));
+            aiCars = [];
+
+            const numAI = 9;
+            const aiColors = [0x00d2be, 0x0600ef, 0xfff000, 0x5a5a5a, 0xff5f00, 0x900000, 0x0000a0, 0x00e100, 0xbf00ff];
+            
+            for (let i = 0; i < numAI; i++) {
+                const color = aiColors[i % aiColors.length];
+                const mesh = createF1Car(color);
+                const startZ = -(40 + (i * 25)); // Placeras längre fram på negativ Z
+                const startX = (i % 2 === 0 ? -4 : 4);
+                
+                mesh.position.set(startX, playerY, startZ);
+                mesh.rotation.set(0, Math.PI, 0); // KORRIGERAT: Motståndare startar vända mot -Z
+                scene.add(mesh);
+
+                aiCars.push({
+                    mesh: mesh,
+                    x: startX,
+                    z: startZ,
+                    speed: 0.8 + (Math.random() * 0.35),
+                    targetX: startX,
+                    laneSwitchTimer: 0,
+                    radius: 2.0,
+                    id: i + 1
+                });
+            }
+        }
+
+        // Anpassad hämtning av vägsegment oavsett riktning (tar absolutvärdet av Z)
+        function getSegmentAt(z) {
+            const segLength = 40;
+            const index = Math.floor(Math.abs(z) / segLength);
+            if (index >= 0 && index < trackSegments.length) {
+                return trackSegments[index];
+            }
+            return null;
+        }
+
+        // TANGENTBORD-DETEKTERING
+        window.addEventListener('keydown', (e) => {
+            if (e.code in keys) {
+                keys[e.code] = true;
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code in keys) {
+                keys[e.code] = false;
+            }
+        });
+
+        // MOBIL TOUCH-STYRNING
+        const touchLeft = document.getElementById('touch-left');
+        const touchRight = document.getElementById('touch-right');
+        const touchGasBtn = document.getElementById('touch-gas');
+        const touchBrakeBtn = document.getElementById('touch-brake');
+
+        touchLeft.addEventListener('touchstart', (e) => { e.preventDefault(); touchSteer = -1; });
+        touchLeft.addEventListener('touchend', (e) => { e.preventDefault(); touchSteer = 0; });
+        touchRight.addEventListener('touchstart', (e) => { e.preventDefault(); touchSteer = 1; });
+        touchRight.addEventListener('touchend', (e) => { e.preventDefault(); touchSteer = 0; });
+
+        touchGasBtn.addEventListener('touchstart', (e) => { e.preventDefault(); touchGas = true; });
+        touchGasBtn.addEventListener('touchend', (e) => { e.preventDefault(); touchGas = false; });
+        touchBrakeBtn.addEventListener('touchstart', (e) => { e.preventDefault(); touchBrake = true; });
+        touchBrakeBtn.addEventListener('touchend', (e) => { e.preventDefault(); touchBrake = false; });
+
+        // SPELKÖRNINGS-UPDATE (VARJE FRAME)
+        function animate(timestamp) {
+            requestAnimationFrame(animate);
+
+            if (!lastFrameTime) lastFrameTime = timestamp;
+            const delta = (timestamp - lastFrameTime) / 1000;
+            lastFrameTime = timestamp;
+
+            if (isPlaying) {
+                gameTime += delta;
+                
+                // 1. Spelarkontroller & Rörelse
+                let steerAction = 0;
+                if (keys.ArrowLeft || keys.KeyA) steerAction = -1;
+                if (keys.ArrowRight || keys.KeyD) steerAction = 1;
+                if (touchSteer !== 0) steerAction = touchSteer;
+
+                let gasAction = (keys.ArrowUp || keys.KeyW || touchGas);
+                let brakeAction = (keys.ArrowDown || keys.KeyS || touchBrake);
+
+                // Acceleration & Broms
+                if (gasAction) {
+                    speed = Math.min(speed + acceleration, maxSpeed);
+                } else if (brakeAction) {
+                    speed = Math.max(speed - acceleration * 2, 0);
+                } else {
+                    speed = Math.max(speed - friction, 0);
+                }
+
+                // Styra bilen (påverkar X-positionen)
+                if (speed > 0.1) {
+                    playerX += steerAction * 11 * delta * (speed / maxSpeed);
+                }
+
+                // CENTRIFUGALKRAFT (SVÄNGAR):
+                // Vi kollar segmentet framför oss på -Z axeln.
+                const currentSeg = getSegmentAt(playerZ);
+                const lookAheadSeg = getSegmentAt(playerZ - 80); // Titta 80 meter framåt (mer negativt)
+                if (currentSeg && lookAheadSeg) {
+                    const roadCurveDelta = lookAheadSeg.x - currentSeg.x;
+                    // Centrifugalkraft: Trycker spelaren utåt från kurvan baserat på hastighet!
+                    playerX -= roadCurveDelta * 0.14 * (speed / maxSpeed);
+                }
+
+                // Uppdatera distans (Kör framåt = rör oss mot negativa Z)
+                distanceCovered += speed * 60 * delta;
+                playerZ = -distanceCovered; // KORRIGERAT: Kör nu mot negativt Z för att ligga rätt i 3D-rymden
+
+                let targetX = 0;
+                if (currentSeg) {
+                    targetX = currentSeg.x;
+                }
+
+                // Placera spelarbilen
+                if (mainCar) {
+                    mainCar.position.x = targetX + playerX;
+                    mainCar.position.z = playerZ;
+                    
+                    // KORRIGERAT: Bil-rotationen lutar nu perfekt framåt och snyggt vid svängar
+                    // Math.PI håller bilen vänd framåt längs negativa Z-axeln.
+                    const roadSteerAngle = (lookAheadSeg && currentSeg) ? (lookAheadSeg.x - currentSeg.x) * 0.05 : 0;
+                    mainCar.rotation.y = Math.PI - (steerAction * 0.15) + roadSteerAngle;
+                    
+                    // Om spelaren åker av banan (utanför röd/vita curbs), bromsas man till gräshastighet
+                    if (Math.abs(playerX) > 11.5) {
+                        speed = Math.min(speed, 0.38);
+                    }
+                }
+
+                // 2. Kamera-följare (placerad snyggt bakom bilen på den positiva sidan av bilen på Z-axeln)
+                const camOffsetZ = 13; // Kameran ligger bakom bilen på Z (mer positivt värde)
+                const camOffsetY = 3.6;
+                if (currentSeg) {
+                    camera.position.x = currentSeg.x + playerX * 0.78;
+                    camera.position.y = playerY + camOffsetY;
+                    camera.position.z = playerZ + camOffsetZ;
+                    camera.lookAt(new THREE.Vector3(mainCar.position.x, playerY + 0.5, playerZ - 15)); // Blickar framåt mot mer negativa Z
+                }
+
+                // 3. AI-Bilarnas Rörelse (kör också mot negativt Z)
+                if (isOpponentMode) {
+                    aiCars.forEach(ai => {
+                        ai.z -= ai.speed * 60 * delta; // Kör mot negativt Z
+                        
+                        const aiSeg = getSegmentAt(ai.z);
+                        const aiLookAheadSeg = getSegmentAt(ai.z - 80);
+                        if (aiSeg) {
+                            ai.mesh.position.x = aiSeg.x + ai.x;
+                            ai.mesh.position.z = ai.z;
+
+                            // KORRIGERAT: AI-bilarna lutar också korrekt framåt på -Z-axeln
+                            const aiLaneChangeSteer = (ai.targetX - ai.x) * 0.1;
+                            const aiCurveSteer = (aiLookAheadSeg && aiSeg) ? (aiLookAheadSeg.x - aiSeg.x) * 0.05 : 0;
+                            ai.mesh.rotation.y = Math.PI - aiLaneChangeSteer + aiCurveSteer;
+                        }
+
+                        ai.laneSwitchTimer += delta;
+                        if (ai.laneSwitchTimer > 2 + Math.random() * 3) {
+                            ai.targetX = (Math.random() - 0.5) * 16;
+                            ai.laneSwitchTimer = 0;
+                        }
+                        
+                        ai.x += (ai.targetX - ai.x) * 0.04;
+
+                        // AI vs Spelare kollision
+                        const distToPlayerZ = Math.abs(ai.z - playerZ);
+                        const distToPlayerX = Math.abs(ai.mesh.position.x - mainCar.position.x);
+                        
+                        if (distToPlayerZ < 3.0 && distToPlayerX < 1.6) {
+                            speed = Math.max(speed - 0.4, 0.1);
+                            playerX += (mainCar.position.x > ai.mesh.position.x ? 1.8 : -1.8);
+                        }
+                    });
+
+                    calculatePositionRank();
+                }
+
+                // 4. Kollisioner med Hinder (Barriärer / Koner)
+                obstacles.forEach(obs => {
+                    const distZ = Math.abs(obs.z - playerZ);
+                    const distX = Math.abs(obs.x - mainCar.position.x);
+
+                    if (distZ < 2.0 && distX < obs.radius) {
+                        handleCollision(obs);
+                    }
+                });
+
+                // 5. Uppdatera HUD
+                document.getElementById('hud-speed').innerText = Math.round(speed * 210);
+                document.getElementById('hud-distance').innerText = Math.round(distanceCovered);
+                document.getElementById('hud-time').innerText = gameTime.toFixed(2) + "s";
+
+                // 6. Mållinjedetektor
+                const trackConfig = TRACKS[selectedTrackKey];
+                if (distanceCovered >= trackConfig.length) {
+                    handleRaceFinish(true);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Beräkna nuvarande position (mer negativ Z-position betyder att man ligger längre fram på banan)
+        function calculatePositionRank() {
+            let rank = 1;
+            aiCars.forEach(ai => {
+                if (ai.z < playerZ) { // Eftersom vi kör mot -Z, betyder ett mindre värde (mer negativt) att de ligger före dig
+                    rank++;
+                }
+            });
+            document.getElementById('hud-pos-rank').innerHTML = `${rank}<span class="text-sm">/10</span>`;
+            return rank;
+        }
+
+        // Kollisionshantering
+        function handleCollision(obs) {
+            if (obs.type === 'barrier') {
+                speed = 0.05; // Kraftig krasch mot röd Tecpro-barriär
+                playerX += (playerX > obs.x ? 1.6 : -1.6);
+            } else {
+                speed = Math.max(speed - 0.25, 0.15); // Lättare smäll mot orange kon
+                playerX += (Math.random() - 0.5) * 2;
+                obs.z -= 12; // KORRIGERAT: Flytta konen längre fram i banans riktning (-Z)
+                obs.mesh.position.z -= 12;
+            }
+        }
+
+        // Slutfört Race
+        function handleRaceFinish(success) {
+            isPlaying = false;
+            userProfile.hasPlayedOnce = true;
+            saveProfile();
+
+            const trackConfig = TRACKS[selectedTrackKey];
+            const finalPos = isOpponentMode ? calculatePositionRank() : 1;
+
+            document.getElementById('status-driver').innerText = userProfile.username;
+            document.getElementById('status-track').innerText = trackConfig.name;
+            document.getElementById('status-time').innerText = gameTime.toFixed(2) + "s";
+            document.getElementById('status-distance').innerText = Math.round(distanceCovered) + " m";
+            
+            if (isOpponentMode) {
+                document.getElementById('status-pos-row').classList.remove('hidden');
+                document.getElementById('status-position').innerText = `${finalPos}:a Plats`;
+            } else {
+                document.getElementById('status-pos-row').classList.add('hidden');
+            }
+
+            const outcomeDiv = document.getElementById('tournament-outcome');
+            const outcomeMsg = document.getElementById('tournament-message');
+            const actionBtn = document.getElementById('status-action-btn');
+            
+            outcomeDiv.classList.add('hidden');
+            actionBtn.innerText = "SPELA IGEN 🏎️";
+
+            if (championshipType === 'world') {
+                outcomeDiv.classList.remove('hidden');
+                
+                if (tournamentStage === 'quarter') {
+                    if (finalPos <= 5) {
+                        tournamentStage = 'semi';
+                        outcomeMsg.innerHTML = "🎉 Grattis! Du slutade topp 5 och har kvalificerat dig till <strong>SEMIFINAL</strong>!";
+                        actionBtn.innerText = "STARTA SEMIFINAL 🏆";
+                    } else {
+                        outcomeMsg.innerHTML = "❌ Du kom inte topp 5. Du lyckades inte kvalificera dig till Semifinalen. Försök igen!";
+                        tournamentStage = 'quarter';
+                    }
+                } else if (tournamentStage === 'semi') {
+                    if (finalPos <= 3) {
+                        tournamentStage = 'final';
+                        outcomeMsg.innerHTML = "🔥 Strålande körning! Du kom på pallen och är klar för den stora <strong>VÄRLDSMÄSTERSKAPSFINALEN</strong>!";
+                        actionBtn.innerText = "STARTA VM-FINAL 🏆";
+                    } else {
+                        outcomeMsg.innerHTML = "❌ Du missade pallen i semifinalen. Försök igen för att nå finalen!";
+                        tournamentStage = 'quarter';
+                    }
+                } else if (tournamentStage === 'final') {
+                    if (finalPos === 1) {
+                        userProfile.isWorldChampion = true;
+                        saveProfile();
+                        outcomeMsg.innerHTML = "👑 HUZZA! Du vann VM-Finalen och är nu officiell <strong>WORLD CHAMPION</strong>! Titeln visas stolt vid ditt namn.";
+                        actionBtn.innerText = "FIRA SEGERN 🎉";
+                    } else {
+                        outcomeMsg.innerHTML = "❌ Du förlorade finalen på mållinjen. Mycket bra kämpat, men det krävs guld för mästartiteln! Försök igen.";
+                        tournamentStage = 'quarter';
+                    }
+                }
+            } else {
+                saveHighscore(userProfile.username, selectedTrackKey, gameTime);
+            }
+
+            document.getElementById('status-title').innerText = "RACE COMPLETED";
+            document.getElementById('status-title').className = "f1-font text-3xl italic text-green-500 mb-6";
+            document.getElementById('game-status-screen').classList.remove('hidden');
+        }
+
+        function saveHighscore(name, track, time) {
+            if (!userProfile.highscores) {
+                userProfile.highscores = [];
+            }
+            userProfile.highscores.push({
+                name: name,
+                track: track,
+                time: time,
+                isChampion: userProfile.isWorldChampion
+            });
+            saveProfile();
+        }
+
+        function handleStatusAction() {
+            document.getElementById('game-status-screen').classList.add('hidden');
+            
+            if (championshipType === 'world') {
+                if (userProfile.isWorldChampion && tournamentStage === 'final') {
+                    returnToMainMenu();
+                    return;
+                }
+                
+                if (tournamentStage === 'semi') {
+                    selectedTrackKey = 'vegas';
+                } else if (tournamentStage === 'final') {
+                    selectedTrackKey = 'miami';
+                } else {
+                    selectedTrackKey = 'monaco';
+                }
+                
+                document.getElementById('hud-track-name').innerText = TRACKS[selectedTrackKey].name;
+                updateTournamentUI();
+                buildF1Track();
+                resetRace();
+                isPlaying = true;
+            } else {
+                buildF1Track();
+                resetRace();
+                isPlaying = true;
+            }
+        }
+    </script>
+</body>
+</html>

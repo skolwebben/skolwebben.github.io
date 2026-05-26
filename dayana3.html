@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="sv" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Song | Musik-Tidsmaskinen</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top center, #2e1065 0%, #030712 100%);
+        }
+
+        /* Vinyl rotation animation */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spin-vinyl {
+            animation: spin 10s linear infinite;
+        }
+        .spin-paused {
+            animation-play-state: paused;
+        }
+
+        /* Custom range slider styling för en modernare känsla */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #ec4899;
+            cursor: pointer;
+            border: 4px solid #ffffff;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.8), 0 0 4px rgba(0, 0, 0, 0.5);
+            transition: all 0.15s ease-in-out;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+            background: #f43f5e;
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.9);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #ec4899;
+            cursor: pointer;
+            border: 4px solid #ffffff;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.8), 0 0 4px rgba(0, 0, 0, 0.5);
+            transition: all 0.15s ease-in-out;
+        }
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.25);
+            background: #f43f5e;
+        }
+
+        /* Glow och ljuseffekter */
+        .neon-glow-pink {
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        }
+        .neon-glow-purple {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+        }
+    </style>
+</head>
+<body class="h-full text-slate-100 flex flex-col justify-between overflow-x-hidden selection:bg-pink-500/30 selection:text-pink-200">
+
+    <!-- Header -->
+    <header class="w-full max-w-5xl mx-auto px-6 py-4 flex items-center justify-between border-b border-pink-500/10 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-500 rounded-2xl shadow-lg shadow-pink-500/20">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black tracking-wider bg-gradient-to-r from-pink-500 via-purple-400 to-cyan-400 bg-clip-text text-transparent">GUESS THE SONG</h1>
+                <p class="text-[10px] uppercase tracking-widest text-pink-400/80 font-bold">Musik-Tidsmaskinen</p>
+            </div>
+        </div>
+        <div id="header-stats" class="hidden flex items-center gap-3 text-xs md:text-sm font-semibold">
+            <div class="bg-slate-900/80 backdrop-blur border border-pink-500/20 px-4 py-2 rounded-2xl flex items-center gap-2 shadow-inner">
+                <span class="text-slate-400">Rundor:</span>
+                <span id="current-round-indicator" class="text-pink-400 font-bold">1/5</span>
+            </div>
+            <div class="bg-slate-900/80 backdrop-blur border border-purple-500/20 px-4 py-2 rounded-2xl flex items-center gap-2 shadow-inner">
+                <span class="text-slate-400">Poäng:</span>
+                <span id="total-score-indicator" class="text-purple-400 font-bold">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow flex items-center justify-center p-4 md:p-6 w-full max-w-5xl mx-auto">
+        
+        <!-- START SKÄRM -->
+        <div id="start-screen" class="w-full max-w-xl bg-slate-900/60 backdrop-blur-2xl border border-white/5 p-8 md:p-10 rounded-3xl shadow-2xl flex flex-col items-center text-center space-y-8 transition-all duration-500 relative overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative">
+                <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 opacity-75 blur-xl animate-pulse"></div>
+                <div class="relative bg-slate-950 p-6 rounded-full border border-pink-500/30">
+                    <svg class="w-16 h-16 text-pink-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h2 class="text-4xl font-extrabold tracking-tight bg-gradient-to-b from-white to-slate-300 bg-clip-text text-transparent">Är du en musikexpert?</h2>
+                <p class="text-slate-400 max-w-md mx-auto text-sm md:text-base leading-relaxed">
+                    Välkommen till den ultimata <strong class="text-pink-400">Guess the Song</strong>-utmaningen! Lyssna på slumpmässigt utvalda världshits från 1960 fram till idag. Kan du pricka in både låttiteln och rätt utgivningsår?
+                </p>
+            </div>
+
+            <div class="w-full space-y-4">
+                <div class="text-left bg-slate-950/70 p-5 rounded-2xl border border-white/5 text-xs text-slate-300 space-y-3">
+                    <p class="font-bold text-pink-400 uppercase tracking-wider text-center border-b border-white/5 pb-2">🎯 SÅ HÄR SAMLAR DU POÄNG</p>
+                    <div class="flex items-center justify-between">
+                        <span>🎵 Gissa rätt låt & artist:</span>
+                        <span class="text-emerald-400 font-bold font-mono">+500 poäng</span>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-white/5 pt-2">
+                        <span>📅 Gissa rätt utgivningsår:</span>
+                        <span class="text-purple-400 font-bold font-mono">Upp till +500 poäng</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 text-center italic pt-1">Ju närmare årtalet du hamnar, desto mer poäng får du!</p>
+                </div>
+
+                <button id="btn-start-game" class="w-full py-4 px-6 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-400 hover:via-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl transition duration-300 shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-lg uppercase tracking-wide">
+                    <span>Starta Spelet</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- LADDNINGSSKÄRM -->
+        <div id="loading-screen" class="hidden w-full max-w-md flex flex-col items-center space-y-6 text-center">
+            <div class="w-16 h-16 border-4 border-pink-500/20 border-t-pink-500 rounded-full animate-spin"></div>
+            <div>
+                <h3 class="text-xl font-bold tracking-wide">Syntoniserar tidslinjen...</h3>
+                <p id="loading-status-text" class="text-slate-400 text-sm mt-1">Laddar hits från musikarkivet...</p>
+            </div>
+        </div>
+
+        <!-- SPELSKÄRM -->
+        <div id="game-screen" class="hidden w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch transition-all duration-500">
+            
+            <!-- Vänster: Spelare & Visualiserare -->
+            <div class="lg:col-span-5 bg-slate-900/60 backdrop-blur-2xl border border-white/5 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col justify-between items-center space-y-6 text-center relative overflow-hidden">
+                <div class="absolute -top-24 -left-24 w-48 h-48 bg-pink-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Omslagskort / Vinyl -->
+                <div class="relative w-48 h-48 md:w-56 md:h-56 mx-auto flex items-center justify-center">
+                    <!-- Det yttre neon-skenet -->
+                    <div id="vinyl-glow" class="absolute inset-0 rounded-full bg-gradient-to-r from-pink-500/20 to-purple-500/20 blur-xl transition-all duration-500"></div>
+                    
+                    <!-- Vinylskiva -->
+                    <div id="vinyl-container" class="relative w-full h-full rounded-full bg-slate-950 p-1 border-4 border-slate-800 shadow-2xl flex items-center justify-center spin-vinyl spin-paused overflow-hidden">
+                        <!-- Vinylspår-effekt -->
+                        <div class="absolute inset-2 rounded-full border border-slate-800/30"></div>
+                        <div class="absolute inset-6 rounded-full border border-slate-800/40"></div>
+                        <div class="absolute inset-10 rounded-full border border-slate-800/50"></div>
+                        <div class="absolute inset-14 rounded-full border border-slate-800/60"></div>
+                        
+                        <!-- Centrum / Albumomslag -->
+                        <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center border-4 border-slate-950 z-10">
+                            <!-- Standard Musiknot / Laddas med albumomslag efter gissning -->
+                            <img id="album-artwork" src="" class="hidden w-full h-full object-cover" alt="Albumomslag">
+                            <div id="album-placeholder" class="text-pink-400">
+                                <svg class="w-10 h-10 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pick-up arm (visas dekorativt) -->
+                    <div class="absolute -right-2 top-0 w-8 h-20 origin-top-left transform rotate-[15deg] transition-all duration-500 pointer-events-none" id="vinyl-arm">
+                        <svg viewBox="0 0 50 150" class="w-full h-full text-slate-400" fill="currentColor">
+                            <path d="M10 10 h15 v80 l-10 15 h-5 z" />
+                            <circle cx="10" cy="10" r="8" class="text-slate-600"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Kontroller & Visualiserare -->
+                <div class="w-full space-y-4">
+                    <!-- Spelarknapp -->
+                    <div class="flex items-center justify-center gap-4">
+                        <button id="btn-play-audio" class="w-16 h-16 bg-gradient-to-tr from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white rounded-full flex items-center justify-center shadow-lg shadow-pink-500/20 active:scale-95 transition transform duration-200">
+                            <!-- Play Icon -->
+                            <svg id="play-icon" class="w-7 h-7 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"></path>
+                            </svg>
+                            <!-- Pause Icon -->
+                            <svg id="pause-icon" class="hidden w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="w-full space-y-1.5">
+                        <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-white/5">
+                            <div id="audio-progress" class="bg-gradient-to-r from-pink-500 to-purple-500 h-full w-0 transition-all duration-100 ease-linear"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-slate-500 font-mono">
+                            <span id="audio-current-time">0:00</span>
+                            <span id="audio-duration">0:30</span>
+                        </div>
+                    </div>
+
+                    <!-- Visualiseringsvåg -->
+                    <div class="h-10 w-full flex items-center justify-center gap-1 px-4" id="visualizer-container">
+                        <!-- Bars dynamically added via JS -->
+                    </div>
+                </div>
+
+                <div class="text-xs text-slate-400 flex items-center gap-1.5 bg-slate-950/60 px-4 py-2 rounded-2xl border border-white/5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
+                    <span class="font-medium tracking-wide">Musik strömmas live</span>
+                </div>
+            </div>
+
+            <!-- Höger: Gissningspaneler -->
+            <div class="lg:col-span-7 flex flex-col gap-6">
+                
+                <!-- Gissning steg 1: Låt / Artist -->
+                <div class="bg-slate-900/60 backdrop-blur-2xl border border-white/5 p-6 md:p-8 rounded-3xl shadow-xl flex-grow flex flex-col justify-between space-y-6">
+                    <div>
+                        <span class="text-xs font-bold text-pink-400 uppercase tracking-widest block mb-1">Del 1 av 2</span>
+                        <h3 class="text-2xl font-black text-white">Vilken låt och artist spelas?</h3>
+                    </div>
+
+                    <!-- Alternativknappar -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="options-grid">
+                        <!-- Alternativen byggs i Javascript -->
+                    </div>
+                </div>
+
+                <!-- Gissning steg 2: Tidsaxel -->
+                <div class="bg-slate-900/60 backdrop-blur-2xl border border-white/5 p-6 md:p-8 rounded-3xl shadow-xl flex-grow flex flex-col justify-between space-y-6">
+                    <div>
+                        <span class="text-xs font-bold text-purple-400 uppercase tracking-widest block mb-1">Del 2 av 2</span>
+                        <h3 class="text-2xl font-black text-white">Vilket år släpptes låten?</h3>
+                    </div>
+
+                    <!-- Stor siffra display -->
+                    <div class="flex flex-col items-center justify-center py-1">
+                        <span id="selected-year-display" class="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 drop-shadow-[0_4px_15px_rgba(236,72,153,0.3)] tracking-tight">1990</span>
+                        <span class="text-xs text-slate-400 tracking-widest mt-1 uppercase font-semibold" id="selected-year-era">Nutid / Modernt</span>
+                    </div>
+
+                    <!-- Tidslinje-skjutreglage -->
+                    <div class="space-y-4">
+                        <div class="relative px-2">
+                            <input type="range" id="year-slider" min="1960" max="2026" value="1990" class="w-full h-2.5 bg-slate-950 rounded-lg appearance-none cursor-pointer border border-white/5 focus:outline-none">
+                            <div class="flex justify-between text-xs font-mono text-slate-500 mt-2">
+                                <span>1960</span>
+                                <span>1980</span>
+                                <span>2000</span>
+                                <span>2020</span>
+                                <span>2026</span>
+                            </div>
+                        </div>
+
+                        <!-- Skicka svar-knapp -->
+                        <button id="btn-submit-guess" disabled class="w-full py-4 bg-slate-800 text-slate-500 font-bold rounded-2xl cursor-not-allowed transition duration-300 flex items-center justify-center gap-2 tracking-wide uppercase">
+                            <span>Välj ett svarsalternativ först</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RUNDA RESULTAT MODAL -->
+        <div id="result-overlay" class="hidden w-full max-w-2xl bg-slate-950/80 backdrop-blur-2xl border border-pink-500/20 p-8 md:p-10 rounded-3xl shadow-2xl flex flex-col items-center text-center space-y-6 animate-fade-in relative overflow-hidden">
+            <div class="absolute -top-32 -left-32 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative w-40 h-40 rounded-3xl overflow-hidden shadow-2xl border-2 border-white/10">
+                <img id="reveal-artwork" src="" class="w-full h-full object-cover" alt="Rätt Albumomslag">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-2.5">
+                    <span id="reveal-year-badge" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg">1999</span>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <span id="guess-verdict-title" class="text-2xl font-black uppercase tracking-widest block">RÄTT LÅT!</span>
+                <h3 id="reveal-track-name" class="text-2xl font-bold text-white">Song Title</h3>
+                <p id="reveal-artist-name" class="text-pink-400 font-semibold">Artist Name</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 w-full max-w-md py-4 border-y border-white/5">
+                <div class="text-center p-3.5 bg-slate-900/60 rounded-2xl border border-white/5 shadow-inner">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Din gissning</p>
+                    <p id="reveal-user-year" class="text-xl font-black text-pink-400">1995</p>
+                </div>
+                <div class="text-center p-3.5 bg-slate-900/60 rounded-2xl border border-white/5 shadow-inner">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Avvikelse</p>
+                    <p id="reveal-year-diff" class="text-xl font-black text-purple-400">4 år ifrån</p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between w-full max-w-md p-4 bg-gradient-to-r from-pink-900/20 via-purple-900/10 to-indigo-900/20 rounded-2xl border border-pink-500/20 shadow-md">
+                <span class="text-sm font-semibold text-slate-300">Intjänade poäng denna runda:</span>
+                <span id="reveal-round-score" class="text-3xl font-black text-amber-400 tracking-tight">+750</span>
+            </div>
+
+            <button id="btn-next-round" class="w-full max-w-md py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-400 hover:via-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl transition duration-300 shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 flex items-center justify-center gap-2 text-md uppercase tracking-wider">
+                <span id="btn-next-text">Nästa Runda</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- SLUTSKÄRM -->
+        <div id="game-over-screen" class="hidden w-full max-w-xl bg-slate-900/60 backdrop-blur-2xl border border-white/5 p-8 md:p-10 rounded-3xl shadow-2xl flex flex-col items-center text-center space-y-8 relative overflow-hidden">
+            <div class="absolute -top-40 -left-40 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative">
+                <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500 to-pink-500 opacity-75 blur-xl animate-pulse"></div>
+                <div class="relative bg-slate-950 p-6 rounded-full border border-amber-500/30">
+                    <svg class="w-16 h-16 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <span class="text-xs font-bold text-pink-400 uppercase tracking-widest block">Spelet är avslutat</span>
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">DIN SLUTPOÄNG</h2>
+                <p id="game-over-verdict" class="text-slate-300 text-sm max-w-sm mx-auto leading-relaxed">Du är en sann musikresenär!</p>
+            </div>
+
+            <!-- Total Poängkort -->
+            <div class="bg-slate-950/70 p-6 rounded-2xl border border-white/5 w-full space-y-2 relative overflow-hidden shadow-inner">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl"></div>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Total poängställning</p>
+                <p id="game-over-score" class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400">0</p>
+                <p class="text-xs text-slate-300 font-medium" id="game-over-stats">Rätt låtar: 0/5 | Snittavvikelse på år: 0 år</p>
+            </div>
+
+            <!-- Knappar -->
+            <div class="w-full flex flex-col sm:flex-row gap-3">
+                <button id="btn-share-score" class="flex-1 py-4 bg-slate-850 hover:bg-slate-800 text-white font-bold rounded-2xl border border-white/5 transition duration-300 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 10.742l4.136-1.93M8.684 13.258l4.136 1.93M17 4h3.5a1.5 1.5 0 011.5 1.5V11m-2.121 2.121a3 3 0 11-4.242 0 3 3 0 014.242 0zm-8.484-8.484a3 3 0 11-4.242 0 3 3 0 014.242 0zM12 21a3 3 0 110-6 3 3 0 010 6z"></path>
+                    </svg>
+                    <span>Dela Resultat</span>
+                </button>
+                <button id="btn-restart" class="flex-1 py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-400 hover:via-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl transition duration-300 shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 16H20M12 8V12l3 3"></path>
+                    </svg>
+                    <span>Spela Igen</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-4 text-center text-[10px] text-slate-500 uppercase tracking-widest border-t border-white/5 shrink-0">
+        Guess the Song &copy; 2026 | Drivs via iTunes Musik-API
+    </footer>
+
+    <!-- Audio Element -->
+    <audio id="audio-player" preload="auto" crossorigin="anonymous"></audio>
+
+    <!-- JS Logic -->
+    <script>
+        // Bibliotek av populära låtar i spelet. Dessa används för att hitta spår via iTunes API
+        const SONGS_ARCHIVE = [
+            // 1960-talet
+            { artist: "The Beatles", title: "Yesterday" },
+            { artist: "The Beach Boys", title: "Good Vibrations" },
+            { artist: "Aretha Franklin", title: "Respect" },
+            { artist: "Elvis Presley", title: "Suspicious Minds" },
+            { artist: "The Rolling Stones", title: "Paint It Black" },
+            // 1970-talet
+            { artist: "ABBA", title: "Dancing Queen" },
+            { artist: "Queen", title: "Bohemian Rhapsody" },
+            { artist: "Bee Gees", title: "Stayin Alive" },
+            { artist: "Pink Floyd", title: "Another Brick in the Wall" },
+            { artist: "John Lennon", title: "Imagine" },
+            // 1980-talet
+            { artist: "Michael Jackson", title: "Billie Jean" },
+            { artist: "Madonna", title: "Like a Virgin" },
+            { artist: "Bon Jovi", title: "Livin on a Prayer" },
+            { artist: "Cyndi Lauper", title: "Girls Just Want to Have Fun" },
+            { artist: "Europe", title: "The Final Countdown" },
+            { artist: "Whitney Houston", title: "I Wanna Dance with Somebody" },
+            // 1990-talet
+            { artist: "Nirvana", title: "Smells Like Teen Spirit" },
+            { artist: "Britney Spears", title: "Baby One More Time" },
+            { artist: "Backstreet Boys", title: "I Want It That Way" },
+            { artist: "Spice Girls", title: "Wannabe" },
+            { artist: "Oasis", title: "Wonderwall" },
+            { artist: "Celine Dion", title: "My Heart Will Go On" },
+            // 2000-talet
+            { artist: "Beyonce", title: "Crazy in Love" },
+            { artist: "Eminem", title: "Lose Yourself" },
+            { artist: "Outkast", title: "Hey Ya" },
+            { artist: "Coldplay", title: "Viva La Vida" },
+            { artist: "Lady Gaga", title: "Poker Face" },
+            { artist: "Britney Spears", title: "Toxic" },
+            // 2010-talet
+            { artist: "Adele", title: "Rolling in the Deep" },
+            { artist: "Avicii", title: "Wake Me Up" },
+            { artist: "Mark Ronson Bruno Mars", title: "Uptown Funk" },
+            { artist: "Ed Sheeran", title: "Shape of You" },
+            { artist: "Billie Eilish", title: "Bad Guy" },
+            { artist: "Gotye", title: "Somebody That I Used to Know" },
+            // 2020-talet
+            { artist: "The Weeknd", title: "Blinding Lights" },
+            { artist: "Dua Lipa", title: "Levitating" },
+            { artist: "Harry Styles", title: "As It Was" },
+            { artist: "Miley Cyrus", title: "Flowers" },
+            { artist: "Sabrina Carpenter", title: "Espresso" }
+        ];
+
+        // Speltillstånd
+        let gamePlaylist = [];
+        let currentRoundIndex = 0;
+        let selectedSongGuess = null; // Den valda gissningen (objekt)
+        let totalScore = 0;
+        let roundDetailedResults = []; // Sparar information för slutskärmen
+        let visualizerInterval = null;
+
+        // Musik/Ljud-tillstånd
+        const audioPlayer = document.getElementById('audio-player');
+        let audioContext, analyser, sourceNode, visualizerBars = [];
+
+        // Hämta HTML-element
+        const startScreen = document.getElementById('start-screen');
+        const loadingScreen = document.getElementById('loading-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultOverlay = document.getElementById('result-overlay');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        
+        const loadingStatusText = document.getElementById('loading-status-text');
+        const currentRoundIndicator = document.getElementById('current-round-indicator');
+        const totalScoreIndicator = document.getElementById('total-score-indicator');
+        const headerStats = document.getElementById('header-stats');
+
+        const btnPlayAudio = document.getElementById('btn-play-audio');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const audioProgress = document.getElementById('audio-progress');
+        const audioCurrentTime = document.getElementById('audio-current-time');
+        const audioDuration = document.getElementById('audio-duration');
+        const visualizerContainer = document.getElementById('visualizer-container');
+
+        const optionsGrid = document.getElementById('options-grid');
+        const selectedYearDisplay = document.getElementById('selected-year-display');
+        const selectedYearEra = document.getElementById('selected-year-era');
+        const yearSlider = document.getElementById('year-slider');
+        const btnSubmitGuess = document.getElementById('btn-submit-guess');
+
+        // Resultat element
+        const revealArtwork = document.getElementById('reveal-artwork');
+        const revealYearBadge = document.getElementById('reveal-year-badge');
+        const guessVerdictTitle = document.getElementById('guess-verdict-title');
+        const revealTrackName = document.getElementById('reveal-track-name');
+        const revealArtistName = document.getElementById('reveal-artist-name');
+        const revealUserYear = document.getElementById('reveal-user-year');
+        const revealYearDiff = document.getElementById('reveal-year-diff');
+        const revealRoundScore = document.getElementById('reveal-round-score');
+        const btnNextRound = document.getElementById('btn-next-round');
+
+        // Vinyl visualisering
+        const vinylContainer = document.getElementById('vinyl-container');
+        const vinylGlow = document.getElementById('vinyl-glow');
+        const albumArtwork = document.getElementById('album-artwork');
+        const albumPlaceholder = document.getElementById('album-placeholder');
+        const vinylArm = document.getElementById('vinyl-arm');
+
+        // Initiera Slider interaktion
+        yearSlider.addEventListener('input', (e) => {
+            const year = parseInt(e.target.value);
+            selectedYearDisplay.innerText = year;
+            updateEraText(year);
+        });
+
+        function updateEraText(year) {
+            if (year < 1970) selectedYearEra.innerText = "60-tals klassiker / Popsensationer";
+            else if (year < 1980) selectedYearEra.innerText = "70-tals Disco, Glam & Rocklegender";
+            else if (year < 1990) selectedYearEra.innerText = "80-tals Synthpop & Hårdrocks-era";
+            else if (year < 2000) selectedYearEra.innerText = "90-tals Grunge, Eurodance & R&B";
+            else if (year < 2010) selectedYearEra.innerText = "00-tals Millennie-pop & Indie";
+            else if (year < 2020) selectedYearEra.innerText = "10-tals EDM, Strömmat & Synthwave";
+            else selectedYearEra.innerText = "2020-tal / Nutida Hits";
+        }
+
+        // Startknapp händelse
+        document.getElementById('btn-start-game').addEventListener('click', startGame);
+
+        async function startGame() {
+            startScreen.classList.add('hidden');
+            loadingScreen.classList.remove('hidden');
+            headerStats.classList.add('hidden');
+            
+            totalScore = 0;
+            currentRoundIndex = 0;
+            roundDetailedResults = [];
+            totalScoreIndicator.innerText = "0";
+
+            // Bygg en slumpmässig spellista med 5 låtar
+            loadingStatusText.innerText = "Väljer ut legendariska musikverk...";
+            const shuffled = [...SONGS_ARCHIVE].sort(() => 0.5 - Math.random());
+            const selectedTracks = shuffled.slice(0, 5);
+
+            gamePlaylist = [];
+            
+            for (let i = 0; i < selectedTracks.length; i++) {
+                loadingStatusText.innerText = `Hämtar låt ${i + 1} av 5...`;
+                const details = await fetchTrackDetails(selectedTracks[i].artist, selectedTracks[i].title);
+                if (details) {
+                    gamePlaylist.push(details);
+                } else {
+                    // Backup om iTunes misslyckas med att söka
+                    gamePlaylist.push({
+                        id: Math.random(),
+                        title: selectedTracks[i].title,
+                        artist: selectedTracks[i].artist,
+                        year: Math.floor(Math.random() * (2024 - 1970) + 1970),
+                        previewUrl: "",
+                        artworkUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop"
+                    });
+                }
+            }
+
+            loadingScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            headerStats.classList.remove('hidden');
+            
+            setupRound(currentRoundIndex);
+        }
+
+        // Sök efter låten med iTunes API
+        async function fetchTrackDetails(artist, title) {
+            try {
+                const query = encodeURIComponent(`${artist} ${title}`);
+                const response = await fetch(`https://itunes.apple.com/search?term=${query}&limit=3&entity=musicTrack`);
+                if (!response.ok) return null;
+                const data = await response.json();
+                
+                if (data && data.results && data.results.length > 0) {
+                    // Försök hitta bästa matchningen
+                    const track = data.results[0];
+                    const releaseYear = new Date(track.releaseDate).getFullYear();
+                    const artworkUrlLarge = track.artworkUrl100.replace('100x100bb.jpg', '400x400bb.jpg');
+                    
+                    return {
+                        id: track.trackId,
+                        title: track.trackName,
+                        artist: track.artistName,
+                        year: releaseYear,
+                        previewUrl: track.previewUrl,
+                        artworkUrl: artworkUrlLarge
+                    };
+                }
+                return null;
+            } catch (err) {
+                console.error("Fel vid iTunes API-sökning", err);
+                return null;
+            }
+        }
+
+        // Skapa runda
+        function setupRound(index) {
+            // Återställ spelgränssnitt
+            selectedSongGuess = null;
+            btnSubmitGuess.disabled = true;
+            btnSubmitGuess.className = "w-full py-4 bg-slate-800 text-slate-500 font-bold rounded-2xl cursor-not-allowed transition duration-300 flex items-center justify-center gap-2 uppercase tracking-wide text-xs md:text-sm";
+            btnSubmitGuess.innerHTML = `<span>Välj en låt först</span>`;
+            
+            currentRoundIndicator.innerText = `${index + 1}/5`;
+            
+            const currentTrack = gamePlaylist[index];
+
+            // Sätt upp ljudspelare
+            audioPlayer.src = currentTrack.previewUrl;
+            audioPlayer.load();
+
+            // Spara vinyltillstånd
+            albumArtwork.src = currentTrack.artworkUrl;
+            albumArtwork.classList.add('hidden');
+            albumPlaceholder.classList.remove('hidden');
+            vinylContainer.classList.add('spin-paused');
+            vinylGlow.className = "absolute inset-0 rounded-full bg-pink-500/10 to-purple-500/10 blur-xl transition-all duration-500";
+            vinylArm.style.transform = "rotate(15deg)";
+            
+            resetAudioUI();
+
+            // Bygg svarsalternativ
+            buildOptions(currentTrack);
+
+            // Initiera slumpmässig tidsaxel-startposition för att hålla spelaren på tårna
+            const randomYearStart = Math.floor(Math.random() * (2025 - 1970) + 1970);
+            yearSlider.value = randomYearStart;
+            selectedYearDisplay.innerText = randomYearStart;
+            updateEraText(randomYearStart);
+
+            // Generera tysta/statiska visualiseringsvågor vid runda-start
+            generateStaticVisualizer();
+        }
+
+        function resetAudioUI() {
+            pauseIcon.classList.add('hidden');
+            playIcon.classList.remove('hidden');
+            audioProgress.style.width = '0%';
+            audioCurrentTime.innerText = '0:00';
+            audioDuration.innerText = '0:30';
+        }
+
+        // Skapa alternativ inklusive felaktiga svar
+        function buildOptions(correctTrack) {
+            optionsGrid.innerHTML = '';
+
+            // Hämta felaktiga alternativ från resten av arkivet
+            let decoys = SONGS_ARCHIVE.filter(s => s.title.toLowerCase() !== correctTrack.title.toLowerCase())
+                                      .sort(() => 0.5 - Math.random())
+                                      .slice(0, 3)
+                                      .map(d => ({ title: d.title, artist: d.artist, isCorrect: false }));
+
+            // Skapa rätt svar i samma format
+            const correctOption = { 
+                title: correctTrack.title, 
+                artist: correctTrack.artist, 
+                isCorrect: true 
+            };
+
+            const options = [...decoys, correctOption].sort(() => 0.5 - Math.random());
+
+            options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn text-left p-4 rounded-2xl border border-white/5 bg-slate-950/40 hover:bg-slate-800/60 hover:border-pink-500/20 transition duration-200 focus:outline-none flex items-center gap-3.5 group relative overflow-hidden";
+                
+                // Indexetikett (A, B, C, D)
+                const labelLetter = String.fromCharCode(65 + idx);
+                btn.innerHTML = `
+                    <span class="flex-shrink-0 w-8 h-8 bg-slate-800 group-hover:bg-gradient-to-tr group-hover:from-pink-500 group-hover:to-purple-600 group-hover:text-white transition rounded-xl flex items-center justify-center font-bold text-xs text-slate-400 font-mono shadow-md">${labelLetter}</span>
+                    <div class="overflow-hidden">
+                        <p class="font-bold text-slate-200 text-sm truncate group-hover:text-white">${opt.title}</p>
+                        <p class="text-xs text-slate-400 group-hover:text-pink-300 transition truncate">${opt.artist}</p>
+                    </div>
+                `;
+
+                btn.addEventListener('click', () => {
+                    selectSongOption(btn, opt);
+                });
+
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function selectSongOption(selectedBtn, option) {
+            // Ta bort markeringsklasser från alla andra alternativ
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('border-pink-500', 'bg-pink-950/10', 'ring-1', 'ring-pink-500/20', 'neon-glow-pink');
+                btn.classList.add('border-white/5', 'bg-slate-950/40');
+                btn.querySelector('span').classList.remove('bg-gradient-to-tr', 'from-pink-500', 'to-purple-600', 'text-white');
+                btn.querySelector('span').classList.add('bg-slate-800', 'text-slate-400');
+            });
+
+            // Markera den klickade knappen
+            selectedBtn.classList.add('border-pink-500', 'bg-pink-950/10', 'ring-1', 'ring-pink-500/20', 'neon-glow-pink');
+            selectedBtn.classList.remove('border-white/5', 'bg-slate-950/40');
+            selectedBtn.querySelector('span').classList.add('bg-gradient-to-tr', 'from-pink-500', 'to-purple-600', 'text-white');
+            selectedBtn.querySelector('span').classList.remove('bg-slate-800', 'text-slate-400');
+
+            selectedSongGuess = option;
+
+            // Aktivera skicka-knappen och byt färgtema till aktiv
+            btnSubmitGuess.disabled = false;
+            btnSubmitGuess.className = "w-full py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-400 hover:via-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl transition duration-300 shadow-lg shadow-pink-500/20 cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 uppercase tracking-wide text-xs md:text-sm";
+            btnSubmitGuess.innerHTML = `<span>Skicka Gissning</span> <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+        }
+
+        // Ljudspelare kontroller
+        btnPlayAudio.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                if (!audioContext) {
+                    initAudioVisualizer();
+                }
+                audioPlayer.play();
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+                vinylContainer.classList.remove('spin-paused');
+                vinylGlow.className = "absolute inset-0 rounded-full bg-gradient-to-r from-pink-500/30 to-purple-500/30 blur-2xl animate-pulse";
+                vinylArm.style.transform = "rotate(27deg)";
+                startVisualizerAnimation();
+            } else {
+                audioPlayer.pause();
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                vinylContainer.classList.add('spin-paused');
+                vinylGlow.className = "absolute inset-0 rounded-full bg-pink-500/10 to-purple-500/10 blur-xl transition-all duration-500";
+                vinylArm.style.transform = "rotate(15deg)";
+                stopVisualizerAnimation();
+            }
+        });
+
+        audioPlayer.addEventListener('timeupdate', () => {
+            const pct = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            audioProgress.style.width = `${pct}%`;
+            audioCurrentTime.innerText = formatTime(audioPlayer.currentTime);
+            
+            if (audioPlayer.duration) {
+                audioDuration.innerText = formatTime(audioPlayer.duration);
+            }
+        });
+
+        audioPlayer.addEventListener('ended', () => {
+            resetAudioUI();
+            vinylContainer.classList.add('spin-paused');
+            vinylGlow.className = "absolute inset-0 rounded-full bg-pink-500/10 to-purple-500/10 blur-xl transition-all duration-500";
+            vinylArm.style.transform = "rotate(15deg)";
+            stopVisualizerAnimation();
+            generateStaticVisualizer();
+        });
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        // Visualiserare generator
+        function generateStaticVisualizer() {
+            visualizerContainer.innerHTML = '';
+            visualizerBars = [];
+            for (let i = 0; i < 28; i++) {
+                const bar = document.createElement('div');
+                const h = Math.floor(Math.random() * 6) + 6;
+                bar.className = "w-1 md:w-1.5 rounded-full bg-slate-800/60 transition-all duration-300";
+                bar.style.height = `${h}px`;
+                visualizerContainer.appendChild(bar);
+                visualizerBars.push(bar);
+            }
+        }
+
+        function initAudioVisualizer() {
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioContext = new AudioContextClass();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 64; 
+                sourceNode = audioContext.createMediaElementSource(audioPlayer);
+                sourceNode.connect(analyser);
+                analyser.connect(audioContext.destination);
+            } catch (e) {
+                console.log("Kunde inte starta Web Audio API, kör CSS-simulering.");
+            }
+        }
+
+        function startVisualizerAnimation() {
+            if (visualizerInterval) clearInterval(visualizerInterval);
+            
+            visualizerInterval = setInterval(() => {
+                if (analyser) {
+                    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    visualizerBars.forEach((bar, i) => {
+                        const index = Math.floor(i * (dataArray.length / visualizerBars.length));
+                        const val = dataArray[index] || 0;
+                        const height = Math.max(4, Math.floor((val / 255) * 36) + 4);
+                        bar.style.height = `${height}px`;
+                        if (val > 150) {
+                            bar.className = "w-1 md:w-1.5 rounded-full bg-gradient-to-t from-pink-500 to-purple-500 transition-all duration-75";
+                        } else {
+                            bar.className = "w-1 md:w-1.5 rounded-full bg-pink-500/60 transition-all duration-75";
+                        }
+                    });
+                } else {
+                    // Simulerad visualisering vid CORS- eller nätverksrestriktioner
+                    visualizerBars.forEach(bar => {
+                        const h = Math.floor(Math.random() * 32) + 4;
+                        bar.style.height = `${h}px`;
+                        bar.className = "w-1 md:w-1.5 rounded-full bg-pink-500/50 transition-all duration-100";
+                    });
+                }
+            }, 80);
+        }
+
+        function stopVisualizerAnimation() {
+            if (visualizerInterval) {
+                clearInterval(visualizerInterval);
+                visualizerInterval = null;
+            }
+            generateStaticVisualizer();
+        }
+
+        // Skicka Gissning
+        btnSubmitGuess.addEventListener('click', () => {
+            if (!selectedSongGuess) return;
+            
+            // Pausa ljudet automatiskt och återställ gränssnittet
+            audioPlayer.pause();
+            resetAudioUI();
+            stopVisualizerAnimation();
+
+            const currentTrack = gamePlaylist[currentRoundIndex];
+            const userYearGuess = parseInt(yearSlider.value);
+            const actualYear = currentTrack.year;
+            
+            // Räkna ut poäng för låten
+            let songPoints = selectedSongGuess.isCorrect ? 500 : 0;
+
+            // Räkna ut poäng för årtalet (max 500 poäng)
+            const yearDiff = Math.abs(userYearGuess - actualYear);
+            let yearPoints = 0;
+            if (yearDiff === 0) {
+                yearPoints = 500; 
+            } else if (yearDiff <= 10) {
+                yearPoints = Math.max(0, 500 - (yearDiff * 50)); // Fallande skala på 10 år
+            }
+
+            const roundScore = songPoints + yearPoints;
+            totalScore += roundScore;
+
+            // Spara resultatet
+            roundDetailedResults.push({
+                track: currentTrack,
+                guessedSong: selectedSongGuess,
+                guessedYear: userYearGuess,
+                yearDiff: yearDiff,
+                score: roundScore,
+                correctSong: selectedSongGuess.isCorrect
+            });
+
+            // Visa feedback
+            revealArtwork.src = currentTrack.artworkUrl;
+            revealYearBadge.innerText = actualYear;
+            revealUserYear.innerText = userYearGuess;
+            
+            if (yearDiff === 0) {
+                revealYearDiff.innerText = "Perfekt! Exakt rätt år!";
+                revealYearDiff.className = "text-xl font-black text-emerald-400";
+            } else {
+                revealYearDiff.innerText = `${yearDiff} ${yearDiff === 1 ? 'år' : 'år'} ifrån`;
+                revealYearDiff.className = "text-xl font-black text-purple-400";
+            }
+
+            revealRoundScore.innerText = `+${roundScore}`;
+            revealTrackName.innerText = currentTrack.title;
+            revealArtistName.innerText = currentTrack.artist;
+
+            if (selectedSongGuess.isCorrect) {
+                guessVerdictTitle.innerText = "HELT RÄTT!";
+                guessVerdictTitle.className = "text-2xl font-black uppercase tracking-widest block text-emerald-400 text-glow";
+            } else {
+                guessVerdictTitle.innerText = "FEL LÅTTITEL";
+                guessVerdictTitle.className = "text-2xl font-black uppercase tracking-widest block text-rose-500";
+            }
+
+            // Uppdatera header-poäng directly
+            totalScoreIndicator.innerText = totalScore;
+
+            // Byt skärm till runda-resultat
+            gameScreen.classList.add('hidden');
+            resultOverlay.classList.remove('hidden');
+
+            if (currentRoundIndex === 4) {
+                document.getElementById('btn-next-text').innerText = "Visa Slutresultat";
+            } else {
+                document.getElementById('btn-next-text').innerText = "Nästa Runda";
+            }
+        });
+
+        // Nästa runda händelse
+        btnNextRound.addEventListener('click', () => {
+            resultOverlay.classList.add('hidden');
+            
+            if (currentRoundIndex < 4) {
+                currentRoundIndex++;
+                gameScreen.classList.remove('hidden');
+                setupRound(currentRoundIndex);
+            } else {
+                showGameOverScreen();
+            }
+        });
+
+        // Slutskärm
+        function showGameOverScreen() {
+            headerStats.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+
+            document.getElementById('game-over-score').innerText = totalScore;
+
+            const correctSongsCount = roundDetailedResults.filter(r => r.correctSong).length;
+            const avgYearDiff = Math.round(roundDetailedResults.reduce((acc, curr) => acc + curr.yearDiff, 0) / 5);
+
+            document.getElementById('game-over-stats').innerText = `Rätt gissade låtar: ${correctSongsCount}/5 | Snittavvikelse på årtal: ${avgYearDiff} år`;
+
+            // Omdöme baserat på poängskala (max 5000)
+            let verdict = "";
+            if (totalScore >= 4500) {
+                verdict = "🏆 Musik-Legendar! Du dominerar pophistorien fullständigt och har en absolut kännedom om decennierna!";
+            } else if (totalScore >= 3500) {
+                verdict = "🎵 Kassettbandssamlare! Imponerande kunskap och mycket bra tidskänsla. Det här gjorde du strålande.";
+            } else if (totalScore >= 2200) {
+                verdict = "📻 Radio-Novis! En stabil insats. Du känner igen melodierna men tidsåldrarna är ibland lite kluriga.";
+            } else {
+                verdict = "🔇 Tondöv Tidsresenär... Men du fick i alla fall lyssna på ett gäng riktigt bra låtar under tiden!";
+            }
+            document.getElementById('game-over-verdict').innerText = verdict;
+        }
+
+        // Dela resultat
+        document.getElementById('btn-share-score').addEventListener('click', () => {
+            const correctSongsCount = roundDetailedResults.filter(r => r.correctSong).length;
+            const avgYearDiff = Math.round(roundDetailedResults.reduce((acc, curr) => acc + curr.yearDiff, 0) / 5);
+            
+            const shareText = `🎵 Guess the Song: Tidsmaskinen 🎵\n🏆 Jag skrapade ihop ${totalScore} poäng!\n✅ Gissade rätt på ${correctSongsCount}/5 låtar.\n⏳ Snittavvikelse på år: ${avgYearDiff} år.\nKan du slå mig? 🚀⏰`;
+            
+            // Skapa textarea för stabil urklipps-kopiering
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = shareText;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            // Temporär knappbekräftelse
+            const shareBtn = document.getElementById('btn-share-score');
+            const originalHTML = shareBtn.innerHTML;
+            shareBtn.innerHTML = `
+                <svg class="w-5 h-5 text-emerald-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="text-emerald-400">Resultat kopierat!</span>
+            `;
+            setTimeout(() => {
+                shareBtn.innerHTML = originalHTML;
+            }, 2500);
+        });
+
+        // Starta om spelet
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            gameOverScreen.classList.add('hidden');
+            startGame();
+        });
+    </script>
+</body>
+</html>

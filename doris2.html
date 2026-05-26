@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymnasiePlugget 🌸✨- Gör plugget till en fest!</title>
+    <!-- Tailwind CSS för en responsiv och modern bas layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts för glada och mjuka typsnitt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #eefcff 50%, #f1f0ff 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .happy-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Glitter partiklar */
+        .sparkle {
+            position: absolute;
+            background: radial-gradient(circle, #ffffff 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+            animation: floatSparkle 1.5s ease-out forwards;
+        }
+        @keyframes floatSparkle {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(1.2);
+                opacity: 0;
+            }
+        }
+        /* Blomster-animationer */
+        .flower-spin {
+            animation: spinFlower 12s linear infinite;
+        }
+        @keyframes spinFlower {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Mjuk studs-effekt för glada element */
+        .bounce-soft {
+            animation: softBounce 3s ease-in-out infinite alternate;
+        }
+        @keyframes softBounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+        /* Special-stilade knappar som ser godisaktiga ut */
+        .candy-btn {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 0px rgba(0,0,0,0.1);
+        }
+        .candy-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="relative pb-12">
+
+    <!-- Canvas för bakgrundsglitter och fallande blommor -->
+    <canvas id="canvas-bg" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
+
+    <!-- Topp-meny med blommor -->
+    <header class="relative z-10 max-w-6xl mx-auto px-4 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="showScreen('home')">
+            <div class="text-4xl flower-spin">🌸</div>
+            <div class="text-center sm:text-left">
+                <h1 class="text-3xl md:text-4xl text-pink-500 tracking-wide drop-shadow-md">GymnasiePlugget✨</h1>
+                <p class="text-sm text-purple-600 font-semibold">Första året på gymnasiet har aldrig varit roligare!</p>
+            </div>
+            <div class="text-4xl flower-spin" style="animation-duration: 8s;">🌼</div>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="showScreen('home')" class="candy-btn bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold px-4 py-2 rounded-full border-2 border-purple-800 text-sm flex items-center gap-1">
+                🏠 Hem
+            </button>
+            <button onclick="showHelpModal()" class="candy-btn bg-pink-400 hover:bg-pink-300 text-white font-bold px-4 py-2 rounded-full border-2 border-pink-700 text-sm flex items-center gap-1">
+                ❓ Hur gör man?
+            </button>
+        </div>
+    </header>
+
+    <!-- Huvudinnehåll -->
+    <main class="relative z-10 max-w-5xl mx-auto px-4 mt-8">
+
+        <!-- HEMSKÄRM -->
+        <section id="screen-home" class="text-center">
+            <div class="bg-white/80 backdrop-blur-md border-4 border-pink-300 rounded-3xl p-6 md:p-10 shadow-2xl bounce-soft">
+                <div class="flex justify-center gap-6 mb-4 text-3xl">
+                    <span>✨</span><span>🌺</span><span>✨</span><span>🌻</span><span>✨</span>
+                </div>
+                <h2 class="text-2xl md:text-4xl text-purple-700 mb-4 leading-relaxed">
+                    Välkommen till din glittriga kunskapskarusell! 🦄
+                </h2>
+                <p class="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+                    Här övar du på riktiga moment inför dina prov i första året på gymnasiet. 
+                    Välj ett ämne nedan, starta ett spel och samla glittriga poäng!
+                </p>
+
+                <!-- Ämneskort -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    
+                    <!-- MATTE -->
+                    <div class="bg-gradient-to-br from-yellow-100 to-amber-200 border-4 border-yellow-400 rounded-2xl p-6 flex flex-col justify-between shadow-lg transform hover:scale-105 transition-transform">
+                        <div>
+                            <div class="text-5xl mb-3">📐🌻</div>
+                            <h3 class="text-xl font-bold text-amber-800 mb-2">Matematik 1</h3>
+                            <p class="text-sm text-amber-950 mb-4">Träna på ekvationer, procent, geometri och smarta räkneknep som dyker upp på provet!</p>
+                        </div>
+                        <button onclick="startSubject('math')" class="candy-btn w-full bg-yellow-400 hover:bg-yellow-300 text-amber-900 font-bold py-3 px-4 rounded-xl border-b-4 border-yellow-600">
+                            Spela Matte-Magin! 🧙‍♀️
+                        </button>
+                    </div>
+
+                    <!-- SVENSKA -->
+                    <div class="bg-gradient-to-br from-pink-100 to-rose-200 border-4 border-pink-400 rounded-2xl p-6 flex flex-col justify-between shadow-lg transform hover:scale-105 transition-transform">
+                        <div>
+                            <div class="text-5xl mb-3">📖🌸</div>
+                            <h3 class="text-xl font-bold text-rose-800 mb-2">Svenska 1</h3>
+                            <p class="text-sm text-rose-950 mb-4">Bemästra litteraturhistoria, roliga stilfigurer, grammatik och meningsbyggnad!</p>
+                        </div>
+                        <button onclick="startSubject('swedish')" class="candy-btn w-full bg-pink-400 hover:bg-pink-300 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-pink-600">
+                            Starta Språkresan! ✈️
+                        </button>
+                    </div>
+
+                    <!-- ENGELSKA -->
+                    <div class="bg-gradient-to-br from-purple-100 to-indigo-200 border-4 border-purple-400 rounded-2xl p-6 flex flex-col justify-between shadow-lg transform hover:scale-105 transition-transform">
+                        <div>
+                            <div class="text-5xl mb-3">🇬🇧✨</div>
+                            <h3 class="text-xl font-bold text-purple-800 mb-2">Engelska 5</h3>
+                            <p class="text-sm text-purple-950 mb-4">Bygg upp ett fantastiskt ordförråd (vocabulary), synonymer och idiomatiska uttryck!</p>
+                        </div>
+                        <button onclick="startSubject('english')" class="candy-btn w-full bg-purple-500 hover:bg-purple-400 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-purple-700">
+                            Börja Ordkampen! 🏹
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Global Poängtavla -->
+                <div class="mt-10 bg-purple-100 rounded-2xl p-4 inline-flex items-center gap-3 border border-purple-300">
+                    <span class="text-2xl">🏆</span>
+                    <span class="font-bold text-purple-800">Dina totala glitterpoäng: <span id="total-score" class="text-2xl text-pink-500">0</span> st!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SPELSKÄRM -->
+        <section id="screen-game" class="hidden">
+            <div class="bg-white/90 backdrop-blur-md border-4 rounded-3xl p-5 md:p-8 shadow-2xl relative" id="game-card">
+                
+                <!-- Spel-huvud -->
+                <div class="flex flex-col sm:flex-row items-center justify-between border-b-2 pb-4 mb-6 border-dashed" id="game-header-border">
+                    <div class="flex items-center gap-3">
+                        <span id="game-icon" class="text-4xl">📐</span>
+                        <div>
+                            <h2 id="game-title" class="text-2xl text-purple-800">Matematik-spel</h2>
+                            <p id="game-sub" class="text-sm text-gray-500">Nivå: Gymnasiet år 1</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 mt-3 sm:mt-0">
+                        <div class="bg-pink-100 px-4 py-2 rounded-full border border-pink-300 font-bold text-pink-600">
+                            Fråga: <span id="current-question-num">1</span>/<span id="total-questions-num">10</span>
+                        </div>
+                        <div class="bg-yellow-100 px-4 py-2 rounded-full border border-yellow-300 font-bold text-yellow-700">
+                            Poäng: <span id="game-score">0</span> 🌸
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spel-yta -->
+                <div class="min-h-[300px] flex flex-col justify-between">
+                    
+                    <!-- Frågebox -->
+                    <div class="text-center my-6">
+                        <div id="game-question-text" class="text-xl md:text-2xl font-semibold text-gray-800 mb-8 px-4 leading-relaxed">
+                            Laddar spännande utmaning...
+                        </div>
+                        
+                        <!-- Interaktiva Svarsalternativ (för flervalsfrågor) -->
+                        <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto hidden">
+                            <!-- Knappar genereras av JS -->
+                        </div>
+
+                        <!-- Skriv-själv-svar (för matte-spel etc om man vill) -->
+                        <div id="input-container" class="max-w-md mx-auto hidden">
+                            <input type="text" id="user-text-input" class="w-full border-4 border-pink-300 rounded-2xl px-4 py-3 text-center text-xl font-bold focus:outline-none focus:border-pink-500" placeholder="Skriv ditt svar här...">
+                            <button onclick="submitTextInputAnswer()" class="candy-btn mt-4 w-full bg-green-400 hover:bg-green-300 text-white font-bold py-3 rounded-xl border-b-4 border-green-600">
+                                Skicka svar ✨
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feedback-meddelande vid rätt/fel -->
+                    <div id="answer-feedback" class="hidden text-center p-4 rounded-2xl font-bold text-lg mb-4 transition-all scale-95 duration-200">
+                        <span id="feedback-text">Jättebra! 🎉</span>
+                    </div>
+
+                    <!-- Spel-fot -->
+                    <div class="flex items-center justify-between border-t-2 pt-4 border-dashed border-gray-200">
+                        <button onclick="exitGame()" class="candy-btn bg-gray-400 hover:bg-gray-300 text-white font-bold px-5 py-2 rounded-xl text-sm">
+                            Avbryt spel 🏃‍♀️
+                        </button>
+                        <button id="next-btn" onclick="nextQuestion()" class="candy-btn bg-pink-500 hover:bg-pink-400 text-white font-bold px-6 py-2 rounded-xl text-sm hidden">
+                            Nästa fråga ➡️
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- RESULTATSKÄRM -->
+        <section id="screen-result" class="hidden text-center">
+            <div class="bg-white/90 backdrop-blur-md border-4 border-yellow-300 rounded-3xl p-8 md:p-12 shadow-2xl max-w-2xl mx-auto bounce-soft">
+                <div class="text-7xl mb-4" id="result-emoji">👑</div>
+                <h2 class="text-3xl md:text-4xl text-purple-700 mb-2">Superbra jobbat!</h2>
+                <p class="text-lg text-pink-600 font-bold mb-6" id="result-text-summary">Du klarade provet galant!</p>
+                
+                <div class="bg-yellow-50 rounded-2xl p-6 border-2 border-yellow-200 mb-8 max-w-sm mx-auto">
+                    <p class="text-gray-600 font-semibold mb-2">Ditt resultat</p>
+                    <div class="text-4xl font-bold text-yellow-600 mb-2"><span id="result-score">0</span> / <span id="result-total">10</span></div>
+                    <p class="text-sm text-gray-500">Du samlade <span id="result-glitter-gained" class="font-bold text-pink-500">0</span> nya glitterpoäng!</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="restartCurrentSubject()" class="candy-btn bg-pink-500 hover:bg-pink-400 text-white font-bold py-3 px-6 rounded-2xl border-b-4 border-pink-700">
+                        Spela igen 🔄
+                    </button>
+                    <button onclick="showScreen('home')" class="candy-btn bg-purple-500 hover:bg-purple-400 text-white font-bold py-3 px-6 rounded-2xl border-b-4 border-purple-700">
+                        Välj ett annat ämne 🌸
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- HÄRLIG BLOMSTERPALL / DEKORATION LÄNGST NER -->
+    <div class="fixed bottom-0 left-0 w-full pointer-events-none flex justify-between px-10 z-0 opacity-40 md:opacity-90">
+        <div class="text-6xl flower-spin" style="animation-duration: 15s; transform-origin: center;">🌸</div>
+        <div class="text-5xl flower-spin" style="animation-duration: 20s; transform-origin: center;">🌼</div>
+        <div class="text-6xl flower-spin" style="animation-duration: 18s; transform-origin: center;">🌺</div>
+        <div class="text-5xl flower-spin" style="animation-duration: 25s; transform-origin: center;">🌻</div>
+    </div>
+
+    <!-- HÄRLIGT HUR-GÖR-MAN MODAL -->
+    <div id="help-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border-4 border-pink-400 rounded-3xl p-6 max-w-md w-full shadow-2xl relative">
+            <button onclick="closeHelpModal()" class="absolute top-3 right-3 text-3xl hover:text-red-500 transition-colors">🌸</button>
+            <h3 class="text-2xl text-purple-700 mb-4 flex items-center gap-2">
+                <span>✨</span> Hur spelar man?
+            </h3>
+            <ul class="space-y-4 text-gray-700 text-left text-sm md:text-base">
+                <li class="flex gap-2">
+                    <span class="text-xl">1️⃣</span>
+                    <span>Välj det <strong>ämne</strong> du vill träna på: Matte, Svenska eller Engelska.</span>
+                </li>
+                <li class="flex gap-2">
+                    <span class="text-xl">2️⃣</span>
+                    <span>Läs frågan noga. Det är anpassat efter <strong>första året på gymnasiet</strong>!</span>
+                </li>
+                <li class="flex gap-2">
+                    <span class="text-xl">3️⃣</span>
+                    <span>Klicka på det svar du tror är rätt, eller skriv in ditt svar i rutan.</span>
+                </li>
+                <li class="flex gap-2">
+                    <span class="text-xl">4️⃣</span>
+                    <span>När du svarar rätt sprutar det <strong>färgglatt glitter</strong> och du får poäng!</span>
+                </li>
+                <li class="flex gap-2">
+                    <span class="text-xl">5️⃣</span>
+                    <span>Samla så många poäng du kan och försök få alla rätt på proven!</span>
+                </li>
+            </ul>
+            <button onclick="closeHelpModal()" class="candy-btn mt-6 w-full bg-pink-400 hover:bg-pink-300 text-white font-bold py-2 rounded-xl">
+                Okej, låt oss plugga! 🚀
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- SPEL-DATA (Gymnasienivå År 1: Matte 1, Svenska 1, Engelska 5) ---
+        const gameData = {
+            math: {
+                title: "Matematik-Magin (Matte 1)",
+                icon: "📐",
+                borderColor: "border-yellow-400",
+                headerBg: "bg-yellow-50",
+                questions: [
+                    {
+                        question: "Lös ekvationen: 3x - 7 = 8. Vad är x?",
+                        type: "options",
+                        options: ["x = 3", "x = 5", "x = 15", "x = 1.5"],
+                        correct: "x = 5",
+                        hint: "Addera 7 på båda sidor, dela sedan med 3!"
+                    },
+                    {
+                        question: "En jacka kostar 800 kr. Det är 25% rabatt. Hur mycket kostar jackan nu?",
+                        type: "options",
+                        options: ["600 kr", "200 kr", "700 kr", "550 kr"],
+                        correct: "600 kr",
+                        hint: "25% är en fjärdedel. Ta bort en fjärdedel av priset!"
+                    },
+                    {
+                        question: "Vilket av följande tal är ett primtal?",
+                        type: "options",
+                        options: ["9", "15", "17", "21"],
+                        correct: "17",
+                        hint: "Ett primtal kan bara delas med 1 och sig självt."
+                    },
+                    {
+                        question: "Skriv i enklaste form: (2x + 5) + (3x - 2)",
+                        type: "options",
+                        options: ["5x - 3", "5x + 3", "6x - 10", "x + 3"],
+                        correct: "5x + 3",
+                        hint: "Räkna ihop x-termerna för sig och siffrorna för sig."
+                    },
+                    {
+                        question: "En rät linje skrivs som y = 2x + 3. Vad är linjens m-värde (där den skär y-axeln)?",
+                        type: "options",
+                        options: ["2", "3", "0", "-3"],
+                        correct: "3",
+                        hint: "I formeln y = kx + m representerar m-värdet konstanten."
+                    },
+                    {
+                        question: "Beräkna värdet av uttrycket: 5 - 2 * 3 + 4",
+                        type: "options",
+                        options: ["13", "3", "9", "3"],
+                        correct: "3",
+                        hint: "Tänk på prioriteringsreglerna! Multiplikation går före addition och subtraktion."
+                    },
+                    {
+                        question: "Om sannolikheten att dra en röd kula är 2/5, hur stor är sannolikheten i procent?",
+                        type: "options",
+                        options: ["20%", "40%", "50%", "25%"],
+                        correct: "40%",
+                        hint: "Dela 2 med 5 för att få decimaltalet, multiplicera sedan med 100."
+                    },
+                    {
+                        question: "Vad kallas en vinkel som är exakt 90 grader?",
+                        type: "options",
+                        options: ["Spetsig vinkel", "Trubbig vinkel", "Rät vinkel", "Rak vinkel"],
+                        correct: "Rät vinkel",
+                        hint: "Tänk på hörnet av ett papper!"
+                    },
+                    {
+                        question: "Förenkla uttrycket: 4a * 3b",
+                        type: "options",
+                        options: ["7ab", "12ab", "12a+b", "7a+b"],
+                        correct: "12ab",
+                        hint: "Multiplicera siffrorna med varandra och behåll variablerna."
+                    },
+                    {
+                        question: "Vad är medianen av följande talföljd: 3, 5, 8, 10, 12?",
+                        type: "options",
+                        options: ["5", "10", "8", "7.6"],
+                        correct: "8",
+                        hint: "Medianen är det mittersta talet när de är sorterade i storleksordning."
+                    }
+                ]
+            },
+            swedish: {
+                title: "Svenska Språkresan (Svenska 1)",
+                icon: "📖",
+                borderColor: "border-pink-400",
+                headerBg: "bg-pink-50",
+                questions: [
+                    {
+                        question: "Vilken litterär epok är känd för sitt fokus på förnuft, vetenskap och samhällskritik?",
+                        type: "options",
+                        options: ["Antiken", "Medeltiden", "Upplysningen", "Romantiken"],
+                        correct: "Upplysningen",
+                        hint: "Tänk på ordet 'upplysa' - att sprida ljus och kunskap!"
+                    },
+                    {
+                        question: "Vad är en 'metafor' för något?",
+                        type: "options",
+                        options: [
+                            "En direkt jämförelse utan jämförelseord (t.ex. 'du är en stjärna')",
+                            "En jämförelse med ordet som (t.ex. 'du är som en stjärna')",
+                            "Ett ord som rimmar i slutet av en mening",
+                            "Ett annat ord för slangspråk"
+                        ],
+                        correct: "En direkt jämförelse utan jämförelseord (t.ex. 'du är en stjärna')",
+                        hint: "Utan ordet 'som' blir det en metafor. Med 'som' kallas det liknelse."
+                    },
+                    {
+                        question: "Vilket ord är ett exempel på ett subjunktion (tidigare känd som underordnande konjunktion)?",
+                        type: "options",
+                        options: ["och", "eftersom", "men", "eller"],
+                        correct: "eftersom",
+                        hint: "De binder samman en huvudsats med en bisats."
+                    },
+                    {
+                        question: "Vad kännetecknar ett typiskt argumenterande tal eller text?",
+                        type: "options",
+                        options: [
+                            "Att man bara berättar en spännande historia",
+                            "Att man har en tes och försöker övertyga mottagaren",
+                            "Att man förklarar hur en maskin fungerar helt neutralt",
+                            "Att texten måste rimma på varje rad"
+                        ],
+                        correct: "Att man har en tes och försöker övertyga mottagaren",
+                        hint: "Du vill bevisa din åsikt (tes) med hjälp av argument."
+                    },
+                    {
+                        question: "I vilken tidsålder levde författare som William Shakespeare?",
+                        type: "options",
+                        options: ["Antiken", "Renässansen", "Realismen", "Modernismen"],
+                        correct: "Renässansen",
+                        hint: "Det betyder 'pånyttfödelse' och varade ca 1400-1600."
+                    },
+                    {
+                        question: "Vad betyder det att skriva 'objektivt'?",
+                        type: "options",
+                        options: [
+                            "Att man skriver väldigt känslosamt och personligt",
+                            "Att man är saklig, opartisk och håller sig till fakta",
+                            "Att man hittar på egna sagor",
+                            "Att man använder mycket slang och svordomar"
+                        ],
+                        correct: "Att man är saklig, opartisk och håller sig till fakta",
+                        hint: "Motsatsen till subjektivt (som handlar om egna åsikter)."
+                    },
+                    {
+                        question: "Vad är 'allitteration'?",
+                        type: "options",
+                        options: [
+                            "Flera ord i rad som börjar på samma ljud/bokstav",
+                            "Att sluta en mening med ett utropstecken",
+                            "Ett annat ord för att läsa snabbt",
+                            "Ett ord som betyder motsatsen till ett annat"
+                        ],
+                        correct: "Flera ord i rad som börjar på samma ljud/bokstav",
+                        hint: "Tänk på 'Sju sjösjuka sjömän'!"
+                    },
+                    {
+                        question: "Vem skrev det kända antika dramat 'Antigone'?",
+                        type: "options",
+                        options: ["Sofokles", "Homeros", "Shakespeare", "August Strindberg"],
+                        correct: "Sofokles",
+                        hint: "Han var en av de tre stora grekiska tragediförfattarna."
+                    },
+                    {
+                        question: "Vilken ordklass tillhör orden: springa, läsa, glittra, sjunga?",
+                        type: "options",
+                        options: ["Substantiv", "Adjektiv", "Verb", "Adverb"],
+                        correct: "Verb",
+                        hint: "Det är saker man gör eller något som sker!"
+                    },
+                    {
+                        question: "Vad är syftet med en källhänvisning i en vetenskaplig text?",
+                        type: "options",
+                        options: [
+                            "Att göra texten så lång som möjligt",
+                            "Att visa varifrån man hämtat informationen så läsaren kan kontrollera källan",
+                            "Att gömma vem som egentligen har skrivit texten",
+                            "Att dekorera texten med fina parenteser"
+                        ],
+                        correct: "Att visa varifrån man hämtat informationen så läsaren kan kontrollera källan",
+                        hint: "Det handlar om akademisk ärlighet och källkritik."
+                    }
+                ]
+            },
+            english: {
+                title: "Vocabulary Quest (Engelska 5)",
+                icon: "🇬🇧",
+                borderColor: "border-purple-400",
+                headerBg: "bg-purple-50",
+                questions: [
+                    {
+                        question: "What is a synonym for the word 'AMBIGUOUS'?",
+                        type: "options",
+                        options: ["Clear", "Unclear / Vague", "Beautiful", "Angry"],
+                        correct: "Unclear / Vague",
+                        hint: "If something is ambiguous, it has double meanings or is open to interpretation."
+                    },
+                    {
+                        question: "Complete the sentence: 'Despite the rain, they decided to ______ with their outdoor plans.'",
+                        type: "options",
+                        options: ["proceed", "precede", "prevent", "predict"],
+                        correct: "proceed",
+                        hint: "To 'proceed' means to go forward or carry on an action."
+                    },
+                    {
+                        question: "What does the idiom 'bite the bullet' mean?",
+                        type: "options",
+                        options: [
+                            "To eat something very hard",
+                            "To face a difficult situation with courage and get it over with",
+                            "To start a physical fight",
+                            "To buy something expensive on sale"
+                        ],
+                        correct: "To face a difficult situation with courage and get it over with",
+                        hint: "It historically comes from soldiers biting on bullets during surgery to cope with pain."
+                    },
+                    {
+                        question: "Choose the correct spelling of the word that means 'nödvändig' or 'oumbärlig':",
+                        type: "options",
+                        options: ["Neccessary", "Necessary", "Nesesary", "Necessery"],
+                        correct: "Necessary",
+                        hint: "Remember: One Collar (C), Two Sleeves (SS) to wear a shirt!"
+                    },
+                    {
+                        question: "What is the meaning of the word 'BENEFICIAL'?",
+                        type: "options",
+                        options: ["Harmful", "Helpful / Advantageous", "Boring", "Artificial"],
+                        correct: "Helpful / Advantageous",
+                        hint: "Think of a 'benefit' which is something good for you."
+                    },
+                    {
+                        question: "Which of these is a formal way to say 'jag vill klaga' in an email?",
+                        type: "options",
+                        options: [
+                            "I wish to make a formal complaint",
+                            "I'm super mad about this",
+                            "You need to fix this trash now",
+                            "I wanna complain big time"
+                        ],
+                        correct: "I wish to make a formal complaint",
+                        hint: "Formal English uses polite, structured and indirect phrasing."
+                    },
+                    {
+                        question: "What does the word 'OBSTACLE' mean?",
+                        type: "options",
+                        options: ["An opportunity", "A barrier or hurdle", "A visual helper", "A type of modern art"],
+                        correct: "A barrier or hurdle",
+                        hint: "An obstacle blocks your path and you need to overcome it."
+                    },
+                    {
+                        question: "Translate 'kontrakt' (formellt avtal) into the correct English word:",
+                        type: "options",
+                        options: ["Contact", "Contract", "Contrast", "Conduct"],
+                        correct: "Contract",
+                        hint: "It sounds very similar to Swedish but is spelled with an 'r' in the middle."
+                    },
+                    {
+                        question: "What does the term 'CONSEQUENCE' mean?",
+                        type: "options",
+                        options: ["A cause", "A result or outcome", "An initial idea", "A long conversation"],
+                        correct: "A result or outcome",
+                        hint: "Every action has a reaction, or a consequence."
+                    },
+                    {
+                        question: "Identify the noun in this list:",
+                        type: "options",
+                        options: ["Beautifully", "Analyze", "Hypothesis", "Significant"],
+                        correct: "Hypothesis",
+                        hint: "A 'hypothesis' is an assumption or theory that you can test."
+                    }
+                ]
+            }
+        };
+
+        // --- GLOBAL STATS & TILLSTÅND ---
+        let currentSubject = "";
+        let currentQuestionIdx = 0;
+        let gameScore = 0;
+        let totalScore = 0;
+
+        // Läs in tidigare sparade poäng om de finns (in-memory standard, men vi sparar i localStorage så det sparas vid omladdning!)
+        if (localStorage.getItem("total_glitter_score")) {
+            totalScore = parseInt(localStorage.getItem("total_glitter_score"));
+            document.getElementById("total-score").innerText = totalScore;
+        }
+
+        // --- SIDEBAR / VIEW CONTROL ---
+        function showScreen(screenId) {
+            document.getElementById("screen-home").classList.add("hidden");
+            document.getElementById("screen-game").classList.add("hidden");
+            document.getElementById("screen-result").classList.add("hidden");
+
+            document.getElementById(`screen-${screenId}`).classList.remove("hidden");
+        }
+
+        function showHelpModal() {
+            document.getElementById("help-modal").classList.remove("hidden");
+        }
+
+        function closeHelpModal() {
+            document.getElementById("help-modal").classList.add("hidden");
+        }
+
+        // --- SPEL-LOGIK ---
+        function startSubject(subjectKey) {
+            currentSubject = subjectKey;
+            currentQuestionIdx = 0;
+            gameScore = 0;
+            
+            const data = gameData[subjectKey];
+            
+            // Anpassa spelkortets utseende efter ämnet
+            const gameCard = document.getElementById("game-card");
+            gameCard.className = `bg-white/90 backdrop-blur-md border-4 ${data.borderColor} rounded-3xl p-5 md:p-8 shadow-2xl relative`;
+            
+            document.getElementById("game-title").innerText = data.title;
+            document.getElementById("game-icon").innerText = data.icon;
+            document.getElementById("game-score").innerText = "0";
+            
+            showScreen("game");
+            loadQuestion();
+        }
+
+        function restartCurrentSubject() {
+            if (currentSubject) {
+                startSubject(currentSubject);
+            } else {
+                showScreen("home");
+            }
+        }
+
+        function loadQuestion() {
+            const data = gameData[currentSubject];
+            const q = data.questions[currentQuestionIdx];
+
+            // Uppdatera räknare
+            document.getElementById("current-question-num").innerText = currentQuestionIdx + 1;
+            document.getElementById("total-questions-num").innerText = data.questions.length;
+
+            // Nollställ feedback och nästa-knapp
+            const feedback = document.getElementById("answer-feedback");
+            feedback.classList.add("hidden");
+            document.getElementById("next-btn").classList.add("hidden");
+
+            // Sätt frågetext
+            document.getElementById("game-question-text").innerHTML = `
+                <div class="mb-2 text-pink-500 text-sm tracking-widest font-bold uppercase">Fråga ${currentQuestionIdx + 1}</div>
+                ${q.question}
+                <div class="mt-4 text-xs text-purple-500 italic bg-purple-50 inline-block px-3 py-1 rounded-full border border-purple-200">💡 Tips: ${q.hint}</div>
+            `;
+
+            // Visa rätt svarsmetod
+            if (q.type === "options") {
+                document.getElementById("options-container").classList.remove("hidden");
+                document.getElementById("input-container").classList.add("hidden");
+                generateOptions(q.options, q.correct);
+            } else {
+                document.getElementById("options-container").classList.add("hidden");
+                document.getElementById("input-container").classList.remove("hidden");
+                document.getElementById("user-text-input").value = "";
+                document.getElementById("user-text-input").focus();
+            }
+        }
+
+        function generateOptions(options, correct) {
+            const container = document.getElementById("options-container");
+            container.innerHTML = "";
+
+            // Blanda alternativen lite för extra skoj, men behåll referens till det rätta
+            options.forEach((opt, idx) => {
+                const button = document.createElement("button");
+                button.className = "candy-btn bg-white hover:bg-pink-50 text-gray-800 font-bold py-4 px-6 rounded-2xl border-2 border-pink-200 text-left transition-all flex items-center gap-3 text-base sm:text-lg";
+                
+                // Olika glada färgade kulor för alternativen
+                const bullets = ["🌸", "⭐", "🦄", "🍀"];
+                const bullet = bullets[idx % bullets.length];
+
+                button.innerHTML = `<span class="text-xl">${bullet}</span> <span class="flex-1">${opt}</span>`;
+                button.onclick = () => selectOption(button, opt, correct);
+                container.appendChild(button);
+            });
+        }
+
+        function selectOption(button, selected, correct) {
+            // Förhindra klick på andra knappar efter val
+            const buttons = document.querySelectorAll("#options-container button");
+            buttons.forEach(btn => btn.disabled = true);
+
+            const feedback = document.getElementById("answer-feedback");
+            const feedbackText = document.getElementById("feedback-text");
+            feedback.classList.remove("hidden");
+
+            if (selected === correct) {
+                // RÄTT SVAR!
+                button.classList.remove("border-pink-200", "bg-white");
+                button.classList.add("border-green-500", "bg-green-100", "text-green-800");
+                
+                feedback.className = "text-center p-4 rounded-2xl font-bold text-lg mb-4 bg-green-100 text-green-700 border-2 border-green-300 animate-bounce";
+                feedbackText.innerHTML = "JAA! Helt fantastiskt rätt! 🌟🌸✨ Det där kan du!";
+                
+                gameScore++;
+                document.getElementById("game-score").innerText = gameScore;
+
+                // Spruta glitter!
+                const rect = button.getBoundingClientRect();
+                spawnGlitter(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+            } else {
+                // FEL SVAR
+                button.classList.remove("border-pink-200", "bg-white");
+                button.classList.add("border-red-500", "bg-red-100", "text-red-800");
+
+                // Visa även det rätta svaret för pedagogiken
+                buttons.forEach(btn => {
+                    if (btn.innerText.includes(correct)) {
+                        btn.classList.add("border-green-500", "bg-green-50");
+                    }
+                });
+
+                feedback.className = "text-center p-4 rounded-2xl font-bold text-lg mb-4 bg-yellow-100 text-yellow-800 border-2 border-yellow-300";
+                feedbackText.innerHTML = `Nära skjuter ingen hare! 🐰 Det rätta svaret var: <span class="text-green-700">${correct}</span>. Heja på nästa!`;
+            }
+
+            document.getElementById("next-btn").classList.remove("hidden");
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            const data = gameData[currentSubject];
+
+            if (currentQuestionIdx < data.questions.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        function finishGame() {
+            showScreen("result");
+            
+            const data = gameData[currentSubject];
+            document.getElementById("result-score").innerText = gameScore;
+            document.getElementById("result-total").innerText = data.questions.length;
+
+            // Räkna ut hur mycket glitter man får!
+            const scoreGained = gameScore * 10;
+            document.getElementById("result-glitter-gained").innerText = scoreGained;
+
+            // Uppdatera totalt poängsaldo
+            totalScore += scoreGained;
+            document.getElementById("total-score").innerText = totalScore;
+            localStorage.setItem("total_glitter_score", totalScore);
+
+            // Anpassa feedback utifrån resultat
+            const resultEmoji = document.getElementById("result-emoji");
+            const resultSummary = document.getElementById("result-text-summary");
+
+            if (gameScore === data.questions.length) {
+                resultEmoji.innerText = "👑🏆✨";
+                resultSummary.innerText = "HELT OTROLIGT! Full pott! Du är redo att spika gymnasieprovet direkt! 🌸";
+                startConfetti();
+            } else if (gameScore >= 7) {
+                resultEmoji.innerText = "🌻💖🎈";
+                resultSummary.innerText = "Superbra jobbat! Du har verkligen koll på det här. Fortsätt glänsa! ✨";
+                startConfetti();
+            } else if (gameScore >= 5) {
+                resultEmoji.innerText = "⭐👍🧸";
+                resultSummary.innerText = "Bra kämpat! Du är godkänd och på god väg, lite mer träning så sitter allt! 📚";
+            } else {
+                resultEmoji.innerText = "🌱🎒💪";
+                resultSummary.innerText = "Bra försök! Övning ger färdighet. Testa igen – du lär dig snabbt! 🌸";
+            }
+        }
+
+        function exitGame() {
+            if(confirm("Vill du verkligen avsluta spelet och gå tillbaka till startsidan? Dina påbörjade poäng sparas inte.")) {
+                showScreen("home");
+            }
+        }
+
+
+        // --- GLITTER & PARTIKEL EFFEKTER ---
+        
+        // Skapa fysiskt klick-glitter vid rätt svar
+        function spawnGlitter(x, y) {
+            const body = document.body;
+            const colors = ["#ff007f", "#ff00ff", "#00ffff", "#ffff00", "#00ff00", "#ffaa00"];
+
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement("div");
+                sparkle.className = "sparkle";
+                
+                // Slumpmässiga riktningar och storlekar
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 120;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+                const size = 8 + Math.random() * 14;
+
+                sparkle.style.width = `${size}px`;
+                sparkle.style.height = `${size}px`;
+                
+                // Slumpmässig glad färg
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                sparkle.style.background = `radial-gradient(circle, #ffffff 10%, ${color} 70%)`;
+                sparkle.style.boxShadow = `0 0 10px ${color}`;
+
+                sparkle.style.left = `${x + window.scrollX - size/2}px`;
+                sparkle.style.top = `${y + window.scrollY - size/2}px`;
+
+                sparkle.style.setProperty("--dx", `${dx}px`);
+                sparkle.style.setProperty("--dy", `${dy}px`);
+
+                body.appendChild(sparkle);
+
+                // Ta bort efter animationen
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1500);
+            }
+        }
+
+        // --- CANVAS BAKGRUNDSANIMATION (Fallande blommor och bakgrundsglitter) ---
+        const canvas = document.getElementById("canvas-bg");
+        const ctx = canvas.getContext("2d");
+
+        let particles = [];
+        const maxParticles = 35;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        // Skapa en partikel (antingen en blomma eller en glittrande stjärna)
+        function createParticle(isFresh = false) {
+            return {
+                x: Math.random() * canvas.width,
+                y: isFresh ? -20 : Math.random() * canvas.height,
+                size: 8 + Math.random() * 18,
+                speedY: 0.5 + Math.random() * 1.5,
+                speedX: (Math.random() - 0.5) * 1,
+                rotation: Math.random() * 360,
+                spin: (Math.random() - 0.5) * 2,
+                type: Math.random() > 0.4 ? "flower" : "star",
+                color: ["#ffb7d5", "#ffe066", "#a8f0ff", "#e0b0ff"][Math.floor(Math.random() * 4)]
+            };
+        }
+
+        // Initiera partiklar spridda över skärmen
+        for (let i = 0; i < maxParticles; i++) {
+            particles.push(createParticle(false));
+        }
+
+        function drawFlower(x, y, size, color, rot) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rot * Math.PI / 180);
+            
+            ctx.fillStyle = color;
+            // Rita 5 blomblad
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.ellipse(0, -size/2, size/3, size/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.rotate((360 / 5) * Math.PI / 180);
+            }
+            // Blommans mitt
+            ctx.beginPath();
+            ctx.arc(0, 0, size/3, 0, Math.PI*2);
+            ctx.fillStyle = "#fff5cc";
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawStar(x, y, size, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.fillStyle = "#ffffff";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = color;
+            
+            // Fyrauddig glittrande stjärna
+            ctx.beginPath();
+            ctx.moveTo(0, -size);
+            ctx.quadraticCurveTo(0, 0, size, 0);
+            ctx.quadraticCurveTo(0, 0, 0, size);
+            ctx.quadraticCurveTo(0, 0, -size, 0);
+            ctx.quadraticCurveTo(0, 0, 0, -size);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        function updateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, index) => {
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.rotation += p.spin;
+
+                // Återskapa om den faller ut ur skärmen
+                if (p.y > canvas.height + 20) {
+                    particles[index] = createParticle(true);
+                }
+
+                if (p.type === "flower") {
+                    drawFlower(p.x, p.y, p.size, p.color, p.rotation);
+                } else {
+                    drawStar(p.x, p.y, p.size / 2, p.color);
+                }
+            });
+
+            requestAnimationFrame(updateParticles);
+        }
+
+        // Starta bakgrundsanimering direkt
+        updateParticles();
+
+        // Extra stor konfetti vid toppbetyg!
+        function startConfetti() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    spawnGlitter(Math.random() * window.innerWidth, Math.random() * (window.innerHeight / 2));
+                }, i * 350);
+            }
+        }
+    </script>
+</body>
+</html>

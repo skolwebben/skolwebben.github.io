@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UNO Spel</title>
+    <style>
+        :root {
+            --red: #e74c3c;
+            --blue: #3498db;
+            --green: #2ecc71;
+            --yellow: #f1c40f;
+            --wild: #34495e;
+            --bg-table: radial-gradient(circle, #2e7d32, #1b5e20);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-table);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Spelplanen */
+        #game-board {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        /* Motståndarens Hand */
+        #ai-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 130px;
+            gap: -40px; /* Överlappning */
+        }
+
+        .ai-stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        /* Mitten (Korthög & Slänghög) */
+        #center-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+        }
+
+        .pile {
+            position: relative;
+            width: 100px;
+            height: 150px;
+        }
+
+        #draw-pile .card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #draw-pile .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        /* Spelarens Hand */
+        #player-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 20px;
+        }
+
+        /* Kort Design */
+        .card {
+            width: 90px;
+            height: 135px;
+            border-radius: 12px;
+            background: white;
+            border: 6px solid white;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            font-weight: 900;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            user-select: none;
+            box-sizing: border-box;
+            transition: transform 0.2s, top 0.2s;
+        }
+
+        .card.playable {
+            cursor: pointer;
+            box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6);
+        }
+
+        .card.playable:hover {
+            transform: translateY(-15px);
+            z-index: 10;
+        }
+
+        /* Inner Oval */
+        .card::before {
+            content: '';
+            position: absolute;
+            width: 85%;
+            height: 85%;
+            background: white;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transform: rotate(-30deg);
+            z-index: 0;
+        }
+
+        .card span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Kort Färger */
+        .card.red { background: var(--red); }
+        .card.red span { color: var(--red); }
+        
+        .card.blue { background: var(--blue); }
+        .card.blue span { color: var(--blue); }
+        
+        .card.green { background: var(--green); }
+        .card.green span { color: var(--green); }
+        
+        .card.yellow { background: var(--yellow); }
+        .card.yellow span { color: var(--yellow); }
+        
+        .card.wild { 
+            background: linear-gradient(135deg, var(--red) 50%, var(--blue) 50%);
+            border-color: #222;
+        }
+        .card.wild::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, var(--green) 50%, transparent 50%);
+            border-radius: 6px;
+            z-index: -1;
+        }
+        .card.wild span { color: #222; text-shadow: 1px 1px 0px white; }
+
+        .card.back {
+            background: #111;
+            border-color: white;
+            margin-left: -50px; /* Överlappning för AI */
+        }
+        .card.back:first-child { margin-left: 0; }
+        .card.back::before { display: none; }
+        .card.back span { color: var(--red); font-size: 24px; text-shadow: 2px 2px 0px #f1c40f; transform: rotate(-20deg); }
+
+        /* UI Overlays */
+        #message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: bold;
+            background: rgba(0,0,0,0.8);
+            padding: 20px 40px;
+            border-radius: 15px;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        #color-picker-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .color-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .color-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+        .color-btn:active { transform: scale(0.95); }
+        .color-btn.red { background: var(--red); }
+        .color-btn.blue { background: var(--blue); }
+        .color-btn.green { background: var(--green); }
+        .color-btn.yellow { background: var(--yellow); }
+
+        #current-color-indicator {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        /* End Screen */
+        #end-screen {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+        #end-screen h1 { font-size: 4rem; color: var(--yellow); margin-bottom: 20px;}
+        #end-screen button {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #end-screen button:hover { background: #c0392b; }
+
+        @media (max-width: 600px) {
+            .card { width: 60px; height: 90px; font-size: 20px; border-width: 4px; }
+            #center-area { gap: 20px; }
+            .pile { width: 60px; height: 90px; }
+            .ai-stats { font-size: 1rem; top: 10px; left: 10px; }
+            #player-area { gap: -20px; } /* Överlappning på mobil för att få plats */
+            #player-area .card { margin-left: -30px; }
+            #player-area .card:first-child { margin-left: 0; }
+            #player-area .card:hover { transform: translateY(-20px); margin-right: 30px; } /* Gör den synlig */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ai-stats">Dator: <span id="ai-card-count">7</span> kort</div>
+
+    <div id="game-board">
+        <!-- Datorns hand (Endast baksidor) -->
+        <div id="ai-area"></div>
+
+        <!-- Mitten -->
+        <div id="center-area">
+            <div id="current-color-indicator"></div>
+            <!-- Dra kort-högen -->
+            <div id="draw-pile" class="pile" onclick="playerDrawCard()">
+                <div class="card back"><span>UNO</span></div>
+            </div>
+            <!-- Slänghögen -->
+            <div id="discard-pile" class="pile">
+                <!-- Genereras dynamiskt -->
+            </div>
+        </div>
+
+        <!-- Spelarens hand -->
+        <div id="player-area"></div>
+    </div>
+
+    <!-- UI Overlays -->
+    <div id="message-box">UNO!</div>
+
+    <div id="color-picker-overlay">
+        <div class="color-options">
+            <button class="color-btn red" onclick="selectColor('red')"></button>
+            <button class="color-btn blue" onclick="selectColor('blue')"></button>
+            <button class="color-btn green" onclick="selectColor('green')"></button>
+            <button class="color-btn yellow" onclick="selectColor('yellow')"></button>
+        </div>
+    </div>
+
+    <div id="end-screen">
+        <h1 id="end-title">Du Vann!</h1>
+        <button onclick="initGame()">Spela Igen</button>
+    </div>
+
+    <script>
+        // --- Spelkonfiguration och Tillstånd ---
+        const colors = ['red', 'blue', 'green', 'yellow'];
+        const values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Vänd', 'Stopp', '+2'];
+        const wildTypes = ['Färg', '+4'];
+
+        let deck = [];
+        let discardPile = [];
+        let playerHand = [];
+        let aiHand = [];
+        
+        let currentColor = '';
+        let isPlayerTurn = true;
+        let waitingForColor = false;
+
+        // UI Element
+        const aiArea = document.getElementById('ai-area');
+        const playerArea = document.getElementById('player-area');
+        const discardPileEl = document.getElementById('discard-pile');
+        const msgBox = document.getElementById('message-box');
+        const colorIndicator = document.getElementById('current-color-indicator');
+        const aiCountEl = document.getElementById('ai-card-count');
+
+        // --- Initiering ---
+        function initGame() {
+            document.getElementById('end-screen').style.display = 'none';
+            deck = buildDeck();
+            shuffle(deck);
+            
+            playerHand = [];
+            aiHand = [];
+            discardPile = [];
+            isPlayerTurn = true;
+            waitingForColor = false;
+            colorIndicator.style.display = 'none';
+
+            // Dela ut 7 kort
+            for(let i=0; i<7; i++) {
+                playerHand.push(drawCard());
+                aiHand.push(drawCard());
+            }
+
+            // Lägg första kortet
+            let firstCard = drawCard();
+            // Undvik specialkort som första kort för att förenkla
+            while(firstCard.color === 'wild' || isActionCard(firstCard)) {
+                deck.push(firstCard);
+                shuffle(deck);
+                firstCard = drawCard();
+            }
+            discardPile.push(firstCard);
+            currentColor = firstCard.color;
+
+            updateUI();
+            showMessage("Spelet börjar! Din tur.");
+        }
+
+        function buildDeck() {
+            let newDeck = [];
+            for (let color of colors) {
+                newDeck.push({ color: color, value: '0' }); // En 0:a
+                for (let i = 1; i < values.length; i++) {
+                    newDeck.push({ color: color, value: values[i] }); // Två av 1-9, Vänd, Stopp, +2
+                    newDeck.push({ color: color, value: values[i] });
+                }
+            }
+            for(let i=0; i<4; i++) {
+                newDeck.push({ color: 'wild', value: 'Färg' });
+                newDeck.push({ color: 'wild', value: '+4' });
+            }
+            return newDeck;
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // --- Korthantering ---
+        function drawCard() {
+            if (deck.length === 0) {
+                // Blanda om slänghögen om dra-högen är tom
+                let topCard = discardPile.pop();
+                deck = discardPile;
+                discardPile = [topCard];
+                shuffle(deck);
+                showMessage("Blandar om högen...");
+            }
+            return deck.pop();
+        }
+
+        function isActionCard(card) {
+            return ['Vänd', 'Stopp', '+2', '+4', 'Färg'].includes(card.value);
+        }
+
+        function isValidPlay(card) {
+            const topCard = discardPile[discardPile.length - 1];
+            if (card.color === 'wild') return true;
+            if (card.color === currentColor) return true;
+            if (card.value === topCard.value) return true;
+            return false;
+        }
+
+        // --- UI Uppdatering ---
+        function createCardHTML(card, isPlayable, onClickFunc) {
+            const div = document.createElement('div');
+            div.className = `card ${card.color}`;
+            if (isPlayable) {
+                div.classList.add('playable');
+                div.onclick = onClickFunc;
+            }
+            const span = document.createElement('span');
+            span.innerText = card.value;
+            div.appendChild(span);
+            return div;
+        }
+
+        function updateUI() {
+            // Uppdatera AI Hand
+            aiArea.innerHTML = '';
+            for(let i=0; i<aiHand.length; i++) {
+                const div = document.createElement('div');
+                div.className = 'card back';
+                div.innerHTML = '<span>UNO</span>';
+                aiArea.appendChild(div);
+            }
+            aiCountEl.innerText = aiHand.length;
+
+            // Uppdatera Mitten (Top kortet)
+            discardPileEl.innerHTML = '';
+            const topCard = discardPile[discardPile.length - 1];
+            discardPileEl.appendChild(createCardHTML(topCard, false, null));
+
+            // Färgindikator (vid wild cards)
+            if(topCard.color === 'wild') {
+                colorIndicator.style.display = 'block';
+                colorIndicator.style.backgroundColor = `var(--${currentColor})`;
+            } else {
+                colorIndicator.style.display = 'none';
+            }
+
+            // Uppdatera Spelarens hand
+            playerArea.innerHTML = '';
+            playerHand.forEach((card, index) => {
+                const isPlayable = isPlayerTurn && !waitingForColor && isValidPlay(card);
+                const htmlCard = createCardHTML(card, isPlayable, () => playPlayerCard(index));
+                playerArea.appendChild(htmlCard);
+            });
+
+            // Kolla Vinst
+            if(playerHand.length === 0) endGame("Grattis! Du Vann! 🎉");
+            if(aiHand.length === 0) endGame("Datorn Vann! 🤖");
+        }
+
+        function showMessage(msg, duration = 2000) {
+            msgBox.innerText = msg;
+            msgBox.style.opacity = 1;
+            setTimeout(() => {
+                msgBox.style.opacity = 0;
+            }, duration);
+        }
+
+        // --- Spelmekanik (Spelare) ---
+        function playerDrawCard() {
+            if (!isPlayerTurn || waitingForColor) return;
+            
+            const card = drawCard();
+            playerHand.push(card);
+            showMessage("Du drog ett kort");
+            
+            // Kan det nydragna kortet spelas? Om inte, gå till AI
+            if(isValidPlay(card)) {
+                updateUI(); // Ge spelaren chans att spela det nydragna (officiell UNO regel: du FÅR spela det direkt)
+            } else {
+                passTurn();
+            }
+        }
+
+        function playPlayerCard(index) {
+            if (!isPlayerTurn || waitingForColor) return;
+            
+            const card = playerHand[index];
+            if (!isValidPlay(card)) return;
+
+            // Ta bort från hand och lägg i slänghögen
+            playerHand.splice(index, 1);
+            discardPile.push(card);
+            currentColor = card.color;
+
+            if (playerHand.length === 1) showMessage("DU HAR UNO!");
+
+            applyCardEffect(card, 'player');
+        }
+
+        function selectColor(color) {
+            currentColor = color;
+            document.getElementById('color-picker-overlay').style.display = 'none';
+            waitingForColor = false;
+            updateUI();
+            passTurn(); // Nu när färgen är vald, går turen över (om inte en specialeffekt ändrade det)
+        }
+
+        // --- Spelmekanik (Gemensam & Effekter) ---
+        function applyCardEffect(card, playedBy) {
+            let skipNext = false;
+            let opponent = playedBy === 'player' ? aiHand : playerHand;
+
+            if (card.value === 'Vänd' || card.value === 'Stopp') {
+                // I 2-spelar UNO fungerar både Vänd och Stopp som att motståndaren hoppas över
+                skipNext = true;
+                showMessage(playedBy === 'player' ? "Du får spela igen!" : "Datorn fick spela igen!", 1500);
+            } 
+            else if (card.value === '+2') {
+                opponent.push(drawCard(), drawCard());
+                skipNext = true;
+                showMessage(playedBy === 'player' ? "Datorn drog 2 kort" : "Du drog 2 kort!", 2000);
+            }
+            else if (card.value === '+4') {
+                opponent.push(drawCard(), drawCard(), drawCard(), drawCard());
+                skipNext = true;
+                showMessage(playedBy === 'player' ? "Datorn drog 4 kort!" : "Du drog 4 kort!", 2000);
+            }
+
+            // Hantera Wild kortens färgval
+            if (card.color === 'wild') {
+                if (playedBy === 'player') {
+                    waitingForColor = true;
+                    document.getElementById('color-picker-overlay').style.display = 'flex';
+                    // Turen passas i selectColor() istället
+                    return; 
+                } else {
+                    // AI väljer den färg den har mest av
+                    let colorCounts = { red:0, blue:0, green:0, yellow:0 };
+                    aiHand.forEach(c => { if(c.color !== 'wild') colorCounts[c.color]++; });
+                    let bestColor = Object.keys(colorCounts).reduce((a, b) => colorCounts[a] > colorCounts[b] ? a : b);
+                    if(colorCounts[bestColor] === 0) bestColor = colors[Math.floor(Math.random() * 4)]; // Om AI bara har wilds
+                    
+                    currentColor = bestColor;
+                    
+                    // Översätt färg till Svenska för meddelandet
+                    const svColors = {red: 'Röd', blue: 'Blå', green: 'Grön', yellow: 'Gul'};
+                    showMessage(`Datorn valde ${svColors[bestColor]}`);
+                }
+            }
+
+            updateUI();
+
+            if (skipNext) {
+                // Om 'skipNext' är sann fortsätter turen att vara hos nuvarande spelare.
+                if(playedBy === 'ai') {
+                    setTimeout(aiTurn, 2000);
+                } else {
+                    // Spelaren får spela igen, så vi sätter inte isPlayerTurn till false
+                    updateUI(); 
+                }
+            } else {
+                passTurn();
+            }
+        }
+
+        function passTurn() {
+            isPlayerTurn = !isPlayerTurn;
+            updateUI();
+
+            if (!isPlayerTurn) {
+                setTimeout(aiTurn, 1000); // AI väntar lite så det ser realistiskt ut
+            }
+        }
+
+        // --- AI Logik ---
+        function aiTurn() {
+            if (aiHand.length === 0 || isPlayerTurn) return; // Dubbelkoll
+
+            // Hitta spelbara kort
+            let validCards = aiHand.filter(isValidPlay);
+
+            if (validCards.length > 0) {
+                // AI Logik: 
+                // 1. Försök spela vanligt kort (färg/nummer) först.
+                // 2. Spara Wild / +4 till kris.
+                let cardToPlay;
+                let regularCards = validCards.filter(c => c.color !== 'wild');
+                
+                if (regularCards.length > 0) {
+                    cardToPlay = regularCards[Math.floor(Math.random() * regularCards.length)];
+                } else {
+                    cardToPlay = validCards[0]; // Måste spela Wild
+                }
+
+                // Spela kortet
+                const index = aiHand.indexOf(cardToPlay);
+                aiHand.splice(index, 1);
+                discardPile.push(cardToPlay);
+                currentColor = cardToPlay.color;
+
+                if (aiHand.length === 1) showMessage("Datorn säger: UNO!");
+
+                applyCardEffect(cardToPlay, 'ai');
+            } else {
+                // Inget spelbart kort, måste dra
+                aiHand.push(drawCard());
+                showMessage("Datorn drog ett kort");
+                updateUI();
+                
+                // Om det nya kortet inte kan spelas, går turen över. (Förenkling: AI spelar sällan det nya kortet direkt här)
+                setTimeout(passTurn, 1000);
+            }
+        }
+
+        function endGame(msg) {
+            document.getElementById('end-title').innerText = msg;
+            document.getElementById('end-screen').style.display = 'flex';
+        }
+
+        // Starta spelet när sidan laddas
+        initGame();
+
+    </script>
+</body>
+</html>

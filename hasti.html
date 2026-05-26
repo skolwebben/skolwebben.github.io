@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="sv" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Grand Prix - Snake Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts för racing-känsla -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome för ikoner -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #080b11;
+        }
+        .f1-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .hud-border {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3), inset 0 0 10px rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.6);
+        }
+        .neon-btn {
+            text-shadow: 0 0 5px rgba(239, 68, 68, 0.6);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.6);
+            transition: all 0.2s ease;
+        }
+        .neon-btn:hover:not(:disabled) {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+        /* F1 Startljus */
+        .start-light {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #1e293b;
+            border: 3px solid #0f172a;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+            transition: background-color 0.1s ease, box-shadow 0.1s ease;
+        }
+        .start-light.red-active {
+            background-color: #ef4444;
+            box-shadow: 0 0 20px #ef4444, 0 0 40px #ef4444;
+        }
+        .start-light.green-active {
+            background-color: #10b981;
+            box-shadow: 0 0 20px #10b981, 0 0 40px #10b981;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-full text-gray-100 select-none overflow-x-hidden">
+
+    <!-- Huvudcontainer -->
+    <div class="flex-grow flex flex-col items-center justify-center p-4 md:p-6 max-w-4xl mx-auto w-full">
+        
+        <!-- Header -->
+        <header class="w-full text-center mb-4">
+            <h1 class="text-4xl md:text-5xl font-black f1-font text-red-500 tracking-wider mb-1 uppercase italic">F1 NEON GP</h1>
+            <p class="text-gray-400 text-xs md:text-sm tracking-widest font-bold">SLÅ BANREKORDET MED DITT STALL</p>
+        </header>
+
+        <!-- Startljus Panel -->
+        <div id="lights-panel" class="w-full max-w-lg bg-slate-900 border border-slate-800 p-3 rounded-xl flex justify-between items-center mb-4 px-6 gap-2">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider f1-font">START</span>
+            <div class="flex gap-3">
+                <div class="start-light" id="light-1"></div>
+                <div class="start-light" id="light-2"></div>
+                <div class="start-light" id="light-3"></div>
+                <div class="start-light" id="light-4"></div>
+                <div class="start-light" id="light-5"></div>
+            </div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider f1-font">GRID</span>
+        </div>
+
+        <!-- Telemetri / Scoreboard -->
+        <div class="w-full max-w-lg grid grid-cols-3 gap-3 mb-4 text-center">
+            <div class="bg-slate-950 p-2 rounded-xl border border-red-500/20">
+                <span class="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">HUSHÅLLNING / POÄNG</span>
+                <span id="score-display" class="text-xl md:text-2xl font-black text-red-400 f1-font font-mono">0</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded-xl border border-yellow-500/20">
+                <span class="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">BANREKORD (VARV)</span>
+                <span id="high-score-display" class="text-xl md:text-2xl font-black text-yellow-400 f1-font font-mono">0</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded-xl border border-cyan-500/20 flex flex-col justify-center items-center">
+                <span class="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">TELEMETRI (STATUS)</span>
+                <div id="active-power-display" class="text-xs font-bold text-gray-500 mt-0.5 uppercase f1-font">Standard</div>
+            </div>
+        </div>
+
+        <!-- Spelyta / Race Track Canvas -->
+        <div class="relative w-full max-w-lg aspect-square bg-slate-950 rounded-2xl overflow-hidden hud-border flex items-center justify-center">
+            
+            <!-- Canvas för racingbanan -->
+            <canvas id="game-canvas" class="w-full h-full block"></canvas>
+
+            <!-- Spelmenyer och Överlagringar -->
+            <div id="overlay" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center transition-all duration-300">
+                
+                <!-- Stall-väljare & Startskärm -->
+                <div id="start-screen" class="space-y-4 w-full max-w-sm">
+                    <div class="text-red-500 text-5xl mb-2 animate-pulse"><i class="fa-solid fa-car-formula"></i></div>
+                    <h2 class="text-2xl font-black tracking-wider text-white f1-font italic">VÄLJ DITT F1-STALL</h2>
+                    
+                    <!-- Stallknappar -->
+                    <div class="grid grid-cols-1 gap-2 my-4">
+                        <button onclick="selectTeam('ferrari')" class="team-select-btn flex items-center justify-between p-3 rounded-lg border-2 border-red-600/50 bg-red-950/20 hover:bg-red-900/40 transition text-left" id="btn-ferrari">
+                            <span class="font-bold flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> Scuderia Ferrari</span>
+                            <span class="text-xs text-red-400 font-mono">SF-26</span>
+                        </button>
+                        <button onclick="selectTeam('mercedes')" class="team-select-btn flex items-center justify-between p-3 rounded-lg border-2 border-slate-600/50 bg-slate-950/20 hover:bg-slate-800/40 transition text-left" id="btn-mercedes">
+                            <span class="font-bold flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-400"></span> Mercedes-AMG</span>
+                            <span class="text-xs text-slate-400 font-mono">W17 E</span>
+                        </button>
+                        <button onclick="selectTeam('redbull')" class="team-select-btn flex items-center justify-between p-3 rounded-lg border-2 border-blue-900/50 bg-blue-950/20 hover:bg-blue-900/40 transition text-left" id="btn-redbull">
+                            <span class="font-bold flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-900"></span> Red Bull Racing</span>
+                            <span class="text-xs text-blue-400 font-mono">RB22</span>
+                        </button>
+                        <button onclick="selectTeam('mclaren')" class="team-select-btn flex items-center justify-between p-3 rounded-lg border-2 border-orange-600/50 bg-orange-950/20 hover:bg-orange-900/40 transition text-left" id="btn-mclaren">
+                            <span class="font-bold flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-500"></span> McLaren F1</span>
+                            <span class="text-xs text-orange-400 font-mono">MCL38</span>
+                        </button>
+                        <button onclick="selectTeam('aston')" class="team-select-btn flex items-center justify-between p-3 rounded-lg border-2 border-emerald-800/50 bg-emerald-950/20 hover:bg-emerald-900/40 transition text-left" id="btn-aston">
+                            <span class="font-bold flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-700"></span> Aston Martin</span>
+                            <span class="text-xs text-emerald-400 font-mono">AMR26</span>
+                        </button>
+                    </div>
+
+                    <button id="start-btn" class="neon-btn w-full bg-red-600/20 text-red-500 font-black px-8 py-3 rounded-lg text-lg tracking-widest uppercase f1-font italic transition-all duration-300">
+                        Starta Värmningsvarv
+                    </button>
+                </div>
+
+                <!-- Game Over Skärm -->
+                <div id="game-over-screen" class="hidden space-y-4">
+                    <h2 class="text-red-500 text-3xl font-black tracking-widest f1-font italic">DNF - DID NOT FINISH</h2>
+                    <p class="text-gray-300 text-base">Du kraschade bilen och samlade <span id="final-score" class="text-red-400 font-bold font-mono">0</span> poäng!</p>
+                    <p id="new-high-score-msg" class="text-yellow-400 font-bold hidden animate-bounce f1-font text-sm">🏆 NYTT BANREKORD! 🎉</p>
+                    <button id="restart-btn" class="neon-btn bg-red-600/20 text-red-500 font-bold px-8 py-3 rounded-lg text-lg tracking-widest uppercase f1-font italic">
+                        Nytt Försök
+                    </button>
+                </div>
+
+                <!-- Pausskärm -->
+                <div id="pause-screen" class="hidden space-y-4">
+                    <h2 class="text-blue-400 text-4xl font-extrabold tracking-widest f1-font italic">DEPÅSTOPP (PAUS)</h2>
+                    <p class="text-gray-400 text-sm">Dina mekaniker justerar vinklarna...</p>
+                    <button id="resume-btn" class="neon-btn bg-red-600/20 text-red-500 font-bold px-8 py-3 rounded-lg text-lg tracking-widest uppercase mt-4 f1-font italic">
+                        Ut På Banan Igen
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spelkontroller under canvas (Paus & Ljud) -->
+        <div class="w-full max-w-lg flex justify-between items-center mt-3 px-1">
+            <button id="pause-toggle-btn" class="px-4 py-2 bg-slate-900/80 border border-slate-800 hover:border-red-500 rounded-lg text-xs text-gray-300 hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-pause"></i> <span>Pausa (P)</span>
+            </button>
+            <button id="audio-toggle-btn" class="px-4 py-2 bg-slate-900/80 border border-slate-800 hover:border-emerald-500 rounded-lg text-xs text-gray-300 hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-volume-high"></i> <span>Motorljud På</span>
+            </button>
+        </div>
+
+        <!-- Mobilkontroller (D-Pad) -->
+        <div class="w-full max-w-xs mt-4 mb-2 block lg:hidden" id="mobile-controls">
+            <div class="grid grid-cols-3 gap-2 justify-items-center">
+                <div></div>
+                <button id="ctrl-up" class="w-12 h-12 bg-slate-800/80 active:bg-red-600 border border-red-500/30 rounded-xl flex items-center justify-center text-lg text-white shadow-lg active:scale-90 transition-transform">
+                    <i class="fa-solid fa-chevron-up"></i>
+                </button>
+                <div></div>
+                <button id="ctrl-left" class="w-12 h-12 bg-slate-800/80 active:bg-red-600 border border-red-500/30 rounded-xl flex items-center justify-center text-lg text-white shadow-lg active:scale-90 transition-transform">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="w-12 h-12 rounded-full border border-red-500/10 bg-slate-950 flex items-center justify-center text-gray-600 text-[10px] font-bold tracking-tighter">F1 STEER</div>
+                <button id="ctrl-right" class="w-12 h-12 bg-slate-800/80 active:bg-red-600 border border-red-500/30 rounded-xl flex items-center justify-center text-lg text-white shadow-lg active:scale-90 transition-transform">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <div></div>
+                <button id="ctrl-down" class="w-12 h-12 bg-slate-800/80 active:bg-red-600 border border-red-500/30 rounded-xl flex items-center justify-center text-lg text-white shadow-lg active:scale-90 transition-transform">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div></div>
+            </div>
+        </div>
+
+        <!-- Legendariska stall i banan (Beskrivning) -->
+        <div class="w-full max-w-lg mt-4 bg-slate-900/30 p-4 rounded-xl border border-slate-800 text-xs text-gray-400">
+            <h3 class="font-bold text-gray-300 mb-2 uppercase tracking-wide f1-font italic text-center text-red-500">STALLOGGOR ATT PLOCKA (MAT)</h3>
+            <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex flex-col items-center gap-1">
+                    <span class="w-3 h-3 rounded-full bg-[#ef4444]"></span>
+                    <span>Ferrari SF</span>
+                </div>
+                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex flex-col items-center gap-1">
+                    <span class="w-3 h-3 rounded-full bg-[#cbd5e1]"></span>
+                    <span>Mercedes AMG</span>
+                </div>
+                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex flex-col items-center gap-1">
+                    <span class="w-3 h-3 rounded-full bg-[#1d4ed8]"></span>
+                    <span>Red Bull Racing</span>
+                </div>
+                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex flex-col items-center gap-1">
+                    <span class="w-3 h-3 rounded-full bg-[#f97316]"></span>
+                    <span>McLaren F1</span>
+                </div>
+                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex flex-col items-center gap-1 col-span-2">
+                    <span class="w-3 h-3 rounded-full bg-[#047857]"></span>
+                    <span>Aston Martin Racing</span>
+                </div>
+            </div>
+            
+            <h3 class="font-bold text-gray-300 mb-2 uppercase tracking-wide f1-font italic text-center text-yellow-500 border-t border-slate-800/50 pt-2">SPECIALEFFEKTER (DEPÅKRAFTER)</h3>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex flex-col items-center">
+                    <span class="text-yellow-400 font-bold font-mono">DRS</span>
+                    <span class="text-[9px] text-gray-400">Dubbla poäng + Snabb</span>
+                </div>
+                <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex flex-col items-center">
+                    <span class="text-orange-400 font-bold font-mono">SAFETY CAR</span>
+                    <span class="text-[9px] text-gray-400">Saktar ner banan</span>
+                </div>
+                <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex flex-col items-center">
+                    <span class="text-blue-400 font-bold font-mono">HÅRDA DÄCK</span>
+                    <span class="text-[9px] text-gray-400">Skydd mot krasch</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-xs text-gray-500 mt-auto border-t border-slate-900">
+        F1 Neon GP &copy; 2026 | Utvecklat med HTML5 Canvas & Web Audio
+    </footer>
+
+    <!-- Spellogik -->
+    <script>
+        // --- MOTORLJUD OCH EFFEKTER (Web Audio API) ---
+        class F1SoundManager {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+                this.engineOsc = null;
+                this.engineGain = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            // Starta det ihållande F1-motorljudet
+            startEngine() {
+                if (this.muted) return;
+                this.init();
+                this.stopEngine();
+
+                this.engineOsc = this.ctx.createOscillator();
+                this.engineGain = this.ctx.createGain();
+
+                this.engineOsc.type = 'sawtooth';
+                this.engineOsc.frequency.setValueAtTime(80, this.ctx.currentTime); // Låg basgång
+
+                this.engineGain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+
+                this.engineOsc.connect(this.engineGain);
+                this.engineGain.connect(this.ctx.destination);
+
+                this.engineOsc.start();
+            }
+
+            // Justera motorljudets tonhöjd beroende på hastighet/poäng
+            setEnginePitch(pitchMultiplier) {
+                if (this.muted || !this.engineOsc) return;
+                const baseFreq = 80 + (score * 1.5);
+                const targetFreq = Math.min(350, baseFreq * pitchMultiplier);
+                this.engineOsc.frequency.setTargetAtTime(targetFreq, this.ctx.currentTime, 0.1);
+            }
+
+            stopEngine() {
+                if (this.engineOsc) {
+                    try {
+                        this.engineOsc.stop();
+                    } catch(e){}
+                    this.engineOsc = null;
+                }
+            }
+
+            // Beep-ljud för F1-lampor
+            playLightBeep(pitch = 440, duration = 0.1) {
+                if (this.muted) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(pitch, this.ctx.currentTime);
+                
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            }
+
+            // Däckskrik vid kurvor
+            playTireScreech() {
+                if (this.muted) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.15);
+                
+                gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.15);
+            }
+
+            // Plocka logotyp/poäng ljud
+            playEatLogo() {
+                if (this.muted) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, this.ctx.currentTime); // D5
+                osc.frequency.setValueAtTime(880, this.ctx.currentTime + 0.08); // A5
+                
+                gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.005, this.ctx.currentTime + 0.25);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }
+
+            // Kraschljud
+            playCrash() {
+                if (this.muted) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.8);
+                
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.8);
+            }
+        }
+
+        const sound = new F1SoundManager();
+
+        // --- STALLDEFINITIONER (Färgscheman) ---
+        const TEAMS = {
+            ferrari: {
+                name: "Scuderia Ferrari",
+                color: "#ef4444", // Ferrari Röd
+                secondary: "#facc15", // Gul
+                trailColor: "rgba(239, 68, 68, 0.2)"
+            },
+            mercedes: {
+                name: "Mercedes-AMG",
+                color: "#cbd5e1", // Silver
+                secondary: "#22d3ee", // Petronas Cyan
+                trailColor: "rgba(203, 213, 225, 0.2)"
+            },
+            redbull: {
+                name: "Red Bull Racing",
+                color: "#1d4ed8", // Mörkblå
+                secondary: "#facc15", // Röd-gul sol
+                trailColor: "rgba(29, 78, 216, 0.2)"
+            },
+            mclaren: {
+                name: "McLaren F1 Team",
+                color: "#f97316", // Papaya Orange
+                secondary: "#000000", // Antracit
+                trailColor: "rgba(249, 115, 22, 0.2)"
+            },
+            aston: {
+                name: "Aston Martin F1",
+                color: "#047857", // Racinggrön
+                secondary: "#ccff00", // Neon-gul linje
+                trailColor: "rgba(4, 120, 87, 0.2)"
+            }
+        };
+
+        let selectedTeamKey = 'ferrari';
+
+        // --- SPELKONSTANTER OCH VARIABLER ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const GRID_SIZE = 22; // Något större rutnät för att rymma curbs
+        let tileSize = 0;
+
+        let snake = [];
+        let direction = { x: 1, y: 0 };
+        let nextDirection = { x: 1, y: 0 };
+        let food = { x: 0, y: 0, type: 'ferrari' }; // Ferrari, mclaren, redbull, etc eller 'drs', 'safety', 'hard'
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('f1_snake_highscore')) || 0;
+        let gameActive = false;
+        let isPaused = false;
+        let lastUpdateTime = 0;
+        let baseSpeed = 140; // Hastighet i millisekunder
+        let currentSpeed = baseSpeed;
+
+        // Däckspår (Tire Skidmarks)
+        let tireTracks = [];
+
+        // Special effekter
+        let activePower = null; // 'drs' (dubbel poäng & snabb), 'safety' (långsam), 'hard' (skydd)
+        let powerTimer = 0;
+        const POWER_DURATION = 9000; // 9 sekunder
+
+        // --- DOM-ELEMENT ---
+        const overlay = document.getElementById('overlay');
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const pauseScreen = document.getElementById('pause-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const resumeBtn = document.getElementById('resume-btn');
+        const pauseToggleBtn = document.getElementById('pause-toggle-btn');
+        const audioToggleBtn = document.getElementById('audio-toggle-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const highScoreDisplay = document.getElementById('high-score-display');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const newHighScoreMsg = document.getElementById('new-high-score-msg');
+        const activePowerDisplay = document.getElementById('active-power-display');
+
+        highScoreDisplay.textContent = highScore;
+
+        // Välj stall innan start
+        window.selectTeam = function(teamKey) {
+            selectedTeamKey = teamKey;
+            document.querySelectorAll('.team-select-btn').forEach(btn => {
+                btn.classList.remove('border-red-500', 'border-slate-400', 'border-blue-500', 'border-orange-500', 'border-emerald-500', 'bg-slate-800/60');
+            });
+            const selectedBtn = document.getElementById(`btn-${teamKey}`);
+            let accentColor = 'border-red-500';
+            if (teamKey === 'mercedes') accentColor = 'border-slate-400';
+            if (teamKey === 'redbull') accentColor = 'border-blue-500';
+            if (teamKey === 'mclaren') accentColor = 'border-orange-500';
+            if (teamKey === 'aston') accentColor = 'border-emerald-500';
+
+            selectedBtn.classList.add(accentColor, 'bg-slate-800/60');
+            sound.playLightBeep(400, 0.08);
+        }
+
+        // Initiera förvalt stall
+        selectTeam('ferrari');
+
+        // --- KOPPLA CANVASSTORLEK ---
+        function resizeCanvas() {
+            const size = Math.min(canvas.parentElement.clientWidth, canvas.parentElement.clientHeight);
+            if (size <= 0) return;
+            canvas.width = size;
+            canvas.height = size;
+            tileSize = size / GRID_SIZE;
+            draw();
+        }
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 50);
+
+        // --- F1 STARTNEDRÄKNING (FIVELIGHTS) ---
+        function triggerF1StartSequence(callback) {
+            // Återställ lampor
+            document.querySelectorAll('.start-light').forEach(light => {
+                light.className = 'start-light';
+            });
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                count++;
+                if (count <= 5) {
+                    document.getElementById(`light-${count}`).classList.add('red-active');
+                    sound.playLightBeep(440, 0.15); // Standard F1 beep-ton
+                } else {
+                    clearInterval(interval);
+                    
+                    // Släck alla röda och slå på gröna lampor omedelbart efter en kort slumpmässig tid
+                    const lightsOutDelay = 800 + Math.random() * 1200;
+                    setTimeout(() => {
+                        document.querySelectorAll('.start-light').forEach(light => {
+                            light.classList.remove('red-active');
+                            light.classList.add('green-active');
+                        });
+                        sound.playLightBeep(880, 0.4); // Startskott hög signal!
+                        
+                        // Släck de gröna lamporna efter 1.5 sekund
+                        setTimeout(() => {
+                            document.querySelectorAll('.start-light').forEach(light => {
+                                light.classList.remove('green-active');
+                            });
+                        }, 1500);
+
+                        callback();
+                    }, lightsOutDelay);
+                }
+            }, 1000);
+        }
+
+        // --- STARTA NYTT SPEL ---
+        function initGame() {
+            // Rensa gamla däckspår
+            tireTracks = [];
+
+            // Spawn-position för F1 bilen mitt i fältet
+            snake = [
+                { x: 10, y: 11 },
+                { x: 9, y: 11 },
+                { x: 8, y: 11 }
+            ];
+            direction = { x: 1, y: 0 };
+            nextDirection = { x: 1, y: 0 };
+            score = 0;
+            activePower = null;
+            powerTimer = 0;
+            currentSpeed = baseSpeed;
+            scoreDisplay.textContent = score;
+            
+            activePowerDisplay.textContent = "STANDARD";
+            activePowerDisplay.className = "text-xs font-bold text-gray-500 mt-0.5 uppercase f1-font";
+            
+            spawnFood();
+            
+            // Starta motorljud
+            sound.startEngine();
+            sound.setEnginePitch(1.0);
+
+            gameActive = true;
+            isPaused = false;
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            
+            lastUpdateTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // --- SLUMPVIS LOGOPOSITION ---
+        function spawnFood() {
+            let valid = false;
+            let rx, ry;
+
+            while (!valid) {
+                // Håll frukten innanför kurvorna (undvik rad 0 och rad GRID_SIZE - 1)
+                rx = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                ry = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                
+                valid = true;
+                // Inte på ormen
+                for (let part of snake) {
+                    if (part.x === rx && part.y === ry) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+
+            // Slumpa mattyp (Olika F1-stall eller DRS / Däck)
+            const rand = Math.random();
+            let type = 'ferrari';
+            
+            if (rand > 0.93) {
+                type = 'drs'; // Special: DRS Speed & Double points
+            } else if (rand > 0.86) {
+                type = 'safety'; // Special: Safety Car Slowdown
+            } else if (rand > 0.79) {
+                type = 'hard'; // Special: Hårda däck (Sköld)
+            } else {
+                // Slumpa bland vanliga stallogotyper
+                const teams = ['ferrari', 'mercedes', 'redbull', 'mclaren', 'aston'];
+                type = teams[Math.floor(Math.random() * teams.length)];
+            }
+
+            food = { x: rx, y: ry, type: type };
+        }
+
+        // --- GAME LOOP ---
+        function gameLoop(currentTime) {
+            if (!gameActive || isPaused) return;
+
+            requestAnimationFrame(gameLoop);
+
+            const elapsed = currentTime - lastUpdateTime;
+            if (elapsed >= currentSpeed) {
+                lastUpdateTime = currentTime - (elapsed % currentSpeed);
+                update();
+                draw();
+            }
+        }
+
+        // --- UPPDATERA BILENS POSITION ---
+        function update() {
+            // Kontrollera om vi svänger, spela däckskrik-ljud
+            if (direction.x !== nextDirection.x || direction.y !== nextDirection.y) {
+                sound.playTireScreech();
+            }
+
+            direction = nextDirection;
+
+            const head = { 
+                x: snake[0].x + direction.x, 
+                y: snake[0].y + direction.y 
+            };
+
+            // Kraftnedräkning
+            if (activePower) {
+                powerTimer -= currentSpeed;
+                if (powerTimer <= 0) {
+                    removePower();
+                }
+            }
+
+            // Spara däckspår från hjulen på bakhuvudet (där däcken sitter)
+            saveSkidmarks(snake[0].x, snake[0].y);
+
+            // Kollision med curbs/väggar (kantstenarna ligger på rad 0 och GRID_SIZE - 1)
+            if (head.x <= 0 || head.x >= GRID_SIZE - 1 || head.y <= 0 || head.y >= GRID_SIZE - 1) {
+                if (activePower === 'hard') {
+                    // Studsa/rädda vid hårda däck
+                    bounceRecovery(head);
+                    removePower();
+                } else {
+                    gameOver();
+                    return;
+                }
+            }
+
+            // Kollision med egen kropp/aerodynamiskt spår
+            for (let i = 0; i < snake.length; i++) {
+                if (snake[i].x === head.x && snake[i].y === head.y) {
+                    if (activePower === 'hard') {
+                        removePower();
+                    } else {
+                        gameOver();
+                        return;
+                    }
+                }
+            }
+
+            // Flytta F1-bilen framåt
+            snake.unshift(head);
+
+            // Plockat en stallogo?
+            if (head.x === food.x && head.y === food.y) {
+                handleFoodConsumption();
+                spawnFood();
+            } else {
+                snake.pop(); // Ta bort sista segmentet om vi inte äter
+            }
+
+            // Uppdateror motorljudet pitch dynamiskt
+            let speedPitch = 1.0;
+            if (activePower === 'drs') speedPitch = 1.6;
+            if (activePower === 'safety') speedPitch = 0.6;
+            sound.setEnginePitch(speedPitch);
+
+            // Uppdatera däckspår (blek bort gamla spår för att spara prestanda)
+            updateSkidmarks();
+        }
+
+        // Räddningsmekanik för hårda däck (Sköld)
+        function bounceRecovery(head) {
+            if (head.x <= 0) head.x = 1;
+            if (head.x >= GRID_SIZE - 1) head.x = GRID_SIZE - 2;
+            if (head.y <= 0) head.y = 1;
+            if (head.y >= GRID_SIZE - 1) head.y = GRID_SIZE - 2;
+            
+            // Sväng undan bilen automatiskt i en ledig riktning
+            if (direction.x !== 0) {
+                nextDirection = { x: 0, y: 1 };
+            } else {
+                nextDirection = { x: 1, y: 0 };
+            }
+        }
+
+        // Däckspårs-logik
+        function saveSkidmarks(x, y) {
+            // Generera däckspår för vänster och höger däck
+            const angle = Math.atan2(direction.y, direction.x);
+            const offset = tileSize * 0.3; // Bredden mellan hjulen
+            
+            const pxLeft = x * tileSize + tileSize/2 + Math.sin(angle) * offset;
+            const pyLeft = y * tileSize + tileSize/2 - Math.cos(angle) * offset;
+            
+            const pxRight = x * tileSize + tileSize/2 - Math.sin(angle) * offset;
+            const pyRight = y * tileSize + tileSize/2 + Math.cos(angle) * offset;
+
+            const teamColor = TEAMS[selectedTeamKey]?.color || '#ef4444';
+
+            tireTracks.push({
+                x1: pxLeft, y1: pyLeft,
+                x2: pxRight, y2: pyRight,
+                opacity: 0.8,
+                color: teamColor
+            });
+        }
+
+        // Uppdatera däckspår
+        function updateSkidmarks() {
+            // Blek bort och ta bort gamla spår
+            for (let i = tireTracks.length - 1; i >= 0; i--) {
+                tireTracks[i].opacity -= 0.03;
+                if (tireTracks[i].opacity <= 0) {
+                    tireTracks.splice(i, 1);
+                }
+            }
+        }
+
+        // --- PLOCKA MAT/LOGOTYPER OCH UPPDATERA KRAFTER ---
+        function handleFoodConsumption() {
+            let pointsEarned = 10;
+
+            if (activePower === 'drs') {
+                pointsEarned = 25; // Mycket högre poäng med DRS
+            }
+
+            score += pointsEarned;
+            scoreDisplay.textContent = score;
+
+            // Plocka specialkraft eller vanlig logo
+            if (['drs', 'safety', 'hard'].includes(food.type)) {
+                sound.playEatLogo();
+                applyPower(food.type);
+            } else {
+                sound.playEatLogo();
+            }
+
+            // Öka svårighetsgraden (om inte Safety Car är aktiv)
+            if (activePower !== 'safety') {
+                const speedModifier = activePower === 'drs' ? 1.5 : 1.0;
+                currentSpeed = Math.max(50, (baseSpeed - Math.floor(score / 40) * 10) / speedModifier);
+            }
+        }
+
+        // Aktivera krafter
+        function applyPower(type) {
+            activePower = type;
+            powerTimer = POWER_DURATION;
+            
+            if (type === 'hard') {
+                activePowerDisplay.textContent = "HÅRDA DÄCK (SKYDD) 🛡️";
+                activePowerDisplay.className = "text-xs font-bold text-cyan-400 mt-0.5 uppercase f1-font animate-pulse";
+            } else if (type === 'drs') {
+                activePowerDisplay.textContent = "DRS AKTIVERAD ⚡";
+                activePowerDisplay.className = "text-xs font-bold text-yellow-400 mt-0.5 uppercase f1-font animate-pulse";
+                currentSpeed = Math.max(45, currentSpeed / 1.5); // Blixtsnabb!
+            } else if (type === 'safety') {
+                activePowerDisplay.textContent = "SAFETY CAR SLOW 🚨";
+                activePowerDisplay.className = "text-xs font-bold text-orange-400 mt-0.5 uppercase f1-font animate-pulse";
+                currentSpeed = baseSpeed * 1.6; // Säkerhetsfart
+            }
+        }
+
+        // Ta bort krafter
+        function removePower() {
+            activePower = null;
+            activePowerDisplay.textContent = "STANDARD";
+            activePowerDisplay.className = "text-xs font-bold text-gray-500 mt-0.5 uppercase f1-font";
+            // Återgå till ordinarie fart
+            currentSpeed = Math.max(65, baseSpeed - Math.floor(score / 40) * 10);
+        }
+
+        // --- RITA ALL GRAPHICS PÅ CANVAS ---
+        function draw() {
+            if (tileSize <= 0) return;
+
+            // 1. Rita Asfalten (Banan)
+            ctx.fillStyle = '#1e293b'; // Grå asfalt
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Rita röd-vita Curbs (Kantstenar) längs fönsterkanterna
+            drawCurbs();
+
+            // 3. Rita däckspår (Skidmarks)
+            drawTireTracks();
+
+            // 4. Rita maten / F1-stallogo
+            drawF1Logo();
+
+            // 5. Rita F1-bilen (Huvud och Aerodynamiskt spår)
+            drawF1Car();
+        }
+
+        // Curbs (Röd-vita linjer längs banan)
+        function drawCurbs() {
+            const curbWidth = tileSize;
+            ctx.save();
+            
+            // Loopa runt hela banans omkrets för att rita curben
+            for (let i = 0; i < GRID_SIZE; i++) {
+                // Bestäm färg (växla rött och vitt)
+                const isRed = i % 2 === 0;
+                ctx.fillStyle = isRed ? '#ef4444' : '#ffffff';
+
+                // Topp-curb
+                ctx.fillRect(i * tileSize, 0, tileSize, curbWidth);
+                // Botten-curb
+                ctx.fillRect(i * tileSize, canvas.height - curbWidth, tileSize, curbWidth);
+                // Vänster-curb
+                ctx.fillRect(0, i * tileSize, curbWidth, tileSize);
+                // Höger-curb
+                ctx.fillRect(canvas.width - curbWidth, i * tileSize, curbWidth, tileSize);
+            }
+
+            // Rita ett inre mörkare banstreck för djup
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(curbWidth, curbWidth, canvas.width - curbWidth * 2, canvas.height - curbWidth * 2);
+
+            ctx.restore();
+        }
+
+        // Rita ut däckspår
+        function drawTireTracks() {
+            ctx.save();
+            tireTracks.forEach(track => {
+                ctx.strokeStyle = `rgba(15, 23, 42, ${track.opacity})`; // Kolsvarta spår
+                ctx.lineWidth = tileSize * 0.15;
+                ctx.lineCap = 'round';
+                
+                ctx.beginPath();
+                ctx.arc(track.x1, track.y1, 1, 0, Math.PI*2);
+                ctx.arc(track.x2, track.y2, 1, 0, Math.PI*2);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+
+        // Rita avancerade F1-teamlogotyper och Specialmärken (Maten)
+        function drawF1Logo() {
+            const cx = food.x * tileSize + tileSize / 2;
+            const cy = food.y * tileSize + tileSize / 2;
+            const size = tileSize * 1.15; // Stor storlek för fantastisk synlighet
+
+            ctx.save();
+            ctx.shadowBlur = 14;
+
+            if (food.type === 'ferrari') {
+                ctx.shadowColor = 'rgba(239, 68, 68, 0.8)';
+                // Ferrari Gula sköld med röd kant
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - size/2);
+                ctx.quadraticCurveTo(cx + size/2, cy - size/2, cx + size/2, cy);
+                ctx.quadraticCurveTo(cx + size/4, cy + size/2, cx, cy + size/1.8);
+                ctx.quadraticCurveTo(cx - size/4, cy + size/2, cx - size/2, cy);
+                ctx.quadraticCurveTo(cx - size/2, cy - size/2, cx, cy - size/2);
+                ctx.fill();
+
+                // Det svarta "Prancing Horse" stiliserat i skölden
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(cx, cy, size/4, 0, Math.PI*2);
+                ctx.fill();
+            } 
+            else if (food.type === 'mercedes') {
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                // Silver-cirkel
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.arc(cx, cy, size/2.2, 0, Math.PI*2);
+                ctx.stroke();
+
+                // Trestjärnigt tecken (Mercedes)
+                ctx.fillStyle = '#cbd5e1';
+                for (let i = 0; i < 3; i++) {
+                    const angle = (i * 120 - 90) * Math.PI / 180;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + Math.cos(angle) * (size/2.4), cy + Math.sin(angle) * (size/2.4));
+                    ctx.lineWidth = 2.5;
+                    ctx.strokeStyle = '#cbd5e1';
+                    ctx.stroke();
+                }
+            } 
+            else if (food.type === 'redbull') {
+                ctx.shadowColor = 'rgba(29, 78, 216, 0.9)';
+                
+                // Mörkblå rund platta
+                ctx.fillStyle = '#0b1330';
+                ctx.beginPath();
+                ctx.arc(cx, cy, size/2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Stor realistisk F1-gul sol
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.arc(cx, cy - size * 0.05, size/4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // DETALJERAD REALISTISK RÖD TJUR (Charging Bull) med bezier-kurvor
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                // Starta vid svansen / bakdelen
+                ctx.moveTo(cx - size * 0.35, cy + size * 0.1);
+                // Ryggmuskel / puckel
+                ctx.quadraticCurveTo(cx - size * 0.1, cy - size * 0.12, cx + size * 0.1, cy - size * 0.05);
+                // Nacke och huvud sänkt
+                ctx.lineTo(cx + size * 0.25, cy + size * 0.04);
+                // Framåtriktade skarpa horn
+                ctx.lineTo(cx + size * 0.32, cy - size * 0.06);
+                ctx.lineTo(cx + size * 0.23, cy + size * 0.08);
+                // Kraftiga framben i språng
+                ctx.lineTo(cx + size * 0.15, cy + size * 0.28);
+                ctx.lineTo(cx + size * 0.06, cy + size * 0.14);
+                // Mage
+                ctx.lineTo(cx - size * 0.12, cy + size * 0.18);
+                // Kraftfulla bakben
+                ctx.lineTo(cx - size * 0.22, cy + size * 0.3);
+                ctx.closePath();
+                ctx.fill();
+            } 
+            else if (food.type === 'mclaren') {
+                ctx.shadowColor = 'rgba(249, 115, 22, 0.9)';
+                
+                // Kolfibersvart cirkulär bottenplatta
+                ctx.fillStyle = '#111827';
+                ctx.beginPath();
+                ctx.arc(cx, cy, size/2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // REALISTISK McLAREN SPEEDMARK (Vektorritad aerodynamisk swoosh)
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath();
+                // Yttre kurvan av swooshen
+                ctx.moveTo(cx - size * 0.25, cy + size * 0.15);
+                ctx.bezierCurveTo(cx - size * 0.1, cy - size * 0.3, cx + size * 0.35, cy - size * 0.2, cx + size * 0.38, cy - size * 0.22);
+                // Inre kurvan som sveper tillbaka och nyper ihop till spetsen
+                ctx.bezierCurveTo(cx + size * 0.1, cy - size * 0.1, cx - size * 0.15, cy + size * 0.15, cx - size * 0.25, cy + size * 0.15);
+                ctx.closePath();
+                ctx.fill();
+            } 
+            else if (food.type === 'aston') {
+                ctx.shadowColor = 'rgba(4, 120, 87, 0.9)';
+                
+                // Classic British Racing Green rektangel (Aston-grön)
+                ctx.fillStyle = '#004225';
+                ctx.beginPath();
+                ctx.roundRect(cx - size/2, cy - size/3, size, size/1.5, 6);
+                ctx.fill();
+
+                // REALISTISKA SILVERVENGAR (Aston Martin Wings)
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.fillStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+
+                // Yttre vingsiluett
+                ctx.beginPath();
+                ctx.moveTo(cx - size * 0.44, cy - size * 0.1);
+                ctx.lineTo(cx + size * 0.44, cy - size * 0.1);
+                ctx.lineTo(cx + size * 0.4, cy + size * 0.1);
+                ctx.quadraticCurveTo(cx, cy + size * 0.2, cx - size * 0.4, cy + size * 0.1);
+                ctx.closePath();
+                ctx.stroke();
+
+                // Ribbor / Fjädrar inuti vingarna
+                ctx.beginPath();
+                for (let i = -3; i <= 3; i++) {
+                    if (i === 0) continue;
+                    const xOffset = (i / 4) * (size * 0.4);
+                    ctx.moveTo(cx + xOffset, cy - size * 0.1);
+                    ctx.lineTo(cx + xOffset * 0.88, cy + size * 0.11);
+                }
+                ctx.stroke();
+
+                // Centrala rektangulära namnskylten mitt på vingen
+                ctx.fillStyle = '#002515';
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.beginPath();
+                ctx.roundRect(cx - size * 0.18, cy - size * 0.06, size * 0.36, size * 0.13, 1);
+                ctx.fill();
+                ctx.stroke();
+            } 
+            else if (food.type === 'drs') {
+                // DRS Specialbricka (Guld / Grön)
+                ctx.shadowColor = 'rgba(234, 179, 8, 0.9)';
+                ctx.fillStyle = '#eab308';
+                ctx.beginPath();
+                ctx.roundRect(cx - size/2, cy - size/2, size, size, 8);
+                ctx.fill();
+
+                ctx.fillStyle = '#000000';
+                ctx.font = `bold ${Math.floor(tileSize * 0.55)}px Orbitron`;
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.fillText('DRS', cx, cy);
+            } 
+            else if (food.type === 'safety') {
+                // Safety Car (Fladdrande orange/blå lampa)
+                ctx.shadowColor = 'rgba(249, 115, 22, 0.9)';
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath();
+                ctx.arc(cx, cy, size/2, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(cx - size/3, cy - size/4, size/1.5, size/2);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.floor(tileSize * 0.45)}px Orbitron`;
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.fillText('SC', cx, cy);
+            } 
+            else if (food.type === 'hard') {
+                // Hårt racerdäck (Blå fälg)
+                ctx.shadowColor = 'rgba(6, 182, 212, 0.9)';
+                ctx.fillStyle = '#0f172a'; // Däckfärg
+                ctx.beginPath();
+                ctx.arc(cx, cy, size/2, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#06b6d4'; // Blå linje för hårt däck
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(cx, cy, size/3, 0, Math.PI*2);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // Rita hela F1 Bilen (Huvudet) och Aerodynamiska kroppen
+        function drawF1Car() {
+            const team = TEAMS[selectedTeamKey];
+            const carColor = team?.color || '#ef4444';
+            const detailColor = team?.secondary || '#ffffff';
+
+            snake.forEach((part, index) => {
+                const isHead = index === 0;
+                ctx.save();
+
+                if (isHead) {
+                    // --- RITA DETALJERAD F1-BIL UPPIFRÅN ---
+                    const cx = part.x * tileSize + tileSize / 2;
+                    const cy = part.y * tileSize + tileSize / 2;
+                    const angle = Math.atan2(direction.y, direction.x);
+
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle);
+                    
+                    // Skala upp hela bilen 30% för en mer realistisk och kraftfull närvaro på banan
+                    ctx.scale(1.3, 1.3);
+
+                    // Om vi har sköld (hårda däck) rita ett cyanfärgat skyddsfält runt bilen
+                    if (activePower === 'hard') {
+                        ctx.strokeStyle = 'rgba(34, 211, 238, 0.8)';
+                        ctx.lineWidth = 2;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = '#22d3ee';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, tileSize * 0.9, 0, Math.PI*2);
+                        ctx.stroke();
+                    }
+
+                    // 1. Bakvinge (Svart/Kolfiber på baksidan av bilen)
+                    ctx.fillStyle = '#0f172a';
+                    ctx.fillRect(-tileSize * 0.45, -tileSize * 0.4, tileSize * 0.15, tileSize * 0.8);
+
+                    // 2. Bakvinges fästen
+                    ctx.strokeStyle = carColor;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(-tileSize * 0.4, -tileSize * 0.15);
+                    ctx.lineTo(-tileSize * 0.25, -tileSize * 0.15);
+                    ctx.moveTo(-tileSize * 0.4, -tileSize * -0.15);
+                    ctx.lineTo(-tileSize * 0.25, -tileSize * -0.15);
+                    ctx.stroke();
+
+                    // 3. Bakdäck (Svarta breda däck bak)
+                    ctx.fillStyle = '#020617';
+                    ctx.fillRect(-tileSize * 0.35, -tileSize * 0.45, tileSize * 0.25, tileSize * 0.2); // Vänster bak
+                    ctx.fillRect(-tileSize * 0.35, tileSize * 0.25, tileSize * 0.25, tileSize * 0.2);  // Höger bak
+
+                    // Fälg-detalj på bakdäck
+                    ctx.fillStyle = detailColor;
+                    ctx.fillRect(-tileSize * 0.25, -tileSize * 0.4, tileSize * 0.05, tileSize * 0.1);
+                    ctx.fillRect(-tileSize * 0.25, tileSize * 0.3, tileSize * 0.05, tileSize * 0.1);
+
+                    // 4. Framdäck (Något smalare hjul fram)
+                    ctx.fillStyle = '#020617';
+                    ctx.fillRect(tileSize * 0.1, -tileSize * 0.42, tileSize * 0.2, tileSize * 0.18); // Vänster fram
+                    ctx.fillRect(tileSize * 0.1, tileSize * 0.24, tileSize * 0.2, tileSize * 0.18);  // Höger fram
+
+                    // Fälg-detalj på framdäck
+                    ctx.fillStyle = detailColor;
+                    ctx.fillRect(tileSize * 0.18, -tileSize * 0.38, tileSize * 0.04, tileSize * 0.1);
+                    ctx.fillRect(tileSize * 0.18, tileSize * 0.28, tileSize * 0.04, tileSize * 0.1);
+
+                    // 5. Bilens Chassis (Smala F1-kroppen)
+                    ctx.fillStyle = carColor;
+                    ctx.beginPath();
+                    ctx.moveTo(-tileSize * 0.35, -tileSize * 0.18); // Bakre kaross
+                    ctx.lineTo(-tileSize * 0.1, -tileSize * 0.22);  // Sidopontoner
+                    ctx.lineTo(tileSize * 0.15, -tileSize * 0.12);  // Nos
+                    ctx.lineTo(tileSize * 0.45, -tileSize * 0.08);  // Nosspets
+                    ctx.lineTo(tileSize * 0.45, tileSize * 0.08);   // Nosspets höger
+                    ctx.lineTo(tileSize * 0.15, tileSize * 0.12);   // Nos höger
+                    ctx.lineTo(-tileSize * 0.1, tileSize * 0.22);   // Sidopontoner höger
+                    ctx.lineTo(-tileSize * 0.35, tileSize * 0.18);  // Bakre kaross höger
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // 6. Cockpit & Driver (Hjälm och Halo skyddsbygel)
+                    ctx.fillStyle = '#000000'; // Halo
+                    ctx.beginPath();
+                    ctx.arc(-tileSize * 0.02, 0, tileSize * 0.12, 0, Math.PI*2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#facc15'; // Driver helmet (gul hjälm)
+                    ctx.beginPath();
+                    ctx.arc(-tileSize * 0.05, 0, tileSize * 0.08, 0, Math.PI*2);
+                    ctx.fill();
+
+                    // Visir på hjälm
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(-tileSize * 0.03, -tileSize * 0.04, tileSize * 0.04, tileSize * 0.08);
+
+                    // 7. Framvinge (Monteras på nosspetsen)
+                    ctx.fillStyle = '#0f172a'; // Svart kolfiber framvinge
+                    ctx.fillRect(tileSize * 0.36, -tileSize * 0.38, tileSize * 0.1, tileSize * 0.76);
+
+                    // Endplates på framvingen (färgade)
+                    ctx.fillStyle = carColor;
+                    ctx.fillRect(tileSize * 0.33, -tileSize * 0.42, tileSize * 0.14, tileSize * 0.04);
+                    ctx.fillRect(tileSize * 0.33, tileSize * 0.38, tileSize * 0.14, tileSize * 0.04);
+
+                    // 8. T-Cam (Kameran på luftintaget ovanför hjälmen)
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(-tileSize * 0.15, -tileSize * 0.03, tileSize * 0.08, tileSize * 0.06);
+
+                } else {
+                    // --- RITA AERODYNAMISKT TRAIL (Bakre delar av ormen) ---
+                    // Varje segment bakom bilen blir smalare och mer transparent (Aeroflow effekt!)
+                    const opacity = Math.max(0.15, 1 - (index / snake.length));
+                    ctx.fillStyle = carColor;
+                    ctx.shadowBlur = 4;
+                    ctx.shadowColor = carColor;
+
+                    const cx = part.x * tileSize + tileSize / 2;
+                    const cy = part.y * tileSize + tileSize / 2;
+                    
+                    // Skalat upp släpet något för en starkare strömlinjeeffekt
+                    const size = Math.max(3, tileSize * 0.75 * (1 - index / snake.length * 0.55));
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, size / 2, 0, Math.PI*2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            });
+        }
+
+        // --- SPELET SLUT ---
+        function gameOver() {
+            gameActive = false;
+            sound.stopEngine();
+            sound.playCrash();
+            
+            finalScoreDisplay.textContent = score;
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('f1_snake_highscore', highScore);
+                highScoreDisplay.textContent = highScore;
+                newHighScoreMsg.classList.remove('hidden');
+            } else {
+                newHighScoreMsg.classList.add('hidden');
+            }
+
+            // Visa Game Over skärmen
+            startScreen.classList.add('hidden');
+            pauseScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        // --- PAUSA SPELET ---
+        function togglePause() {
+            if (!gameActive) return;
+
+            isPaused = !isPaused;
+            if (isPaused) {
+                sound.stopEngine();
+                pauseScreen.classList.remove('hidden');
+                startScreen.classList.add('hidden');
+                gameOverScreen.classList.add('hidden');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                pauseToggleBtn.innerHTML = '<i class="fa-solid fa-play"></i> <span>Återta Race (P)</span>';
+            } else {
+                sound.startEngine();
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                pauseToggleBtn.innerHTML = '<i class="fa-solid fa-pause"></i> <span>Pausa (P)</span>';
+                lastUpdateTime = performance.now();
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // --- TANGENTBORDSTYRNING ---
+        window.addEventListener('keydown', (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+                e.preventDefault();
+            }
+
+            if (!gameActive) return;
+
+            switch (e.code) {
+                case 'ArrowUp':
+                case 'KeyW':
+                    if (direction.y !== 1) nextDirection = { x: 0, y: -1 };
+                    break;
+                case 'ArrowDown':
+                case 'KeyS':
+                    if (direction.y !== -1) nextDirection = { x: 0, y: 1 };
+                    break;
+                case 'ArrowLeft':
+                case 'KeyA':
+                    if (direction.x !== 1) nextDirection = { x: -1, y: 0 };
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    if (direction.x !== -1) nextDirection = { x: 1, y: 0 };
+                    break;
+                case 'KeyP':
+                    togglePause();
+                    break;
+            }
+        });
+
+        // --- MOBILSTYRNING (Knappar & Swipe) ---
+        document.getElementById('ctrl-up').addEventListener('click', () => {
+            if (direction.y !== 1) nextDirection = { x: 0, y: -1 };
+        });
+        document.getElementById('ctrl-down').addEventListener('click', () => {
+            if (direction.y !== -1) nextDirection = { x: 0, y: 1 };
+        });
+        document.getElementById('ctrl-left').addEventListener('click', () => {
+            if (direction.x !== 1) nextDirection = { x: -1, y: 0 };
+        });
+        document.getElementById('ctrl-right').addEventListener('click', () => {
+            if (direction.x !== -1) nextDirection = { x: 1, y: 0 };
+        });
+
+        // Swipe gester på spelplanen
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+            
+            if (Math.max(Math.abs(dx), Math.abs(dy)) > 25) {
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    if (dx > 0 && direction.x !== -1) nextDirection = { x: 1, y: 0 };
+                    else if (dx < 0 && direction.x !== 1) nextDirection = { x: -1, y: 0 };
+                } else {
+                    if (dy > 0 && direction.y !== -1) nextDirection = { x: 0, y: 1 };
+                    else if (dy < 0 && direction.y !== 1) nextDirection = { x: 0, y: -1 };
+                }
+            }
+        }, { passive: true });
+
+        // --- KNAPPAR ---
+        startBtn.addEventListener('click', () => {
+            sound.init();
+            
+            // Inaktivera knappen under sekvensen
+            startBtn.disabled = true;
+            
+            triggerF1StartSequence(() => {
+                startBtn.disabled = false;
+                initGame();
+            });
+        });
+
+        restartBtn.addEventListener('click', () => {
+            triggerF1StartSequence(() => {
+                initGame();
+            });
+        });
+
+        resumeBtn.addEventListener('click', () => {
+            togglePause();
+        });
+
+        pauseToggleBtn.addEventListener('click', () => {
+            togglePause();
+        });
+
+        audioToggleBtn.addEventListener('click', () => {
+            sound.muted = !sound.muted;
+            if (sound.muted) {
+                sound.stopEngine();
+                audioToggleBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> <span>Motorljud Av</span>';
+                audioToggleBtn.classList.replace('hover:border-emerald-500', 'hover:border-red-500');
+            } else {
+                sound.init();
+                if (gameActive && !isPaused) {
+                    sound.startEngine();
+                }
+                audioToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> <span>Motorljud På</span>';
+                audioToggleBtn.classList.replace('hover:border-red-500', 'hover:border-emerald-500');
+            }
+        });
+
+        // Rita ut första vyn
+        draw();
+    </script>
+</body>
+</html>

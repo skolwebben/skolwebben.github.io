@@ -1,0 +1,1600 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mimis Magiska Tårtbageri</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts för en gullig & lyxig känsla -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #fff0f6 0%, #f3e8ff 100%);
+            user-select: none;
+        }
+        .heading-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Kawaii rutmönster i bakgrunden */
+        .kawaii-bg {
+            background-image: radial-gradient(#ffd1dc 1.5px, transparent 1.5px), radial-gradient(#ffd1dc 1.5px, #fff0f6 1.5px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            opacity: 0.35;
+        }
+        /* Custom scrollbar för dekorationslådorna */
+        .custom-scroll::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #fff0f5;
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #ffb6c1;
+            border-radius: 10px;
+        }
+        /* Guldglitter för VIP */
+        @keyframes goldSparkle {
+            0%, 100% { box-shadow: 0 0 20px #ffd700, inset 0 0 12px #ffd700; }
+            50% { box-shadow: 0 0 35px #fff7c2, inset 0 0 25px #ffd700; }
+        }
+        .vip-active {
+            animation: goldSparkle 2s infinite ease-in-out;
+            border-color: #ffd700 !important;
+        }
+        /* Spooky glow för Skräckkunder */
+        @keyframes spookyGlow {
+            0%, 100% { box-shadow: 0 0 20px #8a2be2; filter: drop-shadow(0 0 6px #00ff00); }
+            50% { box-shadow: 0 0 30px #4b0082; filter: drop-shadow(0 0 15px #9400d3); }
+        }
+        .spooky-active {
+            animation: spookyGlow 2.5s infinite ease-in-out;
+            border-color: #8a2be2 !important;
+            background: #151022 !important;
+        }
+        /* Flytande animation för Mimi */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .mimi-float {
+            animation: float 4s infinite ease-in-out;
+        }
+        /* Kattens svansviftning */
+        @keyframes tailWag {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(15deg); }
+        }
+        .cat-tail {
+            animation: tailWag 1.5s infinite ease-in-out;
+            transform-origin: 155px 230px;
+        }
+        /* Blinkande ögon för Mimi och Mochi */
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        .mimi-eye, .cat-eye {
+            animation: blink 4.2s infinite ease-in-out;
+            transform-origin: center;
+        }
+        /* Regnbågssås rullande färger */
+        @keyframes rainbowShimmer {
+            0% { stop-color: #ff9aa2; }
+            20% { stop-color: #ffb7b2; }
+            40% { stop-color: #ffdac1; }
+            60% { stop-color: #e2f0cb; }
+            80% { stop-color: #b5ead7; }
+            100% { stop-color: #c7ceea; }
+        }
+        .rainbow-stop-1 { animation: rainbowShimmer 6s infinite alternate; }
+        .rainbow-stop-2 { animation: rainbowShimmer 6s infinite alternate-reverse; }
+
+
+        /* Konfetti animation */
+        @keyframes confettiFall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        .confetti {
+            position: absolute;
+            animation: confettiFall 3s linear forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+        /* Skräckdimma */
+        @keyframes fogMove {
+            0% { transform: translateX(-10%); }
+            100% { transform: translateX(10%); }
+        }
+        .fog-bg {
+            animation: fogMove 20s infinite alternate ease-in-out;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-x-hidden relative">
+
+
+    <!-- Kawaii mjukt bakgrundsmönster -->
+    <div class="absolute inset-0 kawaii-bg pointer-events-none z-0"></div>
+
+
+    <!-- Ljudeffekt-synth (Web Audio) -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+
+                if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.16);
+                } else if (type === 'place') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.12);
+                } else if (type === 'vip') {
+                    const now = audioCtx.currentTime;
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.type = 'sine';
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.08);
+                        g.gain.setValueAtTime(0.1, now + idx * 0.08);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.4);
+                        o.start(now + idx * 0.08);
+                        o.stop(now + idx * 0.08 + 0.4);
+                    });
+                } else if (type === 'spooky') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(110, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.8);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.8);
+                } else if (type === 'success') {
+                    const now = audioCtx.currentTime;
+                    [523.25, 659.25, 783.99, 987.77].forEach((f, i) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.type = 'triangle';
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(f, now + i * 0.05);
+                        g.gain.setValueAtTime(0.15, now + i * 0.05);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.3);
+                        o.start(now + i * 0.05);
+                        o.stop(now + i * 0.05 + 0.3);
+                    });
+                } else if (type === 'fail') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.5);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.5);
+                }
+            } catch (e) { console.log("Ljud kunde inte initieras."); }
+        }
+    </script>
+
+
+    <!-- Spooky dimma-overlay vid skräckkunder -->
+    <div id="spooky-fog" class="absolute inset-0 pointer-events-none z-10 hidden bg-gradient-to-t from-purple-950/20 via-black/40 to-transparent">
+        <svg class="w-full h-full fog-bg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <path d="M0,500 Q250,450 500,500 T1000,500 L1000,1000 L0,1000 Z" fill="#321a4a" opacity="0.15"/>
+            <path d="M0,600 Q200,650 400,600 T800,600 T1000,620 L1000,1000 L0,1000 Z" fill="#132c16" opacity="0.15"/>
+        </svg>
+    </div>
+
+
+    <!-- Huvudcontainer -->
+    <div class="max-w-7xl mx-auto px-4 py-3 relative z-20">
+        
+        <!-- HEADER -->
+        <header class="flex flex-wrap justify-between items-center bg-white/90 backdrop-blur-md rounded-3xl p-4 shadow-md border-2 border-pink-100 mb-4 gap-3">
+            <div class="flex items-center gap-3">
+                <span class="text-4xl animate-bounce">🎂</span>
+                <div>
+                    <h1 class="heading-font text-2xl md:text-3xl text-pink-500 tracking-wide">Mimis Magiska Tårtbageri</h1>
+                    <p class="text-xs text-pink-400 font-bold uppercase tracking-wider">👩‍🍳 Baka stressfritt med katten Mochi! 🐾</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-3 items-center">
+                <!-- Dag-räknare -->
+                <div class="bg-gradient-to-r from-pink-400 to-rose-400 text-white px-4 py-1.5 rounded-2xl font-bold shadow-sm text-sm border-b-4 border-pink-600">
+                    📅 Dag <span id="day-counter">1</span>
+                </div>
+                <!-- Poäng / Mynt -->
+                <div class="bg-amber-100 text-amber-700 border-2 border-amber-300 px-4 py-1.5 rounded-2xl font-bold shadow-sm flex items-center gap-1.5 text-sm border-b-4 border-amber-500">
+                    🪙 <span id="coin-counter">150</span> <span class="text-xs text-amber-600">Mynt</span>
+                </div>
+                <!-- Highscore -->
+                <div class="bg-violet-100 text-violet-700 border-2 border-violet-200 px-4 py-1.5 rounded-2xl font-bold shadow-sm text-sm border-b-4 border-violet-400">
+                    🏆 Rekord: <span id="highscore-counter">0</span>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- SPELYTA -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- VÄNSTER: MIMI, MOCHI OCH TALBUBBLA (3 Kolumner) -->
+            <div class="lg:col-span-3 flex flex-col items-center justify-start gap-3">
+                
+                <!-- Mimis & Mochis Talbubbla -->
+                <div class="w-full bg-white rounded-3xl p-4 shadow-md border-2 border-pink-200 relative mimi-float z-30">
+                    <div class="absolute bottom-[-10px] left-1/3 -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-pink-200 rotate-45"></div>
+                    <p id="mimi-speech" class="text-sm text-pink-700 font-semibold text-center">
+                        Hej! Mochi och jag har förberett köket! Nu kan vi baka i lugn och ro – ingen brådska! 🌸✨
+                    </p>
+                </div>
+
+
+                <!-- Mimi & Mochi SVG Karaktär -->
+                <div class="w-full max-w-[280px] h-[340px] relative bg-white/60 rounded-3xl p-2 border-2 border-pink-100/50 shadow-inner flex items-center justify-center">
+                    <!-- Bakgrundsinredning i bageriet: hylla -->
+                    <div class="absolute inset-x-4 top-4 h-24 border-b-2 border-pink-100 opacity-60 flex justify-around items-end pb-1">
+                        <span class="text-lg" title="Sockerburk">🍯</span>
+                        <span class="text-lg" title="Söta koppar">☕</span>
+                        <span class="text-lg" title="Blomma">🌸</span>
+                    </div>
+
+
+                    <svg viewBox="0 0 240 250" class="w-full h-full drop-shadow-xl z-10">
+                        <defs>
+                            <!-- Regnbågssås Shimmer Gradient -->
+                            <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" class="rainbow-stop-1" stop-color="#ff9aa2" />
+                                <stop offset="100%" class="rainbow-stop-2" stop-color="#c7ceea" />
+                            </linearGradient>
+                        </defs>
+
+
+                        <!-- ================= MIMI ================= -->
+                        <!-- Långt rosa bakgrundshår -->
+                        <path d="M20,110 Q2,170 12,230 Q30,240 50,230 Q32,150 40,110 Z" fill="#ff7da0"/>
+                        <path d="M130,110 Q148,170 138,230 Q120,240 100,230 Q118,150 110,110 Z" fill="#ff7da0"/>
+                        
+                        <!-- Kropp (Kockrock) -->
+                        <path d="M40,185 L110,185 L118,245 L32,245 Z" fill="#fff" stroke="#f0dae4" stroke-width="2"/>
+                        <!-- Rosa förkläde -->
+                        <path d="M52,185 L98,185 L102,245 L48,245 Z" fill="#ffb6c1"/>
+                        <circle cx="75" cy="210" r="3.5" fill="#ff69b4"/>
+                        <circle cx="75" cy="222" r="3.5" fill="#ff69b4"/>
+                        
+                        <!-- Hals -->
+                        <rect x="67" y="135" width="16" height="20" rx="4" fill="#ffe0d0"/>
+                        
+                        <!-- Ansikte -->
+                        <circle cx="75" cy="112" r="38" fill="#ffe0d0"/>
+                        
+                        <!-- Rosa Kinder -->
+                        <circle cx="48" cy="122" r="6" fill="#ffb3c6" opacity="0.8"/>
+                        <circle cx="102" cy="122" r="6" fill="#ffb3c6" opacity="0.8"/>
+
+
+                        <!-- Ögon (Stora Anime-ögon) -->
+                        <g id="mimi-eyes">
+                            <!-- Vänster öga -->
+                            <ellipse cx="52" cy="110" rx="8" ry="10" fill="#2d1c1c"/>
+                            <ellipse cx="52" cy="110" rx="6.5" ry="8.5" fill="#a855f7"/>
+                            <circle cx="50" cy="106" r="3" fill="#fff" class="mimi-eye"/>
+                            <circle cx="54" cy="113" r="1.2" fill="#fff" class="mimi-eye"/>
+                            <path d="M42,106 Q52,97 62,106" fill="none" stroke="#2d1c1c" stroke-width="3" stroke-linecap="round"/>
+
+
+                            <!-- Höger öga -->
+                            <ellipse cx="98" cy="110" rx="8" ry="10" fill="#2d1c1c"/>
+                            <ellipse cx="98" cy="110" rx="6.5" ry="8.5" fill="#a855f7"/>
+                            <circle cx="96" cy="106" r="3" fill="#fff" class="mimi-eye"/>
+                            <circle cx="100" cy="113" r="1.2" fill="#fff" class="mimi-eye"/>
+                            <path d="M88,106 Q98,97 108,106" fill="none" stroke="#2d1c1c" stroke-width="3" stroke-linecap="round"/>
+                        </g>
+
+
+                        <!-- Mun -->
+                        <path id="mimi-mouth" d="M70,126 Q75,133 80,126" fill="none" stroke="#ff4f7a" stroke-width="2.5" stroke-linecap="round"/>
+
+
+                        <!-- Långt rosa hår (Fram) -->
+                        <path d="M36,86 Q75,60 114,86 Q122,110 114,120 Q110,102 102,94 Q75,98 48,94 Q40,102 36,120 Q28,110 36,86 Z" fill="#ff8da1"/>
+                        <path d="M38,102 Q28,140 32,175 Q40,175 42,140 Z" fill="#ff8da1"/>
+                        <path d="M112,102 Q122,140 118,175 Q110,175 108,140 Z" fill="#ff8da1"/>
+
+
+                        <!-- Kockmössa -->
+                        <path d="M52,78 C44,44 106,44 98,78 Z" fill="#ffffff" stroke="#f0dae4" stroke-width="1.5"/>
+                        <path d="M52,74 L98,74 L98,79 L52,79 Z" fill="#ffb6c1"/>
+                        <circle cx="75" cy="76" r="4" fill="#ff4f7a"/>
+
+
+                        <!-- ================= KATEN MOCHI ================= -->
+                        <g id="kawaii-cat" class="cursor-pointer">
+                            <!-- Svans som vickar -->
+                            <path class="cat-tail" d="M150,225 Q170,225 165,190 Q160,165 175,160 Q180,175 168,195 Q158,235 145,235 Z" fill="#e8f4fd" stroke="#b0c4de" stroke-width="1.5"/>
+                            
+                            <!-- Kropp (Rund & Knubbig) -->
+                            <ellipse cx="150" cy="210" rx="32" ry="30" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+                            
+                            <!-- Huvud -->
+                            <circle cx="150" cy="180" r="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+                            
+                            <!-- Öron (med rosa insida) -->
+                            <path d="M132,168 L126,146 L144,158 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+                            <path d="M134,164 L130,152 L141,158 Z" fill="#ffb6c1"/> <!-- Vänster inneröra -->
+                            
+                            <path d="M168,168 L174,146 L156,158 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+                            <path d="M166,164 L170,152 L159,158 Z" fill="#ffb6c1"/> <!-- Höger inneröra -->
+                            
+                            <!-- Stora glittrande kattögon -->
+                            <ellipse cx="140" cy="178" rx="4.5" ry="5.5" fill="#2d1c1c"/>
+                            <circle cx="138.5" cy="176" r="1.5" fill="#fff" class="cat-eye"/>
+                            
+                            <ellipse cx="160" cy="178" rx="4.5" ry="5.5" fill="#2d1c1c"/>
+                            <circle cx="158.5" cy="176" r="1.5" fill="#fff" class="cat-eye"/>
+                            
+                            <!-- Rosa kinder på katten -->
+                            <circle cx="134" cy="184" r="3" fill="#ffb3c6" opacity="0.9"/>
+                            <circle cx="166" cy="184" r="3" fill="#ffb3c6" opacity="0.9"/>
+                            
+                            <!-- Nos & Mustascher -->
+                            <path d="M148,181 L150,183 L152,181" fill="none" stroke="#2d1c1c" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M149.5,183 Q150,185 151,185 Q152,185 152.5,183.5" fill="none" stroke="#2d1c1c" stroke-width="1"/>
+                            <path d="M149.5,183 Q149,185 148,185 Q147,185 146.5,183.5" fill="none" stroke="#2d1c1c" stroke-width="1"/>
+                            
+                            <!-- Små morrhår -->
+                            <line x1="124" y1="180" x2="116" y2="178" stroke="#2d1c1c" stroke-width="1"/>
+                            <line x1="124" y1="184" x2="116" y2="185" stroke="#2d1c1c" stroke-width="1"/>
+                            <line x1="176" y1="180" x2="184" y2="178" stroke="#2d1c1c" stroke-width="1"/>
+                            <line x1="176" y1="184" x2="184" y2="185" stroke="#2d1c1c" stroke-width="1"/>
+
+
+                            <!-- Liten Kockmössa för katten Mochi -->
+                            <path d="M140,158 C135,138 165,138 160,158 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+                            <rect x="142" y="154" width="16" height="4" rx="1" fill="#ffb6c1"/>
+                            
+                            <!-- Tass som vinkar -->
+                            <circle cx="140" cy="205" r="5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+                            <circle cx="160" cy="205" r="5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+                        </g>
+                    </svg>
+                </div>
+
+
+                <!-- Bagar-Tips -->
+                <div class="bg-pink-100/60 p-3 rounded-2xl border-2 border-pink-200 text-xs text-pink-700 text-center w-full font-semibold shadow-sm">
+                    ✨ <span class="font-bold">Mochis Tips:</span> Klicka på <strong class="text-pink-600">Toppings</strong> och placera söta hjärtan, geléögon eller guldflarn var du vill på tårtan!
+                </div>
+            </div>
+
+
+            <!-- MITTEN: INTERAKTIV TÅRTDESIGNER (6 Kolumner) -->
+            <div id="cake-workshop" class="lg:col-span-6 bg-white rounded-3xl p-6 shadow-md border-2 border-pink-100 flex flex-col justify-between relative min-h-[500px] z-20">
+                
+                <!-- Aktuellt verktyg & Ångra-knapp -->
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs bg-pink-100 text-pink-700 font-bold px-3 py-1 rounded-full border border-pink-200">
+                        Aktiv: <span id="current-tool-text">Ingen (välj topping nedan!)</span>
+                    </span>
+                    <button onclick="undoLastDecoration()" class="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-700 text-xs font-bold px-3 py-1.5 rounded-2xl transition-all flex items-center gap-1">
+                        ↩️ Ångra placering
+                    </button>
+                </div>
+
+
+                <!-- Tårtans ritområde (Canvas-liknande SVG) -->
+                <div class="flex-1 flex items-center justify-center relative cursor-crosshair bg-pink-50/20 rounded-2xl border-2 border-dashed border-pink-200 p-4" id="cake-container" onclick="placeDecorationOnCake(event)">
+                    
+                    <!-- SVG Tårta -->
+                    <svg id="cake-svg" viewBox="0 0 350 350" class="w-full max-w-[320px] h-auto drop-shadow-xl">
+                        
+                        <!-- Fatet -->
+                        <ellipse cx="175" cy="290" rx="140" ry="25" fill="#f3e8ff" stroke="#d8b4fe" stroke-width="4"/>
+                        <ellipse cx="175" cy="285" rx="140" ry="20" fill="#ffffff"/>
+
+
+                        <!-- ================= LAGER 3 (HÖGSTA VÅNINGEN) ================= -->
+                        <g id="layer3-group" style="display: none;">
+                            <path id="layer3-shape" d="M 120,130 C 120,115 230,115 230,130 L 230,170 C 230,185 120,185 120,170 Z" fill="#fecdd3" stroke="#fda4af" stroke-width="2"/>
+                            <ellipse id="layer3-top" cx="175" cy="130" rx="55" ry="15" fill="#ffe4e6"/>
+                            <!-- Drip -->
+                            <path id="layer3-drip" d="M 120,133 Q 130,145 135,133 Q 145,155 155,133 Q 170,160 180,133 Q 195,145 205,133 Q 220,150 230,133" fill="none" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                        </g>
+
+
+                        <!-- ================= LAGER 2 (MELLERSTA VÅNINGEN) ================= -->
+                        <g id="layer2-group" style="display: none;">
+                            <path id="layer2-shape" d="M 95,190 C 95,170 255,170 255,190 L 255,235 C 255,255 95,255 95,235 Z" fill="#fbcfe8" stroke="#f472b6" stroke-width="2"/>
+                            <ellipse id="layer2-top" cx="175" cy="190" rx="80" ry="20" fill="#fdf2f8"/>
+                            <!-- Drip -->
+                            <path id="layer2-drip" d="M 95,195 Q 110,210 120,195 Q 140,225 155,195 Q 175,220 190,195 Q 215,225 230,195 Q 245,210 255,195" fill="none" stroke-width="10" stroke-linecap="round" opacity="0.9"/>
+                        </g>
+
+
+                        <!-- ================= LAGER 1 (BOTTENVÅNINGEN) ================= -->
+                        <g id="layer1-group">
+                            <path id="layer1-shape" d="M 70,245 C 70,225 280,225 280,245 L 280,290 C 280,310 70,310 70,290 Z" fill="#fbcfe8" stroke="#f472b6" stroke-width="2"/>
+                            <ellipse id="layer1-top" cx="175" cy="245" rx="105" ry="20" fill="#fdf2f8"/>
+                            <!-- Drip -->
+                            <path id="layer1-drip" d="M 70,250 Q 90,270 110,250 Q 130,285 150,250 Q 180,280 200,250 Q 230,285 250,250 Q 265,270 280,250" fill="none" stroke-width="12" stroke-linecap="round" opacity="0.9"/>
+                        </g>
+
+
+                        <!-- Grupp för användarens manuellt utplacerade dekorationer -->
+                        <g id="placed-decorations-group"></g>
+                    </svg>
+                </div>
+
+
+                <!-- TÅRTVÄLJARE OCH ANPASSNINGS-FLIKAR -->
+                <div class="mt-4 bg-pink-50/50 p-3 rounded-2xl border-2 border-pink-100">
+                    <div class="flex border-b-2 border-pink-200 mb-3 overflow-x-auto gap-2 text-xs font-bold whitespace-nowrap pb-1">
+                        <button onclick="switchTab('tab-layers')" id="btn-tab-layers" class="px-3 py-1.5 rounded-xl bg-pink-500 text-white transition-all">🏗️ Våningar & Form</button>
+                        <button onclick="switchTab('tab-frosting')" id="btn-tab-frosting" class="px-3 py-1.5 rounded-xl bg-white text-pink-600 border border-pink-100 transition-all">🎨 Glasyr</button>
+                        <button onclick="switchTab('tab-drip')" id="btn-tab-drip" class="px-3 py-1.5 rounded-xl bg-white text-pink-600 border border-pink-100 transition-all">💧 Drips</button>
+                        <button onclick="switchTab('tab-toppings')" id="btn-tab-toppings" class="px-3 py-1.5 rounded-xl bg-white text-pink-600 border border-pink-100 transition-all">🍓 Toppings (Klicka & Placera)</button>
+                    </div>
+
+
+                    <!-- FLIK 1: Våningar & Form -->
+                    <div id="tab-layers" class="tab-content block">
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <label class="block font-bold text-gray-700 mb-1">Antal våningar</label>
+                                <div class="flex gap-2">
+                                    <button onclick="changeTiers(1)" id="tier-btn-1" class="flex-1 py-2 rounded-xl bg-pink-100 border-2 border-pink-300 font-bold text-pink-700">1 Våning</button>
+                                    <button onclick="changeTiers(2)" id="tier-btn-2" class="flex-1 py-2 rounded-xl bg-white border border-pink-200 font-semibold text-pink-600">2 Våningar</button>
+                                    <button onclick="changeTiers(3)" id="tier-btn-3" class="flex-1 py-2 rounded-xl bg-white border border-pink-200 font-semibold text-pink-600">3 Våningar</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-gray-700 mb-1">Form (Grunddesign)</label>
+                                <div class="flex gap-2">
+                                    <button onclick="changeShape('round')" id="shape-btn-round" class="flex-1 py-2 rounded-xl bg-pink-100 border-2 border-pink-300 font-bold text-pink-700">🟢 Rund</button>
+                                    <button onclick="changeShape('heart')" id="shape-btn-heart" class="flex-1 py-2 rounded-xl bg-white border border-pink-200 font-semibold text-pink-600">❤️ Hjärta</button>
+                                    <button onclick="changeShape('square')" id="shape-btn-square" class="flex-1 py-2 rounded-xl bg-white border border-pink-200 font-semibold text-pink-600">🟦 Fyrkant</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- FLIK 2: Glasyrfärg -->
+                    <div id="tab-frosting" class="tab-content hidden">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-gray-700">Välj färg på glasyr:</label>
+                            <div class="flex flex-wrap gap-2">
+                                <!-- Rosa -->
+                                <button onclick="applyFrosting('#ffb6c1', '#ffd1dc')" class="w-8 h-8 rounded-full border border-gray-300 shadow-sm transition-transform hover:scale-110" style="background-color: #ffb6c1;" title="Rosa dröm"></button>
+                                <!-- Choklad -->
+                                <button onclick="applyFrosting('#5c4033', '#7b5844')" class="w-8 h-8 rounded-full border border-gray-300 shadow-sm transition-transform hover:scale-110" style="background-color: #5c4033;" title="Fyllig Choklad"></button>
+                                <!-- Vit/Grädd -->
+                                <button onclick="applyFrosting('#fffaf0', '#ffffff')" class="w-8 h-8 rounded-full border border-gray-300 shadow-sm transition-transform hover:scale-110" style="background-color: #fffaf0;" title="Klassisk Vanilj"></button>
+                                <!-- VIP Guld -->
+                                <button onclick="applyFrosting('#ffd700', '#fff099')" class="w-8 h-8 rounded-full border border-yellow-400 shadow-sm flex items-center justify-center text-xs font-bold transition-transform hover:scale-110" style="background: radial-gradient(circle, #ffe259 0%, #ffa751 100%);" title="Äkta Guld">👑</button>
+                                <!-- Skräck Svart -->
+                                <button onclick="applyFrosting('#1c1c1c', '#333333')" class="w-8 h-8 rounded-full border border-gray-600 shadow-sm flex items-center justify-center text-xs text-white transition-transform hover:scale-110" style="background-color: #1c1c1c;" title="Midnattsolja">💀</button>
+                                <!-- Skräck Zombiegrön -->
+                                <button onclick="applyFrosting('#556b2f', '#6b8e23')" class="w-8 h-8 rounded-full border border-green-600 shadow-sm flex items-center justify-center text-xs transition-transform hover:scale-110" style="background-color: #556b2f;" title="Slemsås">🤢</button>
+                                <!-- Violett -->
+                                <button onclick="applyFrosting('#8a2be2', '#9932cc')" class="w-8 h-8 rounded-full border border-purple-400 shadow-sm transition-transform hover:scale-110" style="background-color: #8a2be2;" title="Lila magi"></button>
+                            </div>
+                            <span class="text-[10px] text-gray-400">Glasyren täcker alla våningar vackert!</span>
+                        </div>
+                    </div>
+
+
+                    <!-- FLIK 3: Drips (Rinnande sås) -->
+                    <div id="tab-drip" class="tab-content hidden">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-gray-700">Lägg till läcker rinnande drip:</label>
+                            <div class="flex flex-wrap gap-2 items-center">
+                                <button onclick="applyDrip('none')" class="px-3 py-1.5 rounded-xl bg-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-300">Inget</button>
+                                <button onclick="applyDrip('#4a2c11')" class="px-3 py-1.5 rounded-xl text-white text-xs font-bold hover:scale-105 transition-all" style="background-color: #4a2c11;">🍫 Chokladdrip</button>
+                                <button onclick="applyDrip('#e11d48')" class="px-3 py-1.5 rounded-xl text-white text-xs font-bold hover:scale-105 transition-all" style="background-color: #e11d48;">🍓 Jordgubbssås</button>
+                                <button onclick="applyDrip('#ffd700')" class="px-3 py-1.5 rounded-xl text-amber-900 text-xs font-bold border border-yellow-500 hover:scale-105 transition-all" style="background: linear-gradient(to right, #ffe259, #ffa751);">✨ VIP Gulddrip</button>
+                                <button onclick="applyDrip('#00ff00')" class="px-3 py-1.5 rounded-xl text-green-900 text-xs font-bold border border-green-500 hover:scale-105 transition-all animate-pulse" style="background-color: #00ff00;">🧟 Zombieslem</button>
+                                
+                                <!-- Regnbågssås (Låst till en början) -->
+                                <button id="drip-rainbow-btn" onclick="applyDrip('url(#rainbowGrad)')" class="px-3 py-1.5 rounded-xl text-indigo-900 text-xs font-black border-2 border-indigo-300 opacity-50 cursor-not-allowed flex items-center gap-1" disabled style="background: linear-gradient(45deg, #ff9aa2, #ffdac1, #b5ead7, #c7ceea);">
+                                    <span>🔒</span> Regnbågssås
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- FLIK 4: Toppings (Välj & Klicka för att placera) -->
+                    <div id="tab-toppings" class="tab-content hidden">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-xs text-pink-700 font-semibold">Välj dekoration och klicka direkt på tårtan ovan!</span>
+                            <div class="flex gap-2 overflow-x-auto pb-2 custom-scroll">
+                                
+                                <!-- Standard Toppings -->
+                                <div class="flex flex-col items-center bg-white p-2 rounded-2xl border border-pink-100 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('🍓', 'strawberries')">
+                                    <span class="text-2xl">🍓</span>
+                                    <span class="text-[10px] text-gray-600 font-semibold mt-1">Jordgubb</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-white p-2 rounded-2xl border border-pink-100 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('🍒', 'cherry')">
+                                    <span class="text-2xl">🍒</span>
+                                    <span class="text-[10px] text-gray-600 font-semibold mt-1">Körsbär</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-white p-2 rounded-2xl border border-pink-100 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('☁️', 'cream')">
+                                    <span class="text-2xl">☁️</span>
+                                    <span class="text-[10px] text-gray-600 font-semibold mt-1">Grädde</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-white p-2 rounded-2xl border border-pink-100 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('💖', 'heart')">
+                                    <span class="text-2xl">💖</span>
+                                    <span class="text-[10px] text-gray-600 font-semibold mt-1">Hjärta</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-white p-2 rounded-2xl border border-pink-100 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('⭐', 'sprinkles')">
+                                    <span class="text-2xl">⭐</span>
+                                    <span class="text-[10px] text-gray-600 font-semibold mt-1">Stjärna</span>
+                                </div>
+
+
+                                <!-- VIP Toppings -->
+                                <div class="flex flex-col items-center bg-amber-50 p-2 rounded-2xl border-2 border-amber-300 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('👑', 'crown')">
+                                    <span class="text-2xl">👑</span>
+                                    <span class="text-[10px] text-amber-700 font-bold mt-1">VIP Krona</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-amber-50 p-2 rounded-2xl border-2 border-amber-300 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('✨', 'goldflakes')">
+                                    <span class="text-2xl">✨</span>
+                                    <span class="text-[10px] text-amber-700 font-bold mt-1">Guldflarn</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-amber-50 p-2 rounded-2xl border-2 border-amber-300 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('🕯️', 'candle')">
+                                    <span class="text-2xl">🕯️</span>
+                                    <span class="text-[10px] text-amber-700 font-bold mt-1">Guldljus</span>
+                                </div>
+
+
+                                <!-- Horror / Skräck Toppings -->
+                                <div class="flex flex-col items-center bg-purple-950/20 p-2 rounded-2xl border-2 border-purple-700 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('👁️', 'eyeball')">
+                                    <span class="text-2xl animate-pulse">👁️</span>
+                                    <span class="text-[10px] text-purple-900 font-bold mt-1">Geléöga</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-purple-950/20 p-2 rounded-2xl border-2 border-purple-700 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('💀', 'skull')">
+                                    <span class="text-2xl">💀</span>
+                                    <span class="text-[10px] text-purple-900 font-bold mt-1">Dödskalle</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-purple-950/20 p-2 rounded-2xl border-2 border-purple-700 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('🦇', 'bat')">
+                                    <span class="text-2xl">🦇</span>
+                                    <span class="text-[10px] text-purple-900 font-bold mt-1">Fladdermus</span>
+                                </div>
+                                <div class="flex flex-col items-center bg-purple-950/20 p-2 rounded-2xl border-2 border-purple-700 min-w-[75px] cursor-pointer hover:scale-105 transition-transform" onclick="selectTool('🕸️', 'spiderweb')">
+                                    <span class="text-2xl">🕸️</span>
+                                    <span class="text-[10px] text-purple-900 font-bold mt-1">Spindelnät</span>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- KNAPP: LEVERERA TÅRTA -->
+                <button onclick="deliverCake()" class="mt-4 w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3.5 px-6 rounded-3xl shadow-lg transform active:scale-95 transition-all flex items-center justify-center gap-2 text-lg border-b-4 border-rose-700">
+                    <span>👩‍🍳</span> Leverera tårtan nu!
+                </button>
+            </div>
+
+
+            <!-- HÖGER: KUNDER & BESTÄLLNING (3 Kolumner) -->
+            <div class="lg:col-span-3 flex flex-col gap-4 z-20">
+                
+                <!-- Kundkort -->
+                <div id="customer-card" class="bg-white rounded-3xl p-5 shadow-md border-2 border-pink-100 transition-all duration-300 flex flex-col justify-between min-h-[400px]">
+                    <div>
+                        <div class="flex items-center justify-between border-b-2 border-pink-100 pb-3 mb-3">
+                            <span id="customer-badge" class="bg-pink-100 text-pink-700 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Normal Kund</span>
+                            <!-- Timer / Tålamod -->
+                            <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
+                                <span class="animate-pulse">⏳</span>
+                                <span id="patience-timer">75s</span>
+                            </div>
+                        </div>
+
+
+                        <!-- Kundens Porträtt & Dialog -->
+                        <div class="flex items-center gap-3 mb-4">
+                            <div id="customer-avatar" class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center text-4xl border-2 border-pink-200 shadow-sm animate-bounce">
+                                🐰
+                            </div>
+                            <div>
+                                <h3 id="customer-name" class="font-bold text-gray-800 text-sm">Gulliga Kaninen Clara</h3>
+                                <p id="customer-speech" class="text-[10px] text-gray-500 italic">"Hoppas bageriet har öppet!"</p>
+                            </div>
+                        </div>
+
+
+                        <!-- Tålamods-Bar -->
+                        <div class="w-full bg-gray-100 h-2.5 rounded-full mb-4 overflow-hidden border border-gray-200">
+                            <div id="patience-bar" class="bg-gradient-to-r from-emerald-400 to-teal-400 h-full w-full transition-all duration-300"></div>
+                        </div>
+
+
+                        <!-- BESTÄLLNINGSKRAV -->
+                        <div class="bg-pink-50/50 p-4 rounded-2xl border-2 border-pink-100 shadow-inner">
+                            <h4 class="text-xs font-bold text-pink-700 uppercase tracking-wider mb-2">Önskemål:</h4>
+                            <ul id="order-checklist" class="text-xs text-gray-600 space-y-2 font-semibold">
+                                <!-- Genereras av JS -->
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <!-- Skip Kund -->
+                    <button onclick="skipCustomer()" class="mt-4 text-[11px] font-bold text-gray-400 hover:text-rose-500 text-center transition-colors">
+                        Vänta på nästa gäst ➡️
+                    </button>
+                </div>
+
+
+                <!-- BAGERI-BUTIK / UPGRADERINGAR -->
+                <div class="bg-gradient-to-br from-violet-100 to-pink-100 rounded-3xl p-4 shadow-md border-2 border-violet-200">
+                    <h3 class="heading-font text-sm text-violet-700 mb-2 flex items-center gap-1">🏪 Mimis & Mochis Butik</h3>
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-white/80 p-2.5 rounded-2xl border border-violet-200 flex justify-between items-center gap-1">
+                            <div>
+                                <p class="font-bold text-gray-800">☕ Espresso-maskin</p>
+                                <p class="text-[10px] text-gray-500">Ger kunder +15s mer tålamod.</p>
+                            </div>
+                            <button id="buy-espresso" onclick="buyUpgrade('espresso', 80)" class="bg-violet-600 hover:bg-violet-700 text-white font-bold px-2.5 py-1.5 rounded-xl transition-colors shrink-0">
+                                80 🪙
+                            </button>
+                        </div>
+                        <div class="bg-white/80 p-2.5 rounded-2xl border border-violet-200 flex justify-between items-center gap-1">
+                            <div>
+                                <p class="font-bold text-gray-800">✨ Magiskt Guldglitter</p>
+                                <p class="text-[10px] text-gray-500">Dubblerar dricksen från VIP.</p>
+                            </div>
+                            <button id="buy-glitter" onclick="buyUpgrade('glitter', 150)" class="bg-violet-600 hover:bg-violet-700 text-white font-bold px-2.5 py-1.5 rounded-xl transition-colors shrink-0">
+                                150 🪙
+                            </button>
+                        </div>
+                        <div class="bg-white/80 p-2.5 rounded-2xl border border-violet-200 flex justify-between items-center gap-1">
+                            <div>
+                                <p class="font-bold text-violet-800">🌈 Magisk Regnbågssås</p>
+                                <p class="text-[10px] text-gray-500">Låser upp färgskiftande tårt-drip!</p>
+                            </div>
+                            <button id="buy-rainbow" onclick="buyUpgrade('rainbowDrip', 100)" class="bg-violet-600 hover:bg-violet-700 text-white font-bold px-2.5 py-1.5 rounded-xl transition-colors shrink-0">
+                                100 🪙
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- MODAL / FEEDBACK FÖR SERVERAD TÅRTA -->
+        <div id="feedback-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+            <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border-4 border-pink-300 text-center transform scale-95 transition-transform">
+                <span id="modal-emoji" class="text-6xl mb-3 block">👑</span>
+                <h2 id="modal-title" class="heading-font text-2xl text-pink-500 mb-1">Mums, tack!</h2>
+                <p id="modal-subtitle" class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-4">Recension</p>
+                
+                <!-- Betygsstjärnor -->
+                <div class="flex justify-center gap-1.5 mb-4 text-2xl text-amber-400" id="modal-stars">
+                    ⭐⭐⭐⭐⭐
+                </div>
+
+
+                <div class="bg-pink-50 rounded-2xl p-4 mb-4 text-sm text-pink-700 font-semibold" id="modal-feedback-text">
+                    "Tårtan var jättefin!"
+                </div>
+
+
+                <!-- Belöning -->
+                <div class="bg-amber-100 border-2 border-amber-300 rounded-2xl py-2 px-5 inline-flex items-center gap-2 font-bold text-amber-800 text-lg mb-6 border-b-4 border-amber-500">
+                    🪙 Du fick +<span id="modal-payout">0</span> Guldmynt!
+                </div>
+
+
+                <button onclick="closeModal()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 rounded-2xl shadow-md transition-colors border-b-4 border-pink-700">
+                    Ta emot & baka vidare! 🐾✨
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <!-- JAVASCRIPT: SPEL-LOGIK -->
+    <script>
+        // SPELSTATE
+        let coins = 150;
+        let day = 1;
+        let highscore = 0;
+        let currentDayScore = 0;
+        let activeTab = 'tab-layers';
+
+
+        // Tårtdesign state
+        let cakeTiers = 1;
+        let cakeShape = 'round'; // 'round', 'heart', 'square'
+        let frostingColor = '#ffb6c1';
+        let frostingSecondaryColor = '#ffd1dc';
+        let cakeDrip = 'none';
+        let placedDecorations = []; // Array av { x, y, symbol, type }
+
+
+        // Vald dekoration från verktygslådan
+        let activeTool = null; // { symbol: '🍓', type: 'strawberries' }
+
+
+        // Kundstate
+        let currentCustomer = null;
+        let customerTimer = null;
+        let maxPatience = 75; // Förlängt tidsfönster (+30 sekunder från tidigare 45)
+        let currentPatience = 75;
+
+
+        // Uppgraderingar
+        let upgrades = {
+            espresso: false,
+            glitter: false,
+            rainbowDrip: false
+        };
+
+
+        // KUNDDATABAS (Stressfria timrar på +30 sekunder adderat på allt)
+        const customersDatabase = [
+            {
+                name: "Prinsessan Lilian",
+                type: "VIP",
+                avatar: "👑",
+                badge: "VIP Kund 👑",
+                greeting: "Bara det absolut mest eleganta är gott nog för min födelsedag!",
+                theme: "gold",
+                requirements: {
+                    tiers: 3,
+                    frosting: "gold",
+                    drip: "#ffd700",
+                    mustHave: ["crown", "goldflakes"]
+                }
+            },
+            {
+                name: "Spöket Casper",
+                type: "Horror",
+                avatar: "👻",
+                badge: "Skräckkund 🦇",
+                greeting: "Gör mig något... läskigt och geggigt. Buuuu!",
+                theme: "horror",
+                requirements: {
+                    tiers: 1,
+                    frosting: "dark",
+                    drip: "#00ff00",
+                    mustHave: ["eyeball", "bat"]
+                }
+            },
+            {
+                name: "Gulliga Kaninen Clara",
+                type: "Normal",
+                avatar: "🐰",
+                badge: "Normal Kund 🌸",
+                greeting: "En söt och bärig tårta till mitt te-party, tack!",
+                theme: "cute",
+                requirements: {
+                    tiers: 2,
+                    frosting: "cute",
+                    drip: "#e11d48",
+                    mustHave: ["strawberries", "cream"]
+                }
+            },
+            {
+                name: "Fladdermusen Dracula",
+                type: "Horror",
+                avatar: "🦇",
+                badge: "Skräckkund 🧛‍♂️",
+                greeting: "Mörker, aska och spindlar. Det är min melodi!",
+                theme: "horror",
+                requirements: {
+                    tiers: 2,
+                    frosting: "dark",
+                    drip: "#4a2c11",
+                    mustHave: ["spiderweb", "skull"]
+                }
+            },
+            {
+                name: "Nallen Bruno",
+                type: "Normal",
+                avatar: "🐻",
+                badge: "Normal Kund 🧸",
+                greeting: "Mums, jag älskar choklad mer än något annat!",
+                theme: "cute",
+                requirements: {
+                    tiers: 1,
+                    frosting: "chocolate",
+                    drip: "#4a2c11",
+                    mustHave: ["cherry", "cream"]
+                }
+            },
+            {
+                name: "Guldkejsaren Midas",
+                type: "VIP",
+                avatar: "🦁",
+                badge: "VIP Kund ✨",
+                greeting: "Allt jag rör vid blir till guld. Min tårta ska matcha mig!",
+                theme: "gold",
+                requirements: {
+                    tiers: 2,
+                    frosting: "gold",
+                    drip: "#ffd700",
+                    mustHave: ["goldflakes", "candle"]
+                }
+            }
+        ];
+
+
+        // STARTA SPELET NÄR SIDAN LADDATS
+        window.onload = function() {
+            const savedHighScore = localStorage.getItem('mimi_cake_highscore');
+            if (savedHighScore) {
+                highscore = parseInt(savedHighScore);
+                document.getElementById('highscore-counter').innerText = highscore;
+            }
+
+
+            spawnCustomer();
+            updateCakeRendering();
+
+
+            // Söt interaktion om man klickar på Mochi katten
+            document.getElementById('kawaii-cat').addEventListener('click', () => {
+                playSound('success');
+                MimiSpeak("Mjau! Mochi kurrar glatt och önskar dig lycka till! 🐾✨");
+            });
+        };
+
+
+        // BYT FLIK I WORKSHOP
+        function switchTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+
+
+            const tabs = ['tab-layers', 'tab-frosting', 'tab-drip', 'tab-toppings'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('btn-' + t);
+                if (t === tabId) {
+                    btn.className = "px-3 py-1.5 rounded-xl bg-pink-500 text-white transition-all";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-xl bg-white text-pink-600 border border-pink-100 transition-all";
+                }
+            });
+        }
+
+
+        // UPPDATERA TÅRTLAGERSYSTEM (1, 2 eller 3 våningar)
+        function changeTiers(num) {
+            playSound('click');
+            cakeTiers = num;
+            
+            for(let i = 1; i <= 3; i++) {
+                const btn = document.getElementById('tier-btn-' + i);
+                if (i === num) {
+                    btn.className = "flex-1 py-2 rounded-xl bg-pink-100 border-2 border-pink-300 font-bold text-pink-700";
+                } else {
+                    btn.className = "flex-1 py-2 rounded-xl bg-white border border-pink-200 font-semibold text-pink-600";
+                }
+            }
+
+
+            updateCakeRendering();
+        }
+
+
+        // BYT FORM PÅ TÅRTAN
+        function changeShape(shape) {
+            playSound('click');
+            cakeShape = shape;
+
+
+            const shapes = ['round', 'heart', 'square'];
+            shapes.forEach(s => {
+                const btn = document.getElementById('shape-btn-' + s);
+                if (s === shape) {
+                    btn.className = "flex-1 py-2 rounded-xl bg-pink-100 border-2 border-pink-300 font-bold text-pink-700";
+                } else {
+                    btn.className = "flex-1 py-2 rounded-xl bg-white border border-pink-200 font-semibold text-pink-600";
+                }
+            });
+
+
+            updateCakeRendering();
+        }
+
+
+        // ANVÄND GLASYRFÄRG
+        function applyFrosting(mainColor, secondaryColor) {
+            playSound('click');
+            frostingColor = mainColor;
+            frostingSecondaryColor = secondaryColor;
+            updateCakeRendering();
+            
+            MimiSpeak("Det där blir en jättefin färg på glasyren! 🌟 Nu kan vi lägga till drips eller toppings!");
+        }
+
+
+        // ANVÄND DRIP (Rinnande dekoration)
+        function applyDrip(dripType) {
+            playSound('click');
+            cakeDrip = dripType;
+            updateCakeRendering();
+        }
+
+
+        // VÄLJ VERKTYG/DEKORATION ATT PLACERA UT
+        function selectTool(symbol, type) {
+            playSound('click');
+            activeTool = { symbol, type };
+            document.getElementById('current-tool-text').innerHTML = `<span class="text-base">${symbol}</span> (${type})`;
+            MimiSpeak(`Klicka nu på tårtan för att fästa din ${symbol}! Du kan sätta den var som helst.`);
+        }
+
+
+        // PLACERA UT DEKORATION DIREKT PÅ TÅRT-SVG:N
+        function placeDecorationOnCake(event) {
+            if (!activeTool) {
+                MimiSpeak("Välj först en söt dekoration i fliken 'Toppings'! 💖");
+                return;
+            }
+
+
+            const svg = document.getElementById('cake-svg');
+            const rect = svg.getBoundingClientRect();
+            
+            const x = ((event.clientX - rect.left) / rect.width) * 350;
+            const y = ((event.clientY - rect.top) / rect.height) * 350;
+
+
+            if (y < 60 || y > 300) {
+                MimiSpeak("Oj! Försök att placera dekorationen på själva tårtvåningarna så den sitter stadigt! 🐾");
+                return;
+            }
+
+
+            placedDecorations.push({
+                x: x,
+                y: y,
+                symbol: activeTool.symbol,
+                type: activeTool.type
+            });
+
+
+            playSound('place');
+            renderDecorations();
+        }
+
+
+        // RENDERAR ALLA UTPLACERADE DEKORATIONER
+        function renderDecorations() {
+            const group = document.getElementById('placed-decorations-group');
+            group.innerHTML = '';
+
+
+            placedDecorations.forEach((decor, index) => {
+                const textNode = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                textNode.setAttribute("x", decor.x);
+                textNode.setAttribute("y", decor.y + 8);
+                textNode.setAttribute("font-size", "22");
+                textNode.setAttribute("text-anchor", "middle");
+                textNode.setAttribute("class", "cursor-pointer select-none drop-shadow-md");
+                textNode.textContent = decor.symbol;
+
+
+                textNode.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeDecoration(index);
+                });
+
+
+                group.appendChild(textNode);
+            });
+        }
+
+
+        // ÅNGRA SENAST PLACERADE DEKORATION
+        function undoLastDecoration() {
+            if (placedDecorations.length > 0) {
+                playSound('click');
+                placedDecorations.pop();
+                renderDecorations();
+            }
+        }
+
+
+        // RADERA EN SPECIFIK DEKORATION MAN KLICKAR PÅ
+        function removeDecoration(index) {
+            playSound('place');
+            placedDecorations.splice(index, 1);
+            renderDecorations();
+        }
+
+
+        // RENSA HELA TÅRTAN
+        function clearCake() {
+            placedDecorations = [];
+            cakeDrip = 'none';
+            cakeTiers = 1;
+            frostingColor = '#ffb6c1';
+            frostingSecondaryColor = '#ffd1dc';
+            renderDecorations();
+            updateCakeRendering();
+        }
+
+
+        // UPPDATERA TÅRTANS VISUELLA UTSEENDE
+        function updateCakeRendering() {
+            const layer1 = document.getElementById('layer1-group');
+            const layer2 = document.getElementById('layer2-group');
+            const layer3 = document.getElementById('layer3-group');
+
+
+            if (cakeTiers >= 1) layer1.style.display = "block";
+            
+            if (cakeTiers >= 2) {
+                layer2.style.display = "block";
+            } else {
+                layer2.style.display = "none";
+            }
+
+
+            if (cakeTiers >= 3) {
+                layer3.style.display = "block";
+            } else {
+                layer3.style.display = "none";
+            }
+
+
+            const shapes = ['layer1-shape', 'layer2-shape', 'layer3-shape'];
+            const tops = ['layer1-top', 'layer2-top', 'layer3-top'];
+
+
+            shapes.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.setAttribute("fill", frostingColor);
+                    el.setAttribute("stroke", frostingSecondaryColor);
+                }
+            });
+
+
+            tops.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.setAttribute("fill", frostingSecondaryColor);
+            });
+
+
+            updateShapePaths();
+
+
+            const drips = ['layer1-drip', 'layer2-drip', 'layer3-drip'];
+            drips.forEach(id => {
+                const dripEl = document.getElementById(id);
+                if (dripEl) {
+                    if (cakeDrip === 'none') {
+                        dripEl.setAttribute("stroke", "none");
+                    } else {
+                        dripEl.setAttribute("stroke", cakeDrip);
+                    }
+                }
+            });
+        }
+
+
+        // ÄNDRA FORM PÅ SVG-LAGREN BASERAT PÅ VAL
+        function updateShapePaths() {
+            const l1 = document.getElementById('layer1-shape');
+            const l1Top = document.getElementById('layer1-top');
+            
+            const l2 = document.getElementById('layer2-shape');
+            const l2Top = document.getElementById('layer2-top');
+
+
+            const l3 = document.getElementById('layer3-shape');
+            const l3Top = document.getElementById('layer3-top');
+
+
+            if (cakeShape === 'round') {
+                if(l1) l1.setAttribute("d", "M 70,245 C 70,225 280,225 280,245 L 280,290 C 280,310 70,310 70,290 Z");
+                if(l1Top) { l1Top.setAttribute("cx", "175"); l1Top.setAttribute("cy", "245"); l1Top.setAttribute("rx", "105"); l1Top.setAttribute("ry", "20"); }
+
+
+                if(l2) l2.setAttribute("d", "M 95,190 C 95,170 255,170 255,190 L 255,235 C 255,255 95,255 95,235 Z");
+                if(l2Top) { l2Top.setAttribute("cx", "175"); l2Top.setAttribute("cy", "190"); l2Top.setAttribute("rx", "80"); l2Top.setAttribute("ry", "20"); }
+
+
+                if(l3) l3.setAttribute("d", "M 120,135 C 120,120 230,120 230,135 L 230,175 C 230,190 120,190 120,175 Z");
+                if(l3Top) { l3Top.setAttribute("cx", "175"); l3Top.setAttribute("cy", "135"); l3Top.setAttribute("rx", "55"); l3Top.setAttribute("ry", "15"); }
+
+
+            } else if (cakeShape === 'heart') {
+                if(l1) l1.setAttribute("d", "M 70,245 C 50,205 175,200 175,230 C 175,200 300,205 280,245 L 280,285 C 240,315 175,320 175,320 C 175,320 110,315 70,285 Z");
+                if(l1Top) { l1Top.setAttribute("cx", "175"); l1Top.setAttribute("cy", "235"); l1Top.setAttribute("rx", "95"); l1Top.setAttribute("ry", "15"); }
+
+
+                if(l2) l2.setAttribute("d", "M 95,190 C 75,155 175,150 175,175 C 175,150 275,155 255,190 L 255,225 C 220,250 175,255 175,255 C 175,255 130,250 95,225 Z");
+                if(l2Top) { l2Top.setAttribute("cx", "175"); l2Top.setAttribute("cy", "180"); l2Top.setAttribute("rx", "70"); l2Top.setAttribute("ry", "12"); }
+
+
+                if(l3) l3.setAttribute("d", "M 120,135 C 105,105 175,100 175,120 C 175,100 245,105 230,135 L 230,165 C 205,185 175,190 175,190 C 175,190 145,185 120,165 Z");
+                if(l3Top) { l3Top.setAttribute("cx", "175"); l3Top.setAttribute("cy", "128"); l3Top.setAttribute("rx", "50"); l3Top.setAttribute("ry", "10"); }
+
+
+            } else if (cakeShape === 'square') {
+                if(l1) l1.setAttribute("d", "M 70,230 L 280,230 L 280,290 L 70,290 Z");
+                if(l1Top) { l1Top.setAttribute("cx", "175"); l1Top.setAttribute("cy", "230"); l1Top.setAttribute("rx", "105"); l1Top.setAttribute("ry", "8"); }
+
+
+                if(l2) l2.setAttribute("d", "M 95,175 L 255,175 L 255,235 L 95,235 Z");
+                if(l2Top) { l2Top.setAttribute("cx", "175"); l2Top.setAttribute("cy", "175"); l2Top.setAttribute("rx", "80"); l2Top.setAttribute("ry", "8"); }
+
+
+                if(l3) l3.setAttribute("d", "M 120,120 L 230,120 L 230,175 L 120,175 Z");
+                if(l3Top) { l3Top.setAttribute("cx", "175"); l3Top.setAttribute("cy", "120"); l3Top.setAttribute("rx", "55"); l3Top.setAttribute("ry", "6"); }
+            }
+        }
+
+
+        // GENERERA / SLUMPA FRAM EN NY KUND
+        function spawnCustomer() {
+            clearInterval(customerTimer);
+            
+            const randIdx = Math.floor(Math.random() * customersDatabase.length);
+            currentCustomer = JSON.parse(JSON.stringify(customersDatabase[randIdx]));
+
+
+            // Stressfritt tidsfönster: +30 sekunder på basvärdena!
+            maxPatience = 85; 
+            if (currentCustomer.type === "VIP") {
+                maxPatience = 70; // VIP har lite mer bråttom, men ändå jättelugnt!
+                playSound('vip');
+                MimiSpeak(`Mochi jamade precis till! 🌟 En VIP-gäst har anlänt! Det är ${currentCustomer.name} som vill ha guldtema!`);
+                document.getElementById('customer-card').className = "bg-white rounded-3xl p-5 shadow-lg border-2 vip-active transition-all duration-300 flex flex-col justify-between min-h-[400px]";
+                document.getElementById('spooky-fog').classList.add('hidden');
+                document.getElementById('mimi-mouth').setAttribute("d", "M70,126 Q75,138 80,126"); // superstort leende
+            } else if (currentCustomer.type === "Horror") {
+                maxPatience = 80;
+                playSound('spooky');
+                MimiSpeak(`Uhuu... En spöklik gäst smög in! 🕸️ Det är ${currentCustomer.name} som vill ha något kusligt!`);
+                document.getElementById('customer-card').className = "bg-white rounded-3xl p-5 shadow-lg border-2 spooky-active transition-all duration-300 flex flex-col justify-between min-h-[400px]";
+                document.getElementById('spooky-fog').classList.remove('hidden');
+                document.getElementById('mimi-mouth').setAttribute("d", "M72,130 Q75,124 78,130"); // orolig mun
+            } else {
+                playSound('click');
+                MimiSpeak(`Välkommen in! ${currentCustomer.name} vill beställa en tårta. Mochi och jag hjälper dig att dekorera! 🐾`);
+                document.getElementById('customer-card').className = "bg-white rounded-3xl p-5 shadow-md border-2 border-pink-100 transition-all duration-300 flex flex-col justify-between min-h-[400px]";
+                document.getElementById('spooky-fog').classList.add('hidden');
+                document.getElementById('mimi-mouth').setAttribute("d", "M70,126 Q75,133 80,126");
+            }
+
+
+            if (upgrades.espresso) {
+                maxPatience += 15;
+            }
+
+
+            currentPatience = maxPatience;
+
+
+            // Uppdatera GUI
+            document.getElementById('customer-name').innerText = currentCustomer.name;
+            document.getElementById('customer-avatar').innerText = currentCustomer.avatar;
+            document.getElementById('customer-badge').innerText = currentCustomer.badge;
+            document.getElementById('customer-speech').innerText = `"${currentCustomer.greeting}"`;
+            
+            const badge = document.getElementById('customer-badge');
+            if(currentCustomer.type === 'VIP') {
+                badge.className = "bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider";
+            } else if (currentCustomer.type === 'Horror') {
+                badge.className = "bg-purple-900 text-purple-200 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-purple-700";
+            } else {
+                badge.className = "bg-pink-100 text-pink-700 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider";
+            }
+
+
+            generateChecklistHTML();
+
+
+            updatePatienceBar();
+            customerTimer = setInterval(() => {
+                currentPatience--;
+                updatePatienceBar();
+
+
+                if (currentPatience <= 0) {
+                    customerLeavesAngry();
+                }
+            }, 1000);
+        }
+
+
+        // GENERERA HTML FÖR BESTÄLLNINGSKRAVEN
+        function generateChecklistHTML() {
+            const list = document.getElementById('order-checklist');
+            list.innerHTML = '';
+
+
+            const reqs = currentCustomer.requirements;
+            
+            // 1. Antal Våningar
+            const li1 = document.createElement('li');
+            li1.innerHTML = `🥞 Våningar: <strong class="text-pink-600">${reqs.tiers} st</strong>`;
+            list.appendChild(li1);
+
+
+            // 2. Glasyrtyp
+            const li2 = document.createElement('li');
+            let fName = "Valfri";
+            if (reqs.frosting === 'gold') fName = "Lyxig Guldglasyr";
+            else if (reqs.frosting === 'dark') fName = "Svart eller Zombiegrön";
+            else if (reqs.frosting === 'cute') fName = "Ljusrosa eller Gräddvit";
+            else if (reqs.frosting === 'chocolate') fName = "Mörk Chokladglasyr";
+            li2.innerHTML = `🎨 Glasyrstil: <strong class="text-pink-600">${fName}</strong>`;
+            list.appendChild(li2);
+
+
+            // 3. Drip
+            if (reqs.drip) {
+                const li3 = document.createElement('li');
+                let dName = "Valfri sås";
+                if(reqs.drip === '#ffd700') dName = "Guld-drip ✨";
+                else if(reqs.drip === '#00ff00') dName = "Zombieslem-drip 🤢";
+                else if(reqs.drip === '#e11d48') dName = "Jordgubbssås-drip 🍓";
+                else if(reqs.drip === '#4a2c11') dName = "Choklad-drip 🍫";
+                li3.innerHTML = `💧 Speciell drip: <strong class="text-pink-600">${dName}</strong>`;
+                list.appendChild(li3);
+            }
+
+
+            // 4. Måste innehålla dekorationer
+            if (reqs.mustHave && reqs.mustHave.length > 0) {
+                const li4 = document.createElement('li');
+                const translated = reqs.mustHave.map(t => {
+                    if (t === 'crown') return '👑 Krona';
+                    if (t === 'goldflakes') return '✨ Guldflarn';
+                    if (t === 'candle') return '🕯️ Guldljus';
+                    if (t === 'eyeball') return '👁️ Geléöga';
+                    if (t === 'bat') return '🦇 Fladdermus';
+                    if (t === 'spiderweb') return '🕸️ Spindelnät';
+                    if (t === 'skull') return '💀 Dödskalle';
+                    if (t === 'strawberries') return '🍓 Jordgubbar';
+                    if (t === 'cherry') return '🍒 Körsbär';
+                    if (t === 'cream') return '☁️ Grädde';
+                    return t;
+                }).join(', ');
+                li4.innerHTML = `✨ Dekorationer: <strong class="text-pink-600">${translated}</strong>`;
+                list.appendChild(li4);
+            }
+        }
+
+
+        // UPPDATERA PATIENCE BAR (VISUELL TIMER)
+        function updatePatienceBar() {
+            const bar = document.getElementById('patience-bar');
+            const label = document.getElementById('patience-timer');
+            
+            const percentage = (currentPatience / maxPatience) * 100;
+            bar.style.width = percentage + '%';
+            label.innerText = currentPatience + 's';
+
+
+            if (percentage > 50) {
+                bar.className = "bg-gradient-to-r from-emerald-400 to-teal-400 h-full w-full transition-all duration-300";
+            } else if (percentage > 25) {
+                bar.className = "bg-gradient-to-r from-amber-400 to-orange-400 h-full w-full transition-all duration-300";
+            } else {
+                bar.className = "bg-gradient-to-r from-rose-500 to-red-600 h-full w-full transition-all duration-300 animate-pulse";
+            }
+        }
+
+
+        // HOPPA ÖVER KUND
+        function skipCustomer() {
+            playSound('click');
+            spawnCustomer();
+        }
+
+
+        // KUND TRÖTTNAR OCH GÅR (Händer nästan aldrig nu pga +30s!)
+        function customerLeavesAngry() {
+            playSound('fail');
+            clearInterval(customerTimer);
+            
+            document.getElementById('mimi-mouth').setAttribute("d", "M72,130 Q75,124 78,130");
+            MimiSpeak(`Oj då! Tiden rann ut. Men ingen fara, vi provar igen med en ny glad gäst! 😊`);
+
+
+            spawnCustomer();
+        }
+
+
+        // MIMI TALBUBBLA-GENERATOR
+        function MimiSpeak(text) {
+            document.getElementById('mimi-speech').innerText = text;
+        }
+
+
+        // LEVERERA TÅRTA OCH BERÄKNA POÄNG
+        function deliverCake() {
+            clearInterval(customerTimer);
+            
+            const reqs = currentCustomer.requirements;
+            let score = 100; 
+            let feedback = [];
+            let stars = 5;
+
+
+            // 1. Kontrollera antal våningar
+            if (cakeTiers !== reqs.tiers) {
+                score -= 30;
+                feedback.push(`Jag önskade en tårta med ${reqs.tiers} våningar, inte ${cakeTiers}!`);
+            } else {
+                feedback.push(`Tårtans ${cakeTiers} våningar ser perfekta ut!`);
+            }
+
+
+            // 2. Kontrollera glasyrtyp
+            let frostingOk = false;
+            if (reqs.frosting === 'gold') {
+                if (frostingColor === '#ffd700') frostingOk = true;
+            } else if (reqs.frosting === 'dark') {
+                if (frostingColor === '#1c1c1c' || frostingColor === '#556b2f') frostingOk = true;
+            } else if (reqs.frosting === 'cute') {
+                if (frostingColor === '#ffb6c1' || frostingColor === '#fffaf0' || frostingColor === '#8a2be2') frostingOk = true;
+            } else if (reqs.frosting === 'chocolate') {
+                if (frostingColor === '#5c4033') frostingOk = true;
+            } else {
+                frostingOk = true; 
+            }
+
+
+            if (!frostingOk) {
+                score -= 25;
+                feedback.push("Jag är missnöjd med färgen på glasyren...");
+            } else {
+                feedback.push("Glasyren är så otroligt vacker och söt!");
+            }
+
+
+            // 3. Kontrollera drip
+            if (reqs.drip) {
+                if (cakeDrip !== reqs.drip) {
+                    score -= 20;
+                    feedback.push("Du glömde min rinnande drip...");
+                } else {
+                    feedback.push("Den rinnande drippen var jättegod!");
+                }
+            }
+
+
+            // 4. Kontrollera dekorationer
+            if (reqs.mustHave && reqs.mustHave.length > 0) {
+                let missingCount = 0;
+                reqs.mustHave.forEach(itemType => {
+                    const found = placedDecorations.some(d => d.type === itemType);
+                    if (!found) {
+                        missingCount++;
+                        score -= 15;
+                    }
+                });
+
+
+                if (missingCount > 0) {
+                    feedback.push(`Några av mina önskade dekorationer saknades...`);
+                } else {
+                    feedback.push("Alla mina favorit-toppings är med!");
+                }
+            }
+
+
+            // Ge alltid en fin bonus om man lagt ner mycket tid på att dekorera (mer än 3 objekt)
+            if (placedDecorations.length >= 3) {
+                score += 15;
+                feedback.push("Åh, vad underbart och detaljerat dekorerad den är! 😍");
+            }
+
+
+            // Räkna ut betyg i stjärnor
+            if (score >= 90) stars = 5;
+            else if (score >= 70) stars = 4;
+            else if (score >= 45) stars = 3;
+            else if (score >= 20) stars = 2;
+            else stars = 1;
+
+
+            // Beräkna utbetalning - DU FÅR PENGAR EFTER VARJE KUND!
+            let basePayout = stars * 20; // Högre utbetalning som belöning
+            if (currentCustomer.type === "VIP") {
+                basePayout *= 2.5; 
+                if (upgrades.glitter) {
+                    basePayout *= 2; 
+                }
+            }
+
+
+            // Extra dricks för att man har lagt mycket kärlek på dekorationer
+            const decorationTip = placedDecorations.length * 2;
+            const totalPayout = Math.floor(basePayout + decorationTip);
+            
+            coins += totalPayout;
+            currentDayScore += totalPayout;
+
+
+            // Uppdatera myntvisning direkt
+            document.getElementById('coin-counter').innerText = coins;
+
+
+            if (coins > highscore) {
+                highscore = coins;
+                localStorage.setItem('mimi_cake_highscore', highscore);
+                document.getElementById('highscore-counter').innerText = highscore;
+            }
+
+
+            showFeedbackModal(stars, feedback, totalPayout);
+
+
+            if (stars >= 4) {
+                triggerConfetti();
+                playSound('success');
+            } else {
+                playSound('place');
+            }
+
+
+            clearCake();
+        }
+
+
+        // VISA MODALEN MED RESULTAT
+        function showFeedbackModal(stars, feedbackArray, payout) {
+            const modal = document.getElementById('feedback-modal');
+            const title = document.getElementById('modal-title');
+            const subtitle = document.getElementById('modal-subtitle');
+            const starsContainer = document.getElementById('modal-stars');
+            const feedbackText = document.getElementById('modal-feedback-text');
+            const payoutLabel = document.getElementById('modal-payout');
+            const emoji = document.getElementById('modal-emoji');
+
+
+            let titleText = "Mums, tack!";
+            let emojiIcon = "🍰";
+            if (stars === 5) { titleText = "Ett Konstverk!"; emojiIcon = "✨"; }
+            else if (stars === 4) { titleText = "Underbart god!"; emojiIcon = "🍓"; }
+            else if (stars === 3) { titleText = "Smaskigt!"; emojiIcon = "🙂"; }
+            else if (stars <= 2) { titleText = "Kanske nästa gång..."; emojiIcon = "🐾"; }
+
+
+            emoji.innerText = emojiIcon;
+            title.innerText = titleText;
+            subtitle.innerText = `Betyg från ${currentCustomer.name}`;
+            payoutLabel.innerText = payout;
+
+
+            starsContainer.innerHTML = '⭐'.repeat(stars);
+            feedbackText.innerText = feedbackArray.join(" ");
+
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            }, 50);
+        }
+
+
+        // STÄNG MODALEN OCH GÅ VIDARE TILL NÄSTA KUND
+        function closeModal() {
+            playSound('click');
+            const modal = document.getElementById('feedback-modal');
+            modal.classList.add('hidden');
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+
+
+            currentDayScore = 0;
+            day++;
+            document.getElementById('day-counter').innerText = day;
+
+
+            spawnCustomer();
+        }
+
+
+        // KÖP UPPGRADERINGAR I SHOPEN
+        function buyUpgrade(item, cost) {
+            if (coins >= cost) {
+                if (upgrades[item]) {
+                    MimiSpeak("Du har redan låst upp den här uppgraderingen till bageriet! 🌸");
+                    return;
+                }
+                
+                coins -= cost;
+                upgrades[item] = true;
+                document.getElementById('coin-counter').innerText = coins;
+                playSound('success');
+
+
+                const btn = document.getElementById('buy-' + (item === 'rainbowDrip' ? 'rainbow' : item));
+                btn.className = "bg-gray-400 text-white font-bold px-2.5 py-1.5 rounded-xl cursor-not-allowed shrink-0";
+                btn.innerText = "Äger";
+
+
+                // Om användaren köper regnbågssåsen, aktivera knappen i Drip-tabben!
+                if (item === 'rainbowDrip') {
+                    const rainbowBtn = document.getElementById('drip-rainbow-btn');
+                    rainbowBtn.className = "px-3 py-1.5 rounded-xl text-indigo-950 text-xs font-black border-2 border-indigo-400 hover:scale-105 transition-all flex items-center gap-1";
+                    rainbowBtn.removeAttribute("disabled");
+                    rainbowBtn.innerHTML = "🌈 Regnbågssås";
+                    MimiSpeak(`Mums! Du har låst upp den magiska Regnbågssåsen! 🌈 Du hittar den nu under 'Drips' och kan ringla den på tårtan!`);
+                } else {
+                    MimiSpeak(`Mjau! Tack för att du köpte uppgraderingen! Mochi och jag älskar det nya köket! 😍`);
+                }
+            } else {
+                MimiSpeak("Oj! Du behöver lite fler guldmynt. Fortsätt servera kunder så har du råd snart! 🪙🐾");
+                playSound('fail');
+            }
+        }
+
+
+        // MAGISK KONFETTI-EFFEKT (För VIP och 5 stjärnor)
+        function triggerConfetti() {
+            const colors = ['#ffd700', '#ffb6c1', '#8a2be2', '#00ff00', '#ff4f7a', '#ffffff', '#a855f7'];
+            for (let i = 0; i < 40; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.width = Math.random() * 10 + 6 + 'px';
+                conf.style.height = Math.random() * 18 + 8 + 'px';
+                conf.style.animationDelay = Math.random() * 1.5 + 's';
+                conf.style.borderRadius = "3px";
+                document.body.appendChild(conf);
+
+
+                setTimeout(() => {
+                    conf.remove();
+                }, 4000);
+            }
+        }
+    </script>
+</body>
+</html>

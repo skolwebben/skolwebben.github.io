@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De försvunna betygen</title>
+    
+    <style>
+        /* 1. DESIGN (CSS - Matta, dämpade blå och turkosa nyanser) */
+        body {
+            font-family: sans-serif;
+            background-color: #1a2238; /* Dov, mörk mattblå bakgrund */
+            color: #d1dbe5; /* Mjukt ljusgrå/blå textfärg */
+            padding: 20px;
+            text-align: center;
+        }
+
+        #game-container {
+            background-color: #24304a; /* Dov skifferblå container */
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #4a6fa5; /* Matt mellanhimmelsblå kantlinje */
+            margin-bottom: 80px; /* Extra utrymme i botten för skrivblocket */
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            color: #81c3d7; /* Matt, dämpad turkos titel */
+            font-size: 2em;
+        }
+
+        .subtitle {
+            font-size: 0.9em;
+            color: #a4c2cb; /* Gråturkos undertitel */
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .author {
+            font-size: 0.8em;
+            color: #708a9f; /* Dovt blågrå färg för författare */
+            font-style: italic;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* Bildruta för SVG-bilder */
+        #scene-image-container {
+            width: 100%;
+            height: 140px;
+            background-color: #1a2238;
+            border-radius: 8px;
+            border: 1px solid #4a6fa5;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #scene-image-container svg {
+            max-height: 110px;
+            width: auto;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #324a73; /* Dov, matt mörkblå */
+            color: #ffffff;
+            border: 1px solid #4a6fa5;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #4a6fa5; /* Lite ljusare mattblå vid hover */
+            border-color: #81c3d7;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin: 8px 5px;
+            border-radius: 5px;
+            border: 1px solid #4a6fa5;
+            background-color: #1a2238;
+            color: #fff;
+            width: 85%;
+            max-width: 320px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #81c3d7; /* Matt turkos vid fokus */
+        }
+
+        label {
+            font-size: 0.9em;
+            color: #a4c2cb;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* SKRIVBLOCKS-STYLING (Fastnälat i VÄNSTRA hörnet) */
+        #notepad-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px; 
+            z-index: 1000;
+            background-color: #24304a;
+            border: 2px solid #4a6fa5;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s ease-in-out;
+            max-width: 300px;
+            width: auto;
+            text-align: left;
+        }
+
+        /* Knappen när skrivblocket är stängt */
+        #notepad-toggle-btn {
+            background-color: #81c3d7; /* Mjuk, matt turkos */
+            color: #1a2238; /* Mörk text */
+            border: none;
+            padding: 12px 18px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            margin: 0;
+        }
+
+        #notepad-toggle-btn:hover {
+            background-color: #a4c2cb; 
+        }
+
+        /* Innehållet i skrivblocket (när det är öppet) */
+        #notepad-content {
+            padding: 12px;
+        }
+
+        .notepad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #81c3d7;
+        }
+
+        /* Liten stängknapp inuti skrivblocket */
+        .notepad-close-btn {
+            background: none;
+            border: none;
+            color: #a4c2cb;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 5px;
+            margin: 0;
+        }
+
+        .notepad-close-btn:hover {
+            color: #fff;
+            background: none;
+        }
+
+        /* Textfältet */
+        #notepad-textarea {
+            width: 100%;
+            height: 180px;
+            background-color: #1a2238;
+            color: #81c3d7; /* Dämpad matt turkos textfärg */
+            font-family: monospace;
+            border: 1px solid #4a6fa5;
+            border-radius: 4px;
+            padding: 8px;
+            resize: none;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 13px;
+        }
+
+        /* Markerad text för gåtor eller viktiga ledtrådar */
+        .riddle-text {
+            font-style: italic;
+            color: #81c3d7; /* Matt turkos gåttext */
+            background-color: #1a2238;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #81c3d7;
+            margin: 12px 0;
+            text-align: left;
+            line-height: 1.4;
+            font-size: 0.95em;
+        }
+
+        .cliffhanger {
+            color: #81c3d7;
+            font-weight: bold;
+            font-size: 1.4em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Regelsida - styling */
+        .rules-list {
+            text-align: left;
+            margin: 15px auto;
+            max-width: 500px;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        .rules-list li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 2. SIDSTRUKTUR (HTML) -->
+    <div id="game-container">
+        <h1>De försvunna betygen</h1>
+        <p class="subtitle">Vittra Södermalm</p>
+        <p class="author">Av Sohna-Selam.C</p>
+        
+        <!-- Bildruta för illustrationer -->
+        <div id="scene-image-container">
+            <!-- Bilden laddas dynamiskt här via JS (SVG-kod) -->
+        </div>
+
+        <!-- Här hamnar texten om vad som händer i spelet -->
+        <p id="story-text"></p>
+        
+        <!-- Här lägger vi knapparna för spelarens val -->
+        <div id="button-container">
+            <!-- Startknappen -->
+            <button onclick="showRules()" style="font-size: 1.2em; padding: 15px 30px; background-color: #81c3d7; color: #1a2238; font-weight: bold; border: 2px solid #fff; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">Börja spela</button>
+        </div>
+    </div>
+
+    <!-- INTERAKTIVT SKRIVBLOCK -->
+    <div id="notepad-container">
+        <button id="notepad-toggle-btn" onclick="toggleNotepad()">📝 Skrivblock</button>
+        
+        <div id="notepad-content" style="display: none;">
+            <div class="notepad-header">
+                <span>Detektivblock 🕵️‍♂️</span>
+                <button class="notepad-close-btn" onclick="toggleNotepad()">✕</button>
+            </div>
+            <textarea id="notepad-textarea" placeholder="Skriv ner dina ledtrådar här... (T.ex. Kalles gåta, Emmas ord eller lärarens avslöjande!)"></textarea>
+        </div>
+    </div>
+
+    <!-- 3. SPELETS REGLER OCH LOGIK (JAVASCRIPT) -->
+    <script>
+        // Bild-assets som ritas upp med SVG i matta blåtoner
+        const svgImages = {
+            start: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="25" y="15" width="50" height="70" rx="5" fill="#324a73" stroke="#4a6fa5" stroke-width="2"/>
+                <line x1="35" y1="30" x2="65" y2="30" stroke="#81c3d7" stroke-width="4"/>
+                <line x1="35" y1="45" x2="55" y2="45" stroke="#81c3d7" stroke-width="4"/>
+                <circle cx="65" cy="65" r="15" fill="none" stroke="#81c3d7" stroke-width="4"/>
+                <line x1="75" y1="75" x2="88" y2="88" stroke="#81c3d7" stroke-width="4" stroke-linecap="round"/>
+            </svg>`,
+            school: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 80 L90 80 L80 40 L50 20 L20 40 Z" fill="#324a73" stroke="#4a6fa5" stroke-width="2"/>
+                <rect x="42" y="55" width="16" height="25" fill="#1a2238" stroke="#4a6fa5" stroke-width="2"/>
+                <rect x="25" y="45" width="12" height="12" fill="#81c3d7"/>
+                <rect x="63" y="45" width="12" height="12" fill="#81c3d7"/>
+                <polygon points="50,5 45,20 55,20" fill="#81c3d7"/>
+            </svg>`,
+            computers: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="25" width="60" height="40" rx="3" fill="#1a2238" stroke="#4a6fa5" stroke-width="3"/>
+                <rect x="25" y="30" width="50" height="30" fill="#324a73"/>
+                <path d="M40 65 L60 65 L65 75 L35 75 Z" fill="#4a6fa5"/>
+                <rect x="30" y="78" width="40" height="4" rx="1" fill="#81c3d7"/>
+                <line x1="28" y1="35" x2="35" y2="45" stroke="#cc6666" stroke-width="2" stroke-linecap="round"/>
+                <line x1="35" y1="35" x2="28" y2="45" stroke="#cc6666" stroke-width="2" stroke-linecap="round"/>
+            </svg>`,
+            cafeteria: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M30 40 C30 25, 70 25, 70 40 L70 65 C70 75, 30 75, 30 65 Z" fill="#324a73" stroke="#4a6fa5" stroke-width="2"/>
+                <path d="M70 45 C80 45, 80 60, 70 60" fill="none" stroke="#4a6fa5" stroke-width="3"/>
+                <path d="M35 25 Q40 15 45 25 Q50 15 55 25" fill="none" stroke="#81c3d7" stroke-width="2" stroke-linecap="round"/>
+            </svg>`,
+            office: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="20" width="60" height="70" fill="#324a73" stroke="#4a6fa5" stroke-width="3"/>
+                <circle cx="70" cy="55" r="5" fill="#81c3d7"/>
+                <rect x="30" y="35" width="40" height="12" fill="#1a2238" stroke="#4a6fa5" stroke-width="1"/>
+                <text x="50" y="43" fill="#81c3d7" font-size="6" font-family="sans-serif" text-anchor="middle" font-weight="bold">REKTOR</text>
+            </svg>`,
+            yard: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#324a73" stroke-width="8"/>
+                <circle cx="50" cy="50" r="20" fill="none" stroke="#4a6fa5" stroke-width="4"/>
+                <rect x="20" y="75" width="60" height="15" fill="#324a73" stroke="#4a6fa5" stroke-width="2"/>
+                <circle cx="50" cy="30" r="8" fill="#81c3d7"/>
+            </svg>`,
+            chemistry: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M45 30 L45 50 L30 75 C25 83, 35 90, 50 90 C65 90, 75 83, 70 75 L55 50 L55 30 Z" fill="#324a73" stroke="#4a6fa5" stroke-width="3"/>
+                <path d="M36 70 C40 65, 60 65, 64 70 L68 77 C71 82, 62 85, 50 85 C38 85, 29 82, 32 77 Z" fill="#81c3d7" opacity="0.8"/>
+                <circle cx="45" cy="60" r="3" fill="#ffffff" opacity="0.6"/>
+                <circle cx="55" cy="55" r="2" fill="#ffffff" opacity="0.6"/>
+            </svg>`,
+            books: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="25" width="15" height="55" fill="#324a73" stroke="#4a6fa5" stroke-width="2"/>
+                <rect x="38" y="15" width="15" height="65" fill="#4a6fa5" stroke="#81c3d7" stroke-width="2"/>
+                <rect x="56" y="30" width="15" height="50" fill="#1a2238" stroke="#4a6fa5" stroke-width="2"/>
+                <line x1="20" y1="40" x2="35" y2="40" stroke="#81c3d7" stroke-width="2"/>
+                <line x1="38" y1="30" x2="53" y2="30" stroke="#1a2238" stroke-width="2"/>
+            </svg>`,
+            coffee: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="25" y="70" width="50" height="5" fill="#4a6fa5"/>
+                <path d="M30 35 L70 35 L65 65 C64 69, 36 69, 35 65 Z" fill="#324a73" stroke="#4a6fa5" stroke-width="2"/>
+                <path d="M70 40 C77 40, 77 55, 70 55" fill="none" stroke="#4a6fa5" stroke-width="3"/>
+                <path d="M22 62 C35 70, 65 72, 78 61" stroke="#cc6666" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>`,
+            clock: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="35" fill="#324a73" stroke="#4a6fa5" stroke-width="4"/>
+                <line x1="50" y1="50" x2="50" y2="25" stroke="#81c3d7" stroke-width="3" stroke-linecap="round"/>
+                <line x1="50" y1="50" x2="68" y2="50" stroke="#81c3d7" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="50" cy="50" r="4" fill="#1a2238"/>
+            </svg>`
+        };
+
+        // Sparad information i spelet
+        let clues = [];
+
+        // Variabler för att minnas vart vi har varit
+        let visitedDatorsalen = false;
+        let visitedKafeterian = false;
+        let talkedToRektor = false;
+
+        // Variabler för gåsjakten
+        let talkedToKalle = false;
+        let talkedToEmma = false;
+        let talkedToLinus = false;
+        let talkedToBerg = false;
+
+        // Försök-räknare
+        let alarmTimeAttempts = 3;
+        let accusationFailures = 0;
+
+        // Funktion för att sätta en bild i bildrutan
+        function setSceneImage(key) {
+            const container = document.getElementById('scene-image-container');
+            if (svgImages[key]) {
+                container.innerHTML = svgImages[key];
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        // Initiering av startskärmen på sidan
+        window.onload = function() {
+            setSceneImage('start');
+            document.getElementById('story-text').innerHTML = "Betygssystemet har kraschat. Alla elevbetyg är borta på Vittra Södermalm. Kan du lösa fallet?";
+        };
+
+        // Funktion för att visa/dölja skrivblocket
+        function toggleNotepad() {
+            const container = document.getElementById('notepad-container');
+            const content = document.getElementById('notepad-content');
+            const toggleBtn = document.getElementById('notepad-toggle-btn');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                container.style.width = '300px'; 
+            } else {
+                content.style.display = 'none';
+                toggleBtn.style.display = 'block';
+                container.style.width = 'auto'; 
+            }
+        }
+
+        // Visar spelsidan med instruktioner och regler
+        function showRules() {
+            setSceneImage('start');
+            const textElement = document.getElementById('story-text');
+            const buttonContainer = document.getElementById('button-container');
+
+            textElement.innerHTML = `
+                <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+                    <h3 style="color: #81c3d7; margin-bottom: 10px; text-align: center;">Spelregler</h3>
+                    <ul class="rules-list">
+                        <li>🕵️‍♂️ <strong>Hitta hacket:</strong> Lista ut vilka tre personer som raderat betygen.</li>
+                        <li>🧭 <strong>Sök fritt:</strong> Sök på skolan och förhör folk. Se upp för återvändsgränder!</li>
+                        <li>📝 <strong>Skrivblocket:</strong> Klicka i vänstra hörnet för att anteckna. Misstänkta berättar bara sina spår <strong>en gång</strong>!</li>
+                    </ul>
+                </div>
+            `;
+
+            buttonContainer.innerHTML = `
+                <button onclick="startGame()" style="font-size: 1.1em; padding: 12px 25px; background-color: #81c3d7; color: #1a2238; font-weight: bold; border: 1px solid #4a6fa5;">Starta utredningen 🔎</button>
+            `;
+        }
+
+        // Startar igång spelet och visar den inledande berättelsen (KORTAD)
+        function startGame() {
+            setSceneImage('school');
+            const textElement = document.getElementById('story-text');
+            const buttonContainer = document.getElementById('button-container');
+
+            textElement.innerHTML = `Kaos råder på Vittra Södermalm. Tre personer har hackat servrarna inatt och raderat alla betyg!<br><br>Rektorn anlitar dig: "Du måste peka ut de tre skyldiga innan Skolverket kommer imorgon!"`;
+
+            buttonContainer.innerHTML = `
+                <button onclick="chooseAction('datorsalen')">Undersök datorsalen</button>
+                <button onclick="chooseAction('kafeterian')">Lyssna i kafeterian</button>
+                <button onclick="chooseAction('rektorn')">Prata med rektorn</button>
+            `;
+        }
+
+        // Styr spelarens val och uppdaterar historien (KORTADE texter)
+        function chooseAction(action) {
+            const textElement = document.getElementById('story-text');
+            const buttonContainer = document.getElementById('button-container');
+            
+            // --- STEG 1: UNDERSÖKNINGEN ---
+            if (action === 'datorsalen') {
+                setSceneImage('computers');
+                visitedDatorsalen = true;
+                textElement.innerText = "Datorsalen är tom. Skärmarna blinkar. På ett bord hittar du ett USB-minne samt en kvarglömd, silvrig laddare.";
+                
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('ta_usb')">Ta sakerna</button>
+                    <button onclick="chooseAction('korridoren')">Gå till korridoren</button>
+                `;
+            } 
+            else if (action === 'kafeterian') {
+                setSceneImage('cafeteria');
+                visitedKafeterian = true;
+                textElement.innerText = "Eleverna pratar oroligt. Du tjuvlyssnar: '...Kalle skröt om att han knäckt skolans brandvägg igår!'";
+                clues.push("Rykte om Kalle");
+                
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('korridoren')">Gå till korridoren</button>
+                `;
+            }
+            else if (action === 'rektorn') {
+                setSceneImage('office');
+                talkedToRektor = true;
+                textElement.innerText = "Rektorn suckar: 'Larmet till serverrummet stängdes av kl 02:14 inatt med en giltig lärarkod.'";
+                clues.push("Larmet avstängt 02:14");
+                
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('korridoren')">Gå till korridoren</button>
+                `;
+            }
+            else if (action === 'ta_usb') {
+                setSceneImage('computers');
+                textElement.innerHTML = "Du stoppar sakerna i fickan.<br><br>USB-minnet har initialerna <strong>'E.S.'</strong>. Laddaren har initialerna <strong>'V.D.'</strong> djupt inristade.";
+                clues.push("USB-minne med 'E.S.'");
+                clues.push("Laddare med 'V.D.'");
+                
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('korridoren')">Gå till korridoren</button>
+                `;
+            }
+
+            // --- STEG 2: GÅSJAKTEN ---
+            else if (action === 'intervjua_kalle') {
+                setSceneImage('yard');
+                talkedToKalle = true;
+                textElement.innerHTML = `Du hittar Kalle på skolgården. Han tuggar lugnt tuggummi och bryr sig inte om anklagelserna.<br><br>
+                "Jag vet ingenting. Men lös min gåta om du vill vidare:"
+                <div class="riddle-text">
+                    "Sök en plats där färgstarka lösningar möter sin form,<br>
+                    bägare, rör och glas där skapelsen sker,<br>
+                    och spillda droppar på bordet kan skapa en storm..."
+                </div>
+                <strong style="color: #81c3d7;">Beskriver Kalle bildsalen eller kemisalen?</strong>`;
+                clues.push("Kalles gåta");
+
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('sök_emma')">Sök i Kemisalen</button>
+                    <button onclick="chooseAction('fel_bildsal')">Sök i Bildsalen</button>
+                `;
+            }
+            else if (action === 'fel_bildsal') {
+                setSceneImage('start');
+                textElement.innerHTML = `Bildsalen är tom. Plötsligt går dörren i baklås! Du är instängd och misslyckas med fallet.<br><br>
+                <span style="color: #cc6666; font-weight: bold; font-size: 18px;">❌ SPEL SLUT: Du gissade fel på gåtan!</span>`;
+                
+                buttonContainer.innerHTML = `
+                    <button onclick="location.reload()">Starta om 🔄</button>
+                `;
+            }
+            else if (action === 'sök_emma') {
+                setSceneImage('chemistry');
+                talkedToEmma = true;
+                
+                let hasUSB = clues.includes("USB-minne med 'E.S.'");
+                let emmaDialogue = "";
+                
+                if (hasUSB) {
+                    emmaDialogue = `Du visar henne USB-minnet ('E.S.'). Hon blir livrädd:<br><br>
+                    "Okej, det är mitt! Jag heter Emma Sjöberg. Men jag hackade inte! Jag tappade det igår kväll.<br><br>
+                    Men laddaren med 'V.D.'? Den är inte min! Jag har aldrig sett den!"`;
+                } else {
+                    emmaDialogue = `"Jag letade bara efter min jacka igår kväll, jag lovar!"`;
+                }
+
+                textElement.innerHTML = `Emma darrar nervöst i Kemisalen.<br><br>
+                ${emmaDialogue}<br><br>"Men jag såg Linus smyga i Biblioteket igår. Han gömde papper där, och pratade om att <strong>'flickan i skuggan'</strong> hade en hemlig plan!"`;
+                
+                clues.push("Emma pekar ut Linus och 'flickan i skuggan'");
+                clues.push("Emma Sjöberg (E.S.)");
+
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('sök_linus')">Sök efter Linus i Biblioteket</button>
+                `;
+            }
+            else if (action === 'sök_linus') {
+                setSceneImage('books');
+                talkedToLinus = true;
+                textElement.innerHTML = `Du hittar Linus gömd bland hyllorna. Han ger dig en mystisk gåta:<br><br>
+                "Tre personer rörde sig i nattens ljus:"
+                <div class="riddle-text">
+                    "En talar i gåtor (Kalle),<br>
+                    en darrar på sin lärare-stol,<br>
+                    och den tredje är flickan i skuggan som programmerat hacket.<br><br>
+                    Konfrontera läraren i lärarrummet!"
+                </div>`;
+                clues.push("Linus gåta om flickan i skuggan");
+
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('sök_berg')">Gå till Lärarrummet</button>
+                `;
+            }
+            else if (action === 'sök_berg') {
+                setSceneImage('coffee');
+                talkedToBerg = true;
+                textElement.innerHTML = `Herr Berg spiller kaffe och svettas kraftigt: "Okej, jag erkänner! Rektorn behandlar mig som skräp. Jag lät dem använda min dator och stängde av larmet kl 02:14!"<br><br>
+                "Det var jag, den tuggumituggande eleven, och den mystiska flickan i skuggan som styrde allt!"
+                <br><br>
+                <span style="color: #81c3d7; font-size: 0.9em; font-style: italic;">Vem är tuggummituggaren och vad kallas flickan i skuggan? Kolla skrivblocket!</span>`;
+                clues.push("Herr Bergs erkännande");
+
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('summera_ledtradar')">Sammanställ bevisen 📝</button>
+                `;
+            }
+
+            // --- STEG 2.5: SAMMANSTÄLLNING AV LEDTRÅDAR (Med tidsfråga) ---
+            else if (action === 'summera_ledtradar') {
+                setSceneImage('clock');
+                textElement.innerHTML = `
+                    <div style="text-align: left; max-width: 500px; margin: 0 auto; line-height: 1.5;">
+                        <h3 style="color: #81c3d7; text-align: center; margin-bottom: 10px;">Lås upp rektorns dörr</h3>
+                        <p>För att visa rektorn att du har bevisen måste du svara på denna fråga:</p>
+                        
+                        <div style="background-color: #1a2238; padding: 12px; border-radius: 5px; border-left: 3px solid #81c3d7; margin: 15px 0;">
+                            <strong>Fråga:</strong><br>
+                            Vilken tid stängdes larmet av i natt?
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <input type="text" id="alarm-time-input" placeholder="T.ex. tt:mm" style="text-align: center; width: 140px;"><br>
+                            <span id="attempts-left" style="font-weight: bold; color: #a4c2cb; font-size: 0.9em; display: block; margin: 10px 0;">Chanser kvar: ${alarmTimeAttempts}</span>
+                            <span id="error-message" style="color: #cc6666; font-weight: bold; display: block; min-height: 15px; font-size: 0.9em;"></span>
+                        </div>
+                    </div>
+                `;
+
+                buttonContainer.innerHTML = `
+                    <button style="background-color: #81c3d7; color: #1a2238; font-weight: bold; border: 1px solid #4a6fa5;" onclick="verifyAlarmTime()">Svara 📝</button>
+                    <button onclick="chooseAction('korridoren')">Avbryt</button>
+                `;
+            }
+
+            // --- STEG 3: SLUTET (INTERAKTIV RAPPORT) ---
+            else if (action === 'avslöja_skyldiga') {
+                setSceneImage('office');
+                
+                let hintSectionHTML = "";
+                if (accusationFailures >= 3) {
+                    hintSectionHTML = `
+                        <div style="margin: 10px 0;">
+                            <button onclick="toggleAccusationHint()" style="background-color: #1a2238; border: 1px dashed #81c3d7; color: #81c3d7; font-size: 0.85em; padding: 6px 12px; margin: 0 auto; display: block;">Behöver du en hint?</button>
+                            <p id="accusation-hint-text" style="display: none; background-color: #1a2238; color: #ccc; border: 1px solid #4a6fa5; padding: 10px; border-radius: 5px; font-size: 0.85em; max-width: 320px; margin: 10px auto; text-align: left; line-height: 1.4;"></p>
+                        </div>
+                    `;
+                } else {
+                    let attemptsUntilHint = 3 - accusationFailures;
+                    hintSectionHTML = `
+                        <div style="margin: 10px auto; padding: 8px; background-color: #1a2238; border: 1px solid #4a6fa5; border-radius: 5px; max-width: 320px; font-size: 0.8em; color: #a4c2cb;">
+                            💡 Hinten låses upp om du gissar fel <strong>${attemptsUntilHint}</strong> gång(er) till.
+                        </div>
+                    `;
+                }
+
+                textElement.innerHTML = `Rektorn väntar. Skriv in namnen på de tre skyldiga:<br><br>
+                <div style="text-align: left; margin: 10px auto; max-width: 320px; font-size: 0.9em;">
+                    <label><strong>Misstänkt 1 (Tuggummituggaren på skolgården):</strong></label>
+                    <input type="text" id="suspect-1" placeholder="Namn..."><br>
+                    <label><strong>Misstänkt 2 (Den stressade svenskläraren):</strong></label>
+                    <input type="text" id="suspect-2" placeholder="Efternamn..."><br>
+                    <label><strong>Misstänkt 3 (Hennes beskrivning i Linus gåta):</strong></label>
+                    <input type="text" id="suspect-3" placeholder="Skriv in...">
+                </div>
+                
+                ${hintSectionHTML}`;
+                
+                buttonContainer.innerHTML = `
+                    <button style="background-color: #81c3d7; color: #1a2238; font-weight: bold; border: 1px solid #4a6fa5;" onclick="verifySuspects()">Lämna över rapporten 📝</button>
+                    <button onclick="chooseAction('summera_ledtradar')">Tillbaka</button>
+                `;
+            }
+
+            // --- ENBART SLUTSKÄRMEN (CLIFFHANGER OCH NY START) ---
+            else if (action === 'slutskarm') {
+                setSceneImage('start');
+                textElement.innerHTML = `
+                    <div class="cliffhanger">SLUT PÅ DEL 1!</div>
+                    <p style="text-align: left; line-height: 1.6; margin-bottom: 20px; font-size: 0.95em;">
+                        Snyggt jobbat! Du pekade ut Kalle och svenskläraren Herr Berg. Men vem är den mystiska <strong>"flickan i skuggan"</strong> som programmerade allt?<br><br>
+                        Och vems är den silvriga laddaren med initialerna <strong>'V.D.'</strong>?<br><br>
+                        Detektiv, detta är bara början...
+                    </p>
+                `;
+
+                buttonContainer.innerHTML = `
+                    <button style="font-size: 1.1em; padding: 12px 25px; background-color: #81c3d7; color: #1a2238; font-weight: bold; border: 2px solid #fff;" onclick="location.reload()">Spela igen 🔄</button>
+                `;
+            }
+
+            // --- KORRIDOREN ---
+            else if (action === 'korridoren') {
+                setSceneImage('school');
+                textElement.innerText = "Du står i korridoren. Var vill du leta nu?";
+                
+                let buttonsHTML = "";
+                
+                if (visitedDatorsalen === false) {
+                    buttonsHTML += `<button onclick="chooseAction('datorsalen')">Undersök datorsalen</button>`;
+                }
+                if (visitedKafeterian === false) {
+                    buttonsHTML += `<button onclick="chooseAction('kafeterian')">Sök i kafeterian</button>`;
+                }
+                if (talkedToRektor === false) {
+                    buttonsHTML += `<button onclick="chooseAction('rektorn')">Sök rektorn</button>`;
+                }
+
+                if (visitedDatorsalen === true && visitedKafeterian === true && talkedToRektor === true) {
+                    if (talkedToKalle === false) {
+                        buttonsHTML += `<button onclick="chooseAction('intervjua_kalle')">Sök Kalle på skolgården</button>`;
+                    } 
+                    else if (talkedToEmma === false) {
+                        buttonsHTML += `
+                            <button onclick="chooseAction('sök_emma')">Sök Emma i Kemisalen</button>
+                            <button onclick="chooseAction('fel_bildsal')">Sök i Bildsalen</button>
+                        `;
+                    }
+                    else if (talkedToLinus === false) {
+                        buttonsHTML += `<button onclick="chooseAction('sök_linus')">Sök Linus i Biblioteket</button>`;
+                    }
+                    else if (talkedToBerg === false) {
+                        buttonsHTML += `<button onclick="chooseAction('sök_berg')">Sök Herr Berg i Lärarrummet</button>`;
+                    }
+                    else {
+                        buttonsHTML += `<button style="background-color: #81c3d7; color: #1a2238; font-weight: bold; border: 1px solid #4a6fa5;" onclick="chooseAction('summera_ledtradar')">🚨 Rapportera till rektorn</button>`;
+                    }
+                }
+
+                buttonContainer.innerHTML = buttonsHTML;
+            }
+        }
+
+        // Kontrollera om spelaren svarade rätt tid för larmet
+        function verifyAlarmTime() {
+            const inputVal = document.getElementById('alarm-time-input').value.trim();
+            const textElement = document.getElementById('story-text');
+            const buttonContainer = document.getElementById('button-container');
+            const errorElement = document.getElementById('error-message');
+
+            const isCorrect = ["02:14", "2:14", "02.14", "2.14"].includes(inputVal);
+
+            if (isCorrect) {
+                clues.push("Tidskod knäckt");
+                chooseAction('avslöja_skyldiga');
+            } else {
+                alarmTimeAttempts--;
+                if (alarmTimeAttempts <= 0) {
+                    setSceneImage('start');
+                    textElement.innerHTML = `
+                        <h2 style="color: #cc6666; margin-bottom: 10px;">❌ SPEL SLUT: Chanserna är slut!</h2>
+                        <p>Du gissade fel tid tre gånger. Morgonen är här, Skolverket kliver in och du blir avstängd för att ha snokat runt på skolan.<br><br>Håll bättre koll på anteckningarna nästa gång!</p>
+                    `;
+                    buttonContainer.innerHTML = `
+                        <button onclick="location.reload()">Starta om 🔄</button>
+                    `;
+                } else {
+                    document.getElementById('attempts-left').innerText = `Chanser kvar: ${alarmTimeAttempts}`;
+                    errorElement.innerText = "Fel klockslag! Kolla ditt skrivblock.";
+                }
+            }
+        }
+
+        // Visa hint på anklagelseskärmen (KRYPTISK VERSION)
+        function toggleAccusationHint() {
+            const hintText = document.getElementById('accusation-hint-text');
+            if (hintText.style.display === 'none') {
+                hintText.innerText = "De tre misstänkta är:\n1. Tuggummituggaren på skolgården: (ka...)\n2. Stressade läraren: (Herr ....)\n3. Gåtflickan: (Flickan i .......)";
+                hintText.style.display = 'block';
+            } else {
+                hintText.style.display = 'none';
+            }
+        }
+
+        // Kontrollera misstänkta namnen
+        function verifySuspects() {
+            const val1 = document.getElementById('suspect-1').value.trim().toLowerCase();
+            const val2 = document.getElementById('suspect-2').value.trim().toLowerCase();
+            const val3 = document.getElementById('suspect-3').value.trim().toLowerCase();
+            
+            const inputs = [val1, val2, val3];
+            const textElement = document.getElementById('story-text');
+            const buttonContainer = document.getElementById('button-container');
+
+            const isKalle = (v) => v === "kalle";
+            const isBerg = (v) => v === "berg" || v === "herr berg" || v === "läraren berg" || v === "herrberg";
+            
+            const isFlickanISkuggan = (v) => [
+                "flickan i skuggan", 
+                "flickan i skuggorna", 
+                "skuggan", 
+                "flicka i skuggan", 
+                "flickan i skugga"
+            ].includes(v);
+
+            let foundKalle = false;
+            let foundBerg = false;
+            let foundFlickan = false;
+
+            inputs.forEach(val => {
+                if (isKalle(val)) foundKalle = true;
+                else if (isBerg(val)) foundBerg = true;
+                else if (isFlickanISkuggan(val)) foundFlickan = true;
+            });
+
+            if (foundKalle && foundBerg && foundFlickan) {
+                textElement.innerHTML = `Rektorn spärrar upp ögonen i chock:<br><br>
+                "Kalle, svenskläraren Herr Berg och flickan i skuggan?! Det stämmer ju med larmkoderna och Emmas USB!<br><br>
+                Men vänta... du har skrivit 'flickan i skuggan'. Det är ju inget riktigt namn! Vem är hon egentligen?"<br><br>
+                Du inser att du har löst mysteriet om trion, men hennes sanna identitet är fortfarande helt dold... "Det här är inte över!"`;
+
+                buttonContainer.innerHTML = `
+                    <button style="font-size: 1.1em; padding: 12px 25px; background-color: #81c3d7; color: #1a2238; font-weight: bold; border: 1px solid #4a6fa5;" onclick="chooseAction('slutskarm')">Gå vidare ➔</button>
+                `;
+            } else {
+                accusationFailures++;
+                textElement.innerHTML = `Rektorn skakar på huvudet:<br><br>
+                "Nej detektiv, det här stämmer inte. Kontrollera dina ledtrådar i skrivblocket en gång till!"`;
+
+                buttonContainer.innerHTML = `
+                    <button onclick="chooseAction('avslöja_skyldiga')">Försök igen 📝</button>
+                    <button onclick="chooseAction('korridoren')">Gå tillbaka till korridoren</button>
+                `;
+            }
+        }
+    </script>
+
+</body>
+</html>

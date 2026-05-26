@@ -1,0 +1,905 @@
+﻿OCTYPE html>
+<html lang="sv">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Rosengårdens Maskar - Tvåspelarspel</title>
+   <!-- Tailwind CSS för modern och snabb styling -->
+   <script src="https://cdn.tailwindcss.com"></script>
+   <!-- Google Fonts för fin sagolik typografi -->
+   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Quicksand', sans-serif;
+           background: radial-gradient(circle, #e8f5e9 0%, #c8e6c9 100%);
+       }
+       .serif-title {
+           font-family: 'Playfair Display', serif;
+       }
+       /* Förhindra att skärmen zoomar eller rör sig på mobil vid snabba tryck */
+       button {
+           touch-action: manipulation;
+       }
+   </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-6 overflow-x-hidden select-none">
+
+
+   <!-- Bakgrundsmusik- och ljudeffektsgenerator (Web Audio) -->
+   <script>
+       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      
+       function playSound(type) {
+           if (audioCtx.state === 'suspended') {
+               audioCtx.resume();
+           }
+           const osc = audioCtx.createOscillator();
+           const gain = audioCtx.createGain();
+           osc.connect(gain);
+           gain.connect(audioCtx.destination);
+
+
+           if (type === 'eat') {
+               // Trevlig ljus ton när man äter en blomma
+               osc.type = 'triangle';
+               osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+               osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+               gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+               gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+               osc.start();
+               osc.stop(audioCtx.currentTime + 0.15);
+           } else if (type === 'crash') {
+               // Dov duns vid krock
+               osc.type = 'sawtooth';
+               osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+               osc.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 0.3);
+               gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+               gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+               osc.start();
+               osc.stop(audioCtx.currentTime + 0.3);
+           } else if (type === 'win') {
+               // Fanfar vid vinst (50 poäng)
+               const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 1046.50];
+               notes.forEach((freq, index) => {
+                   const o = audioCtx.createOscillator();
+                   const g = audioCtx.createGain();
+                   o.type = 'sine';
+                   o.connect(g);
+                   g.connect(audioCtx.destination);
+                   o.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.12);
+                   g.gain.setValueAtTime(0.15, audioCtx.currentTime + index * 0.12);
+                   g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + index * 0.12 + 0.3);
+                   o.start(audioCtx.currentTime + index * 0.12);
+                   o.stop(audioCtx.currentTime + index * 0.12 + 0.3);
+               });
+           } else if (type === 'click') {
+               // Enkelt klickljud för knappar
+               osc.type = 'sine';
+               osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+               gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+               gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+               osc.start();
+               osc.stop(audioCtx.currentTime + 0.05);
+           }
+       }
+   </script>
+
+
+   <!-- Huvudcontainer -->
+   <div class="w-full max-w-5xl bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-4 md:p-6 border-4 border-emerald-800/10 flex flex-col items-center">
+      
+       <!-- Header -->
+       <header class="text-center mb-4">
+           <h1 class="serif-title text-3xl md:text-5xl font-extrabold text-emerald-900 drop-shadow-sm flex items-center justify-center gap-2">
+               <span>🌸</span> Rosengårdens Maskar <span>🌸</span>
+           </h1>
+           <p class="text-sm md:text-base text-emerald-700 font-semibold mt-1">Ät de magiska blommorna och undvik de taggiga rosettbuskarna! Först till 50 poäng vinner!</p>
+       </header>
+
+
+       <!-- Poängbräda & Spelstatus -->
+       <div class="w-full flex justify-between items-center gap-4 mb-4 bg-emerald-50 p-3 rounded-2xl border border-emerald-100 shadow-inner">
+           <!-- Spelare 1 (Blå) -->
+           <div class="flex items-center gap-3">
+               <div class="w-5 h-5 bg-blue-500 rounded-full border-2 border-blue-600 animate-pulse"></div>
+               <div>
+                   <div class="text-xs text-gray-500 font-bold uppercase">Spelare 1 (Blå)</div>
+                   <div id="score-p1" class="text-2xl font-black text-blue-600">0 / 50</div>
+               </div>
+           </div>
+
+
+           <!-- VS / Mittendel -->
+           <div class="text-center">
+               <div id="game-status" class="text-emerald-800 font-extrabold text-sm md:text-base bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
+                   Gör er redo!
+               </div>
+           </div>
+
+
+           <!-- Spelare 2 (Ljusrosa) -->
+           <div class="flex items-center gap-3 text-right">
+               <div>
+                   <div class="text-xs text-gray-500 font-bold uppercase">Spelare 2 (Rosa)</div>
+                   <div id="score-p2" class="text-2xl font-black text-rose-400">0 / 50</div>
+               </div>
+               <div class="w-5 h-5 bg-pink-300 rounded-full border-2 border-pink-400 animate-pulse"></div>
+           </div>
+       </div>
+
+
+       <!-- Spelyta & Touchkontroller -->
+       <div class="w-full flex flex-col lg:flex-row items-center justify-center gap-6">
+          
+           <!-- Vänster Touchkontroller (Blå Spelare - WASD) -->
+           <div id="touch-p1" class="hidden sm:flex flex-col items-center gap-1 bg-blue-50/50 p-3 rounded-2xl border border-blue-100">
+               <span class="text-xs font-bold text-blue-600 mb-2">Blå Mask Kontroller</span>
+               <button onclick="changeDirTouch('p1', 'UP')" class="w-12 h-12 bg-blue-500 active:bg-blue-600 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">W</button>
+               <div class="flex gap-1">
+                   <button onclick="changeDirTouch('p1', 'LEFT')" class="w-12 h-12 bg-blue-500 active:bg-blue-600 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">A</button>
+                   <button onclick="changeDirTouch('p1', 'DOWN')" class="w-12 h-12 bg-blue-500 active:bg-blue-600 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">S</button>
+                   <button onclick="changeDirTouch('p1', 'RIGHT')" class="w-12 h-12 bg-blue-500 active:bg-blue-600 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">D</button>
+               </div>
+           </div>
+
+
+           <!-- Spelplanen (Canvas) -->
+           <div class="relative bg-emerald-950 rounded-2xl overflow-hidden shadow-xl border-4 border-emerald-900 w-full max-w-[420px] aspect-square">
+               <canvas id="gameCanvas" width="500" height="500" class="w-full h-full block"></canvas>
+              
+               <!-- Startskärm / Pausskärm / Spel Slut Overlay -->
+               <div id="overlay" class="absolute inset-0 bg-emerald-950/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center text-white transition-opacity duration-300">
+                   <h2 id="overlay-title" class="serif-title text-3xl md:text-4xl font-extrabold text-amber-300 mb-2">Välkommen till Gården</h2>
+                   <p id="overlay-desc" class="text-sm md:text-base text-emerald-100 max-w-xs mb-6">Undvik de taggiga nyponbuskarna med fina rosetter. Ät blommorna för att få poäng!</p>
+                  
+                   <!-- Banväljare -->
+                   <div class="mb-6 w-full max-w-xs">
+                       <label class="block text-xs font-bold uppercase tracking-wider text-emerald-200 mb-2">Välj trädgårdsmiljö:</label>
+                       <select id="level-select" onchange="playSound('click'); selectLevel(this.value);" class="w-full bg-emerald-900 text-emerald-100 border border-emerald-700 rounded-xl px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                           <option value="1">🌱 Bana 1: Den öppna ängen</option>
+                           <option value="2">🌿 Bana 2: Busklabyrinten</option>
+                           <option value="3">🌹 Bana 3: Rosornas kammare</option>
+                       </select>
+                   </div>
+
+
+                   <button id="start-btn" onclick="startGame()" class="px-8 py-3 bg-amber-400 hover:bg-amber-300 text-emerald-950 font-black text-xl rounded-2xl shadow-lg transition-all duration-150 active:scale-95 transform">
+                       Starta Spelet 🏁
+                   </button>
+               </div>
+           </div>
+
+
+           <!-- Höger Touchkontroller (Rosa Spelare - PILAR) -->
+           <div id="touch-p2" class="hidden sm:flex flex-col items-center gap-1 bg-rose-50/50 p-3 rounded-2xl border border-rose-100">
+               <span class="text-xs font-bold text-rose-500 mb-2">Rosa Mask Kontroller</span>
+               <button onclick="changeDirTouch('p2', 'UP')" class="w-12 h-12 bg-pink-400 active:bg-pink-500 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">▲</button>
+               <div class="flex gap-1">
+                   <button onclick="changeDirTouch('p2', 'LEFT')" class="w-12 h-12 bg-pink-400 active:bg-pink-500 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">◀</button>
+                   <button onclick="changeDirTouch('p2', 'DOWN')" class="w-12 h-12 bg-pink-400 active:bg-pink-500 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">▼</button>
+                   <button onclick="changeDirTouch('p2', 'RIGHT')" class="w-12 h-12 bg-pink-400 active:bg-pink-500 text-white font-bold rounded-xl shadow-md flex items-center justify-center text-lg">▶</button>
+               </div>
+           </div>
+
+
+       </div>
+
+
+       <!-- Inställningar och extra info -->
+       <div class="w-full mt-6 pt-4 border-t border-emerald-100 flex flex-wrap gap-4 justify-between items-center text-sm text-emerald-800">
+           <div class="flex items-center gap-4">
+               <button id="toggle-touch-btn" onclick="toggleTouchControls()" class="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 rounded-xl font-bold transition">
+                   Visa/Dölj Touchkontroller (Mobil)
+               </button>
+               <button onclick="resetHighScores()" class="px-4 py-2 bg-emerald-100 hover:bg-rose-100 rounded-xl font-bold transition">
+                   Nollställ Poäng
+               </button>
+           </div>
+          
+           <div class="text-xs text-emerald-700/80">
+               <span class="font-bold">Tangentbordskontroller:</span><br>
+               🔵 Blå mask: <span class="bg-emerald-100 px-1 rounded">W/A/S/D</span> | 🔴 Rosa mask: <span class="bg-emerald-100 px-1 rounded">Piltangenter</span>
+           </div>
+       </div>
+
+
+   </div>
+
+
+   <!-- Footer -->
+   <footer class="mt-4 text-center text-xs text-emerald-800/60 font-medium">
+       Skapat med kärlek i Rosengården &bull; 2026
+   </footer>
+
+
+   <!-- Spelmotor i JavaScript -->
+   <script>
+       const canvas = document.getElementById('gameCanvas');
+       const ctx = canvas.getContext('2d');
+
+
+       // Spelkonstanter & Rutnät
+       const GRID_SIZE = 25; // 25x25 rutor
+       const TILE_SIZE = canvas.width / GRID_SIZE; // Storleken på en ruta på canvasen (20px)
+
+
+       // Speltillstånd
+       let gameInterval = null;
+       let isPlaying = false;
+       let selectedLevelNum = 1;
+
+
+       // Spelare 1 (Blå)
+       let snake1 = {
+           body: [],
+           dir: 'RIGHT',
+           nextDir: 'RIGHT',
+           score: 0,
+           color: '#3b82f6', // Blå
+           accentColor: '#1d4ed8',
+           alive: true
+       };
+
+
+       // Spelare 2 (Ljusrosa)
+       let snake2 = {
+           body: [],
+           dir: 'LEFT',
+           nextDir: 'LEFT',
+           score: 0,
+           color: '#f472b6', // Ljusrosa
+           accentColor: '#db2777',
+           alive: true
+       };
+
+
+       // Blommor (mat) - det kommer finnas flera samtidigt för intensivt gameplay!
+       let flowers = [];
+       const MAX_FLOWERS = 8; // Antal blommor på banan samtidigt
+
+
+       // Hinder (Buskar med rosetter och taggar)
+       let obstacles = [];
+
+
+       // Hämta banlayouter
+       function generateObstacles(level) {
+           obstacles = [];
+          
+           // Yttre ram är alltid fria, men vi placerar hinder inuti trädgården
+           if (level === 1) {
+               // Den öppna ängen - Några spridda små buskar i mitten
+               addBush(6, 6);
+               addBush(6, 18);
+               addBush(18, 6);
+               addBush(18, 18);
+               addBush(12, 12);
+           } else if (level === 2) {
+               // Busklabyrinten - Två stora murar som försvårar passage
+               // Horisontella rader
+               for (let x = 4; x < 11; x++) {
+                   addBush(x, 7);
+                   addBush(x + 10, 17);
+               }
+               // Vertikala rader
+               for (let y = 4; y < 11; y++) {
+                   addBush(7, y + 10);
+                   addBush(17, y);
+               }
+           } else if (level === 3) {
+               // Rosornas kammare - En inre ring med öppningar
+               for (let i = 4; i <= 20; i++) {
+                   if (i !== 12) { // Öppning i mitten av varje sida
+                       addBush(i, 4);
+                       addBush(i, 20);
+                       addBush(4, i);
+                       addBush(20, i);
+                   }
+               }
+               // Centralt litet buskage med en lyxig rosett
+               addBush(11, 11);
+               addBush(13, 11);
+               addBush(11, 13);
+               addBush(13, 13);
+           }
+       }
+
+
+       function addBush(x, y) {
+           obstacles.push({ x, y });
+       }
+
+
+       // Kontrollera om en position har ett hinder
+       function isObstacle(x, y) {
+           return obstacles.some(obs => obs.x === x && obs.y === y);
+       }
+
+
+       // Starta / initiera spelet
+       function initGame() {
+           // Nollställ spelare
+           snake1.body = [
+               { x: 3, y: 5 },
+               { x: 2, y: 5 },
+               { x: 1, y: 5 }
+           ];
+           snake1.dir = 'RIGHT';
+           snake1.nextDir = 'RIGHT';
+           snake1.score = 0;
+           snake1.alive = true;
+
+
+           snake2.body = [
+               { x: GRID_SIZE - 4, y: GRID_SIZE - 6 },
+               { x: GRID_SIZE - 3, y: GRID_SIZE - 6 },
+               { x: GRID_SIZE - 2, y: GRID_SIZE - 6 }
+           ];
+           snake2.dir = 'LEFT';
+           snake2.nextDir = 'LEFT';
+           snake2.score = 0;
+           snake2.alive = true;
+
+
+           // Uppdatera gränssnitt
+           document.getElementById('score-p1').innerText = `0 / 50`;
+           document.getElementById('score-p2').innerText = `0 / 50`;
+           document.getElementById('game-status').innerText = 'Samla 50 blommor!';
+           document.getElementById('game-status').className = "text-emerald-800 font-extrabold text-sm md:text-base bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200";
+
+
+           // Skapa hinder
+           generateObstacles(selectedLevelNum);
+
+
+           // Placera ut blommor
+           flowers = [];
+           for (let i = 0; i < MAX_FLOWERS; i++) {
+               spawnFlower();
+           }
+
+
+           draw();
+       }
+
+
+       // Skapa en ny blomma på ett ledigt ställe
+       function spawnFlower() {
+           let x, y, occupied;
+           do {
+               occupied = false;
+               x = Math.floor(Math.random() * GRID_SIZE);
+               y = Math.floor(Math.random() * GRID_SIZE);
+
+
+               // Kolla krock med hinder
+               if (isObstacle(x, y)) occupied = true;
+
+
+               // Kolla krock med mask 1
+               if (snake1.body.some(seg => seg.x === x && seg.y === y)) occupied = true;
+
+
+               // Kolla krock med mask 2
+               if (snake2.body.some(seg => seg.x === x && seg.y === y)) occupied = true;
+
+
+               // Kolla krock med befintliga blommor
+               if (flowers.some(fl => fl.x === x && fl.y === y)) occupied = true;
+
+
+           } while (occupied);
+
+
+           // Blommor kan ha lite olika färger för mer visuell detalj
+           const colors = ['#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#eab308'];
+           const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+
+           flowers.push({ x, y, color: randomColor });
+       }
+
+
+       // Starta spel-loopen
+       function startGame() {
+           playSound('click');
+           document.getElementById('overlay').classList.add('opacity-0', 'pointer-events-none');
+          
+           if (gameInterval) clearInterval(gameInterval);
+           initGame();
+          
+           isPlaying = true;
+           // Bestämmer hastigheten på maskarna (140 ms per steg är perfekt balanserat)
+           gameInterval = setInterval(gameStep, 140);
+       }
+
+
+       // Välj nivå från menyn
+       function selectLevel(val) {
+           selectedLevelNum = parseInt(val);
+           initGame();
+       }
+
+
+       // Ändra riktning via touchkontroller på skärmen
+       function changeDirTouch(player, newDir) {
+           playSound('click');
+           if (player === 'p1') {
+               if (newDir === 'UP' && snake1.dir !== 'DOWN') snake1.nextDir = 'UP';
+               if (newDir === 'DOWN' && snake1.dir !== 'UP') snake1.nextDir = 'DOWN';
+               if (newDir === 'LEFT' && snake1.dir !== 'RIGHT') snake1.nextDir = 'LEFT';
+               if (newDir === 'RIGHT' && snake1.dir !== 'LEFT') snake1.nextDir = 'RIGHT';
+           } else if (player === 'p2') {
+               if (newDir === 'UP' && snake2.dir !== 'DOWN') snake2.nextDir = 'UP';
+               if (newDir === 'DOWN' && snake2.dir !== 'UP') snake2.nextDir = 'DOWN';
+               if (newDir === 'LEFT' && snake2.dir !== 'RIGHT') snake2.nextDir = 'LEFT';
+               if (newDir === 'RIGHT' && snake2.dir !== 'LEFT') snake2.nextDir = 'RIGHT';
+           }
+       }
+
+
+       // Lyssna på tangentbordet
+       window.addEventListener('keydown', function(e) {
+           if (!isPlaying) return;
+
+
+           // Spelare 1: WASD
+           if (e.key.toLowerCase() === 'w' && snake1.dir !== 'DOWN') snake1.nextDir = 'UP';
+           if (e.key.toLowerCase() === 's' && snake1.dir !== 'UP') snake1.nextDir = 'DOWN';
+           if (e.key.toLowerCase() === 'a' && snake1.dir !== 'RIGHT') snake1.nextDir = 'LEFT';
+           if (e.key.toLowerCase() === 'd' && snake1.dir !== 'LEFT') snake1.nextDir = 'RIGHT';
+
+
+           // Spelare 2: Arrow Keys (Förhindra även att sidan scrollar vid tryck)
+           if (e.key === 'ArrowUp' && snake2.dir !== 'DOWN') { snake2.nextDir = 'UP'; e.preventDefault(); }
+           if (e.key === 'ArrowDown' && snake2.dir !== 'UP') { snake2.nextDir = 'DOWN'; e.preventDefault(); }
+           if (e.key === 'ArrowLeft' && snake2.dir !== 'RIGHT') { snake2.nextDir = 'LEFT'; e.preventDefault(); }
+           if (e.key === 'ArrowRight' && snake2.dir !== 'LEFT') { snake2.nextDir = 'RIGHT'; e.preventDefault(); }
+       });
+
+
+       // Huvudloopen i spelet
+       function gameStep() {
+           if (!isPlaying) return;
+
+
+           // Uppdatera faktiska riktningar
+           snake1.dir = snake1.nextDir;
+           snake2.dir = snake2.nextDir;
+
+
+           // Beräkna nya huvuden
+           let head1 = { ...snake1.body[0] };
+           let head2 = { ...snake2.body[0] };
+
+
+           if (snake1.alive) {
+               if (snake1.dir === 'UP') head1.y -= 1;
+               if (snake1.dir === 'DOWN') head1.y += 1;
+               if (snake1.dir === 'LEFT') head1.x -= 1;
+               if (snake1.dir === 'RIGHT') head1.x += 1;
+
+
+               // Portal/Wrap-around kanter (så man inte dör på väggarna, vilket känns modernare och roligare!)
+               if (head1.x < 0) head1.x = GRID_SIZE - 1;
+               if (head1.x >= GRID_SIZE) head1.x = 0;
+               if (head1.y < 0) head1.y = GRID_SIZE - 1;
+               if (head1.y >= GRID_SIZE) head1.y = 0;
+           }
+
+
+           if (snake2.alive) {
+               if (snake2.dir === 'UP') head2.y -= 1;
+               if (snake2.dir === 'DOWN') head2.y += 1;
+               if (snake2.dir === 'LEFT') head2.x -= 1;
+               if (snake2.dir === 'RIGHT') head2.x += 1;
+
+
+               // Portal/Wrap-around kanter för Spelare 2
+               if (head2.x < 0) head2.x = GRID_SIZE - 1;
+               if (head2.x >= GRID_SIZE) head2.x = 0;
+               if (head2.y < 0) head2.y = GRID_SIZE - 1;
+               if (head2.y >= GRID_SIZE) head2.y = 0;
+           }
+
+
+           // Kolla efter krockar med buskar (taggarna skadar direkt!)
+           let crash1 = isObstacle(head1.x, head1.y);
+           let crash2 = isObstacle(head2.x, head2.y);
+
+
+           // Kolla efter krockar med den andra maskens kropp (eller sig själv)
+           if (snake1.alive) {
+               // Krock med egen kropp
+               if (snake1.body.some(seg => seg.x === head1.x && seg.y === head1.y)) crash1 = true;
+               // Krock med spelare 2's kropp
+               if (snake2.alive && snake2.body.some(seg => seg.x === head1.x && seg.y === head1.y)) crash1 = true;
+           }
+
+
+           if (snake2.alive) {
+               // Krock med egen kropp
+               if (snake2.body.some(seg => seg.x === head2.x && seg.y === head2.y)) crash2 = true;
+               // Krock med spelare 1's kropp
+               if (snake1.alive && snake1.body.some(seg => seg.x === head2.x && seg.y === head2.y)) crash2 = true;
+           }
+
+
+           // Hantera krockkonsekvenser
+           if (crash1 && snake1.alive) {
+               snake1.alive = false;
+               playSound('crash');
+           }
+           if (crash2 && snake2.alive) {
+               snake2.alive = false;
+               playSound('crash');
+           }
+
+
+           // Om båda krockar eller dör
+           if (!snake1.alive && !snake2.alive) {
+               endGame("Oavgjort! Båda kraschade 💥");
+               return;
+           }
+
+
+           // Flytta och låt växa (Spelare 1)
+           if (snake1.alive) {
+               snake1.body.unshift(head1);
+
+
+               // Kolla om spelare 1 åt en blomma
+               let ateFlowerIndex = flowers.findIndex(fl => fl.x === head1.x && fl.y === head1.y);
+               if (ateFlowerIndex !== -1) {
+                   snake1.score += 1;
+                   playSound('eat');
+                   flowers.splice(ateFlowerIndex, 1);
+                   spawnFlower(); // Skapa en ny blomma på banan
+                   document.getElementById('score-p1').innerText = `${snake1.score} / 50`;
+                  
+                   if (snake1.score >= 50) {
+                       endGame("Spelare 1 (Blå) har vunnit! 🎉 50 poäng uppnådda!");
+                       return;
+                   }
+               } else {
+                   snake1.body.pop(); // Ta bort svansen om den inte äter
+               }
+           }
+
+
+           // Flytta och låt växa (Spelare 2)
+           if (snake2.alive) {
+               snake2.body.unshift(head2);
+
+
+               // Kolla om spelare 2 åt en blomma
+               let ateFlowerIndex = flowers.findIndex(fl => fl.x === head2.x && fl.y === head2.y);
+               if (ateFlowerIndex !== -1) {
+                   snake2.score += 1;
+                   playSound('eat');
+                   flowers.splice(ateFlowerIndex, 1);
+                   spawnFlower();
+                   document.getElementById('score-p2').innerText = `${snake2.score} / 50`;
+
+
+                   if (snake2.score >= 50) {
+                       endGame("Spelare 2 (Rosa) har vunnit! 🎉 50 poäng uppnådda!");
+                       return;
+                   }
+               } else {
+                   snake2.body.pop();
+               }
+           }
+
+
+           // Om en av dem dör men den andra fortfarande lever
+           if (!snake1.alive && snake2.alive) {
+               // Fortsätt spelet tills den sista också dör eller når 50
+               document.getElementById('game-status').innerText = 'Blå mask kraschade!';
+               document.getElementById('game-status').className = "text-rose-800 font-extrabold text-sm md:text-base bg-rose-100 px-3 py-1 rounded-full border border-rose-200";
+           } else if (snake1.alive && !snake2.alive) {
+               document.getElementById('game-status').innerText = 'Rosa mask kraschade!';
+               document.getElementById('game-status').className = "text-blue-800 font-extrabold text-sm md:text-base bg-blue-100 px-3 py-1 rounded-full border border-blue-200";
+           }
+
+
+           draw();
+       }
+
+
+       // Avsluta spelet och visa overlay
+       function endGame(resultMessage) {
+           isPlaying = false;
+           clearInterval(gameInterval);
+           playSound('win');
+
+
+           // Hitta vinnare baserat på poäng om båda kraschade
+           let finalMsg = resultMessage;
+           if (resultMessage.startsWith("Oavgjort")) {
+               if (snake1.score > snake2.score) {
+                   finalMsg = `Spelare 1 (Blå) vinner på högst poäng: ${snake1.score} poäng! 🏆`;
+               } else if (snake2.score > snake1.score) {
+                   finalMsg = `Spelare 2 (Rosa) vinner på högst poäng: ${snake2.score} poäng! 🏆`;
+               } else {
+                   finalMsg = `Helt oavgjort! Båda samlade ${snake1.score} blommor! 🌸`;
+               }
+           }
+
+
+           document.getElementById('overlay-title').innerText = "Spelomgången är klar!";
+           document.getElementById('overlay-desc').innerText = finalMsg;
+           document.getElementById('start-btn').innerText = "Spela Igen 🔄";
+           document.getElementById('overlay').classList.remove('opacity-0', 'pointer-events-none');
+       }
+
+
+       // Nollställ poäng manuellt
+       function resetHighScores() {
+           playSound('click');
+           initGame();
+       }
+
+
+       // Visa/Dölj touchkontroller
+       function toggleTouchControls() {
+           playSound('click');
+           const touchP1 = document.getElementById('touch-p1');
+           const touchP2 = document.getElementById('touch-p2');
+          
+           if (touchP1.classList.contains('hidden') || touchP1.classList.contains('sm:flex')) {
+               touchP1.classList.remove('hidden', 'sm:flex');
+               touchP1.classList.add('flex');
+               touchP2.classList.remove('hidden', 'sm:flex');
+               touchP2.classList.add('flex');
+           } else {
+               touchP1.classList.add('hidden', 'sm:flex');
+               touchP2.classList.add('hidden', 'sm:flex');
+           }
+       }
+
+
+       // ================= RITNINGSFUNKTIONER (Canvas) =================
+
+
+       // Rita hela spelytan
+       function draw() {
+           // Rensa canvas och rita den härliga gräsmatts-bakgrunden
+           ctx.fillStyle = '#14532d'; // Mörkgrön botten
+           ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+           // Skapa ett rutmönster på gräset för enklare navigering och designdjup
+           for (let i = 0; i < GRID_SIZE; i++) {
+               for (let j = 0; j < GRID_SIZE; j++) {
+                   ctx.fillStyle = (i + j) % 2 === 0 ? '#166534' : '#14532d';
+                   ctx.fillRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+               }
+           }
+
+
+           // Rita hinder (Dekorativa Buskar med taggar och rosetter)
+           obstacles.forEach(obs => {
+               drawBush(obs.x, obs.y);
+           });
+
+
+           // Rita alla vackra blommor
+           flowers.forEach(fl => {
+               drawFlower(fl.x, fl.y, fl.color);
+           });
+
+
+           // Rita Spelare 1 (Blå)
+           if (snake1.alive) {
+               drawSnake(snake1);
+           }
+
+
+           // Rita Spelare 2 (Rosa)
+           if (snake2.alive) {
+               drawSnake(snake2);
+           }
+       }
+
+
+       // Rita en buske med taggar och en fin rosett
+       function drawBush(x, y) {
+           const px = x * TILE_SIZE;
+           const py = y * TILE_SIZE;
+           const center = TILE_SIZE / 2;
+
+
+           // 1. Buskens mörkgröna bladstruktur (flera överlappande cirklar)
+           ctx.fillStyle = '#064e3b';
+           ctx.beginPath();
+           ctx.arc(px + center, py + center, TILE_SIZE * 0.48, 0, Math.PI * 2);
+           ctx.fill();
+
+
+           ctx.fillStyle = '#047857';
+           ctx.beginPath();
+           ctx.arc(px + center - 3, py + center - 3, TILE_SIZE * 0.35, 0, Math.PI * 2);
+           ctx.arc(px + center + 3, py + center + 2, TILE_SIZE * 0.3, 0, Math.PI * 2);
+           ctx.fill();
+
+
+           // 2. Vassa bruna/gula taggar som sticker ut
+           ctx.strokeStyle = '#b45309'; // Brun/orange färg för taggarna
+           ctx.lineWidth = 1.5;
+
+
+           const thornOffsets = [
+               { dx: -6, dy: -6 }, { dx: 6, dy: -6 },
+               { dx: -6, dy: 6 }, { dx: 6, dy: 6 }
+           ];
+
+
+           thornOffsets.forEach(thorn => {
+               ctx.beginPath();
+               ctx.moveTo(px + center, py + center);
+               ctx.lineTo(px + center + thorn.dx, py + center + thorn.dy);
+               ctx.stroke();
+           });
+
+
+           // 3. Den utlovade vackra rosetten (Ljusrosa med mörkrosa kant i mitten av busken)
+           const rx = px + center;
+           const ry = px + center;
+
+
+           ctx.fillStyle = '#fb7185'; // Fin ljusrosa rosettfärg
+           ctx.strokeStyle = '#f43f5e';
+           ctx.lineWidth = 1;
+
+
+           // Vänster rosett-ögla
+           ctx.beginPath();
+           ctx.ellipse(rx - 4, ry - 1, 4, 2.5, -Math.PI/6, 0, Math.PI * 2);
+           ctx.fill();
+           ctx.stroke();
+
+
+           // Höger rosett-ögla
+           ctx.beginPath();
+           ctx.ellipse(rx + 4, ry - 1, 4, 2.5, Math.PI/6, 0, Math.PI * 2);
+           ctx.fill();
+           ctx.stroke();
+
+
+           // Rosettens band som hänger ner lite
+           ctx.strokeStyle = '#fb7185';
+           ctx.lineWidth = 1.5;
+           ctx.beginPath();
+           ctx.moveTo(rx - 1, ry + 1);
+           ctx.lineTo(rx - 3, ry + 6);
+           ctx.moveTo(rx + 1, ry + 1);
+           ctx.lineTo(rx + 3, ry + 6);
+           ctx.stroke();
+
+
+           // Rosettens knut i mitten
+           ctx.fillStyle = '#e11d48';
+           ctx.beginPath();
+           ctx.arc(rx, ry, 2, 0, Math.PI * 2);
+           ctx.fill();
+       }
+
+
+       // Rita en vacker, detaljerad blomma (mat)
+       function drawFlower(x, y, color) {
+           const px = x * TILE_SIZE;
+           const py = y * TILE_SIZE;
+           const center = TILE_SIZE / 2;
+
+
+           // Kronblad (5 st cirklar runtom)
+           ctx.fillStyle = color;
+           const numPetals = 5;
+           const petalRadius = TILE_SIZE * 0.22;
+           for (let i = 0; i < numPetals; i++) {
+               const angle = (i * Math.PI * 2) / numPetals;
+               const cx = px + center + Math.cos(angle) * (TILE_SIZE * 0.2);
+               const cy = py + center + Math.sin(angle) * (TILE_SIZE * 0.2);
+
+
+               ctx.beginPath();
+               ctx.arc(cx, cy, petalRadius, 0, Math.PI * 2);
+               ctx.fill();
+           }
+
+
+           // Gyllene mitt i blomman
+           ctx.fillStyle = '#fbbf24'; // Guldgul färg
+           ctx.beginPath();
+           ctx.arc(px + center, py + center, TILE_SIZE * 0.16, 0, Math.PI * 2);
+           ctx.fill();
+
+
+           // Liten vit glanspunkt i mitten för djup
+           ctx.fillStyle = '#ffffff';
+           ctx.beginPath();
+           ctx.arc(px + center - 1, py + center - 1, TILE_SIZE * 0.06, 0, Math.PI * 2);
+           ctx.fill();
+       }
+
+
+       // Rita en mask (huvud, kropp, ögon)
+       function drawSnake(snake) {
+           snake.body.forEach((seg, index) => {
+               const px = seg.x * TILE_SIZE;
+               const py = seg.y * TILE_SIZE;
+               const center = TILE_SIZE / 2;
+
+
+               if (index === 0) {
+                   // Huvud (något större runda hörn och detaljerade ögon)
+                   ctx.fillStyle = snake.color;
+                   ctx.beginPath();
+                   ctx.arc(px + center, py + center, TILE_SIZE * 0.48, 0, Math.PI * 2);
+                   ctx.fill();
+
+
+                   // Rita ögon beroende på riktning för en levande känsla
+                   ctx.fillStyle = '#ffffff';
+                   let eyeOffset1 = { x: 0, y: 0 };
+                   let eyeOffset2 = { x: 0, y: 0 };
+
+
+                   if (snake.dir === 'RIGHT') {
+                       eyeOffset1 = { x: 3, y: -4 };
+                       eyeOffset2 = { x: 3, y: 4 };
+                   } else if (snake.dir === 'LEFT') {
+                       eyeOffset1 = { x: -3, y: -4 };
+                       eyeOffset2 = { x: -3, y: 4 };
+                   } else if (snake.dir === 'UP') {
+                       eyeOffset1 = { x: -4, y: -3 };
+                       eyeOffset2 = { x: 4, y: -3 };
+                   } else if (snake.dir === 'DOWN') {
+                       eyeOffset1 = { x: -4, y: 3 };
+                       eyeOffset2 = { x: 4, y: 3 };
+                   }
+
+
+                   // Ögonvitor
+                   ctx.beginPath();
+                   ctx.arc(px + center + eyeOffset1.x, py + center + eyeOffset1.y, 3, 0, Math.PI * 2);
+                   ctx.arc(px + center + eyeOffset2.x, py + center + eyeOffset2.y, 3, 0, Math.PI * 2);
+                   ctx.fill();
+
+
+                   // Pupiller (små svarta prickar)
+                   ctx.fillStyle = '#000000';
+                   ctx.beginPath();
+                   ctx.arc(px + center + eyeOffset1.x, py + center + eyeOffset1.y, 1.5, 0, Math.PI * 2);
+                   ctx.arc(px + center + eyeOffset2.x, py + center + eyeOffset2.y, 1.5, 0, Math.PI * 2);
+                   ctx.fill();
+
+
+               } else {
+                   // Kroppssegment (gradient eller skuggning baserat på index för 3D-liknande form)
+                   ctx.fillStyle = snake.color;
+                   ctx.beginPath();
+                   // Gradvis avsmalnande svans
+                   const factor = Math.max(0.25, 1 - (index / snake.body.length) * 0.45);
+                   ctx.arc(px + center, py + center, (TILE_SIZE * 0.4) * factor, 0, Math.PI * 2);
+                   ctx.fill();
+
+
+                   // Liten inre highlight för söt textur
+                   ctx.fillStyle = 'rgba(255,255,255,0.15)';
+                   ctx.beginPath();
+                   ctx.arc(px + center - 2, py + center - 2, (TILE_SIZE * 0.18) * factor, 0, Math.PI * 2);
+                   ctx.fill();
+               }
+           });
+       }
+
+
+       // Initiera vid sidladdning
+       window.onload = function() {
+           initGame();
+       };
+   </script>
+</body>
+</html>

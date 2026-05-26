@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="sv" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tre i Rad: Det Rosa Drömäventyret</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f472b6 100%);
+    }
+    .header-font {
+      font-family: 'Fredoka', sans-serif;
+    }
+    /* Lekfull 3D-effekt på knappar och rutor */
+    .btn-3d {
+      position: relative;
+      transition: all 0.1s ease;
+      border-bottom-width: 4px;
+    }
+    .btn-3d:active {
+      transform: translateY(3px);
+      border-bottom-width: 1px;
+    }
+    /* Svävande fluffig animation */
+    .float-anim {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
+    }
+    /* Skak-effekt vid ogiltigt drag */
+    .shake-anim {
+      animation: shake 0.3s;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+  </style>
+</head>
+<body class="text-pink-900 min-h-full flex flex-col selection:bg-pink-300 selection:text-pink-900 overflow-x-hidden">
+
+  <!-- SPELCONTAINER -->
+  <div id="game-container" class="flex-grow flex flex-col max-w-md w-full mx-auto px-4 py-6 justify-between relative">
+    
+    <!-- KONFETTIDUK -->
+    <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+    <!-- TOP-MENY -->
+    <header class="bg-white/90 border-4 border-pink-300 p-4 rounded-3xl shadow-md text-center mb-6 relative">
+      <div class="absolute -top-5 left-1/2 -translate-x-1/2 text-3xl float-anim">👑</div>
+      <h1 class="header-font text-3xl bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent font-bold">Tre i Rad</h1>
+      <p class="text-xs text-pink-500 font-bold tracking-widest uppercase mt-0.5">Det Rosa Drömäventyret</p>
+    </header>
+
+    <!-- SPELSKÄRMAR -->
+    <main class="flex-grow flex flex-col justify-center items-center">
+
+      <!-- SKÄRM 1: INSTÄLLNINGAR & START -->
+      <section id="screen-setup" class="w-full bg-white border-4 border-pink-200 rounded-3xl p-6 shadow-xl space-y-6">
+        <div class="text-center">
+          <h2 class="header-font text-2xl text-pink-600 font-bold">Gör er redo för kamp! 🎀</h2>
+          <p class="text-slate-500 text-xs font-semibold mt-1">Välj era namn och favorit-emojis att spela med.</p>
+        </div>
+
+        <!-- Spelare 1 Inställningar -->
+        <div class="bg-pink-50/50 p-4 rounded-2xl border-2 border-pink-100 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🌸</span>
+            <h3 class="font-bold text-pink-700 text-sm">Spelare 1 (Börjar)</h3>
+          </div>
+          <input type="text" id="p1-name" value="Spelare 1" class="w-full bg-white border-2 border-pink-200 rounded-xl px-3 py-1.5 text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm">
+          
+          <div>
+            <span class="block text-[10px] font-bold text-pink-500 uppercase mb-1">Välj spelpjäs:</span>
+            <div id="p1-emojis" class="flex flex-wrap gap-1.5">
+              <!-- Genereras av JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Spelare 2 Inställningar -->
+        <div class="bg-purple-50/50 p-4 rounded-2xl border-2 border-purple-100 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">✨</span>
+            <h3 class="font-bold text-purple-700 text-sm">Spelare 2</h3>
+          </div>
+          <input type="text" id="p2-name" value="Spelare 2" class="w-full bg-white border-2 border-purple-200 rounded-xl px-3 py-1.5 text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm">
+          
+          <div>
+            <span class="block text-[10px] font-bold text-purple-500 uppercase mb-1">Välj spelpjäs:</span>
+            <div id="p2-emojis" class="flex flex-wrap gap-1.5">
+              <!-- Genereras av JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Start-knapp -->
+        <div class="text-center pt-2">
+          <button onclick="startGame()" class="btn-3d w-full bg-pink-400 hover:bg-pink-300 text-white border-b-6 border-pink-600 font-extrabold text-lg py-3.5 rounded-2xl shadow-md transition">
+            Börja Spela! 💖
+          </button>
+        </div>
+      </section>
+
+      <!-- SKÄRM 2: SPELPLANEN -->
+      <section id="screen-game" class="hidden w-full space-y-6">
+        
+        <!-- Scoreboard -->
+        <div class="grid grid-cols-3 gap-3 text-center bg-white/80 border-2 border-pink-200 p-3 rounded-2xl shadow-sm">
+          <div class="p-1 rounded-xl bg-pink-50/50 border border-pink-100">
+            <span id="score-p1-emoji" class="text-xl">💖</span>
+            <div id="score-p1-name" class="text-[10px] font-bold text-slate-500 truncate">Spelare 1</div>
+            <div id="score-p1" class="font-extrabold text-pink-600 text-lg">0</div>
+          </div>
+          <div class="p-1 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-center">
+            <span class="text-[10px] font-extrabold text-slate-400 uppercase">Oavgjort</span>
+            <div id="score-ties" class="font-extrabold text-slate-600 text-lg">0</div>
+          </div>
+          <div class="p-1 rounded-xl bg-purple-50/50 border border-purple-100">
+            <span id="score-p2-emoji" class="text-xl">🦄</span>
+            <div id="score-p2-name" class="text-[10px] font-bold text-slate-500 truncate">Spelare 2</div>
+            <div id="score-p2" class="font-extrabold text-purple-600 text-lg">0</div>
+          </div>
+        </div>
+
+        <!-- Aktuell turskylt -->
+        <div id="turn-indicator" class="bg-pink-400 text-white border-b-4 border-pink-600 font-extrabold text-center py-2.5 px-4 rounded-2xl shadow-sm text-sm">
+          Spelare 1:s tur! (💖)
+        </div>
+
+        <!-- 3x3 Spelbräde (Identisk bredd & höjd på varje cell för symmetri) -->
+        <div class="w-full aspect-square bg-white border-4 border-pink-300 rounded-3xl p-4 shadow-lg flex items-center justify-center">
+          <div class="grid grid-cols-3 gap-3 w-full h-full" id="board-grid">
+            <!-- 9 rutor skapas här av JavaScript -->
+          </div>
+        </div>
+
+        <!-- Funktionsknappar -->
+        <div class="flex gap-3">
+          <button onclick="resetBoard()" class="btn-3d flex-1 bg-amber-400 hover:bg-amber-300 text-amber-950 border-b-4 border-amber-600 font-extrabold py-3 rounded-2xl text-xs transition">
+            🔄 Rensa Brädet
+          </button>
+          <button onclick="backToSetup()" class="btn-3d flex-1 bg-slate-200 hover:bg-slate-300 text-slate-600 border-b-4 border-slate-400 font-extrabold py-3 rounded-2xl text-xs transition">
+            ⚙️ Ändra gubbar
+          </button>
+        </div>
+
+      </section>
+
+      <!-- VINST-MODAL / POPUP (Inga alerts!) -->
+      <div id="win-modal" class="hidden fixed inset-0 bg-pink-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white border-4 border-pink-400 rounded-3xl p-6 w-full max-w-xs text-center space-y-4 shadow-2xl transform scale-95 transition-all duration-300">
+          <span id="win-modal-emoji" class="text-6xl block float-anim">🏆</span>
+          <h2 id="win-modal-title" class="header-font text-2xl text-pink-600 font-extrabold">Vi har en vinnare!</h2>
+          <p id="win-modal-desc" class="text-slate-600 font-bold text-sm">Spelare 1 tog hem denna omgången!</p>
+          
+          <div class="pt-2">
+            <button onclick="closeWinModal()" class="btn-3d w-full bg-emerald-400 hover:bg-emerald-300 text-slate-900 border-b-4 border-emerald-600 font-extrabold py-3 rounded-2xl text-sm transition">
+              Spela Igen! 🎉
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-6 text-center text-[10px] text-pink-300/80 font-bold flex justify-between items-center px-2">
+      <p>© 2026 Rosa Drömäventyret</p>
+      <div class="flex gap-2">
+        <span>🌸 Spelare 1</span>
+        <span>⚔️</span>
+        <span>🦄 Spelare 2</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- RETRO LJUDEFFEKTER (Web Audio API) -->
+  <script>
+    let audioCtx = null;
+    let isMuted = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById('mute-btn').innerText = isMuted ? '🔇' : '🔊';
+      playTone(400, "sine", 0.05);
+    }
+
+    function playTone(freq, type, duration) {
+      if (isMuted) return;
+      initAudio();
+      try {
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.log("Audio play blocked or failed: ", e);
+      }
+    }
+
+    function playPop() {
+      playTone(600, "sine", 0.08);
+      setTimeout(() => playTone(800, "sine", 0.05), 40);
+    }
+
+    function playWinSound() {
+      playTone(523.25, "sine", 0.1); // C5
+      setTimeout(() => playTone(659.25, "sine", 0.1), 80); // E5
+      setTimeout(() => playTone(783.99, "sine", 0.1), 160); // G5
+      setTimeout(() => playTone(1046.50, "sine", 0.25), 240); // C6
+    }
+
+    function playDrawSound() {
+      playTone(300, "sawtooth", 0.1);
+      setTimeout(() => playTone(220, "sawtooth", 0.2), 100);
+    }
+
+    function playClick() {
+      playTone(450, "sine", 0.04);
+    }
+  </script>
+
+  <!-- SPEL-LOGIK & KONFETTI -->
+  <script>
+    // Emojis som spelarna kan välja mellan
+    const availableEmojis = [
+      "💖", "🦄", "🍩", "🌸", "⭐", "🐱", 
+      "🐼", "🌈", "🍦", "🍒", "🍭", "🦋", 
+      "❌", "⭕", "🍪", "🍕"
+    ];
+
+    // Spelstatus
+    const state = {
+      p1: { name: "Spelare 1", emoji: "💖", score: 0 },
+      p2: { name: "Spelare 2", emoji: "🦄", score: 0 },
+      ties: 0,
+      board: ["", "", "", "", "", "", "", "", ""],
+      currentPlayer: 1, // 1 eller 2
+      gameActive: true
+    };
+
+    // DOM Laddad
+    window.onload = function() {
+      renderEmojiPickers();
+    };
+
+    // Skapa valbara emojis till inställningsskärmen
+    function renderEmojiPickers() {
+      const p1Container = document.getElementById('p1-emojis');
+      const p2Container = document.getElementById('p2-emojis');
+      
+      p1Container.innerHTML = "";
+      p2Container.innerHTML = "";
+
+      availableEmojis.forEach(emoji => {
+        // Spelare 1 knapp
+        const btn1 = document.createElement('button');
+        btn1.className = `p-2 rounded-xl border font-bold text-xl transition bg-white hover:bg-pink-100 ${state.p1.emoji === emoji ? 'border-pink-500 ring-2 ring-pink-300' : 'border-slate-200'}`;
+        btn1.innerText = emoji;
+        btn1.onclick = () => selectEmoji(1, emoji, btn1);
+        p1Container.appendChild(btn1);
+
+        // Spelare 2 knapp
+        const btn2 = document.createElement('button');
+        btn2.className = `p-2 rounded-xl border font-bold text-xl transition bg-white hover:bg-purple-100 ${state.p2.emoji === emoji ? 'border-purple-500 ring-2 ring-purple-300' : 'border-slate-200'}`;
+        btn2.innerText = emoji;
+        btn2.onclick = () => selectEmoji(2, emoji, btn2);
+        p2Container.appendChild(btn2);
+      });
+    }
+
+    // Välj emoji
+    function selectEmoji(playerNum, emoji, btnElement) {
+      playClick();
+      if (playerNum === 1) {
+        state.p1.emoji = emoji;
+        // Om spelare 2 har samma, välj en annan åt den för att undvika förvirring
+        if (state.p2.emoji === emoji) {
+          state.p2.emoji = availableEmojis.find(e => e !== emoji);
+        }
+      } else {
+        state.p2.emoji = emoji;
+        // Om spelare 1 har samma, välj en annan åt den
+        if (state.p1.emoji === emoji) {
+          state.p1.emoji = availableEmojis.find(e => e !== emoji);
+        }
+      }
+      renderEmojiPickers();
+    }
+
+    // Starta Spelet
+    function startGame() {
+      const name1 = document.getElementById('p1-name').value.trim();
+      const name2 = document.getElementById('p2-name').value.trim();
+
+      if (name1) state.p1.name = name1;
+      if (name2) state.p2.name = name2;
+
+      playPop();
+
+      // Synka scoreboarden
+      document.getElementById('score-p1-emoji').innerText = state.p1.emoji;
+      document.getElementById('score-p1-name').innerText = state.p1.name;
+      document.getElementById('score-p1').innerText = state.p1.score;
+
+      document.getElementById('score-p2-emoji').innerText = state.p2.emoji;
+      document.getElementById('score-p2-name').innerText = state.p2.name;
+      document.getElementById('score-p2').innerText = state.p2.score;
+
+      document.getElementById('score-ties').innerText = state.ties;
+
+      // Rendera spelplanen
+      createBoard();
+      updateTurnIndicator();
+
+      document.getElementById('screen-setup').classList.add('hidden');
+      document.getElementById('screen-game').classList.remove('hidden');
+    }
+
+    // Skapa brädans 3x3 rutor
+    function createBoard() {
+      const grid = document.getElementById('board-grid');
+      grid.innerHTML = "";
+
+      state.board = ["", "", "", "", "", "", "", "", ""];
+      state.gameActive = true;
+
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('button');
+        // Se till att varje cell i 3x3 griden är helt kvadratisk, flexibel och centrerad
+        cell.className = "cell btn-3d bg-pink-50 hover:bg-pink-100 border-b-6 border-pink-200 rounded-2xl flex items-center justify-center text-4xl font-extrabold shadow-sm transition aspect-square duration-100";
+        cell.id = `cell-${i}`;
+        cell.onclick = () => handleMove(i, cell);
+        grid.appendChild(cell);
+      }
+    }
+
+    // Uppdatera vem som ska köra
+    function updateTurnIndicator() {
+      const turnBox = document.getElementById('turn-indicator');
+      if (state.currentPlayer === 1) {
+        turnBox.innerText = `${state.p1.name}:s tur! (${state.p1.emoji})`;
+        turnBox.className = "bg-pink-400 text-white border-b-4 border-pink-600 font-extrabold text-center py-2.5 px-4 rounded-2xl shadow-sm text-sm transition-colors duration-200";
+      } else {
+        turnBox.innerText = `${state.p2.name}:s tur! (${state.p2.emoji})`;
+        turnBox.className = "bg-purple-400 text-white border-b-4 border-purple-600 font-extrabold text-center py-2.5 px-4 rounded-2xl shadow-sm text-sm transition-colors duration-200";
+      }
+    }
+
+    // Hantera när en spelare klickar på en ruta
+    function handleMove(index, cellElement) {
+      if (state.board[index] !== "" || !state.gameActive) {
+        // Redan tagen - skaka lite för feedback
+        cellElement.classList.add('shake-anim');
+        playTone(180, "sawtooth", 0.1);
+        setTimeout(() => cellElement.classList.remove('shake-anim'), 300);
+        return;
+      }
+
+      playPop();
+
+      const activePlayer = state.currentPlayer;
+      const piece = activePlayer === 1 ? state.p1.emoji : state.p2.emoji;
+
+      // Spara i status
+      state.board[index] = piece;
+      cellElement.innerText = piece;
+      cellElement.className = `cell btn-3d ${activePlayer === 1 ? 'bg-pink-100 border-pink-300 text-pink-700' : 'bg-purple-100 border-purple-300 text-purple-700'} rounded-2xl flex items-center justify-center text-4xl font-extrabold shadow-inner transition aspect-square duration-100 pointer-events-none scale-95`;
+
+      // Kolla om vinst
+      if (checkWin()) {
+        state.gameActive = false;
+        
+        // Uppdatera poäng
+        if (activePlayer === 1) {
+          state.p1.score++;
+          document.getElementById('score-p1').innerText = state.p1.score;
+        } else {
+          state.p2.score++;
+          document.getElementById('score-p2').innerText = state.p2.score;
+        }
+
+        playWinSound();
+        startConfetti();
+        showWinModal(`${activePlayer === 1 ? state.p1.name : state.p2.name} vann! 🎉`, piece);
+        return;
+      }
+
+      // Kolla oavgjort
+      if (!state.board.includes("")) {
+        state.gameActive = false;
+        state.ties++;
+        document.getElementById('score-ties').innerText = state.ties;
+        playDrawSound();
+        showWinModal("Det blev oavgjort! 🤝", "🎈");
+        return;
+      }
+
+      // Byt spelare
+      state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
+      updateTurnIndicator();
+    }
+
+    // Kontrollera vinstkombinationer
+    const winCombos = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Vågrätt
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Lodrätt
+      [0, 4, 8], [2, 4, 6]             // Diagonalt
+    ];
+
+    function checkWin() {
+      const board = state.board;
+      return winCombos.some(combo => {
+        const [a, b, c] = combo;
+        return board[a] !== "" && board[a] === board[b] && board[a] === board[c];
+      });
+    }
+
+    // Öppna vinst-skärmen (Modal istället för alert)
+    function showWinModal(title, emoji) {
+      document.getElementById('win-modal-title').innerText = title;
+      document.getElementById('win-modal-emoji').innerText = emoji;
+      
+      const desc = title.includes("oavgjort") 
+        ? "Båda spelade fantastiskt bra! Ta revansch direkt."
+        : `Vinnaren har utsetts! Bra kämpat!`;
+      document.getElementById('win-modal-desc').innerText = desc;
+
+      const modal = document.getElementById('win-modal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeWinModal() {
+      playClick();
+      document.getElementById('win-modal').classList.add('hidden');
+      stopConfetti();
+      resetBoard();
+    }
+
+    // Rensa Spelplanen
+    function resetBoard() {
+      playClick();
+      createBoard();
+      // Vinnaren börjar nästa omgång för roligare spelbana
+      updateTurnIndicator();
+    }
+
+    // Tillbaka till gubbar inställningar
+    function backToSetup() {
+      playClick();
+      document.getElementById('screen-game').classList.add('hidden');
+      document.getElementById('screen-setup').classList.remove('hidden');
+      stopConfetti();
+    }
+
+    // -----------------------------------------------------------------
+    // KONFETTI-EFFEKTER (REN JS / CANVAS)
+    // -----------------------------------------------------------------
+    let confettiInterval = null;
+    let particles = [];
+    const colors = ['#f472b6', '#f43f5e', '#fbbf24', '#c084fc', '#60a5fa', '#34d399'];
+
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Anpassa canvas storlek till skärmen
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * canvas.height,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 5,
+          tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+          tiltAngle: 0
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach((p, index) => {
+          p.tiltAngle += p.tiltAngleIncremental;
+          p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+          p.tilt = Math.sin(p.tiltAngle - index / 3) * 15;
+
+          ctx.beginPath();
+          ctx.lineWidth = p.r;
+          ctx.strokeStyle = p.color;
+          ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+          ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+          ctx.stroke();
+
+          // Återställ om den faller utanför skärmen
+          if (p.y > canvas.height) {
+            particles[index] = {
+              x: Math.random() * canvas.width,
+              y: -20,
+              r: p.r,
+              d: p.d,
+              color: p.color,
+              tilt: p.tilt,
+              tiltAngleIncremental: p.tiltAngleIncremental,
+              tiltAngle: p.tiltAngle
+            };
+          }
+        });
+      }
+
+      if (confettiInterval) clearInterval(confettiInterval);
+      confettiInterval = setInterval(draw, 24);
+    }
+
+    function stopConfetti() {
+      if (confettiInterval) {
+        clearInterval(confettiInterval);
+        confettiInterval = null;
+      }
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  </script>
+</body>
+</html>

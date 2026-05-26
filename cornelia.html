@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="sv" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Kart - Superracern</title>
+    <!-- Tailwind CSS för krispigt och modernt UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti för vinstfirande -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght=500;700&display=swap');
+        
+        .retro-font {
+            font-family: 'Press Start 2P', monospace;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle at center, #1e1b4b, #090514);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Dölj scrollbars */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between select-none">
+
+    <!-- Startskärm / Meny -->
+    <div id="start-screen" class="fixed inset-0 bg-slate-950/95 z-50 flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <div class="max-w-xl w-full text-center space-y-8 my-auto">
+            <!-- Titel -->
+            <div class="space-y-2">
+                <h1 class="retro-font text-3xl sm:text-4xl text-yellow-400 tracking-wider animate-bounce drop-shadow-[0_5px_0_rgba(220,38,38,1)]">
+                    RETRO KART
+                </h1>
+                <p class="text-indigo-400 font-bold tracking-widest text-sm uppercase">EXTREM HASTIGHET!</p>
+            </div>
+
+            <!-- Karaktärsval -->
+            <div class="bg-slate-900/80 border-2 border-indigo-500/30 rounded-3xl p-6 shadow-2xl backdrop-blur-md">
+                <h3 class="text-white font-bold text-lg mb-4 text-center">Välj din förare:</h3>
+                <div class="grid grid-cols-2 gap-4" id="character-grid">
+                    <!-- Karaktär 1 -->
+                    <button onclick="selectCharacter('mario')" id="char-mario" class="char-btn p-3 rounded-2xl border-2 border-indigo-500/20 bg-slate-850 hover:bg-indigo-950/50 hover:border-indigo-500 text-left transition flex items-center gap-3">
+                        <span class="text-3xl">🔴</span>
+                        <div>
+                            <p class="text-white font-bold text-sm">Blixten (Hypersnabb)</p>
+                            <div class="flex gap-1 mt-1 text-[9px] text-slate-400">
+                                <span>Fart: ⭐⭐⭐⭐⭐</span>
+                            </div>
+                        </div>
+                    </button>
+                    <!-- Karaktär 2 -->
+                    <button onclick="selectCharacter('luigi')" id="char-luigi" class="char-btn p-3 rounded-2xl border-2 border-indigo-500/20 bg-slate-850 hover:bg-indigo-950/50 hover:border-indigo-500 text-left transition flex items-center gap-3">
+                        <span class="text-3xl">🟢</span>
+                        <div>
+                            <p class="text-white font-bold text-sm">Grodan (Smidig)</p>
+                            <div class="flex gap-1 mt-1 text-[9px] text-slate-400">
+                                <span>Styrning: ⭐⭐⭐⭐⭐</span>
+                            </div>
+                        </div>
+                    </button>
+                    <!-- Karaktär 3 -->
+                    <button onclick="selectCharacter('bowser')" id="char-bowser" class="char-btn p-3 rounded-2xl border-2 border-indigo-500/20 bg-slate-850 hover:bg-indigo-950/50 hover:border-indigo-500 text-left transition flex items-center gap-3">
+                        <span class="text-3xl">🟡</span>
+                        <div>
+                            <p class="text-white font-bold text-sm">Tungviktarn (Extrem)</p>
+                            <div class="flex gap-1 mt-1 text-[9px] text-slate-400">
+                                <span>Toppfart: ⭐⭐⭐⭐⭐⭐</span>
+                            </div>
+                        </div>
+                    </button>
+                    <!-- Karaktär 4 -->
+                    <button onclick="selectCharacter('toad')" id="char-toad" class="char-btn p-3 rounded-2xl border-2 border-indigo-500/20 bg-slate-850 hover:bg-indigo-950/50 hover:border-indigo-500 text-left transition flex items-center gap-3">
+                        <span class="text-3xl">🔵</span>
+                        <div>
+                            <p class="text-white font-bold text-sm">Lill-Svampe</p>
+                            <div class="flex gap-1 mt-1 text-[9px] text-slate-400">
+                                <span>Acc: ⭐⭐⭐⭐⭐⭐</span>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kontrollinstruktioner -->
+            <div class="text-slate-400 text-xs bg-slate-900/40 p-4 rounded-2xl border border-slate-800">
+                <p class="font-bold text-slate-300 mb-1">🎮 KONTROLLER:</p>
+                <p>Använd <span class="text-yellow-400 font-bold">W/A/S/D</span> eller <span class="text-yellow-400 font-bold">Piltangenterna</span> för att styra.</p>
+                <p class="mt-1">Tryck på <span class="text-yellow-400 font-bold">MELLANSLAG (Space)</span> för att använda dina vapen/föremål!</p>
+            </div>
+
+            <!-- Start-knapp -->
+            <button onclick="startGame()" class="retro-font w-full py-4 bg-gradient-to-r from-red-600 via-yellow-500 to-emerald-600 hover:from-red-500 hover:to-emerald-500 text-white rounded-2xl text-lg font-bold shadow-[0_6px_0_rgba(4,120,87,1)] hover:translate-y-0.5 active:translate-y-1 transition duration-150 border-2 border-white/20">
+                STARTA RACE!
+            </button>
+        </div>
+    </div>
+
+    <!-- HUD Overlay (Under spelets gång) -->
+    <div id="hud" class="absolute inset-x-0 top-0 p-4 flex justify-between items-start pointer-events-none z-10 text-white select-none">
+        
+        <!-- Vänster sida: Position & Varv -->
+        <div class="space-y-1.5">
+            <!-- Position -->
+            <div class="bg-slate-950/80 border border-slate-800/80 px-4 py-2 rounded-2xl flex items-center gap-3 backdrop-blur-md">
+                <span class="text-slate-400 text-xs font-bold uppercase">Plats</span>
+                <span id="pos-display" class="retro-font text-xl text-yellow-400 animate-pulse">1 / 4</span>
+            </div>
+            <!-- Varv -->
+            <div class="bg-slate-950/80 border border-slate-800/80 px-4 py-2 rounded-2xl flex items-center gap-3 backdrop-blur-md">
+                <span class="text-slate-400 text-xs font-bold uppercase">Varv</span>
+                <span id="lap-display" class="retro-font text-sm">1 / 3</span>
+            </div>
+            <!-- Bana -->
+            <div class="bg-slate-950/80 border border-slate-800/80 px-4 py-1.5 rounded-2xl inline-block backdrop-blur-md">
+                <span class="text-xs text-indigo-300 font-bold uppercase">Bana: <span id="bana-display" class="text-emerald-400">1</span></span>
+            </div>
+        </div>
+
+        <!-- Mitten: Föremålsslot (Fokuspunkt) -->
+        <div class="flex flex-col items-center">
+            <div class="w-16 h-16 bg-slate-950/90 border-4 border-yellow-400 rounded-2xl flex items-center justify-center relative shadow-lg shadow-yellow-400/10 backdrop-blur-md">
+                <!-- Visar aktuellt föremål -->
+                <span id="item-display" class="text-4xl transition-all duration-150">❓</span>
+                <span class="absolute -bottom-2 px-1.5 py-0.5 bg-yellow-500 text-slate-950 text-[8px] retro-font rounded font-bold uppercase">Vapen</span>
+            </div>
+            <span class="text-[9px] text-slate-400 mt-2 font-bold bg-slate-900/80 px-2 py-0.5 rounded">SPACE för att kasta</span>
+        </div>
+
+        <!-- Höger sida: Hastighetsmätare & Poäng -->
+        <div class="text-right space-y-1.5">
+            <!-- Hastighet -->
+            <div class="bg-slate-950/80 border border-slate-800/80 px-4 py-2 rounded-2xl inline-flex flex-col items-end backdrop-blur-md">
+                <span class="text-slate-400 text-[10px] font-bold uppercase">Hastighet</span>
+                <span class="font-bold text-xl text-emerald-400"><span id="speed-display">0</span> <span class="text-xs text-slate-400">km/h</span></span>
+            </div>
+            <!-- Cup Poäng -->
+            <div class="bg-slate-950/80 border border-slate-800/80 px-4 py-2 rounded-2xl flex items-center gap-2 backdrop-blur-md">
+                <span class="text-slate-400 text-[10px] font-bold uppercase">Poäng</span>
+                <span id="score-display" class="font-bold text-amber-400 text-sm">⭐ 0p</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nedräkning / Meddelande i mitten av skärmen -->
+    <div id="game-message" class="absolute inset-0 flex items-center justify-center pointer-events-none z-25 text-center">
+        <h2 id="message-text" class="retro-font text-5xl sm:text-7xl text-yellow-400 drop-shadow-[0_4px_0_rgba(0,0,0,1)] scale-0 transition-transform duration-300"></h2>
+    </div>
+
+    <!-- Huvudspelsyta (Canvas) -->
+    <div class="flex-grow w-full relative overflow-hidden bg-slate-950">
+        <canvas id="game-canvas" class="block mx-auto h-full w-full"></canvas>
+    </div>
+
+    <!-- Mobilkontroller -->
+    <div id="mobile-controls" class="p-4 bg-slate-950/85 border-t border-slate-900 flex justify-between items-center gap-4 z-30 select-none hidden md:hidden">
+        <!-- Vänster: Styrknappar -->
+        <div class="flex gap-2">
+            <button id="btn-left" class="w-16 h-16 bg-slate-800 active:bg-indigo-600 text-white rounded-2xl border border-slate-700 flex items-center justify-center text-2xl active:scale-95 transition-transform">
+                ◀
+            </button>
+            <button id="btn-right" class="w-16 h-16 bg-slate-800 active:bg-indigo-600 text-white rounded-2xl border border-slate-700 flex items-center justify-center text-2xl active:scale-95 transition-transform">
+                ▶
+            </button>
+        </div>
+
+        <!-- Mitten: Använd föremål på mobil -->
+        <button id="btn-use-item" class="w-20 h-16 bg-yellow-500 active:bg-yellow-400 text-slate-950 font-bold rounded-2xl border-2 border-yellow-300 flex flex-col items-center justify-center text-xs active:scale-95 transition-transform shadow-lg shadow-yellow-500/20">
+            <span class="text-xl">🚀</span>
+            <span>KASTA</span>
+        </button>
+
+        <!-- Höger: Gas & Broms -->
+        <div class="flex gap-2">
+            <button id="btn-brake" class="w-16 h-16 bg-rose-950/80 active:bg-rose-800 text-rose-300 rounded-2xl border border-rose-900/50 flex items-center justify-center text-sm font-bold active:scale-95 transition-transform">
+                BROMS
+            </button>
+            <button id="btn-gas" class="w-16 h-16 bg-emerald-600 active:bg-emerald-500 text-white rounded-2xl border border-emerald-500 flex items-center justify-center text-xl font-bold active:scale-95 transition-transform">
+                GAS
+            </button>
+        </div>
+    </div>
+
+    <!-- Slutskärm (Vinst / Förlust) -->
+    <div id="end-screen" class="fixed inset-0 bg-slate-950/95 z-50 flex-col items-center justify-center p-4 hidden">
+        <div class="max-w-md w-full text-center space-y-6 bg-slate-900 border-2 border-indigo-500/30 p-8 rounded-3xl shadow-2xl">
+            <h2 id="end-title" class="retro-font text-3xl text-yellow-400 mb-2">MÅLGÅNG!</h2>
+            <p id="end-subtext" class="text-slate-300 text-sm">Du slutade på plats: <span id="end-position" class="font-bold text-emerald-400">1:a</span></p>
+            
+            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-2">
+                <p class="text-xs text-slate-400 uppercase font-bold tracking-widest">Cup Resultat</p>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-300">Intjänade Poäng:</span>
+                    <span id="end-points" class="font-bold text-yellow-400">+100p</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-300">Aktuell Bana:</span>
+                    <span id="end-level" class="font-bold text-indigo-400">Bana 1</span>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="restartCup()" class="flex-1 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs uppercase tracking-wider transition">
+                    Börja om Cup
+                </button>
+                <button id="next-track-btn" onclick="nextTrack()" class="flex-grow py-3.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-indigo-500/20">
+                    Nästa Bana ➡
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- SPEL-TILLSTÅND (STATE) ---
+        let state = {
+            selectedCharacter: 'mario',
+            score: 0,
+            level: 1,
+            lapsTotal: 3,
+            gameActive: false,
+            countdown: 3,
+            trackConfig: null,
+            players: [], // [0] är mänskliga spelaren, övriga är AI-bilar
+            itemBoxes: [],
+            projectiles: [],
+            obstacles: [], // Bananer etc.
+            keys: {},
+            lastTime: 0
+        };
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // --- SYNTHESIZE SOUNDS (Web Audio API) ---
+        let audioCtx = null;
+        let engineOsc = null;
+        let engineGain = null;
+
+        function initAudio() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Skapa ständigt motorljud för spelaren
+            engineOsc = audioCtx.createOscillator();
+            engineGain = audioCtx.createGain();
+            engineOsc.type = 'sawtooth';
+            engineOsc.frequency.setValueAtTime(60, audioCtx.currentTime);
+            engineGain.gain.setValueAtTime(0.005, audioCtx.currentTime); // Lågt motorljud
+            
+            // Filter för att göra motorljudet mindre vasst
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+
+            engineOsc.connect(filter);
+            filter.connect(engineGain);
+            engineGain.connect(audioCtx.destination);
+            engineOsc.start();
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            try {
+                if (type === 'boost') {
+                    // Snabbt pitch-upp-ljud
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.5);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.5);
+                } 
+                else if (type === 'crash') {
+                    // Brusigt kraschljud
+                    const bufferSize = audioCtx.sampleRate * 0.3;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    const gain = audioCtx.createGain();
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    noise.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    noise.start();
+                }
+                else if (type === 'pickup') {
+                    // Trevligt pling-ljud för lådor
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                    osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.1); // A5
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                }
+                else if (type === 'countdown_beep') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+                }
+                else if (type === 'countdown_start') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                }
+            } catch (e) {
+                console.log("Kunde inte spela ljudeffekt:", e);
+            }
+        }
+
+        function updateEngineSound(speed) {
+            if (!engineOsc) return;
+            // Justera frekvensen på motorljudet baserat på hastighet
+            const targetFreq = 40 + (Math.abs(speed) * 35);
+            engineOsc.frequency.setTargetAtTime(targetFreq, audioCtx.currentTime, 0.1);
+        }
+
+        // --- DESIGN AV BANOR (TRACKS) ---
+        function generateTrackConfig(level) {
+            const width = canvas.width || 1200;
+            const height = canvas.height || 800;
+            
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            let pathPoints = [];
+            let roadWidth = 100 - (level * 6); // Vägen blir smalare för varje nivå
+            if (roadWidth < 45) roadWidth = 45;
+
+            if (level === 1) {
+                const rx = width * 0.38;
+                const ry = height * 0.34;
+                for (let a = 0; a < Math.PI * 2; a += 0.1) {
+                    pathPoints.push({
+                        x: centerX + Math.cos(a) * rx,
+                        y: centerY + Math.sin(a) * ry
+                    });
+                }
+            } 
+            else if (level === 2) {
+                const rx = width * 0.38;
+                const ry = height * 0.34;
+                for (let a = 0; a < Math.PI * 2; a += 0.1) {
+                    let modifier = 1;
+                    if (a > Math.PI * 0.3 && a < Math.PI * 0.8) {
+                        modifier = 0.65;
+                    }
+                    pathPoints.push({
+                        x: centerX + Math.cos(a) * rx * modifier,
+                        y: centerY + Math.sin(a) * ry * modifier
+                    });
+                }
+            }
+            else if (level === 3) {
+                for (let a = 0; a < Math.PI * 2; a += 0.08) {
+                    let r = 260 + Math.sin(a * 2) * 120;
+                    pathPoints.push({
+                        x: centerX + Math.cos(a) * r * 1.3,
+                        y: centerY + Math.sin(a) * r * 0.8
+                    });
+                }
+            }
+            else {
+                const waveCount = 4 + (level % 2);
+                for (let a = 0; a < Math.PI * 2; a += 0.05) {
+                    let r = 240 + Math.sin(a * waveCount) * (50 + level * 10);
+                    pathPoints.push({
+                        x: centerX + Math.cos(a) * r * 1.3,
+                        y: centerY + Math.sin(a) * r * 0.8
+                    });
+                }
+            }
+
+            let itemBoxes = [];
+            const boxCount = 5 + level;
+            for (let i = 0; i < boxCount; i++) {
+                const targetIdx = Math.floor((pathPoints.length / boxCount) * i);
+                const pt = pathPoints[targetIdx];
+                itemBoxes.push({
+                    x: pt.x + (Math.random() * 30 - 15),
+                    y: pt.y + (Math.random() * 30 - 15),
+                    active: true,
+                    respawnTimer: 0
+                });
+            }
+
+            // ALLA HINDER BORTTAGNA!
+            let staticHazards = [];
+
+            return {
+                points: pathPoints,
+                width: roadWidth,
+                itemBoxes: itemBoxes,
+                hazards: staticHazards
+            };
+        }
+
+        // --- SKAPA FORDON (KART-KLASS) ---
+        class Kart {
+            constructor(x, y, isAI = false, charType = 'mario', index = 0) {
+                this.x = x;
+                this.y = y;
+                this.isAI = isAI;
+                this.charType = charType;
+                this.index = index; // 0 = Spelare, 1-3 = AI
+                
+                this.angle = 0;
+                this.speed = 0;
+                this.driftAngle = 0;
+                this.targetAngle = 0;
+
+                // Stats baserade på karaktär (Extrema hastigheter!)
+                this.maxSpeed = 10.0;
+                this.acc = 0.15;
+                this.steerPower = 0.045;
+                this.friction = 0.97;
+                this.color = '#ef4444';
+                this.emoji = '🔴';
+
+                this.setStats();
+
+                this.currentLap = 0;
+                this.nextWaypointIdx = 1;
+                this.spinTimer = 0;
+                this.boostTimer = 0;
+                this.heldItem = null;
+                this.lastWaypointDist = 0;
+                this.finished = false;
+                this.finishTime = 0;
+
+                this.aiWaypointOffset = { x: Math.random() * 30 - 15, y: Math.random() * 30 - 15 };
+                this.aiDecisionTimer = 0;
+            }
+
+            setStats() {
+                if (this.charType === 'mario') {
+                    this.maxSpeed = 11.5; this.acc = 0.15; this.steerPower = 0.042; this.color = '#ef4444'; this.emoji = '🔴';
+                } else if (this.charType === 'luigi') {
+                    this.maxSpeed = 10.0; this.acc = 0.18; this.steerPower = 0.052; this.color = '#22c55e'; this.emoji = '🟢';
+                } else if (this.charType === 'bowser') {
+                    this.maxSpeed = 13.0; this.acc = 0.12; this.steerPower = 0.038; this.color = '#eab308'; this.emoji = '🟡';
+                } else {
+                    this.maxSpeed = 9.5; this.acc = 0.25; this.steerPower = 0.05; this.color = '#3b82f6'; this.emoji = '🔵';
+                }
+
+                if (this.isAI) {
+                    const aiChars = [
+                        { emoji: '🦊', color: '#f97316' },
+                        { emoji: '🐼', color: '#cbd5e1' },
+                        { emoji: '🦖', color: '#10b981' }
+                    ];
+                    const choice = aiChars[(this.index - 1) % aiChars.length];
+                    this.emoji = choice.emoji;
+                    this.color = choice.color;
+                    this.maxSpeed *= (0.82 + (state.level * 0.05));
+                }
+            }
+
+            update(dt) {
+                // 1. Hantera snurreffekt vid krasch
+                if (this.spinTimer > 0) {
+                    this.spinTimer -= dt;
+                    this.angle += 0.25;
+                    this.speed *= 0.85;
+                    this.movePhysical();
+                    return;
+                }
+
+                // 2. Kontroller för spelare vs AI
+                if (!this.isAI) {
+                    this.handlePlayerControls();
+                } else {
+                    this.handleAIControls();
+                }
+
+                // 3. Tillämpa Boost
+                if (this.boostTimer > 0) {
+                    this.boostTimer -= dt;
+                    this.speed = Math.min(this.speed + this.acc * 2, this.maxSpeed * 1.5);
+                }
+
+                // 4. Friktion och vägstatus
+                const onTrack = isPointOnTrack(this.x, this.y);
+                const currentMax = this.boostTimer > 0 ? this.maxSpeed * 1.5 : (onTrack ? this.maxSpeed : this.maxSpeed * 0.4);
+                
+                if (!onTrack && this.boostTimer <= 0) {
+                    this.speed *= 0.90;
+                }
+
+                // Begränsa maxhastighet
+                if (this.speed > currentMax) this.speed -= 0.15;
+                if (this.speed < -currentMax/2) this.speed = -currentMax/2;
+
+                this.speed *= this.friction;
+
+                // 5. Rörelseberäkning
+                this.movePhysical();
+
+                // 6. Uppdatera framsteg på banan
+                this.trackProgress();
+            }
+
+            movePhysical() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+            }
+
+            handlePlayerControls() {
+                let speedFactor = 1.0;
+                const absSpeed = Math.abs(this.speed);
+                
+                if (absSpeed < 1.5) {
+                    speedFactor = Math.max(0.45, absSpeed / 1.5);
+                }
+
+                const steerDirection = this.speed < 0 ? -1 : 1;
+
+                if (state.keys['ArrowLeft'] || state.keys['KeyA'] || state.keys['MobileLeft']) {
+                    this.angle -= this.steerPower * speedFactor * steerDirection;
+                }
+                if (state.keys['ArrowRight'] || state.keys['KeyD'] || state.keys['MobileRight']) {
+                    this.angle += this.steerPower * speedFactor * steerDirection;
+                }
+
+                // Gasa / Backa
+                if (state.keys['ArrowUp'] || state.keys['KeyW'] || state.keys['MobileGas']) {
+                    this.speed += this.acc;
+                } else if (state.keys['ArrowDown'] || state.keys['KeyS'] || state.keys['MobileBrake']) {
+                    this.speed -= this.acc * 1.5;
+                }
+
+                if (state.gameActive) {
+                    updateEngineSound(this.speed);
+                }
+            }
+
+            handleAIControls() {
+                const pts = state.trackConfig.points;
+                const wp = pts[this.nextWaypointIdx];
+                
+                const targetX = wp.x + this.aiWaypointOffset.x;
+                const targetY = wp.y + this.aiWaypointOffset.y;
+
+                const dx = targetX - this.x;
+                const dy = targetY - this.y;
+                const angleToWp = Math.atan2(dy, dx);
+
+                let diff = angleToWp - this.angle;
+                while (diff < -Math.PI) diff += Math.PI * 2;
+                while (diff > Math.PI) diff -= Math.PI * 2;
+
+                const steerSpeed = this.steerPower * 0.95;
+                if (diff > 0.05) this.angle += steerSpeed;
+                else if (diff < -0.05) this.angle -= steerSpeed;
+
+                if (Math.abs(diff) > 0.8) {
+                    this.speed += this.acc * 0.3;
+                } else {
+                    this.speed += this.acc;
+                }
+
+                this.aiDecisionTimer++;
+                if (this.aiDecisionTimer > 180) {
+                    this.aiDecisionTimer = 0;
+                    if (this.heldItem && Math.random() > 0.4) {
+                        useItem(this);
+                    }
+                    this.aiWaypointOffset = { x: Math.random() * 40 - 20, y: Math.random() * 40 - 20 };
+                }
+            }
+
+            trackProgress() {
+                const pts = state.trackConfig.points;
+                const wp = pts[this.nextWaypointIdx];
+                const dx = wp.x - this.x;
+                const dy = wp.y - this.y;
+                const distToWp = Math.sqrt(dx * dx + dy * dy);
+
+                if (distToWp < state.trackConfig.width * 1.5) {
+                    this.nextWaypointIdx = (this.nextWaypointIdx + 1) % pts.length;
+                    
+                    if (this.nextWaypointIdx === 1) {
+                        this.currentLap++;
+                        if (this.currentLap > state.lapsTotal) {
+                            this.finished = true;
+                            this.finishTime = Date.now();
+                            if (!this.isAI) {
+                                triggerRaceFinished();
+                            }
+                        }
+                    }
+                }
+                this.lastWaypointDist = distToWp;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+
+                if (this.speed > 3 && this.spinTimer <= 0) {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                    ctx.fillRect(-15, -10, 6, 4);
+                    ctx.fillRect(-15, 6, 6, 4);
+                }
+
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-16, -11, 4, 22);
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(-12, -8, 20, 16);
+
+                ctx.fillStyle = this.color;
+                ctx.fillRect(4, -9, 6, 2);
+                ctx.fillRect(4, 7, 6, 2);
+                ctx.beginPath();
+                ctx.moveTo(8, -8);
+                ctx.lineTo(16, 0);
+                ctx.lineTo(8, 8);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(-12, -12, 6, 3);
+                ctx.fillRect(-12, 9, 6, 3);
+                ctx.fillRect(6, -11, 5, 2.5);
+                ctx.fillRect(6, 8.5, 5, 2.5);
+
+                ctx.restore();
+                
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.font = '16px serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const bounce = Math.sin(Date.now() * 0.01 + this.index) * 1.5;
+                ctx.fillText(this.emoji, 0, -2 + bounce);
+                ctx.restore();
+            }
+        }
+
+        // --- SKÖLDPADDSSKAL & PROJEKTILER ---
+        class Projectile {
+            constructor(x, y, angle, owner) {
+                this.x = x;
+                this.y = y;
+                this.angle = angle;
+                this.speed = 18;
+                this.owner = owner;
+                this.target = null;
+                this.life = 300;
+                
+                this.findTarget();
+            }
+
+            findTarget() {
+                let closest = null;
+                let minDist = 400;
+                state.players.forEach(p => {
+                    if (p !== this.owner && !p.finished) {
+                        const dx = p.x - this.x;
+                        const dy = p.y - this.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closest = p;
+                        }
+                    }
+                });
+                this.target = closest;
+            }
+
+            update() {
+                this.life--;
+                
+                if (this.target) {
+                    const dx = this.target.x - this.x;
+                    const dy = this.target.y - this.y;
+                    const targetAngle = Math.atan2(dy, dx);
+                    
+                    let diff = targetAngle - this.angle;
+                    while (diff < -Math.PI) diff += Math.PI * 2;
+                    while (diff > Math.PI) diff -= Math.PI * 2;
+                    
+                    this.angle += diff * 0.12;
+                }
+
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+
+                if (!isPointOnTrack(this.x, this.y)) {
+                    this.life = 0;
+                }
+
+                state.players.forEach(p => {
+                    if (p !== this.owner && p.spinTimer <= 0) {
+                        const dx = p.x - this.x;
+                        const dy = p.y - this.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < 20) {
+                            p.spinTimer = 1.2;
+                            playSound('crash');
+                            this.life = 0;
+                        }
+                    }
+                });
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.font = '20px serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🐢', 0, 0);
+                ctx.restore();
+            }
+        }
+
+        // --- BANANSKAL ---
+        class Obstacle {
+            constructor(x, y, type = 'banana') {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.radius = 12;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.font = '18px serif';
+                ctx.fillText('🍌', -9, 9);
+                ctx.restore();
+            }
+        }
+
+        // --- KOLLA OM PUNKT ÄR PÅ RACERBANAN ---
+        function isPointOnTrack(x, y) {
+            const pts = state.trackConfig.points;
+            const w = state.trackConfig.width;
+
+            let minDistance = Infinity;
+
+            for (let i = 0; i < pts.length; i++) {
+                const p1 = pts[i];
+                const p2 = pts[(i + 1) % pts.length];
+
+                const A = x - p1.x;
+                const B = y - p1.y;
+                const C = p2.x - p1.x;
+                const D = p2.y - p1.y;
+
+                const dot = A * C + B * D;
+                const lenSq = C * C + D * D;
+                let param = -1;
+                if (lenSq !== 0) param = dot / lenSq;
+
+                let xx, yy;
+
+                if (param < 0) {
+                    xx = p1.x;
+                    yy = p1.y;
+                } else if (param > 1) {
+                    xx = p2.x;
+                    yy = p2.y;
+                } else {
+                    xx = p1.x + param * C;
+                    yy = p1.y + param * D;
+                }
+
+                const dx = x - xx;
+                const dy = y - yy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < minDistance) {
+                    minDistance = dist;
+                }
+            }
+
+            return minDistance <= w;
+        }
+
+        // --- GAMEPLAY ENGINE LOGIK ---
+        function setupCupLevel() {
+            state.trackConfig = generateTrackConfig(state.level);
+            
+            const pts = state.trackConfig.points;
+            const startPt = pts[0];
+            const nextPt = pts[1];
+            const startAngle = Math.atan2(nextPt.y - startPt.y, nextPt.x - startPt.x);
+
+            state.players = [];
+            state.projectiles = [];
+            state.obstacles = [];
+
+            const playerKart = new Kart(startPt.x, startPt.y, false, state.selectedCharacter, 0);
+            playerKart.angle = startAngle;
+            state.players.push(playerKart);
+
+            for (let i = 1; i <= 3; i++) {
+                const gridOffsetAngle = startAngle + Math.PI;
+                const sideAngle = startAngle + Math.PI/2;
+                
+                const gridDist = i * 35;
+                const sideDist = (i % 2 === 0 ? 1 : -1) * 20;
+
+                const aiX = startPt.x + Math.cos(gridOffsetAngle) * gridDist + Math.cos(sideAngle) * sideDist;
+                const aiY = startPt.y + Math.sin(gridOffsetAngle) * gridDist + Math.sin(sideAngle) * sideDist;
+
+                const charTypes = ['mario', 'luigi', 'bowser', 'toad'];
+                const aiChar = charTypes[(i + state.level) % charTypes.length];
+
+                const aiKart = new Kart(aiX, aiY, true, aiChar, i);
+                aiKart.angle = startAngle;
+                state.players.push(aiKart);
+            }
+
+            // Statiska faror skapas inte längre!
+            state.trackConfig.hazards.forEach(hz => {
+                state.obstacles.push(new Obstacle(hz.x, hz.y, hz.type));
+            });
+
+            const banaDisplay = document.getElementById('bana-display');
+            if (banaDisplay) banaDisplay.textContent = state.level;
+            updateHUD();
+        }
+
+        function selectCharacter(char) {
+            state.selectedCharacter = char;
+            document.querySelectorAll('.char-btn').forEach(btn => {
+                btn.classList.remove('border-yellow-400', 'bg-indigo-950/60');
+                btn.classList.add('border-indigo-500/20');
+            });
+            const selectedBtn = document.getElementById(`char-${char}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-indigo-500/20');
+                selectedBtn.classList.add('border-yellow-400', 'bg-indigo-950/60');
+            }
+        }
+
+        function startGame() {
+            initAudio();
+            document.getElementById('start-screen').classList.add('hidden');
+            
+            setupCupLevel();
+            startCountdown();
+        }
+
+        function startCountdown() {
+            state.gameActive = false;
+            state.countdown = 3;
+            const msgEl = document.getElementById('message-text');
+            if (!msgEl) {
+                state.gameActive = true;
+                state.lastTime = performance.now();
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            const interval = setInterval(() => {
+                if (state.countdown > 0) {
+                    playSound('countdown_beep');
+                    msgEl.textContent = state.countdown;
+                    msgEl.style.transform = 'scale(1.2)';
+                    setTimeout(() => msgEl.style.transform = 'scale(0)', 700);
+                    state.countdown--;
+                } else {
+                    clearInterval(interval);
+                    playSound('countdown_start');
+                    msgEl.textContent = "KÖR!";
+                    msgEl.className = "retro-font text-5xl sm:text-7xl text-emerald-400 drop-shadow-[0_4px_0_rgba(0,0,0,1)] scale-125 transition-all duration-300";
+                    setTimeout(() => {
+                        msgEl.style.transform = 'scale(0)';
+                    }, 1200);
+                    
+                    state.gameActive = true;
+                    state.lastTime = performance.now();
+                    requestAnimationFrame(gameLoop);
+                }
+            }, 1000);
+        }
+
+        function checkItemCollisions() {
+            state.trackConfig.itemBoxes.forEach(box => {
+                if (!box.active) return;
+                
+                state.players.forEach(p => {
+                    const dx = p.x - box.x;
+                    const dy = p.y - box.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+
+                    if (dist < 22) {
+                        box.active = false;
+                        box.respawnTimer = 300;
+                        
+                        if (!p.isAI) {
+                            playSound('pickup');
+                        }
+
+                        if (!p.heldItem) {
+                            const items = ['mushroom', 'banana', 'shell'];
+                            p.heldItem = items[Math.floor(Math.random() * items.length)];
+                            if (!p.isAI) {
+                                triggerItemRoulette();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function triggerItemRoulette() {
+            const display = document.getElementById('item-display');
+            if (!display) return;
+            const icons = { 'mushroom': '🍄', 'banana': '🍌', 'shell': '🐢' };
+            let count = 0;
+            const anim = setInterval(() => {
+                const keys = Object.keys(icons);
+                display.textContent = icons[keys[count % keys.length]];
+                count++;
+                if (count > 8) {
+                    clearInterval(anim);
+                    const realItem = state.players[0].heldItem;
+                    display.textContent = icons[realItem] || '❓';
+                    display.classList.add('scale-150');
+                    setTimeout(() => display.classList.remove('scale-150'), 200);
+                }
+            }, 80);
+        }
+
+        function useItem(kart) {
+            if (!kart.heldItem) return;
+
+            const item = kart.heldItem;
+            kart.heldItem = null;
+
+            const display = document.getElementById('item-display');
+            if (!kart.isAI && display) {
+                display.textContent = '❓';
+            }
+
+            if (item === 'mushroom') {
+                kart.boostTimer = 1.5;
+                if (!kart.isAI) playSound('boost');
+            } 
+            else if (item === 'banana') {
+                const offsetAngle = kart.angle + Math.PI;
+                const bx = kart.x + Math.cos(offsetAngle) * 30;
+                const by = kart.y + Math.sin(offsetAngle) * 30;
+                state.obstacles.push(new Obstacle(bx, by, 'banana'));
+            } 
+            else if (item === 'shell') {
+                const sx = kart.x + Math.cos(kart.angle) * 30;
+                const sy = kart.y + Math.sin(kart.angle) * 30;
+                state.projectiles.push(new Projectile(sx, sy, kart.angle, kart));
+            }
+        }
+
+        function checkObstacleCollisions() {
+            state.players.forEach(p => {
+                if (p.spinTimer > 0) return;
+
+                state.obstacles.forEach((obs, index) => {
+                    const dx = p.x - obs.x;
+                    const dy = p.y - obs.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+
+                    if (dist < obs.radius + 10) {
+                        if (obs.type === 'banana') {
+                            p.spinTimer = 1.0;
+                            playSound('crash');
+                            state.obstacles.splice(index, 1);
+                        }
+                    }
+                });
+            });
+        }
+
+        function checkKartCollisions() {
+            for (let i = 0; i < state.players.length; i++) {
+                for (let j = i + 1; j < state.players.length; j++) {
+                    const p1 = state.players[i];
+                    const p2 = state.players[j];
+
+                    const dx = p2.x - p1.x;
+                    const dy = p2.y - p1.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+
+                    if (dist < 24) {
+                        const angle = Math.atan2(dy, dx);
+                        const pushForce = 2.0;
+                        
+                        p1.x -= Math.cos(angle) * pushForce;
+                        p1.y -= Math.sin(angle) * pushForce;
+                        p2.x += Math.cos(angle) * pushForce;
+                        p2.y += Math.sin(angle) * pushForce;
+
+                        const tempSpeed = p1.speed;
+                        p1.speed = p2.speed * 0.8;
+                        p2.speed = tempSpeed * 0.8;
+
+                        playSound('crash');
+                    }
+                }
+            }
+        }
+
+        function updatePositions() {
+            let sorted = [...state.players].sort((a, b) => {
+                if (a.finished && b.finished) {
+                    return a.finishTime - b.finishTime;
+                }
+                if (a.finished) return -1;
+                if (b.finished) return 1;
+
+                if (a.currentLap !== b.currentLap) {
+                    return b.currentLap - a.currentLap;
+                }
+                if (a.nextWaypointIdx !== b.nextWaypointIdx) {
+                    return b.nextWaypointIdx - a.nextWaypointIdx;
+                }
+                return a.lastWaypointDist - b.lastWaypointDist;
+            });
+
+            state.players.forEach(p => {
+                p.position = sorted.indexOf(p) + 1;
+            });
+        }
+
+        // --- RITA RACERBANA ---
+        function drawTrack() {
+            const pts = state.trackConfig.points;
+            const w = state.trackConfig.width;
+
+            ctx.fillStyle = '#15803d';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#166534';
+            for (let x = 0; x < canvas.width; x += 80) {
+                for (let y = 0; y < canvas.height; y += 80) {
+                    if ((x+y)/80 % 2 === 0) {
+                        ctx.fillRect(x, y, 40, 40);
+                    }
+                }
+            }
+
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = w * 2 + 16;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            pts.forEach((pt, i) => {
+                if (i === 0) ctx.moveTo(pt.x, pt.y);
+                else ctx.lineTo(pt.x, pt.y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.setLineDash([20, 20]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = w * 2;
+            ctx.beginPath();
+            pts.forEach((pt, i) => {
+                if (i === 0) ctx.moveTo(pt.x, pt.y);
+                else ctx.lineTo(pt.x, pt.y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+
+            ctx.save();
+            const startPt = pts[0];
+            const nextPt = pts[1];
+            const angle = Math.atan2(nextPt.y - startPt.y, nextPt.x - startPt.x);
+            
+            ctx.translate(startPt.x, startPt.y);
+            ctx.rotate(angle + Math.PI/2);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(-w, -6, w * 2, 12);
+            ctx.fillStyle = '#000000';
+            const squareSize = 8;
+            for (let ox = -w; ox < w; ox += squareSize * 2) {
+                ctx.fillRect(ox, -6, squareSize, 6);
+                ctx.fillRect(ox + squareSize, 0, squareSize, 6);
+            }
+            ctx.restore();
+
+            // Ritar endast de bananer som kastats av förare nu
+            state.obstacles.forEach(obs => {
+                if (obs.type === 'banana') obs.draw();
+            });
+
+            state.trackConfig.itemBoxes.forEach(box => {
+                if (!box.active) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(box.x, box.y, 14, 0, Math.PI*2);
+                    ctx.stroke();
+                    return;
+                }
+
+                ctx.save();
+                ctx.translate(box.x, box.y);
+                const pulse = Math.sin(Date.now() * 0.01) * 3;
+                
+                const grad = ctx.createRadialGradient(0, 0, 2, 0, 0, 15 + pulse);
+                grad.addColorStop(0, '#facc15');
+                grad.addColorStop(0.5, '#db2777');
+                grad.addColorStop(1, 'rgba(219, 39, 119, 0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, 0, 16 + pulse, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = '#1e1b4b';
+                ctx.lineWidth = 1.5;
+                ctx.fillRect(-6, -6, 12, 12);
+                ctx.strokeRect(-6, -6, 12, 12);
+
+                ctx.fillStyle = '#db2777';
+                ctx.font = 'bold 9px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('?', 0, 0);
+
+                ctx.restore();
+            });
+        }
+
+        function updateHUD() {
+            const player = state.players[0];
+            if (!player) return;
+
+            const kmh = Math.round(Math.abs(player.speed) * 35);
+            const speedDisplay = document.getElementById('speed-display');
+            if (speedDisplay) speedDisplay.textContent = kmh;
+
+            const curLap = player.currentLap === 0 ? 1 : player.currentLap;
+            const lapDisplay = document.getElementById('lap-display');
+            if (lapDisplay) lapDisplay.textContent = `${Math.min(curLap, state.lapsTotal)} / ${state.lapsTotal}`;
+
+            const posDisplay = document.getElementById('pos-display');
+            if (posDisplay) posDisplay.textContent = `${player.position} / 4`;
+
+            const scoreDisplay = document.getElementById('score-display');
+            if (scoreDisplay) scoreDisplay.textContent = `⭐ ${state.score}p`;
+
+            const bboxes = state.trackConfig && state.trackConfig.itemBoxes;
+            if (bboxes) {
+                bboxes.forEach(box => {
+                    if (!box.active && box.respawnTimer > 0) {
+                        box.respawnTimer--;
+                        if (box.respawnTimer <= 0) {
+                            box.active = true;
+                        }
+                    }
+                });
+            }
+        }
+
+        function gameLoop(timestamp) {
+            if (!state.gameActive) return;
+
+            const dt = 1;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            state.players.forEach(p => p.update(dt));
+            state.projectiles.forEach(p => p.update());
+            
+            state.projectiles = state.projectiles.filter(p => p.life > 0);
+
+            checkItemCollisions();
+            checkObstacleCollisions();
+            checkKartCollisions();
+
+            updatePositions();
+
+            drawTrack();
+
+            state.obstacles.forEach(obs => {
+                if (obs.type === 'banana') obs.draw();
+            });
+
+            state.projectiles.forEach(proj => proj.draw());
+            state.players.forEach(p => p.draw());
+
+            updateHUD();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function triggerRaceFinished() {
+            state.gameActive = false;
+            
+            if (engineGain) {
+                engineGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            }
+
+            const player = state.players[0];
+            const isWinner = player.position === 1;
+
+            let earnedPoints = 0;
+            if (player.position === 1) earnedPoints = 100;
+            else if (player.position === 2) earnedPoints = 70;
+            else if (player.position === 3) earnedPoints = 50;
+            else earnedPoints = 20;
+
+            state.score += earnedPoints;
+
+            const endScreen = document.getElementById('end-screen');
+            if (endScreen) {
+                endScreen.classList.remove('hidden');
+                endScreen.classList.add('flex');
+            }
+
+            const titleEl = document.getElementById('end-title');
+            const subtextEl = document.getElementById('end-subtext');
+            const posEl = document.getElementById('end-position');
+            const ptsEl = document.getElementById('end-points');
+            const lvlEl = document.getElementById('end-level');
+            const nextBtn = document.getElementById('next-track-btn');
+
+            if (posEl) posEl.textContent = `${player.position}:a`;
+            if (ptsEl) ptsEl.textContent = `+${earnedPoints}p`;
+            if (lvlEl) lvlEl.textContent = `Bana ${state.level}`;
+
+            if (isWinner) {
+                if (titleEl) {
+                    titleEl.textContent = "🏆 DU VANN GULDET! 🏆";
+                    titleEl.className = "retro-font text-3xl text-yellow-400 mb-2 animate-bounce";
+                }
+                if (subtextEl) subtextEl.textContent = "Helt galen hastighet! Du krossade motståndet!";
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+            } else {
+                if (titleEl) {
+                    titleEl.textContent = "🏁 MÅLGÅNG! 🏁";
+                    titleEl.className = "retro-font text-3xl text-indigo-300 mb-2";
+                }
+                if (subtextEl) subtextEl.textContent = "Bra kämpat! Försök hålla den vilda farten på banan nästa gång.";
+            }
+
+            if (state.level >= 4) {
+                if (nextBtn) {
+                    nextBtn.textContent = "Visa Cup-Segrare! 👑";
+                    nextBtn.onclick = showGrandFinale;
+                }
+            } else {
+                if (nextBtn) {
+                    nextBtn.textContent = `Gå till Bana ${state.level + 1} ➡`;
+                    nextBtn.onclick = nextTrack;
+                }
+            }
+        }
+
+        function nextTrack() {
+            state.level++;
+            const endScreen = document.getElementById('end-screen');
+            if (endScreen) {
+                endScreen.classList.remove('flex');
+                endScreen.classList.add('hidden');
+            }
+            startGame();
+        }
+
+        // Återställ cupen
+        function restartCup() {
+            state.level = 1;
+            state.score = 0;
+            const endScreen = document.getElementById('end-screen');
+            if (endScreen) {
+                endScreen.classList.remove('flex');
+                endScreen.classList.add('hidden');
+            }
+            startGame();
+        }
+
+        function showGrandFinale() {
+            const endScreen = document.getElementById('end-screen');
+            if (endScreen) {
+                endScreen.classList.remove('flex');
+                endScreen.classList.add('hidden');
+            }
+            
+            const msgEl = document.getElementById('message-text');
+            if (msgEl) {
+                msgEl.innerHTML = `🏆 CUPMÄSTARE! 🏆<br><span class="text-xl text-white">Total Poäng: ${state.score}p</span>`;
+                msgEl.className = "retro-font text-3xl sm:text-5xl text-yellow-400 drop-shadow-[0_4px_0_rgba(0,0,0,1)] scale-100 p-6 bg-slate-900/90 rounded-3xl border border-yellow-400";
+            }
+            
+            var duration = 5 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                } else {
+                    setTimeout(() => {
+                        if (msgEl) {
+                            msgEl.className = "retro-font text-5xl sm:text-7xl text-yellow-400 drop-shadow-[0_4px_0_rgba(0,0,0,1)] scale-0 transition-transform duration-300";
+                        }
+                        const startScreen = document.getElementById('start-screen');
+                        if (startScreen) startScreen.classList.remove('hidden');
+                    }, 3000);
+                }
+            }());
+        }
+
+        // --- KONTROLLYSSNARE (INPUTS) ---
+        window.addEventListener('keydown', (e) => {
+            state.keys[e.code] = true;
+            if (e.code === 'Space' && state.gameActive) {
+                e.preventDefault();
+                useItem(state.players[0]);
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            state.keys[e.code] = false;
+        });
+
+        function checkTouchDevice() {
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                const mobControls = document.getElementById('mobile-controls');
+                if (mobControls) {
+                    mobControls.classList.remove('hidden');
+                    mobControls.classList.add('flex');
+                }
+            }
+        }
+
+        function setupMobileButton(id, stateKey) {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                state.keys[stateKey] = true;
+            });
+
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                state.keys[stateKey] = false;
+            });
+        }
+
+        setupMobileButton('btn-left', 'MobileLeft');
+        setupMobileButton('btn-right', 'MobileRight');
+        setupMobileButton('btn-gas', 'MobileGas');
+        setupMobileButton('btn-brake', 'MobileBrake');
+
+        const btnUseItem = document.getElementById('btn-use-item');
+        if (btnUseItem) {
+            btnUseItem.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (state.gameActive) {
+                    useItem(state.players[0]);
+                }
+            });
+        }
+
+        function resizeCanvas() {
+            canvas.width = 1100;
+            canvas.height = 750;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        checkTouchDevice();
+
+        selectCharacter('mario');
+    </script>
+</body>
+</html>
