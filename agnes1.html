@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Svarta hålet</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #04050e;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-wrapper {
+            position: relative;
+            width: 100vmin;
+            height: 100vmin;
+            max-width: 800px;
+            max-height: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            background-color: #020308;
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
+            display: block;
+        }
+
+        /* UI-paneler (Glassmorphism) */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(3, 5, 14, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            background: linear-gradient(to right, #00f2fe, #4facfe, #00f2fe);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite, float 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.6));
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        p {
+            font-size: 1.25rem;
+            color: #a5b4fc;
+            max-width: 500px;
+            margin: 0 0 24px 0;
+            line-height: 1.6;
+        }
+
+        .instruction-box {
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            color: #e0f2fe;
+            max-width: 480px;
+        }
+
+        .btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #03050c;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            border: none;
+            padding: 16px 44px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.8);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Spel-HUD direkt på skärmen */
+        #hud-top {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 5;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hud-item.right {
+            align-items: flex-end;
+        }
+
+        .hud-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #5c62ec;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+
+        .hud-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+
+        #score-val {
+            color: #00f2fe;
+            text-shadow: 0 0 12px rgba(0, 242, 254, 0.5);
+        }
+
+        #multiplier-badge {
+            font-size: 0.85rem;
+            background: rgba(0, 242, 254, 0.15);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: #00f2fe;
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin-top: 6px;
+            font-weight: bold;
+            display: inline-block;
+            transition: transform 0.1s ease;
+        }
+
+        /* Ljudknapp */
+        #sound-toggle {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.25rem;
+            outline: none;
+        }
+
+        #sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00f2fe;
+            color: #00f2fe;
+            transform: scale(1.05);
+        }
+
+        /* Statistikbox vid Game Over */
+        .stats-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 20px 40px;
+            margin-bottom: 25px;
+            min-width: 290px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.25rem;
+        }
+
+        .stat-row span:last-child {
+            font-weight: 700;
+            color: #00f2fe;
+        }
+
+        .info-icons {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .info-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+            color: #cbd5e1;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.green { background-color: #10b981; box-shadow: 0 0 10px #10b981; }
+        .dot.red { background-color: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .dot.gold { background-color: #fbbf24; box-shadow: 0 0 10px #fbbf24; }
+    </style>
+</head>
+<body>
+
+    <div id="game-wrapper">
+        <!-- Spel-HUD -->
+        <div id="hud-top">
+            <div class="hud-item">
+                <span class="hud-label">Poäng</span>
+                <span class="hud-value" id="score-val">0</span>
+                <span id="multiplier-badge">1x Multiplikator</span>
+            </div>
+            <div class="hud-item right">
+                <span class="hud-label">Bästa</span>
+                <span class="hud-value" id="best-val">0</span>
+            </div>
+        </div>
+
+        <!-- Ljud av/på -->
+        <button id="sound-toggle" onclick="toggleSound()">🔊</button>
+
+        <canvas id="gameCanvas" width="800" height="800"></canvas>
+
+        <!-- Startskärm -->
+        <div id="start-screen" class="overlay">
+            <h1>Svarta hålet</h1>
+            <p>Undvik kaoset i rymden! Klicka eller tryck på Spacebar för att byta rotationsriktning.</p>
+            
+            <div class="instruction-box">
+                <strong>UPPDRAG:</strong><br>
+                Nå <strong>50 poäng</strong> för att levla upp och expandera din omloppsbana längre bort från det svarta hålet!
+            </div>
+            
+            <div class="info-icons">
+                <div class="info-icon"><span class="dot green"></span> Samla (+Poäng)</div>
+                <div class="info-icon"><span class="dot red"></span> Undvik (Fara)</div>
+                <div class="info-icon"><span class="dot gold"></span> Sköld (Sällsynt)</div>
+            </div>
+
+            <button class="btn" onclick="initGame()">Starta Spelet</button>
+        </div>
+
+        <!-- Game Over-skärm -->
+        <div id="gameover-screen" class="overlay hidden">
+            <h1 style="background: linear-gradient(to right, #f43f5e, #fda4af, #f43f5e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(244, 63, 94, 0.5));">Krasch!</h1>
+            <p>Din planet pulveriserades i det svarta hålets tyngdkraft...</p>
+
+            <div class="stats-box">
+                <div class="stat-row">
+                    <span>Din Poäng:</span>
+                    <span id="final-score">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Högsta Poäng:</span>
+                    <span id="final-best" style="color: #fbbf24;">0</span>
+                </div>
+            </div>
+
+            <button class="btn" onclick="initGame()">Spela Igen</button>
+        </div>
+    </div>
+
+    <script>
+        // --- LJUDEFFEKTER (Web Audio API) ---
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-toggle').innerText = soundEnabled ? '🔊' : '🔇';
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'switch') {
+                // Snabbt laserswosh vid riktningsändring
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(250, now);
+                osc.frequency.exponentialRampToValueAtTime(550, now + 0.12);
+                gainNode.gain.setValueAtTime(0.12, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'collect') {
+                // Rent, klart synthesizer-pling vid poängsamling
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.07); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.14); // G5
+                gainNode.gain.setValueAtTime(0.18, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'shield') {
+                // Sci-Fi-aktigt uppladdningsljud för skölden
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.35);
+                gainNode.gain.setValueAtTime(0.18, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'level_up') {
+                // Synthesizerackord vid nivå upp
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+                osc.frequency.exponentialRampToValueAtTime(900, now + 0.4);
+                gainNode.gain.setValueAtTime(0.25, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'suck') {
+                // Ljud när spelaren sugs in
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(350, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.8);
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                osc.start(now);
+                osc.stop(now + 0.8);
+            } else if (type === 'crash') {
+                // Dov explosion vid Game Over
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(30, now + 0.7);
+                gainNode.gain.setValueAtTime(0.35, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(250, now);
+                osc.disconnect(gainNode);
+                osc.connect(filter);
+                filter.connect(gainNode);
+
+                osc.start(now);
+                osc.stop(now + 0.7);
+            } else if (type === 'lost_green') {
+                // Negativ ljudeffekt vid bruten combo
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.25);
+                gainNode.gain.setValueAtTime(0.12, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        }
+
+
+        // --- SPEL-LOGIK ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Speltillstånd
+        let state = 'menu'; // 'menu', 'playing', 'sucking', 'gameover'
+        let score = 0;
+        let highscore = localStorage.getItem('neon_orbit_highscore') || 0;
+        let combo = 1;
+        let gameTime = 0;
+
+        // Spelinställningar & Objekt
+        const center = { x: width / 2, y: height / 2 };
+        const orbitLevel1 = 140; // Radie för nivå 1 (Tät omloppsbana)
+        const orbitLevel2 = 230; // Radie för nivå 2 (Expanderad omloppsbana)
+        const blackHoleRadius = 45;
+
+        let player = {
+            angle: 0,
+            speed: 0.05,       // Planetens rotationshastighet
+            direction: 1,      // 1 = medurs, -1 = moturs
+            radius: 11,
+            currentOrbit: orbitLevel1, // Nuvarande dynamiska radie
+            targetOrbit: orbitLevel1,  // Målorbit baserat på nivå
+            trail: [],         // Sparar spår/trail efter spelaren
+            shieldTime: 0      // Aktiv sköld-tid i sekunder
+        };
+
+        let comets = [];
+        let particles = [];
+        let orbitRings = []; // Expanderande chockvågsringar vid interaktion
+        let lastCometSpawn = 0;
+        let spawnInterval = 900; 
+        let leveledUp = false;
+        let levelUpTextTimer = 0; // Timer för att visa Nivå Upp-text på skärmen
+
+        // Läs in bäst poäng
+        document.getElementById('best-val').innerText = highscore;
+
+        function initGame() {
+            initAudio();
+            
+            // Återställ spelarvärden
+            score = 0;
+            combo = 1;
+            gameTime = 0;
+            comets = [];
+            particles = [];
+            orbitRings = [];
+            spawnInterval = 950;
+            leveledUp = false;
+            levelUpTextTimer = 0;
+            
+            player.angle = 0;
+            player.direction = 1;
+            player.currentOrbit = orbitLevel1;
+            player.targetOrbit = orbitLevel1;
+            player.trail = [];
+            player.shieldTime = 0;
+
+            document.getElementById('score-val').innerText = '0';
+            updateMultiplierUI();
+
+            // Göm menyer
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('gameover-screen').classList.add('hidden');
+
+            state = 'playing';
+            lastCometSpawn = performance.now();
+        }
+
+        // --- INPUT-KONTROLLER ---
+        function handleAction() {
+            if (state !== 'playing') return;
+            player.direction *= -1;
+            playSound('switch');
+            
+            // Skapa en läcker ljusring precis vid ändringspunkten
+            const px = center.x + Math.cos(player.angle) * player.currentOrbit;
+            const py = center.y + Math.sin(player.angle) * player.currentOrbit;
+            createRing(px, py, 10, 35, '#00f2fe');
+        }
+
+        // Mus / Pekskärmar (Enkelt klick ändrar riktning)
+        window.addEventListener('mousedown', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                handleAction();
+            }
+        });
+
+        window.addEventListener('touchstart', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                e.preventDefault();
+                handleAction();
+            }
+        }, { passive: false });
+
+        // Tangentbord (Spacebar)
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                handleAction();
+            }
+        });
+
+
+        // --- PARTIKELSYSTEM ---
+        function createExplosion(x, y, color, count = 15) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: Math.random() * 3.5 + 1,
+                    color: color,
+                    alpha: 1,
+                    decay: Math.random() * 0.025 + 0.015
+                });
+            }
+        }
+
+        function createRing(x, y, startR, maxR, color) {
+            orbitRings.push({
+                x: x,
+                y: y,
+                r: startR,
+                startR: startR,
+                maxR: maxR,
+                color: color,
+                alpha: 1,
+                speed: 2.2 
+            });
+        }
+
+
+        // --- SPELMOTORN ---
+        function spawnComet() {
+            // Slumpa startvinkel utanför skärmen
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 580;
+            const startX = center.x + Math.cos(angle) * distance;
+            const startY = center.y + Math.sin(angle) * distance;
+
+            // Kometfördelning: Gröna (55%), Röda (37%), Guld/Sköld (8%)
+            const rand = Math.random();
+            let type = 'green';
+            let color = '#10b981'; 
+            let radius = 8;
+            
+            // Svårighetsgraden ökar (och är snäppet svårare om man levlat upp)
+            let speedFactor = leveledUp ? 2.8 : 2.2;
+            let speed = Math.random() * 1.8 + speedFactor + (gameTime * 0.06); 
+
+            if (rand > 0.55 && rand <= 0.92) {
+                type = 'red';
+                color = '#ef4444';
+                radius = 11; // Större röda kometer
+            } else if (rand > 0.92) {
+                type = 'gold';
+                color = '#fbbf24';
+                radius = 7;
+                speed += 0.8; 
+            }
+
+            // Sikta banan spikrakt mot det svarta hålet
+            const targetAngle = Math.atan2(center.y - startY, center.x - startX);
+
+            comets.push({
+                x: startX,
+                y: startY,
+                vx: Math.cos(targetAngle) * speed,
+                vy: Math.sin(targetAngle) * speed,
+                radius: radius,
+                color: color,
+                type: type,
+                pulse: 0
+            });
+        }
+
+        function updateMultiplierUI() {
+            const badge = document.getElementById('multiplier-badge');
+            badge.innerText = `${combo}x Multiplikator`;
+            badge.style.transform = 'scale(1.25)';
+            setTimeout(() => badge.style.transform = 'scale(1)', 120);
+        }
+
+        function gameOver() {
+            state = 'gameover';
+            playSound('crash');
+            
+            // Explodera direkt i mitten av det svarta hålet
+            createExplosion(center.x, center.y, '#00f2fe', 50);
+            createRing(center.x, center.y, blackHoleRadius, blackHoleRadius + 120, '#f43f5e');
+            
+            document.getElementById('final-score').innerText = score;
+            if (score > highscore) {
+                highscore = score;
+                localStorage.setItem('neon_orbit_highscore', highscore);
+                document.getElementById('best-val').innerText = highscore;
+            }
+            document.getElementById('final-best').innerText = highscore;
+            document.getElementById('gameover-screen').classList.remove('hidden');
+        }
+
+
+        // --- UPPDATERA SPELET ---
+        function update(deltaTime) {
+            // Om vi varken spelar eller sugs in, hantera bara partiklar
+            if (state !== 'playing' && state !== 'sucking') {
+                updateParticles();
+                return;
+            }
+
+            // --- ANIMERA INSUGNINGEN ("SUCKING") ---
+            if (state === 'sucking') {
+                // Dra planeten inåt mot mitten extremt snabbt
+                player.currentOrbit -= 4; 
+                // Öka rotationen dramatiskt ju närmre mitten vi kommer (fysisk korrekthet!)
+                player.angle += player.speed * player.direction * 1.8; 
+
+                const px = center.x + Math.cos(player.angle) * player.currentOrbit;
+                const py = center.y + Math.sin(player.angle) * player.currentOrbit;
+
+                player.trail.push({ x: px, y: py });
+                if (player.trail.length > 18) {
+                    player.trail.shift();
+                }
+
+                // Generera små spårpartiklar
+                if (Math.random() < 0.5) {
+                    createExplosion(px, py, '#00f2fe', 2);
+                }
+
+                // När planeten rör hålets absoluta kärna (radie <= 8), krascha och avsluta!
+                if (player.currentOrbit <= 8) {
+                    gameOver();
+                }
+
+                updateParticles();
+
+                // Fortsätt flytta kometer utan kollisioner
+                for (let i = comets.length - 1; i >= 0; i--) {
+                    const c = comets[i];
+                    c.x += c.vx;
+                    c.y += c.vy;
+                    c.pulse += 0.14;
+                    const distToCenter = Math.hypot(c.x - center.x, c.y - center.y);
+                    if (distToCenter < blackHoleRadius) {
+                        comets.splice(i, 1);
+                    }
+                }
+                return; // Avbryt tidigt så resten av spelkollisionerna inte körs
+            }
+
+            gameTime += deltaTime / 1000;
+
+            // --- NIVÅ UPP MEKANIK (Vid 50 poäng) ---
+            if (score >= 50 && !leveledUp) {
+                leveledUp = true;
+                player.targetOrbit = orbitLevel2; // Flytta ut banan permanent
+                levelUpTextTimer = 120; // Visa texten i 120 frames (~2 sekunder)
+                playSound('level_up');
+                
+                // Massiv chockvåg från mitten
+                createRing(center.x, center.y, blackHoleRadius, orbitLevel2 + 80, '#00f2fe');
+                // Explosionseffekter runt det gamla ban-spåret
+                for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+                    const ex = center.x + Math.cos(a) * orbitLevel1;
+                    const ey = center.y + Math.sin(a) * orbitLevel1;
+                    createExplosion(ex, ey, '#4facfe', 8);
+                }
+            }
+
+            if (levelUpTextTimer > 0) {
+                levelUpTextTimer--;
+            }
+
+            // Mjuk övergång för omloppsbanan när man levlar upp
+            player.currentOrbit += (player.targetOrbit - player.currentOrbit) * 0.05;
+
+            // Spelarrörelse runt den nuvarande omloppsbanan
+            player.angle += player.speed * player.direction;
+            const px = center.x + Math.cos(player.angle) * player.currentOrbit;
+            const py = center.y + Math.sin(player.angle) * player.currentOrbit;
+
+            // Uppdatera sköldens varaktighet
+            if (player.shieldTime > 0) {
+                player.shieldTime -= deltaTime / 1000;
+            }
+
+            // Svansspår efter spelarplaneten
+            player.trail.push({ x: px, y: py });
+            if (player.trail.length > 18) {
+                player.trail.shift();
+            }
+
+            // 2. Kontrollera comet-spawns
+            let dynamicInterval = Math.max(300, spawnInterval - (gameTime * 28)); 
+            const now = performance.now();
+            if (now - lastCometSpawn > dynamicInterval) {
+                spawnComet();
+                lastCometSpawn = now;
+            }
+
+            // 3. Kometer och kollisionshantering
+            for (let i = comets.length - 1; i >= 0; i--) {
+                const c = comets[i];
+                c.x += c.vx;
+                c.y += c.vy;
+                c.pulse += 0.14;
+
+                const distToCenter = Math.hypot(c.x - center.x, c.y - center.y);
+                const distToPlayer = Math.hypot(c.x - px, c.y - py);
+
+                // Kollision: Spelaren samlar eller träffas
+                if (distToPlayer < (player.radius + c.radius)) {
+                    if (c.type === 'green') {
+                        // Samla poängkomet
+                        score += 10 * combo;
+                        combo++;
+                        document.getElementById('score-val').innerText = score;
+                        updateMultiplierUI();
+                        createExplosion(c.x, c.y, '#10b981', 12);
+                        playSound('collect');
+                    } else if (c.type === 'gold') {
+                        // Samla sköld
+                        player.shieldTime = 5; 
+                        createExplosion(c.x, c.y, '#fbbf24', 18);
+                        playSound('shield');
+                        createRing(px, py, 20, 50, '#fbbf24');
+                    } else if (c.type === 'red') {
+                        // Träffar röd komet
+                        if (player.shieldTime > 0) {
+                            // Räddad av skölden!
+                            player.shieldTime = 0; 
+                            createExplosion(c.x, c.y, '#fbbf24', 25);
+                            createRing(px, py, 30, 60, '#ef4444');
+                            playSound('crash');
+                        } else {
+                            // Sugs in i svarta hålet!
+                            state = 'sucking';
+                            playSound('suck');
+                            createRing(px, py, 15, 45, '#ef4444');
+                            return;
+                        }
+                    }
+                    comets.splice(i, 1);
+                    continue;
+                }
+
+                // Sugs in i det svarta hålet
+                if (distToCenter < blackHoleRadius) {
+                    if (c.type === 'green') {
+                        // Du missade en grön komet -> Combo nollställs!
+                        if (combo > 1) {
+                            combo = 1;
+                            updateMultiplierUI();
+                            playSound('lost_green');
+                            createRing(center.x, center.y, blackHoleRadius, blackHoleRadius + 30, 'rgba(239, 68, 68, 0.4)');
+                        }
+                    }
+                    createExplosion(c.x, c.y, c.color, 4);
+                    comets.splice(i, 1);
+                }
+            }
+
+            // 4. Uppdatera effekter (Partiklar & Ringar)
+            updateParticles();
+
+            // Ringar som pulserar utåt
+            for (let i = orbitRings.length - 1; i >= 0; i--) {
+                const r = orbitRings[i];
+                r.r += r.speed;
+                r.alpha = 1 - (r.r - r.startR) / (r.maxR - r.startR);
+                if (r.r >= r.maxR) {
+                    orbitRings.splice(i, 1);
+                }
+            }
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+                
+                // Gravitationsdrag inåt mot hålet
+                const dx = center.x - p.x;
+                const dy = center.y - p.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist > 10) {
+                    p.vx += (dx / dist) * 0.09;
+                    p.vy += (dy / dist) * 0.09;
+                }
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+
+        // --- RITA / GRAFIK ---
+        function draw() {
+            // Rymdbakgrund med mjuk motion blur-effekt
+            ctx.fillStyle = '#020308';
+            ctx.fillRect(0, 0, width, height);
+
+            // Atmosfäriska glittrande rymdstjärnor i bakgrunden
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            for (let i = 0; i < 35; i++) {
+                const x = (Math.sin(i * 143.45) * 0.5 + 0.5) * width;
+                const y = (Math.cos(i * 513.21) * 0.5 + 0.5) * height;
+                const starSize = (Math.sin(performance.now() * 0.0012 + i) * 0.5 + 0.5) * 2 + 1;
+                ctx.fillRect(x, y, starSize, starSize);
+            }
+
+            // 1. Guide-ringar som visar var banan ligger på Nivå 1 och 2 (endast om vi inte sugs in)
+            if (state !== 'sucking') {
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, orbitLevel1, 0, Math.PI * 2);
+                ctx.strokeStyle = !leveledUp ? 'rgba(0, 242, 254, 0.05)' : 'rgba(255, 255, 255, 0.01)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, orbitLevel2, 0, Math.PI * 2);
+                ctx.strokeStyle = leveledUp ? 'rgba(0, 242, 254, 0.05)' : 'rgba(255, 255, 255, 0.01)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 2. Den aktiva, glödande omloppsbanan (som expanderar vid Level Up!)
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, player.currentOrbit, 0, Math.PI * 2);
+                ctx.strokeStyle = leveledUp ? 'rgba(0, 242, 254, 0.06)' : 'rgba(255, 255, 255, 0.03)';
+                ctx.lineWidth = leveledUp ? 5 : 4;
+                ctx.stroke();
+            }
+
+            // 3. Det svarta hålet (med ljusgloria)
+            const holePulse = Math.sin(performance.now() * 0.005) * 2.5;
+            const currentHoleRadius = blackHoleRadius + holePulse;
+
+            const gradientDisc = ctx.createRadialGradient(
+                center.x, center.y, currentHoleRadius - 8,
+                center.x, center.y, currentHoleRadius + 32
+            );
+            gradientDisc.addColorStop(0, '#000000');
+            gradientDisc.addColorStop(0.2, '#1e1b4b'); // Djupindigo
+            gradientDisc.addColorStop(0.5, 'rgba(99, 102, 241, 0.14)');
+            gradientDisc.addColorStop(1, 'rgba(2, 3, 8, 0)');
+            
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, currentHoleRadius + 32, 0, Math.PI * 2);
+            ctx.fillStyle = gradientDisc;
+            ctx.fill();
+
+            // Det svarta hålets kärna
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, currentHoleRadius, 0, Math.PI * 2);
+            ctx.fillStyle = '#000000';
+            ctx.fill();
+            
+            ctx.strokeStyle = '#312e81';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // 4. Rita dekorativa interaktionsringar
+            for (const r of orbitRings) {
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+                ctx.strokeStyle = r.color;
+                ctx.globalAlpha = Math.max(0, r.alpha);
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1.0;
+
+            // 5. Planetens lysande spår (Trail)
+            for (let i = 0; i < player.trail.length; i++) {
+                const pt = player.trail[i];
+                const alpha = (i / player.trail.length) * 0.35;
+                const size = player.radius * (i / player.trail.length);
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = player.shieldTime > 0 ? `rgba(251, 191, 36, ${alpha})` : `rgba(0, 242, 254, ${alpha})`;
+                ctx.fill();
+            }
+
+            // Rita själva Spelarplaneten
+            if (state === 'playing' || state === 'sucking') {
+                const px = center.x + Math.cos(player.angle) * player.currentOrbit;
+                const py = center.y + Math.sin(player.angle) * player.currentOrbit;
+
+                // Om skölden är igång, rita dess lysande skyddsvall
+                if (player.shieldTime > 0 && state !== 'sucking') {
+                    ctx.beginPath();
+                    ctx.arc(px, py, player.radius + 8, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(251, 191, 36, 0.2)';
+                    ctx.strokeStyle = '#fbbf24';
+                    ctx.lineWidth = 2;
+                    ctx.fill();
+                    ctx.stroke();
+                }
+
+                // Planetens lysande kärna
+                ctx.beginPath();
+                ctx.arc(px, py, player.radius, 0, Math.PI * 2);
+                ctx.fillStyle = state === 'sucking' ? '#ff3b3b' : '#00f2fe'; // Ändra färg till röd när den sugs in
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = state === 'sucking' ? '#ff3b3b' : '#00f2fe';
+                ctx.fill();
+                ctx.shadowBlur = 0; 
+            }
+
+            // 6. Rita alla kometer på skärmen
+            for (const c of comets) {
+                const pulseSize = Math.sin(c.pulse) * 1.5;
+                
+                // Svans bakom kometen
+                const speed = Math.hypot(c.vx, c.vy);
+                const dx = (c.vx / speed) * 18;
+                const dy = (c.vy / speed) * 18;
+
+                ctx.beginPath();
+                ctx.moveTo(c.x, c.y);
+                ctx.lineTo(c.x - dx, c.y - dy);
+                ctx.strokeStyle = c.color;
+                ctx.lineWidth = c.radius;
+                ctx.globalAlpha = 0.35;
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
+
+                // Kometkärna
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.radius + pulseSize, 0, Math.PI * 2);
+                ctx.fillStyle = c.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = c.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // 7. Explosioner & Partiklar
+            for (const p of particles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+
+            // 8. Rita Nivå Upp-meddelande på skärmen vid övergången
+            if (levelUpTextTimer > 0) {
+                ctx.save();
+                ctx.font = '900 2.2rem Orbitron';
+                ctx.fillStyle = '#00f2fe';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#00f2fe';
+                ctx.globalAlpha = Math.min(1.0, levelUpTextTimer / 30);
+                
+                ctx.fillText('NIVÅ UPP!', center.x, center.y - 120);
+                ctx.font = '700 1.2rem Rajdhani';
+                ctx.fillStyle = '#a5b4fc';
+                ctx.fillText('OMBANAN EXPANDERAR UTÅT', center.x, center.y - 85);
+                ctx.restore();
+            }
+        }
+
+
+        // --- SPEL-LOOP ---
+        let lastTime = 0;
+        function loop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const elapsed = timestamp - lastTime;
+            lastTime = timestamp;
+
+            // Förhindra jättehopp om webbläsarfliken blir inaktiv
+            update(Math.min(elapsed, 100));
+            draw();
+
+            requestAnimationFrame(loop);
+        }
+
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

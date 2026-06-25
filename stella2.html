@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="sv" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 World Hub 2026 - Den Ultimata Formel 1 Portalen</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js för vinstchanser och statistik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Orbitron & Inter för en racing-tech känsla -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        f1: {
+                            red: '#E10600',
+                            darkred: '#B00500',
+                            carbon: '#15151E',
+                            dark: '#0C0C10',
+                            gray: '#252530',
+                            accent: '#00F5D4'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        tech: ['Orbitron', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0C0C10;
+            color: #F3F4F6;
+        }
+        .tech-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0C0C10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E10600;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B00500;
+        }
+        .f1-card {
+            background: linear-gradient(145deg, #1A1A24, #12121A);
+            border: 1px solid rgba(255, 24, 1, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .f1-card:hover {
+            border-color: rgba(255, 24, 1, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(225, 6, 0, 0.3);
+        }
+        .glow-red {
+            box-shadow: 0 0 15px rgba(225, 6, 0, 0.5);
+        }
+        .glow-green {
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.5);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- TOP NAV BAR -->
+    <nav class="sticky top-0 z-50 bg-f1-dark/95 backdrop-blur-md border-b border-f1-red/20 py-4 px-6 transition-all">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-f1-red text-white tech-font px-3 py-1 text-xl font-black italic rounded tracking-wider flex items-center justify-center">
+                    F1
+                </div>
+                <span class="tech-font text-xl font-bold tracking-widest text-white">WORLD<span class="text-f1-red">HUB</span> <span class="text-xs text-neutral-400 font-sans tracking-normal font-light">SÄSONG 2026</span></span>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-2 text-sm">
+                <button onclick="switchTab('dashboard')" class="tab-btn px-4 py-2 rounded-full font-semibold transition bg-f1-red text-white" id="btn-dashboard">Dashboard</button>
+                <button onclick="switchTab('ranking')" class="tab-btn px-4 py-2 rounded-full font-semibold text-neutral-300 hover:text-white transition" id="btn-ranking">Analys & VM-Chans</button>
+                <button onclick="switchTab('calendar')" class="tab-btn px-4 py-2 rounded-full font-semibold text-neutral-300 hover:text-white transition" id="btn-calendar">Reseguide & Race</button>
+                <button onclick="switchTab('guide')" class="tab-btn px-4 py-2 rounded-full font-semibold text-neutral-300 hover:text-white transition" id="btn-guide">Överlevnadsguide</button>
+                <button onclick="switchTab('games')" class="tab-btn px-4 py-2 rounded-full font-semibold text-neutral-300 hover:text-white transition" id="btn-games">Biljett-Jakten 🎮</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER / HERO SECTION -->
+    <header class="relative bg-cover bg-center h-[50vh] flex items-center justify-center overflow-hidden border-b border-f1-red/30" style="background-image: linear-gradient(to bottom, rgba(12, 12, 16, 0.6), #0C0C10), url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=1600');">
+        <!-- Overlay elements for racing vibe -->
+        <div class="absolute inset-0 bg-gradient-to-r from-f1-red/10 via-transparent to-f1-accent/5 opacity-80"></div>
+        <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-f1-dark to-transparent"></div>
+        
+        <div class="relative z-10 text-center px-4 max-w-4xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-f1-red/20 border border-f1-red/40 rounded-full text-f1-red text-xs font-semibold tracking-wider uppercase mb-4 animate-pulse">
+                <span>🔴 Live uppdaterad data</span>
+            </div>
+            <h1 class="tech-font text-4xl sm:text-6xl font-black text-white uppercase italic tracking-tighter leading-none mb-4">
+                DEN NYA ERAN ÄR HÄR
+            </h1>
+            <p class="text-neutral-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto">
+                2026 års helt nya reglemente har skakat om startfältet! Följ den otroliga striden, analysera vinstoddsen, boka din nästa GP-resa och testa dina färdigheter för att säkra fribiljetter.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        
+        <!-- ================= PAGE 1: DASHBOARD ================= -->
+        <div id="tab-dashboard" class="tab-content space-y-12">
+            
+            <!-- FAST STATS ROW -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="f1-card p-6 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-neutral-400 uppercase tracking-wider">VM-Ledare</p>
+                        <h4 class="tech-font text-xl font-black text-white mt-1">K. Antonelli</h4>
+                        <p class="text-xs text-f1-accent">Mercedes-AMG • 131p</p>
+                    </div>
+                    <div class="text-3xl text-f1-red">🏆</div>
+                </div>
+                <div class="f1-card p-6 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-neutral-400 uppercase tracking-wider">Nästa Race</p>
+                        <h4 class="tech-font text-xl font-black text-white mt-1">Monaco GP</h4>
+                        <p class="text-xs text-neutral-300">5 – 7 Juni 2026</p>
+                    </div>
+                    <div class="text-3xl text-yellow-500">🇲🇨</div>
+                </div>
+                <div class="f1-card p-6 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-neutral-400 uppercase tracking-wider">Konstruktörsledare</p>
+                        <h4 class="tech-font text-xl font-black text-white mt-1">Mercedes</h4>
+                        <p class="text-xs text-neutral-300">219 poäng totalt</p>
+                    </div>
+                    <div class="text-3xl text-teal-400">⚡</div>
+                </div>
+                <div class="f1-card p-6 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-neutral-400 uppercase tracking-wider">Vinstchans VM</p>
+                        <h4 class="tech-font text-xl font-black text-white mt-1">Mercedes 76%</h4>
+                        <p class="text-xs text-f1-accent">Baserat på senaste data</p>
+                    </div>
+                    <div class="text-3xl text-f1-accent">📈</div>
+                </div>
+            </div>
+
+            <!-- F1 SENASTE NYTT -->
+            <section class="space-y-6">
+                <div class="border-l-4 border-f1-red pl-4">
+                    <h2 class="tech-font text-2xl sm:text-3xl font-bold tracking-tight text-white uppercase italic">Senaste Nytt från Depån</h2>
+                    <p class="text-neutral-400 text-sm">Vad som snackas om i Formel 1-världen just nu</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- NEWS CARD 1 -->
+                    <div class="f1-card rounded-xl overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="h-48 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=800');"></div>
+                            <div class="p-6">
+                                <span class="bg-f1-red text-white text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">Mercedes Dominans</span>
+                                <h3 class="tech-font text-lg font-bold text-white mt-3 mb-2">Kimi Antonelli utökar ledningen efter rysaren i Montreal!</h3>
+                                <p class="text-neutral-400 text-sm leading-relaxed">
+                                    Den italienske sensationen Kimi Antonelli tog sin fjärde raka seger för Mercedes i Kanada. Med ett mästerligt strategiskt drag lyckades han hålla Ferraris Lewis Hamilton bakom sig.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0 text-xs text-neutral-500 flex justify-between items-center border-t border-neutral-800">
+                            <span>28 Maj 2026</span>
+                            <span class="text-f1-red font-semibold cursor-pointer hover:underline">Läs mer &rarr;</span>
+                        </div>
+                    </div>
+
+                    <!-- NEWS CARD 2 -->
+                    <div class="f1-card rounded-xl overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="h-48 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1560855814-4802db985be0?auto=format&fit=crop&q=80&w=800');"></div>
+                            <div class="p-6">
+                                <span class="bg-yellow-500 text-black text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">Monaco GP Inför</span>
+                                <h3 class="tech-font text-lg font-bold text-white mt-3 mb-2">Monaco rustar för årets mest prestigefyllda helg</h3>
+                                <p class="text-neutral-400 text-sm leading-relaxed">
+                                    Nästa anhalt är furstendömet Monaco. Det ryktas om extrema aerodynamiska uppgraderingar hos både Ferrari och McLaren för att svara på Mercedes brutala fart på de snäva gatorna.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0 text-xs text-neutral-500 flex justify-between items-center border-t border-neutral-800">
+                            <span>28 Maj 2026</span>
+                            <span class="text-f1-red font-semibold cursor-pointer hover:underline">Läs mer &rarr;</span>
+                        </div>
+                    </div>
+
+                    <!-- NEWS CARD 3 -->
+                    <div class="f1-card rounded-xl overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="h-48 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800');"></div>
+                            <div class="p-6">
+                                <span class="bg-f1-accent text-black text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">Reglemente 2026</span>
+                                <h3 class="tech-font text-lg font-bold text-white mt-3 mb-2">De nya aktiva aero-systemen: Succé eller flopp?</h3>
+                                <p class="text-neutral-400 text-sm leading-relaxed">
+                                    Efter fem körda lopp analyserar experterna den nya rörliga aerodynamiken. Förarna hyllar den ökade möjligheten till omkörningar, medan stallen brottas med tillförlitligheten.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0 text-xs text-neutral-500 flex justify-between items-center border-t border-neutral-800">
+                            <span>27 Maj 2026</span>
+                            <span class="text-f1-red font-semibold cursor-pointer hover:underline">Läs mer &rarr;</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MEDIA & TV CHANNELS -->
+            <section class="bg-f1-gray/40 border border-neutral-800 rounded-2xl p-6 sm:p-10 space-y-6">
+                <div class="max-w-3xl">
+                    <h3 class="tech-font text-2xl font-black text-white italic uppercase">Hur & Vart kan man titta på F1 2026?</h3>
+                    <p class="text-neutral-300 mt-2">
+                        För att inte missa en enda sekund av de dramatiska striderna på banan har vi sammanställt de bästa officiella streamingtjänsterna och webbplatserna för racingfans i Sverige.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-neutral-900/80 p-6 rounded-xl border border-neutral-800 hover:border-f1-red transition">
+                        <div class="text-f1-red text-2xl mb-2 font-bold tech-font">F1 TV Pro</div>
+                        <p class="text-sm text-neutral-300 mb-4">Den ultimata upplevelsen med valbara ombordkameror, team-radio, livesändningar och djupgående analyser direkt från F1:s egna produktion.</p>
+                        <a href="https://f1tv.formula1.com" target="_blank" class="inline-block text-xs font-bold text-f1-red hover:underline">Besök F1 TV &rarr;</a>
+                    </div>
+                    
+                    <div class="bg-neutral-900/80 p-6 rounded-xl border border-neutral-800 hover:border-f1-red transition">
+                        <div class="text-white text-2xl mb-2 font-bold tech-font">Viaplay</div>
+                        <p class="text-sm text-neutral-300 mb-4">Den officiella svenska sändningspartnern med svenska kommentatorer, studiosändningar med experter och heltäckande bevakning på svenska.</p>
+                        <a href="https://viaplay.se/sport" target="_blank" class="inline-block text-xs font-bold text-f1-red hover:underline">Besök Viaplay &rarr;</a>
+                    </div>
+
+                    <div class="bg-neutral-900/80 p-6 rounded-xl border border-neutral-800 hover:border-f1-red transition">
+                        <div class="text-f1-accent text-2xl mb-2 font-bold tech-font font-black">F1 Live Timing</div>
+                        <p class="text-sm text-neutral-300 mb-4">Ett fantastiskt komplement under racen på din surfplatta. Följ däckslitaget, sektortider, GPS-positionering och varvtider i realtid.</p>
+                        <a href="https://www.formula1.com" target="_blank" class="inline-block text-xs font-bold text-f1-accent hover:underline">Se Live Timing &rarr;</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ================= PAGE 2: RANKINGS & WIN PROBABILITIES ================= -->
+        <div id="tab-ranking" class="tab-content hidden space-y-12">
+            
+            <div class="border-l-4 border-f1-red pl-4">
+                <h2 class="tech-font text-3xl font-black text-white uppercase italic">VM-ställning & Statistisk Analys</h2>
+                <p class="text-neutral-400">Den officiella ställningen parat med avancerade vinstberäkningar för resterande del av säsongen 2026.</p>
+            </div>
+
+            <!-- ANALYTICS GRID -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- DRIVER TABLE (Lg: 7 cols) -->
+                <div class="lg:col-span-7 f1-card p-6 rounded-2xl overflow-x-auto">
+                    <h3 class="tech-font text-lg font-bold text-white mb-4">Aktuell Förarställning</h3>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-neutral-800 text-xs text-neutral-400 uppercase tracking-wider">
+                                <th class="py-3 px-2 text-center">Pos</th>
+                                <th class="py-3 px-4">Förare</th>
+                                <th class="py-3 px-4">Stall</th>
+                                <th class="py-3 px-3 text-center">Vinster</th>
+                                <th class="py-3 px-3 text-center">Poäng</th>
+                                <th class="py-3 px-3 text-right">VM-Chans</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-900 text-sm">
+                            <tr class="hover:bg-neutral-900/50 transition">
+                                <td class="py-4 px-2 text-center font-bold text-yellow-500">1</td>
+                                <td class="py-4 px-4 font-semibold text-white">Kimi Antonelli</td>
+                                <td class="py-4 px-4 text-neutral-400">Mercedes-AMG</td>
+                                <td class="py-4 px-3 text-center text-white">4</td>
+                                <td class="py-4 px-3 text-center text-f1-accent font-bold">131</td>
+                                <td class="py-4 px-3 text-right text-f1-accent font-bold">58%</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/50 transition">
+                                <td class="py-4 px-2 text-center font-bold text-neutral-300">2</td>
+                                <td class="py-4 px-4 font-semibold text-white">George Russell</td>
+                                <td class="py-4 px-4 text-neutral-400">Mercedes-AMG</td>
+                                <td class="py-4 px-3 text-center text-white">1</td>
+                                <td class="py-4 px-3 text-center text-neutral-300 font-bold">88</td>
+                                <td class="py-4 px-3 text-right text-neutral-300 font-bold">18%</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/50 transition">
+                                <td class="py-4 px-2 text-center font-bold text-amber-700">3</td>
+                                <td class="py-4 px-4 font-semibold text-white">Charles Leclerc</td>
+                                <td class="py-4 px-4 text-neutral-400">Ferrari</td>
+                                <td class="py-4 px-3 text-center text-white">0</td>
+                                <td class="py-4 px-3 text-center text-neutral-300 font-bold">75</td>
+                                <td class="py-4 px-3 text-right text-neutral-300 font-bold">10%</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/50 transition">
+                                <td class="py-4 px-2 text-center font-bold">4</td>
+                                <td class="py-4 px-4 font-semibold text-white">Lewis Hamilton</td>
+                                <td class="py-4 px-4 text-neutral-400">Ferrari</td>
+                                <td class="py-4 px-3 text-center text-white">0</td>
+                                <td class="py-4 px-3 text-center text-neutral-300 font-bold">72</td>
+                                <td class="py-4 px-3 text-right text-neutral-300 font-bold">8%</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/50 transition">
+                                <td class="py-4 px-2 text-center font-bold">5</td>
+                                <td class="py-4 px-4 font-semibold text-white">Lando Norris</td>
+                                <td class="py-4 px-4 text-neutral-400">McLaren</td>
+                                <td class="py-4 px-3 text-center text-white">0</td>
+                                <td class="py-4 px-3 text-center text-neutral-300 font-bold">58</td>
+                                <td class="py-4 px-3 text-right text-neutral-300 font-bold">4%</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/50 transition">
+                                <td class="py-4 px-2 text-center font-bold">6</td>
+                                <td class="py-4 px-4 font-semibold text-white">Oscar Piastri</td>
+                                <td class="py-4 px-4 text-neutral-400">McLaren</td>
+                                <td class="py-4 px-3 text-center text-white">0</td>
+                                <td class="py-4 px-3 text-center text-neutral-300 font-bold">48</td>
+                                <td class="py-4 px-3 text-right text-neutral-300 font-bold">1%</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/50 transition">
+                                <td class="py-4 px-2 text-center font-bold">7</td>
+                                <td class="py-4 px-4 font-semibold text-white">Max Verstappen</td>
+                                <td class="py-4 px-4 text-neutral-400">Red Bull Racing</td>
+                                <td class="py-4 px-3 text-center text-white">0</td>
+                                <td class="py-4 px-3 text-center text-neutral-300 font-bold">43</td>
+                                <td class="py-4 px-3 text-right text-neutral-300 font-bold">1%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- WIN PROBABILITY GRAPH (Lg: 5 cols) -->
+                <div class="lg:col-span-5 f1-card p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="tech-font text-lg font-bold text-white mb-2">Sannolikhet att vinna VM 2026</h3>
+                        <p class="text-xs text-neutral-400 mb-6">Baseras på maskininlärningsmodell som simulerar de resterande 17 Grand Prix-helgerna med hänsyn till bilarnas prestandatrend.</p>
+                        
+                        <div class="h-64 relative">
+                            <canvas id="winOddsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-neutral-950 p-4 rounded-xl border border-neutral-800 text-xs text-neutral-400 mt-4 leading-relaxed">
+                        <strong class="text-white">Expertkommentar:</strong> Trots en tung inledning av säsongen för Max Verstappen så ger de nya aerodynamiska uppgraderingarna som Red Bull planerar hopp. Kimi Antonellis brutala form ger honom goda chanser att ta sin första VM-titel redan under ditt debutår!
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONSTRUCTORS CHAMPIONSHIP -->
+            <div class="f1-card p-6 sm:p-8 rounded-2xl">
+                <h3 class="tech-font text-xl font-bold text-white mb-6">Konstruktörsmästerskapet 2026</h3>
+                <div class="space-y-4">
+                    <!-- MERCEDES -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-semibold text-white">Mercedes-AMG Petronas (1:a • 219p)</span>
+                            <span class="text-f1-accent font-bold">VM-chans: 76%</span>
+                        </div>
+                        <div class="w-full bg-neutral-900 h-3 rounded-full overflow-hidden">
+                            <div class="bg-teal-400 h-full rounded-full" style="width: 76%"></div>
+                        </div>
+                    </div>
+                    <!-- FERRARI -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-semibold text-white">Scuderia Ferrari HP (2:a • 147p)</span>
+                            <span class="text-neutral-300 font-bold">VM-chans: 16%</span>
+                        </div>
+                        <div class="w-full bg-neutral-900 h-3 rounded-full overflow-hidden">
+                            <div class="bg-f1-red h-full rounded-full" style="width: 16%"></div>
+                        </div>
+                    </div>
+                    <!-- MCLAREN -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-semibold text-white">McLaren Mastercard (3:a • 106p)</span>
+                            <span class="text-neutral-300 font-bold">VM-chans: 6%</span>
+                        </div>
+                        <div class="w-full bg-neutral-900 h-3 rounded-full overflow-hidden">
+                            <div class="bg-orange-500 h-full rounded-full" style="width: 6%"></div>
+                        </div>
+                    </div>
+                    <!-- RED BULL -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-semibold text-white">Oracle Red Bull Racing (4:a • 57p)</span>
+                            <span class="text-neutral-300 font-bold">VM-chans: 2%</span>
+                        </div>
+                        <div class="w-full bg-neutral-900 h-3 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full rounded-full" style="width: 2%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= PAGE 3: INTERACTIVE RACE & TRAVEL GUIDE ================= -->
+        <div id="tab-calendar" class="tab-content hidden space-y-12">
+            
+            <div class="border-l-4 border-f1-red pl-4">
+                <h2 class="tech-font text-3xl font-black text-white uppercase italic">Reseguide & Race-kalender</h2>
+                <p class="text-neutral-400">Planera din drömresa till de återstående loppen under säsongen 2026. Klicka på ett lopp för att se hotelltips, flyginformation och lokala sevärdheter!</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- RACE SELECTOR (Lg: 5 cols) -->
+                <div class="lg:col-span-5 space-y-3 max-h-[70vh] overflow-y-auto pr-2">
+                    <h3 class="tech-font text-lg font-bold text-white mb-2">Välj Grand Prix för reseinformation</h3>
+                    
+                    <!-- RACE ITEMS (JS handles click) -->
+                    <div onclick="selectRace('monaco')" id="race-monaco" class="race-card p-4 rounded-xl cursor-pointer border border-f1-red bg-f1-gray/80 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-f1-red font-semibold uppercase tracking-widest">RUNDA 6 • NÄSTA GP</span>
+                                <h4 class="tech-font text-base font-black text-white">Monaco Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Monte Carlo • 5 - 7 Juni 2026</p>
+                            </div>
+                            <span class="text-2xl">🇲🇨</span>
+                        </div>
+                    </div>
+
+                    <div onclick="selectRace('spain')" id="race-spain" class="race-card p-4 rounded-xl cursor-pointer border border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-neutral-500 font-semibold uppercase tracking-widest">RUNDA 7</span>
+                                <h4 class="tech-font text-base font-black text-white">Barcelona Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Circuit de Catalunya • 12 - 14 Juni 2026</p>
+                            </div>
+                            <span class="text-2xl">🇪🇸</span>
+                        </div>
+                    </div>
+
+                    <div onclick="selectRace('austria')" id="race-austria" class="race-card p-4 rounded-xl cursor-pointer border border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-neutral-500 font-semibold uppercase tracking-widest">RUNDA 8</span>
+                                <h4 class="tech-font text-base font-black text-white">Österrike Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Red Bull Ring • 26 - 28 Juni 2026</p>
+                            </div>
+                            <span class="text-2xl">🇦🇹</span>
+                        </div>
+                    </div>
+
+                    <div onclick="selectRace('britain')" id="race-britain" class="race-card p-4 rounded-xl cursor-pointer border border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-neutral-500 font-semibold uppercase tracking-widest">RUNDA 9</span>
+                                <h4 class="tech-font text-base font-black text-white">Storbritannien Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Silverstone • 3 - 5 Juli 2026</p>
+                            </div>
+                            <span class="text-2xl">🇬🇧</span>
+                        </div>
+                    </div>
+
+                    <div onclick="selectRace('belgium')" id="race-belgium" class="race-card p-4 rounded-xl cursor-pointer border border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-neutral-500 font-semibold uppercase tracking-widest">RUNDA 10</span>
+                                <h4 class="tech-font text-base font-black text-white">Belgien Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Spa-Francorchamps • 17 - 19 Juli 2026</p>
+                            </div>
+                            <span class="text-2xl">🇧🇪</span>
+                        </div>
+                    </div>
+
+                    <div onclick="selectRace('italy')" id="race-italy" class="race-card p-4 rounded-xl cursor-pointer border border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-neutral-500 font-semibold uppercase tracking-widest">RUNDA 13</span>
+                                <h4 class="tech-font text-base font-black text-white">Italien Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Monza • 4 - 6 September 2026</p>
+                            </div>
+                            <span class="text-2xl">🇮🇹</span>
+                        </div>
+                    </div>
+
+                    <div onclick="selectRace('singapore')" id="race-singapore" class="race-card p-4 rounded-xl cursor-pointer border border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-neutral-500 font-semibold uppercase tracking-widest">RUNDA 16</span>
+                                <h4 class="tech-font text-base font-black text-white">Singapore Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Marina Bay • 9 - 11 Oktober 2026</p>
+                            </div>
+                            <span class="text-2xl">🇸🇬</span>
+                        </div>
+                    </div>
+
+                    <div onclick="selectRace('vegas')" id="race-vegas" class="race-card p-4 rounded-xl cursor-pointer border border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] text-neutral-500 font-semibold uppercase tracking-widest">RUNDA 20</span>
+                                <h4 class="tech-font text-base font-black text-white">Las Vegas Grand Prix</h4>
+                                <p class="text-xs text-neutral-400">Las Vegas Strip • 19 - 21 November 2026</p>
+                            </div>
+                            <span class="text-2xl">🇺🇸</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC INFO PANEL (Lg: 7 cols) -->
+                <div class="lg:col-span-7 f1-card p-6 sm:p-8 rounded-2xl space-y-8" id="travel-panel">
+                    <!-- Default content, updated dynamically by JS -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-neutral-800 pb-6 gap-4">
+                        <div>
+                            <span class="text-xs text-f1-red font-semibold uppercase tracking-widest" id="gp-round">RUNDA 6</span>
+                            <h3 class="tech-font text-3xl font-black text-white uppercase italic mt-1" id="gp-title">Monaco Grand Prix</h3>
+                            <p class="text-sm text-neutral-400" id="gp-location">Bana: Circuit de Monaco • Monte Carlo</p>
+                        </div>
+                        <div class="bg-neutral-900 px-4 py-2 rounded-xl text-center border border-neutral-800">
+                            <span class="text-xs text-neutral-400 block uppercase">Datum</span>
+                            <span class="font-bold text-white text-sm" id="gp-date">5 - 7 Juni 2026</span>
+                        </div>
+                    </div>
+
+                    <!-- TRAVEL METRICS -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- FLIGHTS -->
+                        <div class="bg-neutral-950 p-5 rounded-xl border border-neutral-900">
+                            <div class="text-3xl mb-2">✈️</div>
+                            <h4 class="font-bold text-white text-base">Flygresa</h4>
+                            <p class="text-xs text-neutral-400 mt-1" id="gp-flight-airport">Närmaste flygplats: Nice Côte d'Azur Airport (NCE) – ca 30 minuter från Monaco.</p>
+                            <p class="text-xs text-f1-accent font-semibold mt-3" id="gp-flight-tip">Flygtips: Boka direktflyg till Nice från Stockholm (SAS/Norwegian).</p>
+                        </div>
+
+                        <!-- ACCOMMODATION -->
+                        <div class="bg-neutral-950 p-5 rounded-xl border border-neutral-900">
+                            <div class="text-3xl mb-2">🏨</div>
+                            <h4 class="font-bold text-white text-base">Hotell & Boende</h4>
+                            <p class="text-xs text-neutral-400 mt-1" id="gp-hotel-lux"><strong>Premium:</strong> Hôtel de Paris (direkt vid kasinot) – ca 15 000 SEK/natt.</p>
+                            <p class="text-xs text-neutral-400 mt-2" id="gp-hotel-budget"><strong>Budget:</strong> Airbnb i grannstäderna Nice eller Menton – ca 1 500 SEK/natt.</p>
+                        </div>
+
+                        <!-- THINGS TO DO -->
+                        <div class="bg-neutral-950 p-5 rounded-xl border border-neutral-900">
+                            <div class="text-3xl mb-2">📍</div>
+                            <h4 class="font-bold text-white text-base">Saker att göra</h4>
+                            <p class="text-xs text-neutral-400 mt-1" id="gp-activities">Besök legendariska Casino de Monte-Carlo, ta en promenad längs lyxyachterna i hamnen (Port Hercule) eller gå banan till fots på torsdagskvällen.</p>
+                        </div>
+                    </div>
+
+                    <!-- MAP / TRACK SKETCH FRAME -->
+                    <div class="relative bg-neutral-950 rounded-xl overflow-hidden border border-neutral-900 p-6 flex flex-col md:flex-row items-center gap-6">
+                        <div class="w-full md:w-1/2 space-y-2">
+                            <h4 class="tech-font text-sm font-bold text-white uppercase tracking-wider">Banfakta & Svårighetsgrad</h4>
+                            <ul class="text-xs text-neutral-400 space-y-1.5 list-disc pl-4" id="gp-facts">
+                                <li><strong>Banlängd:</strong> 3.337 km</li>
+                                <li><strong>Antal varv:</strong> 78</li>
+                                <li><strong>Unikt:</strong> Den långsammaste banan men den svåraste att bemästra utan misstag.</li>
+                                <li><strong>Särskild utmaning:</strong> Hårnålen (Grand Hotel Hairpin) kräver maximalt rattutslag.</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-1/2 flex justify-center items-center h-40 bg-neutral-900/50 rounded-lg relative overflow-hidden">
+                            <!-- Track layout representation using beautiful styling or emoji -->
+                            <div class="text-center">
+                                <span class="tech-font text-5xl opacity-40 select-none">🏁</span>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-xs font-bold bg-f1-red text-white py-1 px-3 rounded-full glow-red uppercase" id="gp-difficulty">Svårighet: Extrem 🔴</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ================= PAGE 4: LIVE SPECTATOR GUIDE & PACKING LIST ================= -->
+        <div id="tab-guide" class="tab-content hidden space-y-12">
+            
+            <div class="border-l-4 border-f1-red pl-4">
+                <h2 class="tech-font text-3xl font-black text-white uppercase italic">Live-Besökarens Överlevnadsguide</h2>
+                <p class="text-neutral-400">Allt du behöver veta, ha med dig och tänka på när du ska se ett F1-lopp live på plats.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                
+                <!-- ESSENTIAL PACKING LIST (Md: 7 cols) -->
+                <div class="md:col-span-7 f1-card p-6 sm:p-8 rounded-2xl">
+                    <h3 class="tech-font text-xl font-bold text-white mb-2">Interaktiv Packlista för Race-Helgen</h3>
+                    <p class="text-xs text-neutral-400 mb-6">Bocka av sakerna i mobilen medan du packar väskan!</p>
+                    
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3 p-3 bg-neutral-900/50 hover:bg-neutral-900 rounded-lg cursor-pointer transition">
+                            <input type="checkbox" class="w-5 h-5 rounded border-neutral-700 bg-neutral-950 text-f1-red focus:ring-f1-red mt-0.5">
+                            <div>
+                                <span class="font-semibold text-white text-sm">Hörselskydd (Öronproppar)</span>
+                                <p class="text-xs text-neutral-400">Bilarna låter otroligt mycket. Speciellt viktigt för barn samt om du sitter nära kurvutgångar.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start gap-3 p-3 bg-neutral-900/50 hover:bg-neutral-900 rounded-lg cursor-pointer transition">
+                            <input type="checkbox" class="w-5 h-5 rounded border-neutral-700 bg-neutral-950 text-f1-red focus:ring-f1-red mt-0.5">
+                            <div>
+                                <span class="font-semibold text-white text-sm">Powerbank (Bärbar laddare)</span>
+                                <p class="text-xs text-neutral-400">Du kommer att filma, fota och följa live-timing. Täckningen på banorna kan vara begränsad vilket drar mycket batteri.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start gap-3 p-3 bg-neutral-900/50 hover:bg-neutral-900 rounded-lg cursor-pointer transition">
+                            <input type="checkbox" class="w-5 h-5 rounded border-neutral-700 bg-neutral-950 text-f1-red focus:ring-f1-red mt-0.5">
+                            <div>
+                                <span class="font-semibold text-white text-sm">Regnponcho & Keps</span>
+                                <p class="text-xs text-neutral-400">Vädret på klassiska banor som Spa eller Silverstone kan växla på fem minuter. Paraplyer är ofta opraktiska och kan skymma sikten för andra.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start gap-3 p-3 bg-neutral-900/50 hover:bg-neutral-900 rounded-lg cursor-pointer transition">
+                            <input type="checkbox" class="w-5 h-5 rounded border-neutral-700 bg-neutral-950 text-f1-red focus:ring-f1-red mt-0.5">
+                            <div>
+                                <span class="font-semibold text-white text-sm">Sköna Walkingskor</span>
+                                <p class="text-xs text-neutral-400">Du kommer gå i genomsnitt 15 000–25 000 steg per dag. Banorna är enorma med kuperad terräng (t.ex. Red Bull Ring).</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start gap-3 p-3 bg-neutral-900/50 hover:bg-neutral-900 rounded-lg cursor-pointer transition">
+                            <input type="checkbox" class="w-5 h-5 rounded border-neutral-700 bg-neutral-950 text-f1-red focus:ring-f1-red mt-0.5">
+                            <div>
+                                <span class="font-semibold text-white text-sm">FM-Radio / Hörlurar</span>
+                                <p class="text-xs text-neutral-400">Koppla in hörlurar och ratta in banans lokala radiostation för att höra banans kommentatorer i realtid.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TIPS & STRATEGIES (Md: 5 cols) -->
+                <div class="md:col-span-5 space-y-6">
+                    <div class="f1-card p-6 rounded-2xl">
+                        <h3 class="tech-font text-lg font-bold text-f1-accent mb-3">⏱️ Proffstipset: Tidsschema</h3>
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            Kom till banan redan tidigt på fredagsmorgonen. Det är då du får bäst möjlighet att utforska fan-zonerna, köpa officiella kläder innan de tar slut i din storlek, samt spana in support-serier som F2 och F3.
+                        </p>
+                    </div>
+
+                    <div class="f1-card p-6 rounded-2xl">
+                        <h3 class="tech-font text-lg font-bold text-white mb-3">🍔 Mat & Dryck</h3>
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            Maten på banorna är ofta dyr och köerna är milslånga under pauser. De flesta banor tillåter att du tar med egen mat och oöppnade plastflaskor med vatten. Kontrollera alltid reglerna för respektive bana innan insläpp!
+                        </p>
+                    </div>
+
+                    <div class="f1-card p-6 rounded-2xl">
+                        <h3 class="tech-font text-lg font-bold text-f1-red mb-3">🚶‍♂️ Track Invasion</h3>
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            Efter racet öppnas grindarna på de flesta banor (t.ex. Monza och Silverstone) så att fansen kan storma banan för att se podieceremonin. Ta reda på var närmaste grind finns under söndagsmorgonen så är du först ut på asfalten!
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= PAGE 5: GAME / TICKET CHASE ================= -->
+        <div id="tab-games" class="tab-content hidden space-y-12">
+            
+            <div class="border-l-4 border-f1-red pl-4">
+                <h2 class="tech-font text-3xl font-black text-white uppercase italic">Biljett-Jakten</h2>
+                <p class="text-neutral-400">Visa din passion, testa dina F1-kunskaper och dina blixtsnabba reaktioner för chansen att delta i vår virtuella utlottning av exklusiva läktarbiljetter!</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- THE GAME CONTAINER (Lg: 8 cols) -->
+                <div class="lg:col-span-8 f1-card p-6 sm:p-8 rounded-2xl space-y-6 relative overflow-hidden">
+                    
+                    <!-- GAME INTRO -->
+                    <div id="game-intro" class="space-y-6 text-center py-8">
+                        <div class="text-6xl animate-bounce">🚦</div>
+                        <h3 class="tech-font text-2xl font-black text-white uppercase italic">Är du snabb nog för Formel 1?</h3>
+                        <p class="text-neutral-300 max-w-xl mx-auto">
+                            För att "vinna" fribiljetterna måste du klara två utmaningar:
+                            <br><strong class="text-f1-red">1. Reaktionstestet:</strong> Reagera på startlamporna som en riktig förare.
+                            <br><strong class="text-f1-accent">2. F1 Trivia:</strong> Svara rätt på tre kluriga frågor om Formel 1.
+                        </p>
+                        <button onclick="startChallenge()" class="px-8 py-4 bg-f1-red text-white tech-font font-black uppercase italic rounded-lg glow-red hover:bg-f1-darkred transition-all transform hover:scale-105">
+                            Starta Utmaningen
+                        </button>
+                    </div>
+
+                    <!-- STEP 1: REACTION TEST -->
+                    <div id="game-reaction" class="hidden space-y-6 text-center py-6">
+                        <h3 class="tech-font text-xl font-bold text-white uppercase">Steg 1: Släck Startlamporna</h3>
+                        <p class="text-xs text-neutral-400">Vänta tills alla fem lampor lyser rött. Klicka på den stora knappen SÅ FORT de släcks!</p>
+                        
+                        <!-- LIGHTS VISUAL -->
+                        <div class="flex justify-center gap-4 py-6 bg-black/40 rounded-xl max-w-md mx-auto border border-neutral-900">
+                            <div class="light-unit flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-neutral-800 transition-all border border-neutral-700" id="light-1"></div>
+                            </div>
+                            <div class="light-unit flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-neutral-800 transition-all border border-neutral-700" id="light-2"></div>
+                            </div>
+                            <div class="light-unit flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-neutral-800 transition-all border border-neutral-700" id="light-3"></div>
+                            </div>
+                            <div class="light-unit flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-neutral-800 transition-all border border-neutral-700" id="light-4"></div>
+                            </div>
+                            <div class="light-unit flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-neutral-800 transition-all border border-neutral-700" id="light-5"></div>
+                            </div>
+                        </div>
+
+                        <!-- FEEDBACK AND TRIGGER BUTTON -->
+                        <div class="space-y-4">
+                            <p class="text-lg font-bold tech-font" id="reaction-timer">Väntar på start...</p>
+                            <button onmousedown="triggerReaction()" id="reaction-btn" disabled class="w-full max-w-xs py-5 bg-neutral-700 text-white font-bold uppercase rounded-xl transition cursor-not-allowed">
+                                REDO...
+                            </button>
+                        </div>
+
+                        <!-- REACTION TEST RESULT CARD -->
+                        <div id="reaction-result-panel" class="hidden max-w-md mx-auto p-5 bg-neutral-950/80 border border-neutral-800 rounded-xl text-center space-y-4">
+                            <h4 class="tech-font text-lg font-bold text-white uppercase">Ditt Resultat</h4>
+                            <div class="p-3 bg-neutral-900 rounded-lg">
+                                <span class="text-xs text-neutral-400 uppercase tracking-widest block">Reaktionstid</span>
+                                <span class="text-3xl font-black text-f1-accent font-mono" id="reaction-result-time">0.000s</span>
+                            </div>
+                            <p class="text-xs text-neutral-300 leading-relaxed" id="reaction-result-requirement">
+                                <strong class="text-white">Krav för vinst:</strong> Du behöver en reaktionstid under <strong class="text-f1-accent">0.220s</strong> och klara kvissen för att kvalificera dig till utlottningen!
+                            </p>
+                            <div class="flex gap-3 justify-center pt-2">
+                                <button onclick="resetGame()" class="px-5 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all">
+                                    Starta Om helt 🔄
+                                </button>
+                                <button id="reaction-continue-btn" onclick="goToStep2()" class="hidden px-5 py-2 bg-f1-red hover:bg-f1-darkred text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg glow-red">
+                                    Nästa Steg (Trivia) &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: TRIVIA -->
+                    <div id="game-trivia" class="hidden space-y-6">
+                        <div class="flex justify-between items-center border-b border-neutral-800 pb-4">
+                            <h3 class="tech-font text-lg font-bold text-white uppercase">Steg 2: F1 Trivia</h3>
+                            <span class="text-xs bg-f1-accent text-black font-semibold px-2 py-1 rounded">Fråga <span id="trivia-current">1</span> av 3</span>
+                        </div>
+
+                        <div class="py-4">
+                            <p class="text-base sm:text-lg text-white font-medium" id="trivia-question">Vem tog den allra första segern för säsongen 2026?</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="trivia-options">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: LUCKY WHEEL (SPIN TO WIN) -->
+                    <div id="game-wheel" class="hidden text-center space-y-8 py-8">
+                        <h3 class="tech-font text-2xl font-black text-white italic uppercase">Du klarade testerna! 🎉</h3>
+                        <p class="text-neutral-300 text-sm max-w-md mx-auto">Du är snabb som en blixt och smart som en strateg. Snurra på däckshjulet för att se om du vinner en exklusiv läktarbiljett till valfritt lopp!</p>
+                        
+                        <!-- SPIN WHEEL VISUAL -->
+                        <div class="relative w-64 h-64 mx-auto flex items-center justify-center">
+                            <!-- Outer Wheel styling -->
+                            <div class="absolute inset-0 rounded-full border-8 border-neutral-800 bg-neutral-900 overflow-hidden flex items-center justify-center transition-transform duration-[3000ms] ease-out shadow-2xl" id="wheel-element">
+                                <!-- Wheel Segments (rendered using simple CSS conic-gradient) -->
+                                <div class="w-full h-full rounded-full" style="background: conic-gradient(#E10600 0deg 90deg, #15151E 90deg 180deg, #00F5D4 180deg 270deg, #252530 270deg 360deg);"></div>
+                                <!-- Text labels overlay -->
+                                <div class="absolute text-[10px] font-bold text-white uppercase tech-font" style="transform: rotate(45deg) translateY(-80px);">Paddock Pass</div>
+                                <div class="absolute text-[10px] font-bold text-white uppercase tech-font" style="transform: rotate(135deg) translateY(-80px);">Nitar</div>
+                                <div class="absolute text-[10px] font-bold text-black uppercase tech-font" style="transform: rotate(225deg) translateY(-80px);">Grandstand</div>
+                                <div class="absolute text-[10px] font-bold text-white uppercase tech-font" style="transform: rotate(315deg) translateY(-80px);">Tröstpris</div>
+                            </div>
+                            <!-- Center Indicator Pin -->
+                            <div class="absolute top-0 w-4 h-8 bg-white border-2 border-f1-red rounded-b-full shadow-md z-10 transform -translate-y-2"></div>
+                            <!-- Center Hub Button -->
+                            <button onclick="spinWheel()" id="spin-btn" class="absolute w-16 h-16 rounded-full bg-f1-red text-white font-black text-xs tech-font flex items-center justify-center uppercase glow-red hover:bg-f1-darkred transition-all">
+                                SNURRA
+                            </button>
+                        </div>
+
+                        <p class="text-lg font-bold tech-font text-f1-accent h-8" id="wheel-result"></p>
+                    </div>
+
+                </div>
+
+                <!-- LEADERBOARD / RECENT WINNERS (Lg: 4 cols) -->
+                <div class="lg:col-span-4 f1-card p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="tech-font text-base font-bold text-white">🏆 Topplista: Reaktion</h3>
+                            <button onclick="clearHighscores()" class="text-[10px] text-neutral-500 hover:text-f1-red font-semibold uppercase tracking-wider transition-all">
+                                Rensa 🗑️
+                            </button>
+                        </div>
+                        <div class="space-y-3" id="reaction-leaderboard">
+                            <!-- Populated dynamically via localStorage -->
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-neutral-950 p-4 rounded-xl border border-neutral-900 text-xs text-neutral-400 leading-relaxed">
+                        <strong class="text-white block mb-1">ℹ️ Hur tävlingen fungerar:</strong>
+                        Våra utlottningar sker automatiskt en gång per månad bland de deltagare som lyckas klicka under <strong class="text-f1-accent">0.220 sekunder</strong> och svarar rätt på alla tre frågorna.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- CUSTOM MODAL DIALOG (Bypasses window.alert for perfect Iframe usage) -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="f1-card max-w-md w-full p-6 sm:p-8 rounded-2xl space-y-5 border border-f1-red/30 bg-f1-dark text-center shadow-2xl">
+            <div class="text-5xl" id="modal-icon">🏆</div>
+            <h3 class="tech-font text-2xl font-black text-white uppercase italic" id="modal-title">Rubrik</h3>
+            <p class="text-neutral-300 text-sm leading-relaxed" id="modal-body">Meddelande...</p>
+            
+            <!-- Dynamic Form Field for E-post registration / Name input -->
+            <div id="modal-input-container" class="hidden space-y-2">
+                <input type="text" id="modal-name-input" placeholder="Ditt namn för topplistan" class="w-full p-3 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm focus:outline-none focus:border-f1-accent transition mb-2">
+                <input type="email" id="modal-email-input" placeholder="Ange din e-postadress" class="w-full p-3 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm focus:outline-none focus:border-f1-accent transition">
+            </div>
+
+            <button id="modal-action-btn" class="w-full py-3 bg-f1-red text-white tech-font font-black uppercase tracking-wider rounded-lg hover:bg-f1-darkred transition-all">OK</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-f1-dark border-t border-neutral-800 py-12 mt-16 text-center text-xs text-neutral-500 space-y-4">
+        <div class="flex justify-center items-center gap-3">
+            <div class="bg-neutral-800 text-neutral-400 tech-font px-2.5 py-0.5 text-sm font-black italic rounded">
+                F1
+            </div>
+            <span class="tech-font text-sm font-bold tracking-widest text-neutral-400">WORLD<span class="text-f1-red">HUB</span></span>
+        </div>
+        <p class="max-w-md mx-auto">
+            Denna portal är en oberoende fan-sida och är inte associerad med, sponsrad av eller ansluten till Formula One Group eller dess dotterbolag.
+        </p>
+        <p>&copy; 2026 F1 World Hub. All rights reserved.</p>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT FOR ENGINE LOGIC -->
+    <script>
+        // === TABS SYSTEM ===
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            // Show target
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            // Handle active button class
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-f1-red', 'text-white');
+                btn.classList.add('text-neutral-300', 'hover:text-white');
+            });
+            document.getElementById('btn-' + tabId).classList.add('bg-f1-red', 'text-white');
+            document.getElementById('btn-' + tabId).classList.remove('text-neutral-300', 'hover:text-white');
+        }
+
+        // === CHART.JS SETUP ===
+        const ctx = document.getElementById('winOddsChart').getContext('2d');
+        const winOddsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Antonelli', 'Russell', 'Leclerc', 'Hamilton', 'Norris', 'Övriga'],
+                datasets: [{
+                    label: 'Vinstchans (%)',
+                    data: [58, 18, 10, 8, 4, 2],
+                    backgroundColor: [
+                        '#00F5D4', // Antonelli neon-cyan
+                        '#00d1b2', // Russell
+                        '#E10600', // Leclerc Red
+                        '#9E0400', // Hamilton Dark Red
+                        '#FF8700', // Norris Orange
+                        '#252530'  // Others
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        }
+                    }
+                }
+            }
+        });
+
+        // === INTERACTIVE TRAVEL GUIDE DATA ===
+        const gpData = {
+            monaco: {
+                round: "RUNDA 6 • NÄSTA GP",
+                title: "Monaco Grand Prix",
+                location: "Bana: Circuit de Monaco • Monte Carlo",
+                date: "5 - 7 Juni 2026",
+                flight: "Nice Côte d'Azur Airport (NCE) – ca 30 minuter från Monaco med tåg eller helikopter.",
+                flightTip: "Flygtips: Boka direktflyg till Nice från Stockholm (SAS/Norwegian). Ta tåget in till Monaco under racedagarna för att slippa bilköer.",
+                hotelLux: "Premium: Hôtel de Paris (direkt vid kasinot) – ca 15 000 SEK/natt.",
+                hotelBudget: "Budget: Hyr en lägenhet i Nice eller Menton – ca 1 500 SEK/natt och pendla enkelt med tåget på 20 minuter.",
+                activities: "Besök det legendariska Casino de Monte-Carlo, ta en fika på Café de Paris, promenera längs lyxyachterna i Port Hercule eller utforska furstepalatset.",
+                facts: [
+                    "Banlängd: 3.337 km",
+                    "Antal varv: 78 varv",
+                    "Unikt: Världens mest kända stadsbana, extremt smal med noll marginal för misstag.",
+                    "Svårighet: Extremt krävande aerodynamiskt och mentalt."
+                ],
+                difficulty: "Svårighet: Extrem 🔴"
+            },
+            spain: {
+                round: "RUNDA 7",
+                title: "Barcelona Grand Prix",
+                location: "Bana: Circuit de Barcelona-Catalunya",
+                date: "12 - 14 Juni 2026",
+                flight: "Barcelona-El Prat Airport (BCN) – ca 40 minuter från banan.",
+                flightTip: "Flygtips: Direktflyg till Barcelona finns med SAS, Norwegian och Ryanair dagligen från Stockholm.",
+                hotelLux: "Premium: W Barcelona (vid stranden) – ca 6 000 SEK/natt.",
+                hotelBudget: "Budget: Vandrarhem eller hotell i centrala Barcelona (t.ex. Eixample-området) – ca 1 200 SEK/natt.",
+                activities: "Njut av fantastisk tapas, besök Sagrada Família, bada vid Barceloneta-stranden och upplev stadens fantastiska nattliv.",
+                facts: [
+                    "Banlängd: 4.657 km",
+                    "Antal varv: 66 varv",
+                    "Unikt: En av de mest kompletta testbanorna i världen med en blandning av snabba och långsamma kurvor.",
+                    "Svårighet: Medel/Hög."
+                ],
+                difficulty: "Svårighet: Medel 🟡"
+            },
+            austria: {
+                round: "RUNDA 8",
+                title: "Österrike Grand Prix",
+                location: "Bana: Red Bull Ring • Spielberg",
+                date: "26 - 28 Juni 2026",
+                flight: "Vienna International Airport (VIE) eller Graz Airport (GRZ). Tåg eller hyrbil rekommenderas från flygplatsen.",
+                flightTip: "Flygtips: Flyg till Wien och ta en naturskön tågresa till Knittelfeld station (närmsta station till banan).",
+                hotelLux: "Premium: Steirerschlössl (lyxigt boutiquehotell nära banan) – ca 8 000 SEK/natt.",
+                hotelBudget: "Budget: Camping direkt vid banan (en fantastisk och ikonisk folkfest!) – ca 500 SEK/natt.",
+                activities: "Besök det fantastiska bergslandskapet runt Spielberg, vandra i alperna och upplev den vilda österrikiska after-track-stämningen.",
+                facts: [
+                    "Banlängd: 4.318 km",
+                    "Antal varv: 71 varv",
+                    "Unikt: Endast 10 kurvor och enorma höjdskillnader. Banan bjuder nästan alltid på spektakulära omkörningar.",
+                    "Svårighet: Medel."
+                ],
+                difficulty: "Svårighet: Medel 🟡"
+            },
+            britain: {
+                round: "RUNDA 9",
+                title: "Storbritannien Grand Prix",
+                location: "Bana: Silverstone Circuit",
+                date: "3 - 5 Juli 2026",
+                flight: "London Luton (LTN) eller London Heathrow (LHR).",
+                flightTip: "Flygtips: Flyg till London och hyr en bil för den 1.5 timmar långa resan upp till Northamptonshire.",
+                hotelLux: "Premium: Whittlebury Hall (hotell precis intill banan med spa) – ca 7 000 SEK/natt.",
+                hotelBudget: "Budget: Bed & Breakfasts i de närliggande mysiga engelska byarna som Towcester eller Brackley – ca 1 200 SEK/natt.",
+                activities: "Upplev Silverstone Interactive Museum, gå på puben med de fanatiska brittiska F1-fansen och njut av traditionell English Breakfast.",
+                facts: [
+                    "Banlängd: 5.891 km",
+                    "Antal varv: 52 varv",
+                    "Unikt: Formel 1:s andliga hem. Kurvkomplexet Maggots, Becketts och Chapel är bland de snabbaste och mest respekterade i världen.",
+                    "Svårighet: Mycket Hög."
+                ],
+                difficulty: "Svårighet: Hög 🔴"
+            },
+            belgium: {
+                round: "RUNDA 10",
+                title: "Belgien Grand Prix",
+                location: "Bana: Circuit de Spa-Francorchamps",
+                date: "17 - 19 Juli 2026",
+                flight: "Brussels Airport (BRU) eller Düsseldorf Airport (DUS).",
+                flightTip: "Flygtips: Flyg till Bryssel, hyr en bil och kör till de vackra Ardennerna.",
+                hotelLux: "Premium: Hotel de la Source (precis bredvid kurvan La Source) – ca 9 000 SEK/natt.",
+                hotelBudget: "Budget: Camping vid banan eller hotell i närliggande städer som Verviers eller Liège – ca 1 100 SEK/natt.",
+                activities: "Köp äkta belgiska våfflor på banan, drick lokal trappistöl och njut av att vandra i de vackra kuperade skogarna runt banan.",
+                facts: [
+                    "Banlängd: 7.004 km (Formel 1-kalenderns längsta bana)",
+                    "Antal varv: 44 varv",
+                    "Unikt: Den legendariska kurvan Eau Rouge / Raidillon kastar förarna uppför en extremt brant backe i över 300 km/h.",
+                    "Svårighet: Extrem."
+                ],
+                difficulty: "Svårighet: Extrem 🔴"
+            },
+            italy: {
+                round: "RUNDA 13",
+                title: "Italien Grand Prix",
+                location: "Bana: Autodromo Nazionale Monza",
+                date: "4 - 6 September 2026",
+                flight: "Milano Linate (LIN) eller Milano Malpensa (MXP).",
+                flightTip: "Flygtips: Flyg direkt till Milano Linate för snabbast transfer. Ta sedan tåget till Monza station under helgen.",
+                hotelLux: "Premium: Hotel de la Ville Monza (precis vid de kungliga trädgårdarna) – ca 6 500 SEK/natt.",
+                hotelBudget: "Budget: Hotell i centrala Milano – ca 1 400 SEK/natt, och pendla enkelt med tåget på under 30 minuter.",
+                activities: "Besök den magnifika katedralen Duomo di Milano, shoppa i Galleria Vittorio Emanuele II och storma banan för att uppleva Tifosis episka röda flagghav.",
+                facts: [
+                    "Banlängd: 5.793 km",
+                    "Antal varv: 53 varv",
+                    "Unikt: Känd som 'The Temple of Speed'. Bilarna kör med minimal downforce och snittfarten ligger runt 260 km/h.",
+                    "Svårighet: Hög."
+                ],
+                difficulty: "Svårighet: Hög 🔴"
+            },
+            singapore: {
+                round: "RUNDA 16",
+                title: "Singapore Grand Prix",
+                location: "Bana: Marina Bay Street Circuit",
+                date: "9 - 11 Oktober 2026",
+                flight: "Singapore Changi Airport (SIN) – en av världens bästa flygplatser.",
+                flightTip: "Flygtips: Boka i god tid då Singapore är ett mycket populärt nav i Sydostasien.",
+                hotelLux: "Premium: Marina Bay Sands (med den kända infinity-poolen på taket) – ca 12 000 SEK/natt.",
+                hotelBudget: "Budget: Hotell i stadsdelarna Little India eller Geylang – ca 1 200 SEK/natt.",
+                activities: "Besök fantastiska Gardens by the Bay, drick en klassisk Singapore Sling på Raffles Hotel och njut av fantastisk street-food på lokala hawker-centers.",
+                facts: [
+                    "Banlängd: 4.940 km",
+                    "Antal varv: 62 varv",
+                    "Unikt: Ett spektakulärt nattlopp under strålkastare med extremt hög luftfuktighet som pressar förarnas fysik till det yttersta.",
+                    "Svårighet: Extrem."
+                ],
+                difficulty: "Svårighet: Extrem 🔴"
+            },
+            vegas: {
+                round: "RUNDA 20",
+                title: "Las Vegas Grand Prix",
+                location: "Bana: Las Vegas Strip Circuit",
+                date: "19 - 21 November 2026",
+                flight: "Harry Reid International Airport (LAS) – ligger bara 10 minuter från Strippen.",
+                flightTip: "Flygtips: Direktflyg saknas oftast, boka med mellanlandning i t.ex. London, Frankfurt eller New York.",
+                hotelLux: "Premium: The Bellagio eller Caesars Palace – ca 10 100 SEK/natt under F1-helgen.",
+                hotelBudget: "Budget: Hotell i Downtown Las Vegas (Fremont Street) – ca 1 800 SEK/natt.",
+                activities: "Se Bellagios ikoniska fontänshow, spela på kasino, se en storslagen Cirque du Soleil-show eller ta en dagsutflykt till Grand Canyon.",
+                facts: [
+                    "Banlängd: 6.201 km",
+                    "Antal varv: 50 varv",
+                    "Unikt: Förarna dundrar förbi världsberömda landmärken på Las Vegas Strip i över 340 km/h under den kalla ökenhimlen på lördagskvällen.",
+                    "Svårighet: Medel/Hög."
+                ],
+                difficulty: "Svårighet: Hög 🔴"
+            }
+        };
+
+        function selectRace(raceKey) {
+            // Remove active classes from all cards
+            document.querySelectorAll('.race-card').forEach(card => {
+                card.classList.remove('border-f1-red', 'bg-f1-gray/80');
+                card.classList.add('border-neutral-800', 'bg-neutral-900/40');
+            });
+            // Add active class to clicked card
+            document.getElementById('race-' + raceKey).classList.add('border-f1-red', 'bg-f1-gray/80');
+            document.getElementById('race-' + raceKey).classList.remove('border-neutral-800', 'bg-neutral-900/40');
+
+            // Update details panel with fade effect
+            const data = gpData[raceKey];
+            const panel = document.getElementById('travel-panel');
+            panel.style.opacity = '0.3';
+            
+            setTimeout(() => {
+                document.getElementById('gp-round').innerText = data.round;
+                document.getElementById('gp-title').innerText = data.title;
+                document.getElementById('gp-location').innerText = data.location;
+                document.getElementById('gp-date').innerText = data.date;
+                document.getElementById('gp-flight-airport').innerHTML = `<strong>Närmaste flygplats:</strong> ${data.flight}`;
+                document.getElementById('gp-flight-tip').innerHTML = `<strong>Flygtips:</strong> ${data.flightTip}`;
+                document.getElementById('gp-hotel-lux').innerHTML = `<strong>Premium:</strong> ${data.hotelLux}`;
+                document.getElementById('gp-hotel-budget').innerHTML = `<strong>Budget:</strong> ${data.hotelBudget}`;
+                document.getElementById('gp-activities').innerHTML = data.activities;
+                document.getElementById('gp-difficulty').innerText = data.difficulty;
+                
+                // Update facts
+                const factsUl = document.getElementById('gp-facts');
+                factsUl.innerHTML = '';
+                data.facts.forEach(fact => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${fact.split(':')[0]}:</strong>${fact.split(':')[1]}`;
+                    factsUl.appendChild(li);
+                });
+
+                panel.style.opacity = '1';
+            }, 150);
+        }
+
+
+        // === LOCAL STORAGE HIGHSCORES ENGINE ===
+        const defaultHighscores = [
+            { name: "Marcus Andersson", time: 0.142 },
+            { name: "Elin Bergström", time: 0.158 },
+            { name: "Jonas F1-expert", time: 0.174 },
+            { name: "Kimi Fan", time: 0.188 }
+        ];
+
+        function getHighscores() {
+            const stored = localStorage.getItem('f1_highscores_v2');
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            localStorage.setItem('f1_highscores_v2', JSON.stringify(defaultHighscores));
+            return defaultHighscores;
+        }
+
+        function saveHighscore(name, time) {
+            let current = getHighscores();
+            current.push({ name: name || "Anonym Förare", time: parseFloat(time) });
+            // Sort ascendingly
+            current.sort((a, b) => a.time - b.time);
+            // Keep top 5
+            current = current.slice(0, 5);
+            localStorage.setItem('f1_highscores_v2', JSON.stringify(current));
+            renderHighscores();
+        }
+
+        function renderHighscores() {
+            const list = getHighscores();
+            const container = document.getElementById('reaction-leaderboard');
+            container.innerHTML = '';
+            list.forEach((entry, i) => {
+                const isFirst = i === 0;
+                container.innerHTML += `
+                    <div class="flex justify-between items-center text-xs p-2.5 rounded border ${
+                        isFirst ? 'bg-f1-red/10 border-f1-red text-white' : 'bg-neutral-900/50 border-neutral-800 text-neutral-300'
+                    }">
+                        <span class="font-medium">${i + 1}. ${entry.name}</span>
+                        <span class="text-f1-accent font-mono font-bold">${entry.time.toFixed(3)}s</span>
+                    </div>
+                `;
+            });
+        }
+
+        function clearHighscores() {
+            if (confirm("Är du säker på att du vill rensa topplistan?")) {
+                localStorage.setItem('f1_highscores_v2', JSON.stringify(defaultHighscores));
+                renderHighscores();
+            }
+        }
+
+
+        // === GAME AND TRIVIA STATE AND ENGINE ===
+        let currentStep = 1;
+        let reactionStartTime = 0;
+        let reactionTimerId = null;
+        let reactionTimeoutId = null;
+        let testPassed = false;
+        let lastReactionTime = 0;
+        
+        const triviaQuestions = [
+            {
+                q: "Vem leder förarmästerskapet just nu i maj 2026?",
+                options: [
+                    { text: "Max Verstappen", correct: false },
+                    { text: "Kimi Antonelli", correct: true },
+                    { text: "Lewis Hamilton", correct: false },
+                    { text: "George Russell", correct: false }
+                ]
+            },
+            {
+                q: "Vilket team kör sjufaldige världsmästaren Lewis Hamilton för under säsongen 2026?",
+                options: [
+                    { text: "Mercedes", correct: false },
+                    { text: "Ferrari", correct: true },
+                    { text: "Aston Martin", correct: false },
+                    { text: "Red Bull Racing", correct: false }
+                ]
+            },
+            {
+                q: "Vad kallas den extremt snabba och berömda kurvkombinationen på Silverstone?",
+                options: [
+                    { text: "Eau Rouge / Raidillon", correct: false },
+                    { text: "Maggots, Becketts & Chapel", correct: true },
+                    { text: "Grand Hotel Hairpin", correct: false },
+                    { text: "Parabolica", correct: false }
+                ]
+            }
+        ];
+        let currentTriviaIndex = 0;
+
+        function startChallenge() {
+            document.getElementById('game-intro').classList.add('hidden');
+            document.getElementById('game-reaction').classList.remove('hidden');
+            setupReactionTest();
+        }
+
+        // --- STEP 1: REACTION TEST LOGIC ---
+        function setupReactionTest() {
+            // Reset lights UI
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`light-${i}`).style.backgroundColor = '#262626';
+                document.getElementById(`light-${i}`).classList.remove('glow-red');
+            }
+            const timerText = document.getElementById('reaction-timer');
+            timerText.innerText = "Gör dig redo... Lamporna tänds snart.";
+            timerText.style.color = '#FFFFFF';
+            
+            const btn = document.getElementById('reaction-btn');
+            btn.innerText = "VÄNTA PÅ ATT DE SLÄCKS...";
+            btn.disabled = true;
+            btn.style.backgroundColor = '#404040';
+            btn.classList.remove('glow-green', 'bg-f1-accent');
+            btn.classList.add('cursor-not-allowed');
+
+            // Hide previous results
+            document.getElementById('reaction-result-panel').classList.add('hidden');
+
+            // Phase 1: Turn on lights sequentially with 1 second interval
+            let lightsOnCount = 0;
+            const turnOnLights = () => {
+                if (lightsOnCount < 5) {
+                    lightsOnCount++;
+                    const light = document.getElementById(`light-${lightsOnCount}`);
+                    light.style.backgroundColor = '#E10600';
+                    light.classList.add('glow-red');
+                    setTimeout(turnOnLights, 1000);
+                } else {
+                    // All lights on, wait a random time between 1.5s and 4.5s then extinguish
+                    timerText.innerText = "STAY FOCUSED... HÅLL MUSEN REDO!";
+                    const randomDelay = 1500 + Math.random() * 3000;
+                    reactionTimeoutId = setTimeout(extinguishLights, randomDelay);
+                }
+            };
+            setTimeout(turnOnLights, 1000);
+        }
+
+        function extinguishLights() {
+            // Extinguish all red lights
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`light-${i}`).style.backgroundColor = '#171717';
+                document.getElementById(`light-${i}`).classList.remove('glow-red');
+            }
+            
+            // Start timer
+            reactionStartTime = performance.now();
+            
+            const timerText = document.getElementById('reaction-timer');
+            timerText.innerText = "KLICKA NU!!!";
+            timerText.style.color = '#00F5D4';
+            
+            const btn = document.getElementById('reaction-btn');
+            btn.disabled = false;
+            btn.innerText = "KLICKA!";
+            btn.style.backgroundColor = '#00F5D4';
+            btn.style.color = '#000000';
+            btn.classList.add('glow-green');
+            btn.classList.remove('cursor-not-allowed');
+        }
+
+        function triggerReaction() {
+            const clickTime = performance.now();
+            const timeDifference = ((clickTime - reactionStartTime) / 1000).toFixed(3);
+            
+            const timerText = document.getElementById('reaction-timer');
+            const btn = document.getElementById('reaction-btn');
+            
+            btn.disabled = true;
+            btn.classList.remove('glow-green');
+            
+            if (reactionStartTime === 0) {
+                // False start!
+                clearTimeout(reactionTimeoutId);
+                timerText.innerText = "Tjuvstart! Du klickade innan lamporna slocknade.";
+                timerText.style.color = '#E10600';
+                
+                // Show result panel with false start notification and only retry
+                document.getElementById('reaction-result-time').innerText = "TJUVSTART";
+                document.getElementById('reaction-result-time').style.color = '#E10600';
+                document.getElementById('reaction-result-requirement').innerHTML = "Du klickade för tidigt! En riktig F1-förare måste vänta till lamporna slocknar. Prova igen för att få din tid.";
+                document.getElementById('reaction-continue-btn').classList.add('hidden');
+                document.getElementById('reaction-result-panel').classList.remove('hidden');
+            } else {
+                // Valid reaction
+                lastReactionTime = parseFloat(timeDifference);
+                timerText.innerText = `Klarat! Tid: ${timeDifference}s`;
+                timerText.style.color = '#00F5D4';
+
+                // Display result panel
+                document.getElementById('reaction-result-time').innerText = `${timeDifference}s`;
+                document.getElementById('reaction-result-time').style.color = '#00F5D4';
+                
+                const passed = lastReactionTime <= 0.250;
+                const isSuperb = lastReactionTime <= 0.220;
+
+                let reqText = `Dina reaktioner är redo! Du fick <strong class="text-white">${timeDifference}s</strong>. `;
+                if (isSuperb) {
+                    reqText += `Du klarade gränsen på <strong class="text-f1-accent">0.220s</strong> och är kvalificerad för biljettdragningen efter att du svarat rätt på kvissen!`;
+                    document.getElementById('reaction-continue-btn').classList.remove('hidden');
+                } else if (passed) {
+                    reqText += `Du klarade dig vidare till kvissen (gränsen är 0.250s), men för att vinna biljetterna behöver du sänka din tid under <strong class="text-f1-accent">0.220s</strong> vid nästa försök!`;
+                    document.getElementById('reaction-continue-btn').classList.remove('hidden');
+                } else {
+                    reqText += `Du nådde inte gränsen på <strong class="text-f1-red">0.250s</strong> för att gå vidare den här gången. Försök igen för att nå nästa steg!`;
+                    document.getElementById('reaction-continue-btn').classList.add('hidden');
+                }
+                
+                document.getElementById('reaction-result-requirement').innerHTML = reqText;
+                document.getElementById('reaction-result-panel').classList.remove('hidden');
+
+                // Ask for name to register highscore
+                setTimeout(() => {
+                    openModal(
+                        "Bra försök! ⏱️",
+                        `Du fick tiden ${timeDifference}s. Skriv in ditt namn nedan för att spara din tid på den lokala topplistan!`,
+                        "⚡",
+                        true,
+                        "Spara mitt resultat",
+                        () => {
+                            const playerName = document.getElementById('modal-name-input').value;
+                            saveHighscore(playerName, lastReactionTime);
+                        }
+                    );
+                }, 800);
+            }
+        }
+
+        function goToStep2() {
+            document.getElementById('game-reaction').classList.add('hidden');
+            document.getElementById('game-trivia').classList.remove('hidden');
+            loadTriviaQuestion();
+        }
+
+        // --- STEP 2: TRIVIA LOGIC ---
+        function loadTriviaQuestion() {
+            const currentQ = triviaQuestions[currentTriviaIndex];
+            document.getElementById('trivia-current').innerText = currentTriviaIndex + 1;
+            document.getElementById('trivia-question').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('trivia-options');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.innerText = opt.text;
+                btn.className = "w-full text-left p-4 bg-neutral-900/60 hover:bg-neutral-800 text-white rounded-xl border border-neutral-800 hover:border-f1-red transition-all duration-200";
+                btn.onclick = () => handleTriviaAnswer(opt.correct, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleTriviaAnswer(isCorrect, buttonElement) {
+            document.querySelectorAll('#trivia-options button').forEach(b => b.disabled = true);
+            
+            if (isCorrect) {
+                buttonElement.style.backgroundColor = 'rgba(0, 245, 212, 0.2)';
+                buttonElement.style.borderColor = '#00F5D4';
+                buttonElement.innerHTML += ' <span class="float-right text-f1-accent">✓ Rätt</span>';
+                
+                setTimeout(() => {
+                    currentTriviaIndex++;
+                    if (currentTriviaIndex < triviaQuestions.length) {
+                        loadTriviaQuestion();
+                    } else {
+                        document.getElementById('game-trivia').classList.add('hidden');
+                        document.getElementById('game-wheel').classList.remove('hidden');
+                    }
+                }, 1500);
+            } else {
+                buttonElement.style.backgroundColor = 'rgba(225, 6, 0, 0.2)';
+                buttonElement.style.borderColor = '#E10600';
+                buttonElement.innerHTML += ' <span class="float-right text-f1-red">✗ Fel</span>';
+                
+                setTimeout(() => {
+                    openModal(
+                        "Fel Svar!",
+                        "Det var tyvärr fel svar på frågan. Men ge inte upp – F1 handlar om att lära sig av misstagen och komma tillbaka starkare!",
+                        "🔧",
+                        false,
+                        "Starta om kvissen",
+                        () => {
+                            currentTriviaIndex = 0;
+                            loadTriviaQuestion();
+                        }
+                    );
+                }, 1000);
+            }
+        }
+
+        // --- STEP 3: LUCKY WHEEL (SPIN TO WIN) ---
+        let isSpinning = false;
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            
+            const wheel = document.getElementById('wheel-element');
+            const resultText = document.getElementById('wheel-result');
+            const spinBtn = document.getElementById('spin-btn');
+            
+            spinBtn.disabled = true;
+            spinBtn.innerText = "SNURRAR";
+            resultText.innerText = "Spänningen stiger...";
+            
+            const targetSectorDeg = 225; 
+            const totalDeg = (360 * 5) + (360 - targetSectorDeg); 
+            
+            wheel.style.transition = 'transform 3000ms cubic-bezier(0.1, 0.8, 0.1, 1)';
+            wheel.style.transform = `rotate(${totalDeg}deg)`;
+            
+            setTimeout(() => {
+                isSpinning = false;
+                resultText.innerHTML = "🎉 GRATTIS! Du har vunnit ett <span class='text-f1-accent font-black'>Grandstand-biljettpaket</span> till valfritt GP under 2026!";
+                resultText.classList.add('animate-pulse');
+                
+                setTimeout(() => {
+                    openModal(
+                        "Grattis, du vann! 🎫",
+                        "Du klarade både reaktionstestet och kvissen samt snurrade hem ett exklusivt Grandstand-biljettpaket! Ange din e-postadress nedan för att slutföra ditt tävlingsbidrag.",
+                        "🏁",
+                        true,
+                        "Skicka & Gå till Start",
+                        () => {
+                            resetGame();
+                        }
+                    );
+                }, 1500);
+            }, 3100);
+        }
+
+        // === RESTART & STATE CLEANUP SYSTEM ===
+        function resetGame() {
+            // Cancel any pending timers
+            clearTimeout(reactionTimeoutId);
+            
+            // Reset all state variables
+            currentStep = 1;
+            reactionStartTime = 0;
+            reactionTimerId = null;
+            reactionTimeoutId = null;
+            testPassed = false;
+            currentTriviaIndex = 0;
+            isSpinning = false;
+            lastReactionTime = 0;
+
+            // Instantly clear/reset the wheel transformation style
+            const wheel = document.getElementById('wheel-element');
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+            
+            // Force browser reflow to apply the styling transition-none immediately
+            void wheel.offsetHeight;
+            
+            // Re-apply transition property for next turn
+            wheel.style.transition = 'transform 3000ms cubic-bezier(0.1, 0.8, 0.1, 1)';
+
+            const resultText = document.getElementById('wheel-result');
+            resultText.innerText = "";
+            resultText.classList.remove('animate-pulse');
+
+            const spinBtn = document.getElementById('spin-btn');
+            spinBtn.disabled = false;
+            spinBtn.innerText = "SNURRA";
+
+            // Reset Reaction test UI lights
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`light-${i}`).style.backgroundColor = '#262626';
+                document.getElementById(`light-${i}`).classList.remove('glow-red');
+            }
+            document.getElementById('reaction-timer').innerText = "Väntar på start...";
+            document.getElementById('reaction-timer').style.color = '#FFFFFF';
+
+            // Empty input values in modal
+            document.getElementById('modal-name-input').value = "";
+            document.getElementById('modal-email-input').value = "";
+
+            // Hide results panel in step 1
+            document.getElementById('reaction-result-panel').classList.add('hidden');
+
+            // Toggle view panels back to game intro page
+            document.getElementById('game-wheel').classList.add('hidden');
+            document.getElementById('game-trivia').classList.add('hidden');
+            document.getElementById('game-reaction').classList.add('hidden');
+            document.getElementById('game-intro').classList.remove('hidden');
+        }
+
+        // === CUSTOM UI MODAL ENGINE ===
+        function openModal(title, text, icon, showInput, buttonText, callback) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-body').innerText = text;
+            document.getElementById('modal-icon').innerText = icon || '🏎️';
+
+            const inputContainer = document.getElementById('modal-input-container');
+            const nameInput = document.getElementById('modal-name-input');
+            const emailInput = document.getElementById('modal-email-input');
+
+            if (showInput) {
+                inputContainer.classList.remove('hidden');
+                // Customize which inputs to show
+                if (title.includes("försök")) {
+                    nameInput.classList.remove('hidden');
+                    emailInput.classList.add('hidden');
+                } else {
+                    nameInput.classList.add('hidden');
+                    emailInput.classList.remove('hidden');
+                }
+            } else {
+                inputContainer.classList.add('hidden');
+            }
+
+            const actionBtn = document.getElementById('modal-action-btn');
+            actionBtn.innerText = buttonText || 'OK';
+
+            actionBtn.onclick = () => {
+                closeModal();
+                if (callback) callback();
+            };
+
+            // Display modal
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Run on load
+        window.onload = function() {
+            renderHighscores();
+        };
+    </script>
+</body>
+</html>

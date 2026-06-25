@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Kross - Det Kosmiska Matcha-3 Spelet</title>
+    <!-- Tailwind CSS för modern och responsiv styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts för rymdig typografi -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            overflow-x: hidden;
+        }
+        .title-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Animera stjärnbakgrund */
+        .stars {
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+            animation: starry 120s linear infinite;
+        }
+        @keyframes starry {
+            from { background-position: 0 0, 40px 60px, 130px 270px; }
+            to { background-position: 550px 1100px, 440px 760px, 630px 1070px; }
+        }
+        /* Glow och skuggeffekter */
+        .neon-border {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+        .planet-glow:hover {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+        }
+        .selected-planet {
+            filter: drop-shadow(0 0 12px rgba(236, 72, 153, 1)) !important;
+            transform: scale(1.1);
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen relative flex flex-col justify-between select-none">
+    
+    <!-- Animativ stjärnbakgrund -->
+    <div class="stars absolute inset-0 z-0 pointer-events-none opacity-60"></div>
+
+    <!-- Huvudkontainer -->
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center p-4 md:py-8 max-w-4xl mx-auto w-full">
+        
+        <!-- Header / Logo -->
+        <header class="text-center mb-4 md:mb-6">
+            <h1 class="title-font text-4xl md:text-5xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-500 filter drop-shadow-[0_2px_10px_rgba(99,102,241,0.5)]">
+                PLANET KROSS
+            </h1>
+            <p class="text-sm md:text-base text-cyan-300/80 tracking-widest uppercase mt-1">Kosmisk Matcha-3 Äventyr</p>
+        </header>
+
+        <!-- Spelyta & Status -->
+        <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            
+            <!-- Vänsterpanel: Info & Poäng -->
+            <div class="lg:col-span-4 flex flex-col justify-between gap-4">
+                <!-- Statusbox -->
+                <div class="bg-slate-900/80 backdrop-blur-md border border-indigo-500/30 rounded-2xl p-5 neon-border flex flex-col gap-4">
+                    
+                    <!-- Nivå -->
+                    <div class="flex justify-between items-center border-b border-indigo-500/20 pb-2">
+                        <span class="text-indigo-300 font-bold uppercase tracking-wider">Nivå</span>
+                        <span id="level-val" class="title-font text-3xl font-extrabold text-cyan-400">1</span>
+                    </div>
+
+                    <!-- Poäng & Mål -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between items-end">
+                            <span class="text-indigo-300 font-bold uppercase tracking-wider text-sm">Poäng</span>
+                            <span id="score-val" class="title-font text-4xl font-black text-white">0</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-indigo-400/80">
+                            <span>Bästa poäng: <span id="highscore-val">0</span></span>
+                            <span>Mål: <span id="target-val" class="text-emerald-400 font-bold">1000</span></span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-950 h-3 rounded-full mt-2 overflow-hidden p-[2px] border border-indigo-500/20">
+                            <div id="progress-bar" class="bg-gradient-to-r from-cyan-500 to-indigo-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Drag Kvar -->
+                    <div class="bg-slate-950/60 rounded-xl p-3 text-center border border-indigo-500/10">
+                        <div class="text-xs uppercase tracking-widest text-indigo-400">Drag Kvar</div>
+                        <div id="moves-val" class="title-font text-5xl font-black text-rose-500 transition-all duration-200">30</div>
+                    </div>
+
+                </div>
+
+                <!-- Hjälptext/Instruktioner -->
+                <div class="hidden lg:block bg-slate-900/50 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-4 text-xs text-slate-300/80 space-y-2">
+                    <p class="font-bold text-cyan-400 text-sm mb-1 uppercase tracking-wide">Hur man spelar:</p>
+                    <p>🪐 Klicka på en planet och sedan på en angränsande för att byta plats.</p>
+                    <p>☄️ Skapa rader eller kolumner med 3 eller fler likadana planeter för att krossa dem!</p>
+                    <p>✨ Matcha 4 eller fler för extra poäng och rejäla kedjereaktioner.</p>
+                    <p>🔊 Ljudet genereras live! Klicka på spelplanen för att starta ljudmotorn.</p>
+                </div>
+            </div>
+
+            <!-- Högerpanel: Själva spelplanen (Grid) -->
+            <div class="lg:col-span-8 flex flex-col items-center">
+                
+                <!-- Spelplansram -->
+                <div class="relative w-full aspect-square max-w-[480px] bg-slate-950/80 rounded-2xl border-4 border-indigo-500/40 p-1 md:p-2 shadow-2xl neon-border overflow-hidden">
+                    
+                    <!-- Bräde-grid för planeter -->
+                    <div id="game-board" class="relative w-full h-full touch-none">
+                        <!-- Planeter genereras dynamiskt via JS -->
+                    </div>
+
+                    <!-- Combo flyover texter -->
+                    <div id="combo-display" class="absolute inset-0 flex items-center justify-center pointer-events-none z-30 select-none">
+                        <div id="combo-text" class="title-font text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500 scale-0 transition-transform duration-300 filter drop-shadow-md text-center"></div>
+                    </div>
+                </div>
+
+                <!-- Mobilinstruktion / Ljudknapp -->
+                <div class="flex justify-between items-center w-full max-w-[480px] mt-3 px-2 text-sm">
+                    <button id="mute-btn" class="flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 border border-indigo-500/30 rounded-lg px-3 py-1 text-xs text-indigo-300 transition-colors">
+                        <span id="mute-icon">🔊</span> <span id="mute-text">Ljud på</span>
+                    </button>
+                    <span class="text-slate-400 text-xs">Svep eller klicka för att byta</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 py-4 border-t border-slate-900 relative z-10">
+        <p>&copy; 2026 Planet Kross. Skapat i rymdens oändlighet.</p>
+    </footer>
+
+    <!-- MODALER (Nivå avklarad, Game Over, Välkommen) -->
+    
+    <!-- Välkomstskärm -->
+    <div id="welcome-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-indigo-500/50 rounded-3xl p-6 md:p-8 max-w-md w-full text-center neon-border space-y-6">
+            <h2 class="title-font text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">
+                PLANET KROSS
+            </h2>
+            <div class="text-sm text-slate-300 space-y-3 text-left bg-slate-950/50 p-4 rounded-xl border border-indigo-500/10">
+                <p class="font-bold text-center text-cyan-400 mb-2">Välkommen till rymden!</p>
+                <p>🚀 Ditt uppdrag är att matcha de kosmiska planeterna.</p>
+                <p>🌌 Nå poängmålet för varje nivå innan dina drag tar slut.</p>
+                <p>🎼 Spelet använder futuristiska ljudeffekter som genereras direkt av din webbläsare.</p>
+            </div>
+            <button id="start-game-btn" class="w-full title-font py-4 px-6 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-lg rounded-xl shadow-lg shadow-indigo-500/20 transform active:scale-95 transition-all">
+                STARTA MISSIONEN
+            </button>
+        </div>
+    </div>
+
+    <!-- Nivå Avklarad Modal -->
+    <div id="level-win-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border-2 border-emerald-500/50 rounded-3xl p-6 md:p-8 max-w-md w-full text-center neon-border space-y-6">
+            <div class="text-6xl">🚀🌌</div>
+            <h2 class="title-font text-3xl font-extrabold text-emerald-400 uppercase tracking-wider">
+                Nivå Avklarad!
+            </h2>
+            <p class="text-slate-300">Fantastiskt jobbat! Du nådde rymdmålet och navigerade säkert genom asteroidbältet.</p>
+            
+            <div class="bg-slate-950/50 p-4 rounded-xl border border-emerald-500/20 text-left space-y-2">
+                <div class="flex justify-between"><span class="text-slate-400">Din poäng:</span> <span id="win-score" class="font-bold text-white">0</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Nästa nivå:</span> <span id="win-next-level" class="font-bold text-cyan-400">2</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Nästa mål:</span> <span id="win-next-target" class="font-bold text-emerald-400">2000</span></div>
+            </div>
+
+            <button id="next-level-btn" class="w-full title-font py-4 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-lg rounded-xl shadow-lg transform active:scale-95 transition-all">
+                NÄSTA NIVÅ
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border-2 border-rose-500/50 rounded-3xl p-6 md:p-8 max-w-md w-full text-center neon-border space-y-6">
+            <div class="text-6xl">💥🪐</div>
+            <h2 class="title-font text-3xl font-extrabold text-rose-500 uppercase tracking-wider">
+                Slut på bränsle!
+            </h2>
+            <p class="text-slate-300">Dina drag tog slut innan du lyckades nå poängmålet för denna sektor.</p>
+            
+            <div class="bg-slate-950/50 p-4 rounded-xl border border-rose-500/20 text-left space-y-2">
+                <div class="flex justify-between"><span class="text-slate-400">Slutlig poäng:</span> <span id="fail-score" class="font-bold text-white">0</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Du saknade:</span> <span id="fail-missing" class="font-bold text-rose-400">0 poäng</span></div>
+            </div>
+
+            <button id="retry-btn" class="w-full title-font py-4 px-6 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-bold text-lg rounded-xl shadow-lg transform active:scale-95 transition-all">
+                FÖRSÖK IGEN
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript - Spelmotor, logik och ljudgenerering -->
+    <script>
+        // --- LJUDMOTOR (Web Audio API) ---
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playTone(freq, type, duration, slideTo = 0) {
+                if (this.muted || !this.ctx) return;
+                try {
+                    this.init();
+                    if (this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+
+                    const osc = this.ctx.createOscillator();
+                    const gainNode = this.ctx.createGain();
+
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    if (slideTo > 0) {
+                        osc.frequency.exponentialRampToValueAtTime(slideTo, this.ctx.currentTime + duration);
+                    }
+
+                    gainNode.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+
+                    osc.connect(gainNode);
+                    gainNode.connect(this.ctx.destination);
+
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {
+                    console.error("Ljudfel:", e);
+                }
+            }
+
+            playSwap() {
+                this.playTone(180, 'sine', 0.15, 300);
+            }
+
+            playDud() {
+                this.playTone(150, 'sawtooth', 0.2, 80);
+            }
+
+            playMatch(comboCount) {
+                const baseNote = 261.63; // C4
+                // Skala upp tonen baserat på kombo
+                const multiplier = 1 + (comboCount * 0.25);
+                this.playTone(baseNote * multiplier, 'triangle', 0.35, baseNote * multiplier * 1.5);
+                this.playTone(baseNote * multiplier * 1.25, 'sine', 0.25);
+            }
+
+            playLevelUp() {
+                const notes = [261.63, 329.63, 392.00, 523.25]; // C-dur ackord
+                notes.forEach((note, i) => {
+                    setTimeout(() => {
+                        this.playTone(note, 'sine', 0.4, note * 1.1);
+                    }, i * 120);
+                });
+            }
+
+            playGameOver() {
+                const notes = [392.00, 349.23, 311.13, 246.94]; // Ledsen tonskala
+                notes.forEach((note, i) => {
+                    setTimeout(() => {
+                        this.playTone(note, 'sawtooth', 0.5, note * 0.8);
+                    }, i * 150);
+                });
+            }
+        }
+
+        const sounds = new SoundEngine();
+
+        // --- SPELMALL & PLANETDESIGNER (SVG) ---
+        // Vi skapar SVG-kod för 6 distinkta planeter
+        const PLANET_TEMPLATES = [
+            // 0: Solen (Gul/Orange lysande stjärna)
+            `<svg viewBox="0 0 100 100" class="w-full h-full p-1 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]">
+                <defs>
+                    <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#fffbeb" />
+                        <stop offset="30%" stop-color="#fef08a" />
+                        <stop offset="70%" stop-color="#f59e0b" />
+                        <stop offset="100%" stop-color="#b45309" />
+                    </radialGradient>
+                </defs>
+                <circle cx="50" cy="50" r="40" fill="url(#sunGrad)" />
+                <circle cx="50" cy="50" r="44" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8 6" class="animate-spin" style="transform-origin: center; animation-duration: 20s;" />
+            </svg>`,
+            
+            // 1: Tellus / Jorden (Blå/Grön med atmosfäreffekt)
+            `<svg viewBox="0 0 100 100" class="w-full h-full p-1 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]">
+                <defs>
+                    <radialGradient id="earthGrad" cx="40%" cy="40%" r="60%">
+                        <stop offset="0%" stop-color="#60a5fa" />
+                        <stop offset="60%" stop-color="#1d4ed8" />
+                        <stop offset="100%" stop-color="#1e3a8a" />
+                    </radialGradient>
+                </defs>
+                <circle cx="50" cy="50" r="40" fill="url(#earthGrad)" />
+                <!-- Kontinent-liknande former -->
+                <path d="M 35,25 Q 45,20 40,35 T 30,50 Q 40,65 55,60 T 65,40 Q 55,30 35,25 Z" fill="#10b981" opacity="0.6" />
+                <path d="M 60,60 Q 75,55 70,70 T 55,75 Z" fill="#10b981" opacity="0.5" />
+                <!-- Atmosfärssken -->
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#93c5fd" stroke-width="2" opacity="0.4" />
+            </svg>`,
+
+            // 2: Mars (Röd/Orange med kratrar)
+            `<svg viewBox="0 0 100 100" class="w-full h-full p-1 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+                <defs>
+                    <radialGradient id="marsGrad" cx="40%" cy="40%" r="60%">
+                        <stop offset="0%" stop-color="#fca5a5" />
+                        <stop offset="60%" stop-color="#dc2626" />
+                        <stop offset="100%" stop-color="#7f1d1d" />
+                    </radialGradient>
+                </defs>
+                <circle cx="50" cy="50" r="40" fill="url(#marsGrad)" />
+                <!-- Kratrar -->
+                <circle cx="35" cy="35" r="6" fill="#7f1d1d" opacity="0.4" />
+                <circle cx="65" cy="45" r="8" fill="#7f1d1d" opacity="0.4" />
+                <circle cx="45" cy="65" r="5" fill="#7f1d1d" opacity="0.3" />
+                <circle cx="55" cy="25" r="4" fill="#7f1d1d" opacity="0.3" />
+            </svg>`,
+
+            // 3: Jupiter (Bandad jätte med röd fläck)
+            `<svg viewBox="0 0 100 100" class="w-full h-full p-1 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+                <defs>
+                    <radialGradient id="jupGrad" cx="40%" cy="40%" r="60%">
+                        <stop offset="0%" stop-color="#fde047" />
+                        <stop offset="50%" stop-color="#d97706" />
+                        <stop offset="100%" stop-color="#78350f" />
+                    </radialGradient>
+                    <clipPath id="planetClip">
+                        <circle cx="50" cy="50" r="40" />
+                    </clipPath>
+                </defs>
+                <circle cx="50" cy="50" r="40" fill="url(#jupGrad)" />
+                <!-- Jupiter-ränder -->
+                <g clip-path="url(#planetClip)">
+                    <rect x="10" y="25" width="80" height="8" fill="#78350f" opacity="0.4" />
+                    <rect x="10" y="45" width="80" height="12" fill="#78350f" opacity="0.3" />
+                    <rect x="10" y="65" width="80" height="6" fill="#9a3412" opacity="0.4" />
+                    <!-- Den stora röda fläcken -->
+                    <ellipse cx="65" cy="51" rx="9" ry="5" fill="#b91c1c" />
+                </g>
+            </svg>`,
+
+            // 4: Saturnus (Beige/guld med mäktiga ringar)
+            `<svg viewBox="0 0 100 100" class="w-full h-full p-1 drop-shadow-[0_0_8px_rgba(253,224,71,0.5)]">
+                <defs>
+                    <radialGradient id="satGrad" cx="40%" cy="40%" r="60%">
+                        <stop offset="0%" stop-color="#fef08a" />
+                        <stop offset="70%" stop-color="#ca8a04" />
+                        <stop offset="100%" stop-color="#854d0e" />
+                    </radialGradient>
+                </defs>
+                <!-- Bakre delen av ringen -->
+                <path d="M 12,58 C 15,42 85,42 88,58" fill="none" stroke="#ca8a04" stroke-width="7" opacity="0.8" />
+                <path d="M 6,59 C 10,38 90,38 94,59" fill="none" stroke="#eab308" stroke-width="3" opacity="0.5" />
+                
+                <!-- Själva planetkroppen -->
+                <circle cx="50" cy="50" r="30" fill="url(#satGrad)" />
+                
+                <!-- Främre delen av ringen för 3D-djup -->
+                <path d="M 12,58 C 15,74 85,74 88,58" fill="none" stroke="#ca8a04" stroke-width="7" opacity="0.9" />
+                <path d="M 6,59 C 10,80 90,80 94,59" fill="none" stroke="#eab308" stroke-width="3" opacity="0.6" />
+            </svg>`,
+
+            // 5: Neptunus (Djupblå med isiga stormvindar)
+            `<svg viewBox="0 0 100 100" class="w-full h-full p-1 drop-shadow-[0_0_8px_rgba(14,165,233,0.6)]">
+                <defs>
+                    <radialGradient id="nepGrad" cx="40%" cy="40%" r="60%">
+                        <stop offset="0%" stop-color="#38bdf8" />
+                        <stop offset="60%" stop-color="#0284c7" />
+                        <stop offset="100%" stop-color="#0c4a6e" />
+                    </radialGradient>
+                    <clipPath id="nepClip">
+                        <circle cx="50" cy="50" r="40" />
+                    </clipPath>
+                </defs>
+                <circle cx="50" cy="50" r="40" fill="url(#nepGrad)" />
+                <!-- Stormränder -->
+                <g clip-path="url(#nepClip)">
+                    <path d="M 10,35 Q 35,45 90,35" fill="none" stroke="#bae6fd" stroke-width="2" opacity="0.4" />
+                    <path d="M 10,65 Q 45,55 90,65" fill="none" stroke="#bae6fd" stroke-width="2" opacity="0.3" />
+                    <ellipse cx="30" cy="45" rx="8" ry="4" fill="#0369a1" opacity="0.6" />
+                </g>
+            </svg>`
+        ];
+
+        // --- SPELKONFIGURATION OCH STATE ---
+        const BOARD_SIZE = 8;
+        let board = []; // 2D array: board[row][col]
+        let selectedTile = null;
+        let isAnimating = false;
+        
+        // Spelvariabler
+        let score = 0;
+        let highscore = parseInt(localStorage.getItem('planet_kross_highscore')) || 0;
+        let level = 1;
+        let moves = 30;
+        let targetScore = 1000;
+        let comboMultiplier = 1;
+
+        // Elementreferenser
+        const boardEl = document.getElementById('game-board');
+        const scoreEl = document.getElementById('score-val');
+        const highscoreEl = document.getElementById('highscore-val');
+        const targetEl = document.getElementById('target-val');
+        const movesEl = document.getElementById('moves-val');
+        const levelEl = document.getElementById('level-val');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Modaler & knappar
+        const welcomeModal = document.getElementById('welcome-modal');
+        const startBtn = document.getElementById('start-game-btn');
+        const levelWinModal = document.getElementById('level-win-modal');
+        const nextLevelBtn = document.getElementById('next-level-btn');
+        const gameOverModal = document.getElementById('game-over-modal');
+        const retryBtn = document.getElementById('retry-btn');
+        const muteBtn = document.getElementById('mute-btn');
+        const muteIcon = document.getElementById('mute-icon');
+        const muteText = document.getElementById('mute-text');
+
+        // Spara alla DOM-element för planeterna i ett register baserat på unika ID:n
+        let planetDOMElements = {};
+        let nextUniqueId = 0;
+
+        // --- INITIERING ---
+        window.onload = () => {
+            highscoreEl.innerText = highscore;
+            
+            // Event Listeners
+            startBtn.addEventListener('click', () => {
+                sounds.init();
+                welcomeModal.classList.add('hidden');
+                startNewGame();
+            });
+
+            nextLevelBtn.addEventListener('click', () => {
+                levelWinModal.classList.add('hidden');
+                setupLevel(level + 1);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                gameOverModal.classList.add('hidden');
+                setupLevel(1);
+            });
+
+            muteBtn.addEventListener('click', () => {
+                sounds.muted = !sounds.muted;
+                if (sounds.muted) {
+                    muteIcon.innerText = "🔇";
+                    muteText.innerText = "Ljud av";
+                } else {
+                    sounds.init();
+                    muteIcon.innerText = "🔊";
+                    muteText.innerText = "Ljud på";
+                }
+            });
+
+            // Touch- & Svepgester för mobila enheter
+            setupTouchGestures();
+        };
+
+        // Starta om spelet från noll
+        function startNewGame() {
+            setupLevel(1);
+        }
+
+        // Ställ in en specifik nivå
+        function setupLevel(lvl) {
+            level = lvl;
+            score = 0;
+            moves = 30 - Math.min(level - 1, 10); // Färre drag på svårare nivåer (minst 20 drag)
+            targetScore = 1000 + (level - 1) * 750; // Högre poängkrav för varje nivå
+
+            // Uppdatera UI
+            levelEl.innerText = level;
+            scoreEl.innerText = score;
+            targetEl.innerText = targetScore;
+            movesEl.innerText = moves;
+            movesEl.className = "title-font text-5xl font-black text-rose-500";
+            updateProgressBar();
+
+            // Rensa brädet
+            boardEl.innerHTML = "";
+            planetDOMElements = {};
+            nextUniqueId = 0;
+            selectedTile = null;
+            isAnimating = false;
+
+            // Skapa ett bräde utan färdiga matchningar
+            createValidBoard();
+        }
+
+        // Skapa ett slumpmässigt bräde som garanterat inte har 3 i rad direkt från start
+        function createValidBoard() {
+            board = [];
+            for (let r = 0; r < BOARD_SIZE; r++) {
+                board[r] = [];
+                for (let c = 0; c < BOARD_SIZE; c++) {
+                    let type;
+                    // Hitta en planettyp som inte skapar en direkt match-3
+                    do {
+                        type = Math.floor(Math.random() * PLANET_TEMPLATES.length);
+                    } while (
+                        (r >= 2 && board[r-1][c].type === type && board[r-2][c].type === type) ||
+                        (c >= 2 && board[r][c-1].type === type && board[r][c-2].type === type)
+                    );
+
+                    const id = nextUniqueId++;
+                    board[r][c] = { id, type, row: r, col: c };
+                    createPlanetDOM(id, type, r, c);
+                }
+            }
+        }
+
+        // Skapa den fysiska planeten i DOMen med absolut positionering
+        function createPlanetDOM(id, type, r, c, startRow = -1) {
+            const planetDiv = document.createElement('div');
+            planetDiv.className = "absolute w-[12.5%] h-[12.5%] transition-all duration-300 ease-in-out cursor-pointer p-[3px] select-none touch-none planet-glow";
+            planetDiv.dataset.id = id;
+            planetDiv.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center bg-indigo-500/0 rounded-full hover:bg-indigo-500/10 transition-colors">
+                    ${PLANET_TEMPLATES[type]}
+                </div>
+            `;
+            
+            // Sätt initial position (faller in uppifrån om startRow är negativ)
+            updatePlanetPositionDOM(planetDiv, startRow, c);
+            boardEl.appendChild(planetDiv);
+            planetDOMElements[id] = planetDiv;
+
+            // Klick-event för matchning
+            planetDiv.addEventListener('mousedown', (e) => handlePlanetClick(r, c, e));
+
+            // Animerad insläppning till sin riktiga position efter en mikrosekund
+            setTimeout(() => {
+                updatePlanetPositionDOM(planetDiv, r, c);
+            }, 50);
+        }
+
+        // Uppdatera positionen i pixlar via procentsatser för absolut positionering
+        function updatePlanetPositionDOM(el, r, c) {
+            el.style.left = `${c * 12.5}%`;
+            el.style.top = `${r * 12.5}%`;
+        }
+
+        // --- SPELINTERAKTION ---
+        function handlePlanetClick(r, c, event) {
+            if (isAnimating) return;
+            sounds.init(); // Säkerställ att ljudmotorn är aktiv efter användarinteraktion
+
+            const clickedTile = board[r][c];
+
+            if (!selectedTile) {
+                // Första valet
+                selectedTile = clickedTile;
+                planetDOMElements[selectedTile.id].classList.add('selected-planet');
+            } else {
+                // Andra valet - kontrollera om angränsande
+                const rDiff = Math.abs(selectedTile.row - clickedTile.row);
+                const cDiff = Math.abs(selectedTile.col - clickedTile.col);
+
+                const isAdjacent = (rDiff === 1 && cDiff === 0) || (rDiff === 0 && cDiff === 1);
+
+                if (isAdjacent) {
+                    // Ta bort markering
+                    planetDOMElements[selectedTile.id].classList.remove('selected-planet');
+                    // Utför byte och utvärdera matchningar
+                    executeSwap(selectedTile, clickedTile);
+                    selectedTile = null;
+                } else {
+                    // Klickade för långt borta, ändra markerad planet till den nya
+                    planetDOMElements[selectedTile.id].classList.remove('selected-planet');
+                    selectedTile = clickedTile;
+                    planetDOMElements[selectedTile.id].classList.add('selected-planet');
+                }
+            }
+        }
+
+        // Byt plats på två planeter logiskt och visuellt
+        async function executeSwap(tile1, tile2) {
+            isAnimating = true;
+            sounds.playSwap();
+
+            // Spara temporära index
+            const r1 = tile1.row, c1 = tile1.col;
+            const r2 = tile2.row, c2 = tile2.col;
+
+            // Uppdatera logiska koordinater i objekten
+            tile1.row = r2; tile1.col = c2;
+            tile2.row = r1; tile2.col = c1;
+
+            // Byt plats i arrayen
+            board[r1][c1] = tile2;
+            board[r2][c2] = tile1;
+
+            // Byt lyssnarna så klick-koordinaterna stämmer
+            updatePlanetClickHandlers(tile1);
+            updatePlanetClickHandlers(tile2);
+
+            // Uppdatera DOM positioner
+            updatePlanetPositionDOM(planetDOMElements[tile1.id], r2, c2);
+            updatePlanetPositionDOM(planetDOMElements[tile2.id], r1, c1);
+
+            // Vänta tills flytt-animationen (300ms) är klar
+            await delay(300);
+
+            // Sök efter matchningar efter bytet
+            const matches = checkAllMatches();
+
+            if (matches.length > 0) {
+                // Matchning hittad! Dra av ett drag och starta kedjereaktionen
+                moves--;
+                movesEl.innerText = moves;
+                if (moves <= 5) {
+                    movesEl.className = "title-font text-5xl font-black text-rose-500 animate-pulse";
+                }
+                comboMultiplier = 1;
+                await processMatchSequence(matches);
+            } else {
+                // Ingen matchning hittad. Byt tillbaka!
+                sounds.playDud();
+                
+                tile1.row = r1; tile1.col = c1;
+                tile2.row = r2; tile2.col = c2;
+                board[r1][c1] = tile1;
+                board[r2][c2] = tile2;
+
+                updatePlanetClickHandlers(tile1);
+                updatePlanetClickHandlers(tile2);
+
+                updatePlanetPositionDOM(planetDOMElements[tile1.id], r1, c1);
+                updatePlanetPositionDOM(planetDOMElements[tile2.id], r2, c2);
+
+                await delay(300);
+                isAnimating = false;
+            }
+        }
+
+        // Hjälpfunktion för att ställa om klicklyssnarna vid ompositionering
+        function updatePlanetClickHandlers(tile) {
+            const el = planetDOMElements[tile.id];
+            // Rensa gamla lyssnare genom att klona noden (eller uppdatera referenser)
+            const newEl = el.cloneNode(true);
+            el.parentNode.replaceChild(newEl, el);
+            planetDOMElements[tile.id] = newEl;
+            newEl.addEventListener('mousedown', (e) => handlePlanetClick(tile.row, tile.col, e));
+        }
+
+        // --- MATCH- OCH FALL-LOGIK ---
+
+        // Kontrollera om det finns matchningar på hela spelplanen
+        function checkAllMatches() {
+            let matchedIds = new Set();
+
+            // 1. Kolla horisontella matchningar
+            for (let r = 0; r < BOARD_SIZE; r++) {
+                let matchRun = 1;
+                let matchType = -1;
+                let matchStartCol = 0;
+
+                for (let c = 0; c < BOARD_SIZE; c++) {
+                    const currentType = board[r][c].type;
+                    if (c === 0) {
+                        matchType = currentType;
+                        matchStartCol = 0;
+                        matchRun = 1;
+                    } else {
+                        if (currentType === matchType) {
+                            matchRun++;
+                        } else {
+                            if (matchRun >= 3) {
+                                for (let colIdx = matchStartCol; colIdx < c; colIdx++) {
+                                    matchedIds.add(board[r][colIdx].id);
+                                }
+                            }
+                            matchType = currentType;
+                            matchStartCol = c;
+                            matchRun = 1;
+                        }
+                    }
+                }
+                // Hantera sista i raden
+                if (matchRun >= 3) {
+                    for (let colIdx = matchStartCol; colIdx < BOARD_SIZE; colIdx++) {
+                        matchedIds.add(board[r][colIdx].id);
+                    }
+                }
+            }
+
+            // 2. Kolla vertikala matchningar
+            for (let c = 0; c < BOARD_SIZE; c++) {
+                let matchRun = 1;
+                let matchType = -1;
+                let matchStartRow = 0;
+
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                    const currentType = board[r][c].type;
+                    if (r === 0) {
+                        matchType = currentType;
+                        matchStartRow = 0;
+                        matchRun = 1;
+                    } else {
+                        if (currentType === matchType) {
+                            matchRun++;
+                        } else {
+                            if (matchRun >= 3) {
+                                for (let rowIdx = matchStartRow; rowIdx < r; rowIdx++) {
+                                    matchedIds.add(board[rowIdx][c].id);
+                                }
+                            }
+                            matchType = currentType;
+                            matchStartRow = r;
+                            matchRun = 1;
+                        }
+                    }
+                }
+                // Hantera sista i kolumnen
+                if (matchRun >= 3) {
+                    for (let rowIdx = matchStartRow; rowIdx < BOARD_SIZE; rowIdx++) {
+                        matchedIds.add(board[rowIdx][c].id);
+                    }
+                }
+            }
+
+            return Array.from(matchedIds);
+        }
+
+        // Bearbeta hela matchningskedjan: spräng -> fall -> fyll på -> kolla igen (cascade!)
+        async function processMatchSequence(matchedIds) {
+            // Visa kombo-effekt om multipliceraren är över 1
+            if (comboMultiplier > 1) {
+                showComboText(`Kombination! x${comboMultiplier}`);
+            }
+
+            sounds.playMatch(comboMultiplier);
+
+            // 1. Beräkna poäng
+            // Enkel standard: 60 poäng per matchad planet, gånger kombo-multiplikatorn
+            const pointsGained = matchedIds.length * 60 * comboMultiplier;
+            addScore(pointsGained);
+
+            // 2. Animera försvinnandet av matchade planeter
+            matchedIds.forEach(id => {
+                const el = planetDOMElements[id];
+                if (el) {
+                    el.style.transform = "scale(0)";
+                    el.style.opacity = "0";
+                }
+            });
+
+            await delay(250);
+
+            // 3. Ta bort de raderade planeterna ur logikstrukturen (markera dem som tomma/null)
+            for (let r = 0; r < BOARD_SIZE; r++) {
+                for (let c = 0; c < BOARD_SIZE; c++) {
+                    if (matchedIds.includes(board[r][c].id)) {
+                        // Ta bort elementet från DOMen helt
+                        const el = planetDOMElements[board[r][c].id];
+                        if (el) el.remove();
+                        delete planetDOMElements[board[r][c].id];
+                        board[r][c] = null;
+                    }
+                }
+            }
+
+            // 4. Låt planeterna ovanför ramla ner och fyll på med nya uppifrån
+            await dropAndFillPlanets();
+
+            // 5. Kolla om detta fall skapade NYA matchningar (Kedjereaktion!)
+            const nextMatches = checkAllMatches();
+            if (nextMatches.length > 0) {
+                comboMultiplier++;
+                await processMatchSequence(nextMatches);
+            } else {
+                // Inga nya matchningar. Kontrollera om spelet är över (Vinst eller Förlust)
+                isAnimating = false;
+                checkGameStatus();
+            }
+        }
+
+        // Flytta ner befintliga planeter och generera nya för tomma rutor
+        async function dropAndFillPlanets() {
+            // Vi går kolumn för kolumn, nerifrån och upp
+            for (let c = 0; c < BOARD_SIZE; c++) {
+                let emptySpots = 0;
+                for (let r = BOARD_SIZE - 1; r >= 0; r--) {
+                    if (board[r][c] === null) {
+                        emptySpots++;
+                    } else if (emptySpots > 0) {
+                        // Flytta ner planeten logiskt
+                        const tile = board[r][c];
+                        const newRow = r + emptySpots;
+                        
+                        board[newRow][c] = tile;
+                        board[r][c] = null;
+                        
+                        tile.row = newRow;
+                        updatePlanetClickHandlers(tile);
+                        updatePlanetPositionDOM(planetDOMElements[tile.id], newRow, c);
+                    }
+                }
+
+                // Generera nya planeter högst upp
+                for (let k = 1; k <= emptySpots; k++) {
+                    const newRow = emptySpots - k;
+                    const type = Math.floor(Math.random() * PLANET_TEMPLATES.length);
+                    const id = nextUniqueId++;
+                    
+                    board[newRow][c] = { id, type, row: newRow, col: c };
+                    // Starta dess animation utanför spelytan (-k anger hur högt upp den börjar)
+                    createPlanetDOM(id, type, newRow, c, -k);
+                }
+            }
+
+            // Ge fysikanimationen tid att slutföras (300ms)
+            await delay(320);
+        }
+
+        // --- UI & POÄNGHANTERING ---
+
+        function addScore(amount) {
+            score += amount;
+            scoreEl.innerText = score;
+            
+            if (score > highscore) {
+                highscore = score;
+                highscoreEl.innerText = highscore;
+                localStorage.setItem('planet_kross_highscore', highscore);
+            }
+
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const pct = Math.min((score / targetScore) * 100, 100);
+            progressBar.style.width = `${pct}%`;
+        }
+
+        function showComboText(text) {
+            const comboEl = document.getElementById('combo-text');
+            comboEl.innerText = text;
+            comboEl.classList.remove('scale-0');
+            comboEl.classList.add('scale-100');
+            
+            setTimeout(() => {
+                comboEl.classList.remove('scale-100');
+                comboEl.classList.add('scale-0');
+            }, 850);
+        }
+
+        // Kontrollera om spelaren klarat nivån eller förlorat
+        function checkGameStatus() {
+            if (score >= targetScore) {
+                // NIVÅ AVKLARAD!
+                sounds.playLevelUp();
+                document.getElementById('win-score').innerText = score;
+                document.getElementById('win-next-level').innerText = level + 1;
+                document.getElementById('win-next-target').innerText = 1000 + level * 750;
+                levelWinModal.classList.remove('hidden');
+            } else if (moves <= 0) {
+                // SLUT PÅ DRAG - GAME OVER
+                sounds.playGameOver();
+                document.getElementById('fail-score').innerText = score;
+                document.getElementById('fail-missing').innerText = `${targetScore - score} poäng`;
+                gameOverModal.classList.remove('hidden');
+            }
+        }
+
+        // Hjälpfunktion för att introducera paus i async-funktioner
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // --- MOBILTOUCH & SWIPE SUPPORTS ---
+        function setupTouchGestures() {
+            let startX = 0;
+            let startY = 0;
+            let activeTileId = null;
+
+            boardEl.addEventListener('touchstart', (e) => {
+                if (isAnimating) return;
+                sounds.init();
+                
+                const touch = e.touches[0];
+                const rect = boardEl.getBoundingClientRect();
+                
+                // Räkna ut klickat rutnät baserat på touch-position relativt spelplanen
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                const col = Math.floor((x / rect.width) * BOARD_SIZE);
+                const row = Math.floor((y / rect.height) * BOARD_SIZE);
+
+                if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
+                    startX = touch.clientX;
+                    startY = touch.clientY;
+                    activeTileId = board[row][col].id;
+                    
+                    // Simulera ett mousedown-klick för vanligt val
+                    handlePlanetClick(row, col, e);
+                }
+            }, { passive: true });
+
+            boardEl.addEventListener('touchmove', (e) => {
+                if (!activeTileId || isAnimating) return;
+
+                const touch = e.touches[0];
+                const diffX = touch.clientX - startX;
+                const diffY = touch.clientY - startY;
+
+                // Tröskelvärde för att det ska registreras som ett svep (minst 30px)
+                const threshold = 35;
+
+                if (Math.abs(diffX) > threshold || Math.abs(diffY) > threshold) {
+                    // Hitta nuvarande logiska koordinat för den svepta planeten
+                    let currentTile = null;
+                    for (let r = 0; r < BOARD_SIZE; r++) {
+                        for (let c = 0; c < BOARD_SIZE; c++) {
+                            if (board[r][c] && board[r][c].id === activeTileId) {
+                                currentTile = board[r][c];
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!currentTile) return;
+
+                    let targetR = currentTile.row;
+                    let targetC = currentTile.col;
+
+                    // Avgör svepriktning (Horisontellt eller Vertikalt)
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (diffX > 0 && targetC < BOARD_SIZE - 1) targetC++; // Svep Höger
+                        else if (diffX < 0 && targetC > 0) targetC--; // Svep Vänster
+                    } else {
+                        if (diffY > 0 && targetR < BOARD_SIZE - 1) targetR++; // Svep Nedåt
+                        else if (diffY < 0 && targetR > 0) targetR--; // Svep Uppåt
+                    }
+
+                    // Utför byte om vi hittat ett mål som inte är samma ruta
+                    if (targetR !== currentTile.row || targetC !== currentTile.col) {
+                        const targetTile = board[targetR][targetC];
+                        if (targetTile) {
+                            // Avmarkera alla eventuellt valda
+                            if (selectedTile) {
+                                planetDOMElements[selectedTile.id].classList.remove('selected-planet');
+                                selectedTile = null;
+                            }
+                            executeSwap(currentTile, targetTile);
+                        }
+                    }
+
+                    // Återställ touchen för att förhindra upprepade triggningar under samma rörelse
+                    activeTileId = null;
+                }
+            }, { passive: true });
+
+            boardEl.addEventListener('touchend', () => {
+                activeTileId = null;
+            });
+        }
+    </script>
+</body>
+</html>

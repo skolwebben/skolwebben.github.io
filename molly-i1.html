@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spindeljägaren - Bågskyttespel</title>
+    <!-- Använder Tailwind CSS för modern och ren styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0b0f19; /* Mörk science-fiction/fantasy-bakgrund */
+            color: #f3f4f6;
+            touch-action: none; /* Förhindrar zoom och scroll på mobila enheter */
+            user-select: none;
+        }
+        canvas {
+            background-color: #111827; /* Mörkgrå spelyta */
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-2 sm:p-4">
+
+    <!-- Huvudbehållare -->
+    <div class="w-full max-w-4xl flex flex-col items-center">
+        
+        <!-- Header med Poäng, Liv och Våg-räknare -->
+        <div class="w-full max-w-[800px] flex justify-between items-center mb-4 px-2">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-amber-500 tracking-wider">SPINDELJÄGAREN</h1>
+                <p class="text-xs text-gray-400">Överlev vågorna av invaderande spindlar!</p>
+            </div>
+            
+            <div class="flex gap-3 sm:gap-4">
+                <div class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-center">
+                    <span class="block text-[10px] text-gray-400 uppercase font-semibold">Poäng</span>
+                    <span id="scoreVal" class="text-lg sm:text-xl font-bold text-yellow-400">0</span>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-center">
+                    <span class="block text-[10px] text-gray-400 uppercase font-semibold">Våg</span>
+                    <span id="waveVal" class="text-lg sm:text-xl font-bold text-amber-400">1</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spelytan (Canvas) med overlays -->
+        <div class="relative w-full max-w-[800px] aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
+            <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+            
+            <!-- Startskärm -->
+            <div id="startScreen" class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center z-20">
+                <div class="max-w-md">
+                    <span class="text-amber-500 font-bold tracking-widest text-xs uppercase bg-amber-500/10 px-3 py-1 rounded-full">Garanterade Kontroller</span>
+                    <h2 class="text-4xl sm:text-5xl font-black text-white mt-3 mb-4 leading-none">BÅGSKYTTEN VS SPINDLARNA</h2>
+                    <p class="text-gray-300 text-sm sm:text-base mb-6">
+                        Använd din pilbåge för att försvara dig mot horder av giftiga spindlar. Rör dig fritt på spelplanen och sikta med kroppen!
+                    </p>
+                    
+                    <div class="bg-gray-900/80 border border-gray-800 p-4 rounded-lg mb-8 text-left text-xs sm:text-sm">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-amber-500 text-black px-2 py-1 rounded font-bold min-w-[130px] text-center">Piltangenter</span>
+                            <span>Rör på dig (siktar automatiskt dit du går)</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-green-500 text-black px-2 py-1 rounded font-bold min-w-[130px] text-center">A - Tangenten</span>
+                            <span>Skjut iväg en pil! 🏹</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-green-500 text-black px-2 py-1 rounded font-bold min-w-[130px] text-center">Mellanslag</span>
+                            <span>Alternativ knapp för att skjuta!</span>
+                        </div>
+                        <div class="mt-4 text-center text-amber-400 font-medium sm:hidden">
+                            📱 Mobil: Använd de virtuella kontrollerna på skärmen!
+                        </div>
+                    </div>
+                    
+                    <button id="startBtn" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-gray-900 font-extrabold text-lg py-4 px-10 rounded-xl transition shadow-lg shadow-amber-500/20 w-full sm:w-auto">
+                        STARTA JAKTEN
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Over-skärm -->
+            <div id="gameOverScreen" class="hidden absolute inset-0 bg-black/95 flex flex-col items-center justify-center p-6 text-center z-20">
+                <div class="max-w-md">
+                    <span class="text-red-500 font-bold tracking-widest text-xs uppercase bg-red-500/10 px-3 py-1 rounded-full">Du föll i strid</span>
+                    <h2 class="text-4xl sm:text-5xl font-black text-white mt-3 mb-2">SPELET ÄR SLUT!</h2>
+                    <p class="text-gray-400 mb-6">Spindlarna övermannade dig till slut...</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 max-w-xs mx-auto mb-8">
+                        <div class="bg-gray-900 p-3 rounded-lg border border-gray-800">
+                            <span class="text-xs text-gray-400 block">Dina poäng</span>
+                            <span id="finalScore" class="text-2xl font-bold text-yellow-400">0</span>
+                        </div>
+                        <div class="bg-gray-900 p-3 rounded-lg border border-gray-800">
+                            <span class="text-xs text-gray-400 block">Vågor klarade</span>
+                            <span id="finalWave" class="text-2xl font-bold text-amber-500">1</span>
+                        </div>
+                    </div>
+                    
+                    <button id="restartBtn" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-gray-900 font-extrabold text-lg py-4 px-10 rounded-xl transition shadow-lg w-full sm:w-auto">
+                        SPELA IGEN
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Livsmätare direkt på spelytan (Snygg HUD) -->
+            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center pointer-events-none z-10">
+                <div class="bg-gray-900/90 border border-gray-800 rounded-full px-4 py-2 flex items-center gap-3 backdrop-blur-sm max-w-[200px] w-full">
+                    <span class="text-red-500 text-lg">❤️</span>
+                    <div class="flex-1 bg-gray-800 h-3 rounded-full overflow-hidden border border-gray-700">
+                        <div id="healthBar" class="bg-red-500 h-full w-full transition-all duration-150"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-900/90 border border-gray-800 rounded-full px-4 py-2 text-xs font-semibold text-gray-300 backdrop-blur-sm">
+                    Laddar pil: <span id="reloadIndicator" class="text-green-400">KLAR</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Touchkontroller för mobiler (Visas bara på pekskärmar) -->
+        <div id="touchControls" class="hidden w-full max-w-[800px] justify-between items-center mt-6 px-4">
+            <!-- Vänster spak: För att röra sig -->
+            <div class="flex flex-col items-center">
+                <span class="text-xs text-gray-500 mb-1 font-bold">GÅ</span>
+                <div id="movePad" class="w-28 h-28 bg-gray-800/60 border-2 border-gray-700 rounded-full relative flex items-center justify-center active:bg-gray-800">
+                    <div id="moveKnob" class="w-10 h-10 bg-amber-500 rounded-full absolute shadow-md transition-all duration-75 pointer-events-none"></div>
+                </div>
+            </div>
+            
+            <!-- Höger spak: För att sikta & skjut -->
+            <div class="flex flex-col items-center">
+                <span class="text-xs text-gray-500 mb-1 font-bold">SIKTA & SKJUT</span>
+                <div id="shootPad" class="w-28 h-28 bg-gray-800/60 border-2 border-gray-700 rounded-full relative flex items-center justify-center active:bg-gray-800">
+                    <div id="shootKnob" class="w-10 h-10 bg-red-500 rounded-full absolute shadow-md transition-all duration-75 pointer-events-none"></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="mt-4 text-xs text-gray-500 text-center max-w-md leading-relaxed hidden sm:block">
+            <strong>Tips:</strong> Styr karaktären med piltangenterna. Tryck på <strong>A</strong> eller <strong>Mellanslag</strong> för att avfyra pilar!
+        </p>
+    </div>
+
+    <script>
+        // --- LJUDEFFEKTER VIA WEB AUDIO API ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            // Skapar noder för ljudeffekter direkt i webbläsaren
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'shoot') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(350, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.15);
+                
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } 
+            else if (type === 'squish') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.1);
+                
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } 
+            else if (type === 'hurt') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+                
+                gain.gain.setValueAtTime(0.5, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+            else if (type === 'wave') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.setValueAtTime(400, now + 0.1);
+                osc.frequency.setValueAtTime(600, now + 0.2);
+                
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        // --- SPELMOTORN ---
+        window.onload = function() {
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+            
+            // UI-element
+            const scoreVal = document.getElementById("scoreVal");
+            const waveVal = document.getElementById("waveVal");
+            const startScreen = document.getElementById("startScreen");
+            const startBtn = document.getElementById("startBtn");
+            const gameOverScreen = document.getElementById("gameOverScreen");
+            const restartBtn = document.getElementById("restartBtn");
+            const finalScore = document.getElementById("finalScore");
+            const finalWave = document.getElementById("finalWave");
+            const healthBar = document.getElementById("healthBar");
+            const reloadIndicator = document.getElementById("reloadIndicator");
+            const touchControls = document.getElementById("touchControls");
+
+            // Storlek på spelvärlden (intern upplösning)
+            const worldWidth = 800;
+            const worldHeight = 600;
+            canvas.width = worldWidth;
+            canvas.height = worldHeight;
+
+            // Spelaren
+            const player = {
+                x: worldWidth / 2,
+                y: worldHeight / 2,
+                radius: 20,
+                speed: 4.5,
+                angle: 0, // Vinkeln karaktären är vänd i (0 = Höger)
+                maxHealth: 100,
+                health: 100,
+                color: "#ec4899", // Rosa karaktär
+                shootCooldown: 0,
+                maxCooldown: 18 // Hur snabbt man kan skjuta pilar
+            };
+
+            // Spel-tillstånd
+            let keys = {};
+            let enemies = [];
+            let arrows = [];
+            let particles = [];
+            let score = 0;
+            let wave = 1;
+            let waveActive = false;
+            let spidersToSpawnThisWave = 0;
+            let spiderSpawnCooldown = 0;
+            let spiderBaseSpeed = 1.2;
+            let isPlaying = false;
+            let animationFrameId;
+
+            // Touch-variabler
+            let isMobile = false;
+            let moveJoystick = { active: false, startX: 0, startY: 0, curX: 0, curY: 0, vectorX: 0, vectorY: 0 };
+            let shootJoystick = { active: false, startX: 0, startY: 0, curX: 0, curY: 0, vectorX: 0, vectorY: 0 };
+
+            // Kolla om vi är på en mobil eller pekskärm
+            function checkTouchDevice() {
+                if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                    isMobile = true;
+                    touchControls.classList.remove("hidden");
+                    touchControls.classList.add("flex");
+                }
+            }
+            checkTouchDevice();
+
+            // Initiera eller återställ spelet
+            function initGame() {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                player.x = worldWidth / 2;
+                player.y = worldHeight / 2;
+                player.health = player.maxHealth;
+                player.shootCooldown = 0;
+                player.angle = 0; // Börja med att titta åt höger
+                
+                enemies = [];
+                arrows = [];
+                particles = [];
+                score = 0;
+                wave = 1;
+                waveActive = false;
+                
+                scoreVal.innerText = score;
+                waveVal.innerText = wave;
+                updateHealthBar();
+
+                startScreen.classList.add("hidden");
+                gameOverScreen.classList.add("hidden");
+                
+                isPlaying = true;
+                startNewWave();
+                
+                cancelAnimationFrame(animationFrameId);
+                gameLoop();
+            }
+
+            // Starta en ny våg
+            function startNewWave() {
+                waveActive = true;
+                spidersToSpawnThisWave = 8 + (wave * 5); 
+                spiderSpawnCooldown = 0;
+                spiderBaseSpeed = 1.1 + (wave * 0.15); 
+                waveVal.innerText = wave;
+                playSound('wave');
+            }
+
+            // Uppdatera hälso-UI
+            function updateHealthBar() {
+                const percent = Math.max(0, (player.health / player.maxHealth) * 100);
+                healthBar.style.width = percent + "%";
+                if (percent < 30) {
+                    healthBar.className = "bg-red-600 h-full w-full transition-all duration-150 animate-pulse";
+                } else {
+                    healthBar.className = "bg-red-500 h-full w-full transition-all duration-150";
+                }
+            }
+
+            // --- SPEL-LOOP ---
+            function gameLoop() {
+                if (!isPlaying) return;
+
+                update();
+                draw();
+
+                animationFrameId = requestAnimationFrame(gameLoop);
+            }
+
+            // Uppdatera spelobjekt
+            function update() {
+                // 1. Spelarens rörelse (Tangentbordskontroller, oberoende av isMobile!)
+                let moveX = 0;
+                let moveY = 0;
+
+                if (keys["ArrowUp"]) moveY = -1;
+                if (keys["ArrowDown"]) moveY = 1;
+                if (keys["ArrowLeft"]) moveX = -1;
+                if (keys["ArrowRight"]) moveX = 1;
+
+                // Om vi använder virtuell joystick på mobil
+                if (isMobile && moveJoystick.active) {
+                    moveX = moveJoystick.vectorX;
+                    moveY = moveJoystick.vectorY;
+                }
+
+                // Normalisera rörelsevektorn så man inte går snabbare diagonalt
+                if (moveX !== 0 && moveY !== 0) {
+                    const length = Math.sqrt(moveX * moveX + moveY * moveY);
+                    moveX /= length;
+                    moveY /= length;
+                }
+
+                // Uppdatera position
+                player.x += moveX * player.speed;
+                player.y += moveY * player.speed;
+
+                // AUTOMATISK SIKTNING: Uppdatera karaktärens vinkel utifrån rörelsen
+                if (moveX !== 0 || moveY !== 0) {
+                    player.angle = Math.atan2(moveY, moveX);
+                }
+
+                // Håll spelaren innanför skärmen
+                player.x = Math.max(player.radius, Math.min(worldWidth - player.radius, player.x));
+                player.y = Math.max(player.radius, Math.min(worldHeight - player.radius, player.y));
+
+                // Om på mobil, låt siktes-joysticken skriva över vinkeln om den är aktiv
+                if (isMobile && shootJoystick.active) {
+                    player.angle = Math.atan2(shootJoystick.vectorY, shootJoystick.vectorX);
+                    const pullDist = Math.sqrt(shootJoystick.vectorX * shootJoystick.vectorX + shootJoystick.vectorY * shootJoystick.vectorY);
+                    if (pullDist > 0.4 && player.shootCooldown === 0) {
+                        fireArrow(player.angle);
+                    }
+                }
+
+                // SAKTA NER / SIKTA PÅ DATOR MED 'A' ELLER MELLANSLAG (Fungerar nu garanterat på alla datorer/hybridenheter!)
+                const shootKeyPressed = keys["KeyA"] || keys["a"] || keys["Space"] || keys[" "] || keys["space"];
+                if (shootKeyPressed && player.shootCooldown === 0) {
+                    fireArrow(player.angle);
+                }
+
+                // Uppdatera skott-cooldown
+                if (player.shootCooldown > 0) {
+                    player.shootCooldown--;
+                    reloadIndicator.innerText = "LADDAR...";
+                    reloadIndicator.className = "text-yellow-500 animate-pulse";
+                } else {
+                    reloadIndicator.innerText = "KLAR";
+                    reloadIndicator.className = "text-green-400 font-bold";
+                }
+
+                // 2. Hantera spindlar som spawnar
+                if (waveActive && spidersToSpawnThisWave > 0) {
+                    spiderSpawnCooldown--;
+                    if (spiderSpawnCooldown <= 0) {
+                        spawnSpider();
+                        spidersToSpawnThisWave--;
+                        spiderSpawnCooldown = Math.max(15, 60 - (wave * 4));
+                    }
+                }
+
+                // Kolla om vågen är slut
+                if (waveActive && spidersToSpawnThisWave === 0 && enemies.length === 0) {
+                    wave++;
+                    startNewWave();
+                }
+
+                // 3. Uppdatera pilar
+                for (let i = arrows.length - 1; i >= 0; i--) {
+                    const arrow = arrows[i];
+                    arrow.x += arrow.vx;
+                    arrow.y += arrow.vy;
+
+                    // Ta bort pilar utanför skärmen
+                    if (arrow.x < 0 || arrow.x > worldWidth || arrow.y < 0 || arrow.y > worldHeight) {
+                        arrows.splice(i, 1);
+                        continue;
+                    }
+
+                    // Kollisionsdetektering: Pil möter spindel
+                    for (let j = enemies.length - 1; j >= 0; j--) {
+                        const enemy = enemies[j];
+                        const dist = Math.hypot(arrow.x - enemy.x, arrow.y - enemy.y);
+                        
+                        if (dist < enemy.radius) {
+                            enemy.health--;
+                            createExplosion(arrow.x, arrow.y, enemy.color);
+                            arrows.splice(i, 1);
+
+                            if (enemy.health <= 0) {
+                                enemies.splice(j, 1);
+                                score += 10;
+                                scoreVal.innerText = score;
+                                playSound('squish');
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // 4. Uppdatera spindlar (Enemies)
+                for (let i = enemies.length - 1; i >= 0; i--) {
+                    const enemy = enemies[i];
+
+                    const dx = player.x - enemy.x;
+                    const dy = player.y - enemy.y;
+                    const distToPlayer = Math.hypot(dx, dy);
+
+                    if (distToPlayer > 5) {
+                        enemy.x += (dx / distToPlayer) * enemy.speed;
+                        enemy.y += (dy / distToPlayer) * enemy.speed;
+                    }
+
+                    enemy.legAnimTime += 0.2;
+
+                    // Kollision: Spindel biter spelaren
+                    if (distToPlayer < player.radius + enemy.radius) {
+                        player.health -= 0.5; 
+                        updateHealthBar();
+                        
+                        if (Math.random() < 0.15) {
+                            createExplosion(player.x, player.y, "#ef4444");
+                            playSound('hurt');
+                        }
+
+                        if (player.health <= 0) {
+                            gameOver();
+                        }
+                    }
+                }
+
+                // 5. Uppdatera partiklar (blodstänk)
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.02;
+                    if (p.alpha <= 0) {
+                        particles.splice(i, 1);
+                    }
+                }
+            }
+
+            // Rita ut grafiken på vår canvas
+            function draw() {
+                ctx.fillStyle = "#111827";
+                ctx.fillRect(0, 0, worldWidth, worldHeight);
+
+                // Rita ett svagt rutnät i bakgrunden
+                ctx.strokeStyle = "#1f2937";
+                ctx.lineWidth = 1;
+                const gridSize = 40;
+                for (let x = 0; x < worldWidth; x += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, worldHeight);
+                    ctx.stroke();
+                }
+                for (let y = 0; y < worldHeight; y += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(worldWidth, y);
+                    ctx.stroke();
+                }
+
+                // Rita ut partiklar
+                for (let p of particles) {
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // RITA PILAR
+                for (let arrow of arrows) {
+                    ctx.save();
+                    ctx.translate(arrow.x, arrow.y);
+                    ctx.rotate(arrow.angle);
+
+                    // Träskaft
+                    ctx.strokeStyle = "#b45309";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(-15, 0);
+                    ctx.lineTo(5, 0);
+                    ctx.stroke();
+
+                    // Metallspets
+                    ctx.fillStyle = "#9ca3af";
+                    ctx.beginPath();
+                    ctx.moveTo(5, -4);
+                    ctx.lineTo(13, 0);
+                    ctx.lineTo(5, 4);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Fjädrar där bak
+                    ctx.fillStyle = "#ffffff";
+                    ctx.beginPath();
+                    ctx.moveTo(-15, 0);
+                    ctx.lineTo(-20, -4);
+                    ctx.lineTo(-17, 0);
+                    ctx.lineTo(-20, 4);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.restore();
+                }
+
+                // RITA SPINDLAR (Enemies)
+                for (let enemy of enemies) {
+                    ctx.save();
+                    ctx.translate(enemy.x, enemy.y);
+                    
+                    const angleToPlayer = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+                    ctx.rotate(angleToPlayer);
+
+                    ctx.strokeStyle = enemy.color;
+                    ctx.lineWidth = 2.5;
+
+                    const wiggle = Math.sin(enemy.legAnimTime) * 0.4;
+                    
+                    const legAngles = [-1.2, -0.6, 0.6, 1.2, -1.8, -2.4, 2.4, 1.8];
+                    for (let i = 0; i < legAngles.length; i++) {
+                        const baseAngle = legAngles[i];
+                        const currentWiggle = (i % 2 === 0) ? wiggle : -wiggle;
+                        const legAngle = baseAngle + currentWiggle;
+
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        const kneeX = Math.cos(legAngle) * (enemy.radius * 1.2);
+                        const kneeY = Math.sin(legAngle) * (enemy.radius * 1.2);
+                        const footX = Math.cos(legAngle + 0.3) * (enemy.radius * 1.8);
+                        const footY = Math.sin(legAngle + 0.3) * (enemy.radius * 1.8);
+
+                        ctx.lineTo(kneeX, kneeY);
+                        ctx.lineTo(footX, footY);
+                        ctx.stroke();
+                    }
+
+                    // Stor bakkropp
+                    ctx.fillStyle = "#1e1b4b"; 
+                    ctx.strokeStyle = enemy.color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(-enemy.radius * 0.4, 0, enemy.radius * 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Framkropp
+                    ctx.fillStyle = enemy.color;
+                    ctx.beginPath();
+                    ctx.arc(enemy.radius * 0.3, 0, enemy.radius * 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Röda ögon
+                    ctx.fillStyle = "#ef4444";
+                    ctx.beginPath();
+                    ctx.arc(enemy.radius * 0.6, -enemy.radius * 0.2, 2.5, 0, Math.PI * 2);
+                    ctx.arc(enemy.radius * 0.6, enemy.radius * 0.2, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Livsmätare för spindel
+                    if (enemy.health < enemy.maxHealth) {
+                        const healthPct = enemy.health / enemy.maxHealth;
+                        ctx.fillStyle = "#374151";
+                        ctx.fillRect(-enemy.radius, -enemy.radius - 8, enemy.radius * 2, 4);
+                        ctx.fillStyle = "#ef4444";
+                        ctx.fillRect(-enemy.radius, -enemy.radius - 8, (enemy.radius * 2) * healthPct, 4);
+                    }
+
+                    ctx.restore();
+                }
+
+                // RITA SPELAREN (Hjälten med båge)
+                ctx.save();
+                ctx.translate(player.x, player.y);
+                ctx.rotate(player.angle);
+
+                ctx.fillStyle = "rgba(0,0,0,0.4)";
+                ctx.beginPath();
+                ctx.arc(2, 4, player.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Träbåge framför spelaren
+                ctx.strokeStyle = "#d97706"; 
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                const bowDraw = (player.shootCooldown > player.maxCooldown - 8) ? 3 : 12;
+                ctx.arc(10, 0, 18, -Math.PI / 3, Math.PI / 3);
+                ctx.stroke();
+
+                // Bågsträng
+                ctx.strokeStyle = "#e5e7eb";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(10 + Math.cos(-Math.PI / 3) * 18, Math.sin(-Math.PI / 3) * 18);
+                ctx.lineTo(10 - bowDraw, 0); 
+                ctx.lineTo(10 + Math.cos(Math.PI / 3) * 18, Math.sin(Math.PI / 3) * 18);
+                ctx.stroke();
+
+                // Karaktärens kropp (Rosa huva)
+                ctx.fillStyle = player.color; 
+                ctx.strokeStyle = "#ffffff";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Ansikte
+                ctx.fillStyle = "#fbcfe8"; 
+                ctx.beginPath();
+                ctx.arc(player.radius * 0.4, 0, player.radius * 0.5, -Math.PI / 2, Math.PI / 2);
+                ctx.fill();
+
+                // Ögon (Tittar åt det håll spelaren rör sig)
+                ctx.fillStyle = "#1e1b4b";
+                ctx.fillRect(player.radius * 0.5, -5, 2.5, 2.5);
+                ctx.fillRect(player.radius * 0.5, 2.5, 2.5, 2.5);
+
+                ctx.restore();
+            }
+
+            // Skapa en spindel
+            function spawnSpider() {
+                let x, y;
+                if (Math.random() < 0.5) {
+                    x = Math.random() < 0.5 ? -30 : worldWidth + 30;
+                    y = Math.random() * worldHeight;
+                } else {
+                    x = Math.random() * worldWidth;
+                    y = Math.random() < 0.5 ? -30 : worldHeight + 30;
+                }
+
+                const isBig = Math.random() < 0.15 + (wave * 0.02); 
+                const radius = isBig ? 24 : 14;
+                const hp = isBig ? 3 + Math.floor(wave / 2) : 1;
+                const speed = isBig ? spiderBaseSpeed * 0.7 : spiderBaseSpeed * (0.9 + Math.random() * 0.3);
+                const color = isBig ? "#c084fc" : "#a855f7"; 
+
+                enemies.push({
+                    x: x,
+                    y: y,
+                    radius: radius,
+                    speed: speed,
+                    maxHealth: hp,
+                    health: hp,
+                    color: color,
+                    legAnimTime: Math.random() * 100
+                });
+            }
+
+            // Skjut en pil
+            function fireArrow(angle) {
+                const speed = 11;
+                const startX = player.x + Math.cos(angle) * player.radius;
+                const startY = player.y + Math.sin(angle) * player.radius;
+
+                arrows.push({
+                    x: startX,
+                    y: startY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    angle: angle
+                });
+
+                player.shootCooldown = player.maxCooldown;
+                playSound('shoot');
+            }
+
+            // Partiklar
+            function createExplosion(x, y, color) {
+                const pCount = 8 + Math.floor(Math.random() * 6);
+                for (let i = 0; i < pCount; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 1 + Math.random() * 4;
+                    particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: 2 + Math.random() * 3,
+                        color: color,
+                        alpha: 1
+                    });
+                }
+            }
+
+            // Game over
+            function gameOver() {
+                isPlaying = false;
+                cancelAnimationFrame(animationFrameId);
+                
+                finalScore.innerText = score;
+                finalWave.innerText = wave;
+                gameOverScreen.classList.remove("hidden");
+            }
+
+            // --- TANGENTBORDS-REAKTIONER ---
+            window.addEventListener("keydown", (e) => {
+                keys[e.code] = true;
+                if (e.key) {
+                    keys[e.key.toLowerCase()] = true;
+                    keys[e.key] = true;
+                }
+                
+                // Förhindra att webbläsaren scrollar när man spelar med piltangenter eller mellanslag
+                if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", " "].indexOf(e.key) > -1 || e.code === "Space") {
+                    e.preventDefault();
+                }
+            });
+
+            window.addEventListener("keyup", (e) => {
+                keys[e.code] = false;
+                if (e.key) {
+                    keys[e.key.toLowerCase()] = false;
+                    keys[e.key] = false;
+                }
+            });
+
+            // --- MOBILA JOYSTICKS ---
+            const movePad = document.getElementById("movePad");
+            const moveKnob = document.getElementById("moveKnob");
+            const shootPad = document.getElementById("shootPad");
+            const shootKnob = document.getElementById("shootKnob");
+
+            function handleJoystickStart(e, pad, stickState) {
+                e.preventDefault();
+                const touch = e.targetTouches[0];
+                const rect = pad.getBoundingClientRect();
+                stickState.active = true;
+                stickState.startX = rect.left + rect.width / 2;
+                stickState.startY = rect.top + rect.height / 2;
+                handleJoystickMove(e, pad, stickState);
+            }
+
+            function handleJoystickMove(e, pad, stickState) {
+                if (!stickState.active) return;
+                const touch = Array.from(e.targetTouches).find(t => {
+                    const dX = t.clientX - stickState.startX;
+                    const dY = t.clientY - stickState.startY;
+                    return Math.hypot(dX, dY) < 120;
+                }) || e.targetTouches[0];
+
+                if (!touch) return;
+
+                const rawDX = touch.clientX - stickState.startX;
+                const rawDY = touch.clientY - stickState.startY;
+                const dist = Math.hypot(rawDX, rawDY);
+                const maxDist = 48; 
+
+                let moveX = rawDX;
+                let moveY = rawDY;
+
+                if (dist > maxDist) {
+                    moveX = (rawDX / dist) * maxDist;
+                    moveY = (rawDY / dist) * maxDist;
+                }
+
+                stickState.vectorX = moveX / maxDist;
+                stickState.vectorY = moveY / maxDist;
+
+                const knob = pad.firstElementChild;
+                knob.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            }
+
+            function handleJoystickEnd(pad, stickState) {
+                stickState.active = false;
+                stickState.vectorX = 0;
+                stickState.vectorY = 0;
+                
+                const knob = pad.firstElementChild;
+                knob.style.transform = `translate(0px, 0px)`;
+            }
+
+            movePad.addEventListener("touchstart", (e) => handleJoystickStart(e, movePad, moveJoystick));
+            movePad.addEventListener("touchmove", (e) => handleJoystickMove(e, movePad, moveJoystick));
+            movePad.addEventListener("touchend", () => handleJoystickEnd(movePad, moveJoystick));
+
+            shootPad.addEventListener("touchstart", (e) => handleJoystickStart(e, shootPad, shootJoystick));
+            shootPad.addEventListener("touchmove", (e) => handleJoystickMove(e, shootPad, shootJoystick));
+            shootPad.addEventListener("touchend", () => handleJoystickEnd(shootPad, shootJoystick));
+
+            startBtn.addEventListener("click", initGame);
+            restartBtn.addEventListener("click", initGame);
+        };
+    </script>
+</body>
+</html>

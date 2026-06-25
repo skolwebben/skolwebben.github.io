@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PluggHjälten - Gymnasiet</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome för Ikoner -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts (Nunito för en lekfull och vänlig känsla) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f3f4f6; /* Ljusgrå bakgrund */
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* App Container (för att simulera mobilvy på desktop) */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            padding-bottom: 80px; /* Plats för bottom nav */
+            overflow-x: hidden;
+        }
+
+        /* Göm scrollbar men behåll funktionalitet */
+        .app-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Flashcard Animationer */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 250px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .flip-card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .flip-card-back {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            color: #2d3748;
+            transform: rotateY(180deg);
+        }
+
+        /* Toast Animation */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #10B981;
+            color: #fff;
+            text-align: center;
+            border-radius: 9999px;
+            padding: 16px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 100px;
+            transform: translateX(-50%);
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        /* Progress Bar Transition */
+        .xp-bar-fill {
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Vyhantering */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #8B5CF6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"><i class="fa-solid fa-star text-yellow-300 mr-2"></i> <span id="toast-msg"></span></div>
+
+    <div class="app-container flex flex-col">
+        
+        <!-- Header (Gamification & Profil) -->
+        <header class="bg-white p-4 sticky top-0 z-40 rounded-b-3xl shadow-sm">
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="bg-purple-100 p-2 rounded-full text-purple-600 font-bold w-12 h-12 flex items-center justify-center text-xl shadow-inner">
+                        L<span id="level-display">1</span>
+                    </div>
+                    <div>
+                        <h1 class="font-black text-xl text-gray-800 tracking-tight">PluggHjälten</h1>
+                        <p class="text-xs text-gray-500 font-bold" id="current-course-display">Matematik • Åk 1</p>
+                    </div>
+                </div>
+                <div class="bg-orange-100 px-3 py-1.5 rounded-full flex items-center border-2 border-orange-200">
+                    <span class="text-orange-500 font-black text-lg mr-1"><i class="fa-solid fa-fire"></i></span>
+                    <span id="streak-display" class="font-bold text-orange-600">0 Dagar</span>
+                </div>
+            </div>
+            
+            <!-- XP Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-3.5 mb-1 shadow-inner">
+                <div id="xp-bar" class="xp-bar-fill bg-gradient-to-r from-green-400 to-blue-500 h-3.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-xs font-bold text-gray-400">
+                <span>XP: <span id="xp-text">0</span>/100</span>
+                <span>Nästa Level</span>
+            </div>
+        </header>
+
+        <!-- VIEWS -->
+        <main class="flex-1 p-4">
+            
+            <!-- VY: HEM / INSTÄLLNINGAR -->
+            <section id="view-home" class="view-section active">
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg mb-6 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h2 class="text-2xl font-black mb-1">Dags att levla upp! 🚀</h2>
+                        <p class="text-indigo-100 font-semibold text-sm">Välj ämne och årskurs för att anpassa ditt plugg.</p>
+                    </div>
+                    <i class="fa-solid fa-graduation-cap absolute -right-4 -bottom-4 text-8xl text-white opacity-20"></i>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <label class="block text-gray-700 font-bold mb-2"><i class="fa-solid fa-layer-group text-blue-500 mr-2"></i>Gymnasieårskurs</label>
+                        <select id="grade-select" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-700 rounded-xl px-4 py-3 font-bold focus:outline-none focus:border-purple-500 transition-colors" onchange="updateCourseDisplay()">
+                            <option value="Åk 1">Årskurs 1</option>
+                            <option value="Åk 2">Årskurs 2</option>
+                            <option value="Åk 3">Årskurs 3</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <label class="block text-gray-700 font-bold mb-2"><i class="fa-solid fa-book text-green-500 mr-2"></i>Ämne</label>
+                        <select id="subject-select" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-700 rounded-xl px-4 py-3 font-bold focus:outline-none focus:border-purple-500 transition-colors" onchange="updateCourseDisplay()">
+                            <option value="Matematik">Matematik</option>
+                            <option value="Svenska">Svenska</option>
+                            <option value="Engelska">Engelska</option>
+                            <option value="Historia">Historia</option>
+                            <option value="Samhällskunskap">Samhällskunskap</option>
+                            <option value="Naturkunskap">Naturkunskap</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                    <button onclick="switchView('view-flashcards')" class="bg-blue-100 text-blue-700 p-4 rounded-2xl font-black text-left flex flex-col items-center justify-center shadow-sm hover:bg-blue-200 transition-colors">
+                        <i class="fa-solid fa-clone text-3xl mb-2"></i>
+                        Flashcards
+                    </button>
+                    <button onclick="switchView('view-quiz')" class="bg-green-100 text-green-700 p-4 rounded-2xl font-black text-left flex flex-col items-center justify-center shadow-sm hover:bg-green-200 transition-colors">
+                        <i class="fa-solid fa-gamepad text-3xl mb-2"></i>
+                        Spela Quiz
+                    </button>
+                </div>
+            </section>
+
+            <!-- VY: FLASHCARDS -->
+            <section id="view-flashcards" class="view-section">
+                <h2 class="text-2xl font-black text-gray-800 mb-4 flex items-center"><i class="fa-solid fa-clone text-blue-500 mr-2"></i> Flashcards</h2>
+                
+                <div class="mb-4 text-center font-bold text-gray-500" id="flashcard-counter">Kort 1 / 3</div>
+                
+                <div class="flip-card mx-auto" id="flashcard" onclick="flipCard()">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front" id="flashcard-front">
+                            Klicka för att vända
+                        </div>
+                        <div class="flip-card-back" id="flashcard-back">
+                            Svar
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button onclick="prevCard()" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-xl hover:bg-gray-300 transition-colors"><i class="fa-solid fa-arrow-left mr-2"></i> Föregående</button>
+                    <button onclick="nextCard()" class="bg-blue-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-600 transition-colors shadow-blue-500/30">Nästa <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button onclick="finishFlashcards()" class="text-sm font-bold text-green-500 bg-green-50 px-4 py-2 rounded-full border border-green-200">
+                        <i class="fa-solid fa-check mr-1"></i> Jag kan dessa nu (+20 XP)
+                    </button>
+                </div>
+            </section>
+
+            <!-- VY: QUIZ -->
+            <section id="view-quiz" class="view-section">
+                <h2 class="text-2xl font-black text-gray-800 mb-4 flex items-center"><i class="fa-solid fa-gamepad text-green-500 mr-2"></i> Quiz-Dags</h2>
+                
+                <div id="quiz-container" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between text-sm font-bold text-gray-400 mb-4">
+                        <span id="quiz-progress">Fråga 1 av 3</span>
+                        <span class="text-orange-500"><i class="fa-solid fa-star"></i> Poäng: <span id="quiz-score">0</span></span>
+                    </div>
+                    
+                    <h3 id="quiz-question" class="text-xl font-bold text-gray-800 mb-6 leading-snug">Laddar fråga...</h3>
+                    
+                    <div id="quiz-options" class="space-y-3">
+                        <!-- Genereras med JS -->
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden bg-gradient-to-br from-green-400 to-green-600 p-6 rounded-3xl text-white text-center mt-4 shadow-lg">
+                    <i class="fa-solid fa-trophy text-5xl mb-4 text-yellow-300"></i>
+                    <h3 class="text-2xl font-black mb-2">Snyggt jobbat!</h3>
+                    <p class="font-bold mb-4">Du fick <span id="final-score"></span> rätt!</p>
+                    <button onclick="resetQuiz()" class="bg-white text-green-600 font-black py-3 px-8 rounded-full shadow-md hover:bg-gray-50">Kör igen</button>
+                </div>
+            </section>
+
+            <!-- VY: POMODORO -->
+            <section id="view-pomodoro" class="view-section">
+                <div class="text-center">
+                    <h2 class="text-2xl font-black text-gray-800 mb-2 flex items-center justify-center"><i class="fa-solid fa-stopwatch text-red-500 mr-2"></i> Fokus-Timer</h2>
+                    <p class="text-gray-500 font-bold mb-8">Samla XP genom att plugga fokuserat.</p>
+                    
+                    <div class="relative w-64 h-64 mx-auto bg-white rounded-full shadow-xl border-8 border-gray-50 flex flex-col items-center justify-center mb-8">
+                        <svg class="absolute top-0 left-0 w-full h-full transform -rotate-90 pointer-events-none">
+                            <circle cx="120" cy="120" r="110" stroke="#f3f4f6" stroke-width="8" fill="none" class="translate-x-2 translate-y-2" />
+                            <circle id="timer-circle" cx="120" cy="120" r="110" stroke="#EF4444" stroke-width="8" fill="none" stroke-dasharray="691" stroke-dashoffset="0" class="transition-all duration-1000 ease-linear translate-x-2 translate-y-2" />
+                        </svg>
+                        <div id="timer-display" class="text-6xl font-black text-gray-800 relative z-10">25:00</div>
+                        <div id="timer-mode" class="text-sm font-bold text-red-500 mt-2 uppercase tracking-widest relative z-10">Fokus</div>
+                    </div>
+
+                    <div class="flex justify-center space-x-4">
+                        <button id="btn-timer-start" onclick="toggleTimer()" class="bg-red-500 text-white w-16 h-16 rounded-full shadow-lg shadow-red-500/40 text-xl hover:bg-red-600 transition-colors"><i class="fa-solid fa-play"></i></button>
+                        <button onclick="resetTimer()" class="bg-gray-200 text-gray-600 w-16 h-16 rounded-full shadow-md text-xl hover:bg-gray-300 transition-colors"><i class="fa-solid fa-rotate-right"></i></button>
+                    </div>
+                    
+                    <div class="mt-8 flex justify-center space-x-2">
+                        <button onclick="setTimerMode(25)" class="px-4 py-2 rounded-full font-bold text-sm bg-red-100 text-red-600 border border-red-200">25 min (Fokus)</button>
+                        <button onclick="setTimerMode(5)" class="px-4 py-2 rounded-full font-bold text-sm bg-green-100 text-green-600 border border-green-200">5 min (Paus)</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VY: AI ANTECKNINGAR -->
+            <section id="view-ai" class="view-section">
+                <div class="bg-gradient-to-r from-pink-500 to-purple-500 p-6 rounded-3xl text-white shadow-lg mb-6">
+                    <h2 class="text-2xl font-black mb-2 flex items-center"><i class="fa-solid fa-wand-magic-sparkles text-yellow-300 mr-2"></i> AI-Magi</h2>
+                    <p class="font-semibold text-pink-100 text-sm">Klistra in dina anteckningar så genererar jag övningsfrågor åt dig!</p>
+                </div>
+
+                <textarea id="ai-notes-input" class="w-full h-40 p-4 rounded-2xl border-2 border-gray-200 bg-white font-semibold text-gray-700 focus:outline-none focus:border-pink-500 resize-none shadow-sm mb-4" placeholder="Klistra in text från boken eller dina anteckningar här... (T.ex. om den franska revolutionen)"></textarea>
+                
+                <button id="btn-generate-ai" onclick="generateAIQuestions()" class="w-full bg-gray-900 text-white font-black py-4 rounded-2xl shadow-lg hover:bg-gray-800 transition-colors flex justify-center items-center">
+                    <i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Skapa Frågor!
+                </button>
+
+                <div id="ai-loading" class="hidden text-center mt-8">
+                    <div class="loader"></div>
+                    <p class="mt-4 font-bold text-purple-600 animate-pulse">AI:n läser dina anteckningar...</p>
+                </div>
+
+                <div id="ai-result" class="hidden mt-6 bg-white p-5 rounded-2xl shadow-sm border border-pink-100">
+                    <h3 class="font-black text-gray-800 mb-3 border-b pb-2"><i class="fa-solid fa-clipboard-question text-pink-500 mr-2"></i> Genererade Frågor</h3>
+                    <ul id="ai-questions-list" class="space-y-3 text-gray-700 font-semibold text-sm">
+                        <!-- Genereras -->
+                    </ul>
+                    <button onclick="saveAIAsFlashcards()" class="mt-4 w-full bg-purple-100 text-purple-700 font-bold py-2 rounded-xl hover:bg-purple-200 transition-colors border border-purple-200">
+                        <i class="fa-solid fa-plus mr-1"></i> Lägg till i Flashcards
+                    </button>
+                </div>
+            </section>
+
+            <!-- VY: SCHEMA / PÅMINNELSER -->
+            <section id="view-schedule" class="view-section">
+                <h2 class="text-2xl font-black text-gray-800 mb-4 flex items-center"><i class="fa-regular fa-calendar-check text-orange-500 mr-2"></i> Prov & Schema</h2>
+                
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 mb-6">
+                    <h3 class="font-bold text-gray-700 mb-3">Lägg till ny påminnelse</h3>
+                    <div class="flex space-x-2">
+                        <input type="text" id="schedule-title" placeholder="T.ex. Matteprov kap 3" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 font-semibold text-sm focus:outline-none focus:border-orange-500">
+                        <input type="date" id="schedule-date" class="bg-gray-50 border-2 border-gray-200 rounded-xl px-2 py-2 font-semibold text-sm focus:outline-none focus:border-orange-500 text-gray-600">
+                        <button onclick="addScheduleItem()" class="bg-orange-500 text-white w-12 rounded-xl font-bold shadow-md hover:bg-orange-600 transition-colors"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <h3 class="font-black text-gray-400 text-sm uppercase tracking-wider mb-3 ml-2">Dina kommande prov</h3>
+                <div id="schedule-list" class="space-y-3">
+                    <!-- Lista genereras av JS -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bg-white fixed bottom-0 w-full max-w-[480px] border-t border-gray-200 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-50">
+            <div class="flex justify-between items-center px-6 py-3">
+                <button onclick="switchView('view-home')" class="nav-btn text-gray-400 hover:text-indigo-500 flex flex-col items-center w-16 transition-colors" data-target="view-home">
+                    <i class="fa-solid fa-house text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Hem</span>
+                </button>
+                <button onclick="switchView('view-flashcards')" class="nav-btn text-gray-400 hover:text-blue-500 flex flex-col items-center w-16 transition-colors" data-target="view-flashcards">
+                    <i class="fa-solid fa-clone text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Kort</span>
+                </button>
+                
+                <!-- Center "AI" Button -->
+                <div class="relative -top-5">
+                    <button onclick="switchView('view-ai')" class="nav-btn bg-gradient-to-tr from-purple-600 to-pink-500 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-pink-500/40 border-4 border-white hover:scale-105 transition-transform" data-target="view-ai">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                    </button>
+                </div>
+
+                <button onclick="switchView('view-pomodoro')" class="nav-btn text-gray-400 hover:text-red-500 flex flex-col items-center w-16 transition-colors" data-target="view-pomodoro">
+                    <i class="fa-solid fa-stopwatch text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Fokus</span>
+                </button>
+                <button onclick="switchView('view-schedule')" class="nav-btn text-gray-400 hover:text-orange-500 flex flex-col items-center w-16 transition-colors" data-target="view-schedule">
+                    <i class="fa-regular fa-calendar text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Schema</span>
+                </button>
+            </div>
+        </nav>
+
+    </div>
+
+    <!-- JavaScript Logik -->
+    <script>
+        // --- DATA & STATE ---
+        let appState = {
+            xp: 0,
+            level: 1,
+            streak: 0,
+            lastLogin: null,
+            subject: 'Matematik',
+            grade: 'Åk 1',
+            schedule: [
+                { id: 1, title: 'Matteprov Nationella', date: '2026-06-10' }
+            ]
+        };
+
+        // Databaser för olika ämnen och årskurser (Simulerade)
+        const dummyData = {
+            'Matematik': {
+                'Åk 1': {
+                    flashcards: [
+                        { q: "Vad är formeln för en rät linje?", a: "y = kx + m" },
+                        { q: "Vad är Pythagoras sats?", a: "a² + b² = c²" },
+                        { q: "Vad betyder 'k' i linjens ekvation?", a: "Lutningen (riktningskoefficienten)." },
+                        { q: "Vad är 10% av 450?", a: "45" },
+                        { q: "Vad är roten ur 144?", a: "12" }
+                    ],
+                    quiz: [
+                        { q: "Lös ekvationen: 2x + 4 = 10", options: ["x = 2", "x = 3", "x = 4", "x = 6"], ans: 1 },
+                        { q: "Vad kallas linjens lutning i y=kx+m?", options: ["m-värde", "x-värde", "k-värde", "y-värde"], ans: 2 },
+                        { q: "Förenkla uttrycket: 3x + 2x - x", options: ["3x", "4x", "5x", "6x"], ans: 1 },
+                        { q: "Vad är summan av vinklarna i en triangel?", options: ["90°", "180°", "270°", "360°"], ans: 1 }
+                    ]
+                },
+                'Åk 2': {
+                    flashcards: [
+                        { q: "Vad används pq-formeln till?", a: "För att lösa andragradsekvationer." },
+                        { q: "Vad är log₁₀(100)?", a: "2 (eftersom 10² = 100)." },
+                        { q: "Vad kallas formen på en andragradsfunktion?", a: "Parabel." },
+                        { q: "Vad är cos(90°)?", a: "0" },
+                        { q: "Hur ser cirkelns ekvation ut?", a: "(x-a)² + (y-b)² = r²" }
+                    ],
+                    quiz: [
+                        { q: "Hur många nollställen kan en andragradsekvation max ha?", options: ["1", "2", "3", "Oändligt"], ans: 1 },
+                        { q: "Lös ekvationen: x² = 25", options: ["x = 5", "x = -5", "x = ±5", "x = 2.5"], ans: 2 },
+                        { q: "Vilken formel beskriver en parabel?", options: ["y = kx + m", "y = x²", "y = 1/x", "y = sin(x)"], ans: 1 },
+                        { q: "Vad är roten ur -1?", options: ["1", "-1", "i (komplext tal)", "Går ej att definiera med reella tal"], ans: 2 }
+                    ]
+                },
+                'Åk 3': {
+                    flashcards: [
+                        { q: "Vad är derivatan av x²?", a: "2x" },
+                        { q: "Vad beskriver derivatan i en specifik punkt?", a: "Kurvans lutning (förändringshastighet) i den punkten." },
+                        { q: "Vad är en primitiv funktion?", a: "Motsatsen till en derivata (används vid integraler)." },
+                        { q: "Vad är derivatan av e^x?", a: "e^x (den är sig lik!)" },
+                        { q: "Vad innebär det om f'(x) = 0?", a: "Att funktionen har en extrempunkt (t.ex. max eller min)." }
+                    ],
+                    quiz: [
+                        { q: "Vad är derivatan av funktionen f(x) = 3x² + 2x?", options: ["6x + 2", "3x + 2", "6x", "x²"], ans: 0 },
+                        { q: "Vad beräknar man med en bestämd integral?", options: ["Lutning", "Arean under en kurva", "Volym", "Nollställen"], ans: 1 },
+                        { q: "Vilken funktion är sin egen derivata?", options: ["sin(x)", "ln(x)", "e^x", "x²"], ans: 2 },
+                        { q: "Vad kallas punkten där andraderivatan byter tecken?", options: ["Extrempunkt", "Nollställe", "Inflexionspunkt", "Terrasspunkt"], ans: 2 }
+                    ]
+                }
+            },
+            'Svenska': {
+                'Åk 1': {
+                    flashcards: [
+                        { q: "Vad är ett substantiv?", a: "Namn på ting, t.ex. bil, hund, kärlek." },
+                        { q: "Vad kännetecknar en novell?", a: "Kort text, få personer, utspelar sig under kort tid, oväntat slut." },
+                        { q: "När var antiken?", a: "Ca 700 f.Kr. till 500 e.Kr." },
+                        { q: "Vem skrev Odysséen?", a: "Homeros (enligt traditionen)." }
+                    ],
+                    quiz: [
+                        { q: "Vilket ord är ett verb?", options: ["Vacker", "Snabbt", "Kolla", "Bord"], ans: 2 },
+                        { q: "Vilken genre tillhör Iliaden?", options: ["Epik", "Lyrik", "Dramatik", "Novell"], ans: 0 }
+                    ]
+                },
+                'Åk 2': {
+                    flashcards: [
+                        { q: "Vilken epok kom efter upplysningen?", a: "Romantiken." },
+                        { q: "Vad kännetecknade realismen?", a: "Att beskriva verkligheten som den faktiskt var, ofta med fokus på arbetarklassen." },
+                        { q: "Vem skrev 'Röda rummet'?", a: "August Strindberg." }
+                    ],
+                    quiz: [
+                        { q: "Vilken författare är starkt förknippad med Romantiken?", options: ["August Strindberg", "Mary Shelley", "Charles Dickens", "Voltaire"], ans: 1 },
+                        { q: "Vad var typiskt för Upplysningens litteratur?", options: ["Känslor", "Förnuft och vetenskap", "Religion", "Naturmystik"], ans: 1 }
+                    ]
+                },
+                'Åk 3': {
+                    flashcards: [
+                        { q: "Vad är ethos, pathos och logos?", a: "Retoriska verkningsmedel (Trovärdighet, Känslor, Fakta)." },
+                        { q: "Vad kallas en överdrift inom retoriken?", a: "Hyperbol." },
+                        { q: "Vad är isbergstekniken?", a: "Att mycket lämnas osagt i texten och får tolkas av läsaren (känd av Hemingway)." }
+                    ],
+                    quiz: [
+                        { q: "Vilket begrepp syftar på talarens trovärdighet?", options: ["Pathos", "Logos", "Ethos", "Epos"], ans: 2 },
+                        { q: "Vilken författare förknippas med isbergstekniken?", options: ["Franz Kafka", "Ernest Hemingway", "Karin Boye", "Selma Lagerlöf"], ans: 1 }
+                    ]
+                }
+            },
+            'Historia': {
+                'Åk 1': {
+                    flashcards: [
+                        { q: "När startade Franska revolutionen?", a: "1789" },
+                        { q: "Vem var Gustav Vasa?", a: "Sveriges kung som valdes 1523 och enade landet." },
+                        { q: "Vad hette romarrikets förste kejsare?", a: "Augustus." }
+                    ],
+                    quiz: [
+                        { q: "Vilket år upptäckte Columbus Amerika?", options: ["1492", "1523", "1632", "1789"], ans: 0 },
+                        { q: "Vad utlöste Franska revolutionen?", options: ["Svält och orättvisor", "Ett lönnmord", "Religion", "Uppfinningar"], ans: 0 }
+                    ]
+                },
+                'Åk 2': {
+                    flashcards: [
+                        { q: "Vad innebar den industriella revolutionen?", a: "Övergång från jordbrukssamhälle till industrisamhälle, med start i Storbritannien." },
+                        { q: "Vilket år startade Första världskriget?", a: "1914" },
+                        { q: "Vad var imperialismen under 1800-talet?", a: "Europeiska staters strävan att bygga stora imperier, ofta genom kolonier i Afrika och Asien." }
+                    ],
+                    quiz: [
+                        { q: "Vilken händelse utlöste Första världskriget?", options: ["Skotten i Sarajevo", "Börskraschen", "Bastiljens fall", "Tysklands enande"], ans: 0 },
+                        { q: "Var startade den industriella revolutionen?", options: ["Frankrike", "Tyskland", "Storbritannien", "USA"], ans: 2 }
+                    ]
+                },
+                'Åk 3': {
+                    flashcards: [
+                        { q: "När föll Berlinmuren?", a: "1989" },
+                        { q: "Vad var Kalla kriget?", a: "En konflikt utan direkta strider mellan supermakterna USA och Sovjetunionen (ca 1947-1991)." },
+                        { q: "Vad hände under Kubakrisen 1962?", a: "Världen var mycket nära ett kärnvapenkrig efter att Sovjet placerat missiler på Kuba." }
+                    ],
+                    quiz: [
+                        { q: "Vilka två länder var huvudaktörer i Kalla kriget?", options: ["Tyskland & Japan", "USA & Sovjetunionen", "Kina & Indien", "Storbritannien & Frankrike"], ans: 1 },
+                        { q: "Vilket år tog Andra världskriget slut?", options: ["1939", "1945", "1962", "1989"], ans: 1 }
+                    ]
+                }
+            }
+        };
+
+        // Hjälpfunktion för att hämta rätt data (förhindrar krascher om ett ämne saknar data)
+        function getSubjectData() {
+            let subjectData = dummyData[appState.subject] || dummyData['Matematik'];
+            let gradeData = subjectData[appState.grade];
+            
+            // Om specifik data saknas (t.ex. för Naturkunskap), generera en vänlig platshållare
+            if (!gradeData) {
+                return {
+                    flashcards: [
+                        { q: `Färdiga kort för ${appState.subject} (${appState.grade}) är på väg!`, a: "Du kan skapa egna frågor direkt med AI-funktionen så länge." },
+                        { q: "Tips för plugget!", a: "Använd Fokus-timern för att plugga mer effektivt." }
+                    ],
+                    quiz: [
+                        { q: `Vilken årskurs befinner du dig i?`, options: [appState.grade, "Mellanstadiet", "Högskolan", "Förskolan"], ans: 0 }
+                    ]
+                };
+            }
+            return gradeData;
+        }
+
+        // --- INITIERING ---
+        window.onload = () => {
+            loadData();
+            checkStreak();
+            updateCourseDisplay();
+            updateGamificationUI();
+            renderSchedule();
+        };
+
+        function saveData() {
+            localStorage.setItem('pluggApp_data', JSON.stringify(appState));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('pluggApp_data');
+            if (saved) {
+                appState = { ...appState, ...JSON.parse(saved) };
+                document.getElementById('subject-select').value = appState.subject;
+                document.getElementById('grade-select').value = appState.grade;
+            }
+        }
+
+        // --- GAMIFICATION & STREAK ---
+        function checkStreak() {
+            const today = new Date().toISOString().split('T')[0];
+            if (appState.lastLogin !== today) {
+                // Förenklad streak-logik för demo. Ökar med 1 om det är en ny dag.
+                if(appState.lastLogin) {
+                    let yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    if(appState.lastLogin === yesterday.toISOString().split('T')[0]) {
+                        appState.streak += 1;
+                    } else {
+                        appState.streak = 1; // Bruten streak
+                    }
+                } else {
+                    appState.streak = 1; // Första gången
+                }
+                appState.lastLogin = today;
+                saveData();
+                showToast(`Välkommen tillbaka! 🔥 Din streak: ${appState.streak} dagar.`);
+            }
+            document.getElementById('streak-display').innerText = `${appState.streak} Dagar`;
+        }
+
+        function addXP(amount) {
+            appState.xp += amount;
+            if (appState.xp >= 100) {
+                appState.level += Math.floor(appState.xp / 100);
+                appState.xp = appState.xp % 100;
+                showToast(`Level Up! Du är nu nivå ${appState.level} 🎉`);
+            }
+            updateGamificationUI();
+            saveData();
+        }
+
+        function updateGamificationUI() {
+            document.getElementById('level-display').innerText = appState.level;
+            document.getElementById('xp-text').innerText = appState.xp;
+            document.getElementById('xp-bar').style.width = `${appState.xp}%`;
+        }
+
+        // --- NAVIGERING ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            // Hantera färg på bottenmenyn
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(!btn.classList.contains('bg-gradient-to-tr')) { // Ignorera AI-knappen i mitten för färgändring
+                    btn.classList.remove('text-indigo-500', 'text-blue-500', 'text-red-500', 'text-orange-500');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+
+            // Ladda specifik data för vyn
+            if (viewId === 'view-flashcards') initFlashcards();
+            if (viewId === 'view-quiz') initQuiz();
+        }
+
+        function updateCourseDisplay() {
+            appState.subject = document.getElementById('subject-select').value;
+            appState.grade = document.getElementById('grade-select').value;
+            document.getElementById('current-course-display').innerText = `${appState.subject} • ${appState.grade}`;
+            saveData();
+        }
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // --- FLASHCARDS ---
+        let currentFlashcardIndex = 0;
+        let activeFlashcards = [];
+
+        function initFlashcards() {
+            const data = getSubjectData();
+            activeFlashcards = data.flashcards;
+            currentFlashcardIndex = 0;
+            document.getElementById('flashcard').classList.remove('flipped');
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            if(activeFlashcards.length === 0) return;
+            document.getElementById('flashcard-front').innerText = activeFlashcards[currentFlashcardIndex].q;
+            document.getElementById('flashcard-back').innerText = activeFlashcards[currentFlashcardIndex].a;
+            document.getElementById('flashcard-counter').innerText = `Kort ${currentFlashcardIndex + 1} / ${activeFlashcards.length}`;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (currentFlashcardIndex < activeFlashcards.length - 1) {
+                currentFlashcardIndex++;
+                renderFlashcard();
+            } else {
+                currentFlashcardIndex = 0; // Loopa runt
+                renderFlashcard();
+            }
+        }
+
+        function prevCard() {
+            if (currentFlashcardIndex > 0) {
+                currentFlashcardIndex--;
+                renderFlashcard();
+            }
+        }
+
+        function finishFlashcards() {
+            addXP(20);
+            showToast("Grymt! +20 XP för att du pluggat kort.");
+            switchView('view-home');
+        }
+
+        // --- QUIZ ---
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let activeQuiz = [];
+
+        function initQuiz() {
+            const data = getSubjectData();
+            activeQuiz = data.quiz;
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            if(currentQuizIndex >= activeQuiz.length) {
+                showQuizResult();
+                return;
+            }
+            
+            const q = activeQuiz[currentQuizIndex];
+            document.getElementById('quiz-progress').innerText = `Fråga ${currentQuizIndex + 1} av ${activeQuiz.length}`;
+            document.getElementById('quiz-score').innerText = quizScore;
+            document.getElementById('quiz-question').innerText = q.q;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left bg-gray-50 border-2 border-gray-200 p-4 rounded-xl font-bold text-gray-700 hover:border-blue-400 hover:bg-blue-50 transition-colors";
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(index, q.ans);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIndex, correctIndex) {
+            const options = document.getElementById('quiz-options').children;
+            
+            // Markera rätt och fel visuellt
+            for(let i=0; i<options.length; i++) {
+                options[i].disabled = true;
+                if(i === correctIndex) {
+                    options[i].classList.remove('border-gray-200', 'bg-gray-50');
+                    options[i].classList.add('border-green-500', 'bg-green-100', 'text-green-700');
+                } else if(i === selectedIndex && selectedIndex !== correctIndex) {
+                    options[i].classList.remove('border-gray-200', 'bg-gray-50');
+                    options[i].classList.add('border-red-500', 'bg-red-100', 'text-red-700');
+                }
+            }
+
+            if(selectedIndex === correctIndex) {
+                quizScore++;
+                addXP(10);
+            }
+
+            setTimeout(() => {
+                currentQuizIndex++;
+                renderQuizQuestion();
+            }, 1500);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${quizScore} av ${activeQuiz.length}`;
+            let bonusXP = quizScore * 15;
+            if(bonusXP > 0) addXP(bonusXP);
+        }
+
+        function resetQuiz() {
+            initQuiz();
+        }
+
+        // --- POMODORO TIMER ---
+        let timerInterval;
+        let timerMode = 25; // minuter
+        let timeLeft = 25 * 60; // sekunder
+        let isTimerRunning = false;
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
+            
+            // Uppdatera cirkeln
+            const circle = document.getElementById('timer-circle');
+            const total = timerMode * 60;
+            const progress = 1 - (timeLeft / total);
+            const offset = progress * 691; // 691 är omkretsen (2 * pi * 110)
+            circle.style.strokeDashoffset = offset;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('btn-timer-start');
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                btn.classList.replace('bg-orange-500', 'bg-red-500');
+            } else {
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                        // Ge belöning!
+                        if(timerMode === 25) {
+                            addXP(50);
+                            showToast("Fokuspass klart! +50 XP. Ta en rast!");
+                            setTimerMode(5); // Byt till rast automatiskt
+                        } else {
+                            showToast("Rasten är slut! Dags att fokusera.");
+                            setTimerMode(25);
+                        }
+                        
+                        // Spela ett ljud (simulerat med alert-liknande toast pga webbläsar-restriktioner)
+                    }
+                }, 1000);
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                btn.classList.replace('bg-red-500', 'bg-orange-500');
+            }
+            isTimerRunning = !isTimerRunning;
+        }
+
+        function setTimerMode(mins) {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timerMode = mins;
+            timeLeft = mins * 60;
+            const btn = document.getElementById('btn-timer-start');
+            btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            btn.classList.replace('bg-orange-500', 'bg-red-500');
+            
+            const modeText = mins === 25 ? "Fokus" : "Paus";
+            document.getElementById('timer-mode').innerText = modeText;
+            document.getElementById('timer-mode').className = `text-sm font-bold mt-2 uppercase tracking-widest relative z-10 ${mins===25 ? 'text-red-500' : 'text-green-500'}`;
+            document.getElementById('timer-circle').setAttribute('stroke', mins===25 ? '#EF4444' : '#10B981');
+            
+            updateTimerDisplay();
+        }
+
+        function resetTimer() {
+            setTimerMode(timerMode);
+        }
+
+        // --- SCHEMA & PÅMINNELSER ---
+        function renderSchedule() {
+            const list = document.getElementById('schedule-list');
+            list.innerHTML = '';
+            
+            if(appState.schedule.length === 0) {
+                list.innerHTML = '<p class="text-gray-400 font-semibold text-center mt-4">Inga prov inplanerade! 🎉</p>';
+                return;
+            }
+
+            // Sortera efter datum
+            appState.schedule.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            appState.schedule.forEach(item => {
+                const el = document.createElement('div');
+                el.className = "bg-white p-4 rounded-2xl shadow-sm border border-orange-100 flex justify-between items-center";
+                
+                // Beräkna dagar kvar
+                const today = new Date();
+                const examDate = new Date(item.date);
+                const diffTime = examDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                let daysText = "";
+                let badgeColor = "bg-orange-100 text-orange-700";
+                
+                if(diffDays < 0) { daysText = "Passerat"; badgeColor = "bg-gray-100 text-gray-500"; }
+                else if (diffDays === 0) { daysText = "Idag!"; badgeColor = "bg-red-100 text-red-600"; }
+                else if (diffDays === 1) { daysText = "Imorgon"; badgeColor = "bg-red-100 text-red-600"; }
+                else { daysText = `${diffDays} dagar kvar`; }
+
+                el.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-gray-800">${item.title}</h4>
+                        <p class="text-xs text-gray-400 font-semibold mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${item.date}</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xs font-black px-2 py-1 rounded-md ${badgeColor}">${daysText}</span>
+                        <button onclick="deleteSchedule(${item.id})" class="text-gray-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function addScheduleItem() {
+            const title = document.getElementById('schedule-title').value;
+            const date = document.getElementById('schedule-date').value;
+            
+            if(!title || !date) {
+                showToast("Fyll i både titel och datum!");
+                return;
+            }
+
+            appState.schedule.push({
+                id: Date.now(),
+                title: title,
+                date: date
+            });
+            
+            document.getElementById('schedule-title').value = '';
+            document.getElementById('schedule-date').value = '';
+            
+            saveData();
+            renderSchedule();
+            showToast("Inlagt i schemat!");
+        }
+
+        function deleteSchedule(id) {
+            appState.schedule = appState.schedule.filter(item => item.id !== id);
+            saveData();
+            renderSchedule();
+        }
+
+        // --- AI ANTECKNINGAR (MOCK) ---
+        let generatedAIFlashcards = [];
+
+        function generateAIQuestions() {
+            const text = document.getElementById('ai-notes-input').value;
+            if(text.trim().length < 10) {
+                alert("Klistra in lite mer text så AI:n har något att jobba med!");
+                return;
+            }
+
+            // Göm resultat, visa laddning
+            document.getElementById('ai-result').classList.add('hidden');
+            document.getElementById('ai-loading').classList.remove('hidden');
+            document.getElementById('btn-generate-ai').disabled = true;
+
+            // Simulera ett API-anrop (tar 2.5 sekunder)
+            setTimeout(() => {
+                document.getElementById('ai-loading').classList.add('hidden');
+                document.getElementById('ai-result').classList.remove('hidden');
+                document.getElementById('btn-generate-ai').disabled = false;
+                
+                // Skapa fejkade frågor baserat på att det "analyserats"
+                const ul = document.getElementById('ai-questions-list');
+                ul.innerHTML = '';
+                
+                // Enkel simulering: Bara skapar några standardfrågor som låter smarta
+                generatedAIFlashcards = [
+                    { q: "Vad är huvudsyftet med texten du klistrade in?", a: "Att förklara grundkoncepten." },
+                    { q: "Vilka tre nyckelord definierar texten bäst?", a: "Beroende på texten: Analys, förståelse, sammanfattning." },
+                    { q: "Sammanfatta stycket med en mening.", a: "En kort och koncis beskrivning av ämnet." }
+                ];
+
+                generatedAIFlashcards.forEach(card => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="text-pink-500 font-bold mr-1">Q:</span> ${card.q}`;
+                    ul.appendChild(li);
+                });
+
+                showToast("AI hittade 3 intressanta frågor!");
+                addXP(15);
+
+            }, 2500);
+        }
+
+        function saveAIAsFlashcards() {
+            // Skapa säker struktur om datan inte finns ännu
+            if(!dummyData[appState.subject]) {
+                dummyData[appState.subject] = {};
+            }
+            if(!dummyData[appState.subject][appState.grade]) {
+                dummyData[appState.subject][appState.grade] = { flashcards: [], quiz: [] };
+            }
+            
+            // Lägg till de AI-genererade korten i rätt ämne och rätt årskurs
+            dummyData[appState.subject][appState.grade].flashcards = [
+                ...dummyData[appState.subject][appState.grade].flashcards, 
+                ...generatedAIFlashcards
+            ];
+            
+            document.getElementById('ai-notes-input').value = '';
+            document.getElementById('ai-result').classList.add('hidden');
+            
+            showToast(`Frågorna sparades som Flashcards för ${appState.subject} ${appState.grade}!`);
+            setTimeout(() => { switchView('view-flashcards'); }, 1000);
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skriket i Småstaden - Ett Ghostface Mysterium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        body {
+            background-color: #050505;
+            color: #d1d5db;
+            font-family: 'Courier Prime', monospace;
+            background-image: radial-gradient(circle at center, #1a0505 0%, #000000 100%);
+        }
+        
+        h1, .title-font {
+            font-family: 'Creepster', cursive;
+            letter-spacing: 2px;
+        }
+
+        #log-container {
+            scroll-behavior: smooth;
+        }
+
+        .log-entry {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #333;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .log-system { color: #6b7280; font-style: italic; }
+        .log-action { color: #60a5fa; }
+        .log-dialogue { color: #10b981; }
+        .log-danger { color: #ef4444; font-weight: bold; text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+        .log-clue { color: #f59e0b; font-weight: bold; }
+        .log-success { color: #34d399; font-weight: bold; text-shadow: 0 0 5px rgba(52, 211, 153, 0.5); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glitch-text {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 1px 1px 0px rgba(255,0,0,0.5), -1px -1px 0px rgba(0,0,255,0.5); }
+            50% { text-shadow: -2px 1px 0px rgba(255,0,0,0.5), 2px -1px 0px rgba(0,0,255,0.5); }
+            100% { text-shadow: 1px -1px 0px rgba(255,0,0,0.5), -1px 1px 0px rgba(0,0,255,0.5); }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #777; }
+
+        .btn {
+            transition: all 0.2s;
+        }
+        .btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="h-screen w-full overflow-hidden flex flex-col select-none">
+
+    <!-- Header -->
+    <header class="p-4 border-b border-red-900 bg-black bg-opacity-80 flex justify-between items-center shadow-[0_4px_15px_rgba(153,0,0,0.3)] z-10">
+        <div>
+            <h1 class="text-4xl text-red-600 drop-shadow-md cursor-pointer flex items-center" onclick="audio.playRing()">
+                SKRIKET I SMÅSTADEN
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" class="w-8 h-9 ml-3 drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]">
+                    <path fill="#ffffff" d="M50,5 C25,5 15,25 15,50 C15,75 25,115 50,115 C75,115 85,75 85,50 C85,25 75,5 50,5 Z" />
+                    <path fill="#000000" d="M35,35 C28,35 25,48 32,55 C38,50 40,40 35,35 Z" />
+                    <path fill="#000000" d="M65,35 C72,35 75,48 68,55 C62,50 60,40 65,35 Z" />
+                    <path fill="#000000" d="M50,65 C40,65 42,95 50,100 C58,95 60,65 50,65 Z" />
+                    <path fill="#000000" d="M50,54 C48,54 47,58 50,60 C53,58 52,54 50,54 Z" />
+                </svg>
+            </h1>
+            <p class="text-xs text-gray-500 mt-1">Någon driver en dödlig lek. Hitta mördarna innan tiden rinner ut.</p>
+        </div>
+        <div class="text-right">
+            <p class="text-sm font-bold text-gray-400">Tid (Drag): <span id="turn-counter" class="text-white text-lg">0</span> / 15</p>
+            <p class="text-xs text-red-500 font-bold" id="killers-caught-text">Fångade mördare: 0/2</p>
+        </div>
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden max-w-7xl mx-auto w-full">
+        
+        <!-- Left: Händelselogg -->
+        <div class="flex-1 p-4 flex flex-col border-r border-gray-800 bg-black bg-opacity-40">
+            <h2 class="text-xl font-bold mb-3 text-red-500 uppercase tracking-widest border-b border-red-900 pb-2">Händelselogg</h2>
+            <div id="log-container" class="flex-1 overflow-y-auto pr-2 flex flex-col gap-2">
+                <!-- Loggar injiceras genom skriptet här -->
+            </div>
+        </div>
+
+        <!-- Right: Kontroller & Info -->
+        <div class="w-full md:w-96 flex flex-col bg-gray-950 overflow-y-auto border-l border-gray-900">
+            
+            <!-- Handlingspanel -->
+            <div class="p-4 border-b border-gray-800" id="action-panel">
+                <h3 class="text-lg font-bold text-white mb-3">Handlingar</h3>
+                
+                <div class="space-y-4">
+                    <!-- Välj och undersök plats -->
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Välj plats att resa till & undersöka:</label>
+                        <select id="location-select" class="w-full bg-gray-900 border border-gray-700 text-white p-2 rounded focus:border-red-500 focus:outline-none text-sm mb-3">
+                            <option value="Sidneys Hus">Sidneys Hus</option>
+                            <option value="Skolan">Skolan</option>
+                            <option value="Polisstationen">Polisstationen</option>
+                            <option value="Köpcentret">Köpcentret</option>
+                            <option value="Parken">Parken</option>
+                            <option value="Festen">Festen</option>
+                        </select>
+                        <p class="text-[10px] text-gray-500 mb-2 italic">Senast besökta: <span id="current-location-text" class="text-gray-300 font-bold">Inget än</span></p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="game.investigate()" class="btn bg-blue-900 bg-opacity-30 hover:bg-opacity-60 text-blue-300 border border-blue-800 py-2 rounded text-sm font-bold">Undersök plats</button>
+                        <button onclick="game.showAccuseModal()" class="btn bg-red-900 bg-opacity-30 hover:bg-opacity-60 text-red-300 border border-red-800 py-2 rounded text-sm font-bold">Anklaga någon!</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel för misstänkta -->
+            <div class="p-4 border-b border-gray-800">
+                <h3 class="text-lg font-bold text-white mb-3">Misstänkta</h3>
+                <div id="characters-container" class="space-y-2">
+                    <!-- Karaktärer injiceras här -->
+                </div>
+            </div>
+
+            <!-- Panel för ledtrådar -->
+            <div class="p-4 border-b border-gray-800">
+                <h3 class="text-lg font-bold text-yellow-500 mb-3">Ledtrådar</h3>
+                <ul id="clues-container" class="list-disc pl-5 text-sm space-y-2 text-gray-300 mb-4">
+                    <li class="text-gray-600 italic list-none -ml-5">Inga ledtrådar hittade än.</li>
+                </ul>
+            </div>
+
+            <!-- Statistik Panel (Local Storage) -->
+            <div class="p-4 bg-black bg-opacity-50 border-t border-red-950">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Din Profil (Statistik)</h3>
+                <div class="grid grid-cols-3 gap-2 text-center text-[10px] text-gray-400">
+                    <div class="bg-gray-900 p-2 rounded border border-gray-800">
+                        <span class="block text-white font-bold text-sm" id="stats-wins">0</span>
+                        Vinster
+                    </div>
+                    <div class="bg-gray-900 p-2 rounded border border-gray-800">
+                        <span class="block text-white font-bold text-sm" id="stats-streak">0</span>
+                        Bästa svit
+                    </div>
+                    <div class="bg-gray-900 p-2 rounded border border-gray-800">
+                        <span class="block text-white font-bold text-sm" id="stats-best">--</span>
+                        Bästa drag
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Välkomst- & Instruktions-Modal (Optimerad & Kompakt) -->
+    <div id="welcome-modal" class="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-3 overflow-y-auto">
+        <div class="bg-gray-900 border-2 border-red-800 rounded-lg p-5 max-w-sm w-full shadow-[0_0_50px_rgba(220,38,38,0.5)] text-center space-y-3">
+            <div class="flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" class="w-12 h-14 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+                    <path fill="#ffffff" d="M50,5 C25,5 15,25 15,50 C15,75 25,115 50,115 C75,115 85,75 85,50 C85,25 75,5 50,5 Z" />
+                    <path fill="#000000" d="M35,35 C28,35 25,48 32,55 C38,50 40,40 35,35 Z" />
+                    <path fill="#000000" d="M65,35 C72,35 75,48 68,55 C62,50 60,40 65,35 Z" />
+                    <path fill="#000000" d="M50,65 C40,65 42,95 50,100 C58,95 60,65 50,65 Z" />
+                    <path fill="#000000" d="M50,54 C48,54 47,58 50,60 C53,58 52,54 50,54 Z" />
+                </svg>
+            </div>
+            <h2 class="title-font text-2xl text-red-600 glitch-text tracking-widest">ÖVERLEV REGLERNA</h2>
+            
+            <div class="text-left text-xs space-y-3 text-gray-300 border-t border-b border-red-950 py-3 font-mono leading-relaxed max-h-[45vh] overflow-y-auto pr-1">
+                <p class="font-bold text-red-500">🔪 DIN UPPGIFT:</p>
+                <p>Två mördare i Ghostface-masker gömmer sig bland er. Du har bara <span class="text-white font-bold">15 drag</span> på dig att stoppa dem.</p>
+                
+                <p class="font-bold text-red-500">🔍 HITTA SAMBANDEN:</p>
+                <p>Koppla de misstänktas <span class="text-white font-bold">personbeskrivningar</span> (laster, vanor, egenskaper) till de dolda <span class="text-white font-bold">ledtrådarna</span> på platserna.</p>
+                
+                <p class="font-bold text-red-500">💬 PRATA MED GÄNGET:</p>
+                <p>Undersök platser och förhör misstänkta. <span class="text-green-400 font-bold">Oskyldiga talar sanning</span>, men <span class="text-red-400 font-bold">mördarna ljuger aktivt</span> för att sätta dit andra!</p>
+                
+                <p class="font-bold text-red-500">⚠️ LIVSFARLIG RISK:</p>
+                <p class="text-red-400 font-bold">Anklaga aldrig på måfå. Om du gissar fel på mördaren förlorar du spelet direkt och blir nästa offer!</p>
+            </div>
+            
+            <button onclick="game.startGame()" class="w-full bg-red-800 hover:bg-red-700 text-white font-bold py-2.5 rounded text-sm uppercase shadow-lg border-2 border-red-600 hover:scale-[1.01] transition-all">
+                Starta Spelet
+            </button>
+        </div>
+    </div>
+
+    <!-- Meny för anklagelser -->
+    <div id="accuse-modal" class="fixed inset-0 bg-black bg-opacity-90 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-900 border-2 border-red-800 rounded-lg p-5 max-w-md w-full shadow-[0_0_30px_rgba(220,38,38,0.3)] animate-pulse">
+            <h2 class="title-font text-2xl text-red-500 mb-2 text-center">VEM ÄR MÖRDAREN?</h2>
+            <p class="text-xs text-gray-400 mb-4 text-center">Välj försiktigt. Anklagar du fel person slutar det i katastrof.</p>
+            
+            <div id="accuse-options" class="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1 mb-2">
+                <!-- Knappar för att anklaga injiceras här -->
+            </div>
+            
+            <button onclick="game.hideAccuseModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded text-sm mt-2">Avbryt</button>
+        </div>
+    </div>
+
+    <!-- Interaktivt Telefonsamtal Modal -->
+    <div id="phone-modal" class="fixed inset-0 bg-black bg-opacity-95 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-red-950 border-4 border-red-600 rounded-lg p-6 max-w-lg w-full text-center shadow-[0_0_50px_rgba(220,38,38,0.6)]">
+            <div id="phone-calling" class="space-y-6">
+                <div class="text-red-500 text-7xl animate-bounce">📱</div>
+                <h2 class="title-font text-3xl text-red-500 glitch-text">INKOMMANDE SAMTAL...</h2>
+                <p class="text-sm text-gray-300">Ditt nummer rings upp från ett okänt, dolt nummer...</p>
+                <button onclick="game.answerPhone()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:scale-105 transition-all animate-pulse">
+                    Svara i telefon
+                </button>
+            </div>
+            <div id="phone-active" class="hidden space-y-4">
+                <div class="text-red-500 text-5xl">🗣️</div>
+                <p class="text-lg italic text-red-300 font-bold" id="phone-killer-text">"Gillar du läskiga filmer...?"</p>
+                <p class="text-xs text-gray-400 mb-4">Ghostface väntar på ditt svar. Välj noggrant.</p>
+                <div class="space-y-2 flex flex-col items-stretch text-left" id="phone-dialogue-options">
+                    <!-- Dialogalternativ injiceras dynamiskt -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cinematiskt Avmasknings- & Förlust-Modal -->
+    <div id="reveal-modal" class="fixed inset-0 bg-black bg-opacity-95 hidden flex flex-col items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="max-w-md w-full text-center space-y-4 my-auto">
+            <h2 class="title-font text-3xl md:text-4xl text-red-600 tracking-wider animate-pulse">GHOSTFACE SLÅR TILL...</h2>
+            
+            <div class="bg-gray-950 border border-red-900 rounded-lg p-4 text-left shadow-[0_0_30px_rgba(220,38,38,0.25)] max-h-[70vh] overflow-y-auto">
+                <div class="space-y-3 text-xs" id="reveal-unmasking">
+                    <!-- Dynamiskt avslöjandeinnehåll injiceras här -->
+                </div>
+            </div>
+            
+            <button onclick="location.reload()" class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-2.5 rounded text-sm uppercase shadow-lg border-2 border-red-500 hover:scale-[1.01] transition-all">
+                Försök igen
+            </button>
+        </div>
+    </div>
+
+    <!-- Cinematiskt Seger- & Fångst-Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-95 hidden flex flex-col items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="max-w-md w-full text-center space-y-4 my-auto">
+            <h2 id="success-title" class="title-font text-3xl md:text-4xl text-green-500 tracking-wider animate-pulse">EN MÖRDARE FÅNGAD!</h2>
+            
+            <div class="bg-gray-950 border border-green-900 rounded-lg p-4 text-left shadow-[0_0_30px_rgba(34,197,94,0.25)] max-h-[70vh] overflow-y-auto">
+                <div class="space-y-3 text-xs" id="success-content">
+                    <!-- Dynamiskt segerinnehåll injiceras här -->
+                </div>
+            </div>
+            
+            <button id="success-btn" class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-2.5 rounded text-sm uppercase shadow-lg border-2 border-green-500 hover:scale-[1.01] transition-all">
+                Fortsätt
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Web Audio API Synthesizer för ljudeffekter
+        const audio = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playClue() {
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.type = 'triangle';
+                    
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.35);
+                    
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(0.15, now + 0.05);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.35);
+                    
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } catch(e) {}
+            },
+            playRing() {
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    const playDoubleBeep = (delay) => {
+                        const osc1 = this.ctx.createOscillator();
+                        const osc2 = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        
+                        osc1.connect(gain);
+                        osc2.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        
+                        osc1.type = 'sine';
+                        osc2.type = 'sine';
+                        
+                        osc1.frequency.setValueAtTime(400, now + delay);
+                        osc2.frequency.setValueAtTime(450, now + delay);
+                        
+                        gain.gain.setValueAtTime(0, now + delay);
+                        gain.gain.linearRampToValueAtTime(0.1, now + delay + 0.05);
+                        gain.gain.linearRampToValueAtTime(0.1, now + delay + 0.35);
+                        gain.gain.linearRampToValueAtTime(0, now + delay + 0.4);
+                        
+                        osc1.start(now + delay);
+                        osc1.stop(now + delay + 0.4);
+                        osc2.start(now + delay);
+                        osc2.stop(now + delay + 0.4);
+                    };
+                    playDoubleBeep(0);
+                    playDoubleBeep(0.5);
+                } catch(e) {}
+            },
+            playHeartbeat(turnsLeft) {
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    const intensity = Math.max(0.1, (15 - turnsLeft) / 15); 
+                    
+                    const playBeat = (freq, time, volume) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, time);
+                        osc.frequency.exponentialRampToValueAtTime(20, time + 0.15);
+                        gain.gain.setValueAtTime(volume, time);
+                        gain.gain.linearRampToValueAtTime(0, time + 0.15);
+                        osc.start(time);
+                        osc.stop(time + 0.15);
+                    };
+
+                    playBeat(55, now, 0.4 * intensity);
+                    playBeat(50, now + 0.18, 0.3 * intensity);
+                } catch(e) {}
+            }
+        };
+
+        const game = {
+            turn: 0,
+            maxTurns: 15,
+            currentLocation: 'Inget än',
+            gameOver: false,
+            killersFound: 0,
+            locationsSearched: [],
+            clues: [],
+            phoneInterval: null,
+            
+            characters: {
+                'sidney': { name: 'Sidney', role: 'Målet', alive: true, isKiller: false, defeated: false, hint: "någon som undviker att använda högerhanden till finmotorik", desc: "Mördarens besatthet. Bär förvånande ofta sin klocka på höger handled för att den inte ska vara i vägen.", clues: {
+                    'Sidneys Hus': "Ett anteckningsblock i hallen där bläcket på vänstersidan av sidan är svagt utsmetat inåt.",
+                    'Skolan': "I papperskorgen ligger en skiss. Spiralen på blocket satt på höger sida, som om någon vänt det för att skriva bekvämare.",
+                    'Köpcentret': "En ruta på en utrymningsplan har kryssats i med en penna, dragen med en tydlig lutning uppåt och åt vänster.",
+                    'Polisstationen': "Ett kaffefilter har rivits upp vid maskinen. Rivriktningen tyder på att personen dragit med dominerande vänsterhand.",
+                    'Parken': "En kniv sitter inkilad i en trädstam. Vinkeln från ingångshålet tyder på att kraften kom från någons vänstra sida.",
+                    'Festen': "En utklippt artikel hittas. Papperet är tillknycklat vid kanterna, typiskt när en vanlig sax hanteras 'bakvänt'."
+                }, dialogue: [
+                    "Jag är livrädd. Han ringde mig igår natt och andades tungt.",
+                    "Varför händer det här oss? Jag litar inte på någon längre...",
+                    "Det känns som att mördaren känner mig. Verkligen känner mig."
+                ]},
+                'billy': { name: 'Billy', role: 'Pojkvännen', alive: true, isKiller: false, defeated: false, hint: "någon vars steg låter som ett tungt regemente", desc: "Överbeskyddande pojkvän. En person som ofta väljer funktion framför form, och har en tendens att trampa hårt.", clues: {
+                    'Sidneys Hus': "En del av rabatten är totalt krossad under ett massivt tryck med djupt, symmetriskt rutmönster.",
+                    'Skolan': "På det nyskurade golvet syns svaga avtryck med ovanligt brett avstånd mellan klack och sula.",
+                    'Köpcentret': "Övervakningen är suddig, men mördarens steg är inte fjädrande; fötterna landar tungt och osmidigt.",
+                    'Polisstationen': "Ett krossat glasrör vid utgången. Trycket som krävdes indikerar en fotbeklädnad med extremt styv botten.",
+                    'Parken': "Småsten har pressats onaturligt djupt ner i asfalten av något med en påfallande robust och grov undersida.",
+                    'Festen': "En träplanka på verandan har en djup, krossad skåra, formad av ett rejält industriellt hälavtryck."
+                }, dialogue: [
+                    "Jag ska döda den där jäveln om han rör Sidney.",
+                    "Varför snokar du runt? Låt polisen sköta det här.",
+                    "Jag bryr mig bara om att skydda de jag älskar."
+                ]},
+                'stu': { name: 'Stu', role: 'Klassens Clown', alive: true, isKiller: false, defeated: false, hint: "någon som verkar leva sitt liv inuti en dator", desc: "Klassens clown. Lider ofta av sömnbrist och verkar leva med ena foten i en digital, uppkopplad värld.", clues: {
+                    'Sidneys Hus': "Mördaren har lämnat ett hånfullt meddelande med akronymen 'AFK' (Borta från tangentbordet) ristat i dammet på byrån.",
+                    'Skolan': "En liten papperslapp med en nedskriven lokal IP-adress och ett portnummer ligger slängd på golvet.",
+                    'Köpcentret': "I mörkret vid entrén lyser en liten, tappad diod i en pulserande, färgskiftande RGB-cykel.",
+                    'Polisstationen': "En liten, konkav gummidetalj täckt av slitna friktionspiggar – möjligen för en tumme – ligger vid dörren.",
+                    'Parken': "Mördaren har med ett vasst föremål snabbt ristat in orden 'Bra spelat' i parkbänkens trä.",
+                    'Festen': "En liten trådlös sändare för minimal fördröjning är kvarglömd i ett USB-uttag på baksidan av stereon."
+                }, dialogue: [
+                    "Helt ärligt, det här är fan som en film! Vem tror du dör härnäst?",
+                    "Man måste ha ett motiv, bror. Hämnd? Eller bara för skoj skull?",
+                    "Jag har fan inte gesehen min kåpa från maskeraden på flera dagar."
+                ]},
+                'tatum': { name: 'Tatum', role: 'Bästa Vännen', alive: true, isKiller: false, defeated: false, hint: "någon som försöker dölja sin identitet under kemiska dofter", desc: "Bästa vännen. Har en distinkt, nästan överväldigande närvaro som dröjer sig kvar i luften långt efteråt.", clues: {
+                    'Sidneys Hus': "Du hittar en bit silkespapper på golvet som avger en svag, artificiell doft av bränd karamell.",
+                    'Skolan': "Luften i rummet känns tung att andas in, mättad av en syntetisk not av jasmin och patchouli.",
+                    'Köpcentret': "Ett minimalt, krossat glasrör med en guldfärgad pumpmekanism ligger dolt under en hylla.",
+                    'Polisstationen': "I förhörsrummet känner du en intensiv, oljig och blommig doft som polischefen nyss nös av.",
+                    'Parken': "Den kalla nattluften bryts av en oväntad värmande bris av något som påminner om koncentrerad bärnsten.",
+                    'Festen': "På badrumsspegeln finns en svagt oljig hinna i kanten som lämnar ifrån sig en stark, kemiskt söt odör."
+                }, dialogue: [
+                    "Polisen här är ett skämt. Dewey kan inte ens hitta sina egna bilnycklar.",
+                    "Jag tänker inte sitta inne och gråta.",
+                    "Ärligt talat, Billy skrämmer mig lite. Han blir så arg så lätt."
+                ]},
+                'randy': { name: 'Randy', role: 'Filmnörden', alive: true, isKiller: false, defeated: false, hint: "någon som inte behöver en stege för att sabotera takbelysningen", desc: "Skräckexpert. Har en fysisk räckvidd som gör att han sällan behöver be om hjälp för att nå översta hyllan.", clues: {
+                    'Sidneys Hus': "Ett litet blodstänk sitter precis på ovansidan av dörrkarmens list. En normallång person når inte dit utan ansträngning.",
+                    'Skolan': "Någon har skruvat loss en ventilationskåpa i taket med blotta händerna, utan några märken efter en stol under.",
+                    'Köpcentret': "Säkerhetskameran, monterad med god marginal över ögonhöjd, har vinklats om slarvigt för hand.",
+                    'Polisstationen': "Damm har nyligen dragits bort från en avsats som kräver att man står på tå – om man inte har en rejäl fördel i hållning.",
+                    'Parken': "En tjock trädgren som hänger orimligt högt över stigen har knäckts av någon som sprang förbi obehindrat.",
+                    'Festen': "Spindelnätet i den högsta fönstervrån har slitits sönder och bär svaga spår av ludd från en axel."
+                }, dialogue: [
+                    "Regel nummer 1: Säg aldrig 'jag kommer strax'.",
+                    "Mördaren måste vara någon vi känner.",
+                    "Har ni tänkt på att samtalen ibland kommer från inifrån huset?"
+                ]},
+                'dewey': { name: 'Dewey', role: 'Vice Sheriff', alive: true, isKiller: false, defeated: false, hint: "någon som anländer till brottsplatser i ett fordon byggt för skogen", desc: "Välmenande polis. Tenderar att föra med sig spår av motorväg och terräng från sitt ständiga patrullerande.", clues: {
+                    'Sidneys Hus': "Breda, parallella lerspår skär in i gräsmattan. Fordonet har bevisligen fyrhjulsdrift och stor massa.",
+                    'Skolan': "Färska, grova däckavtryck med ovanligt stort avstånd mellan axlarna syns precis vid trottoarkanten.",
+                    'Köpcentret': "En oljefläck på asfalten indikerar ett fordon med betydligt högre markfrigång än en vanlig personbil.",
+                    'Polisstationen': "Någon har nyligen och slarvigt spolat bort tjock lera från skärmkanten på ett stort nyttofordon.",
+                    'Parken': "Ett svart stänkskydd anpassat för tuff terrängkörning ligger halvt loss-slitet i diket bredvid vägen.",
+                    'Festen': "Rabatterna vid gatan är krossade under tyngden av något som kräver en kraftig motor och stor hjulbas för att flytta sig."
+                }, dialogue: [
+                    "Gå hem, ungdomar. Vi har situationen under kontroll.",
+                    "Jag har patrullerat området hela natten.",
+                    "Håll er borta från köpcentret, vi har spärrat av det."
+                ]},
+                'gale': { name: 'Gale', role: 'Reportern', alive: true, isKiller: false, defeated: false, hint: "någon som skulle lämna spår av sin avancerade manikyr efter en strid", desc: "Hänsynslös journalist. Perfektionist ut i fingerspetsarna, med en förkärlek för vassa och färgstarka accenter.", clues: {
+                    'Sidneys Hus': "Du hittar en liten, kurvad flisa av djupröd, lackerad akryl inkilad i en trång dörrspringa.",
+                    'Skolan': "Någon har rivit loss en lapp i all hast, och en mörkröd, blank skärva sitter fast inuti tejpen.",
+                    'Köpcentret': "Mördaren slirade mot metallräcket och lämnade en distinkt repa av glänsande, cinnoberröd färg efter sig.",
+                    'Polisstationen': "Tangentbordet på receptionens bord har djupa, halvmåneformade jack på plastknapparna.",
+                    'Parken': "I leran nära mordplatsen ligger en perfekt filad, syntetisk bit plast formad som en spetsig mandel.",
+                    'Festen': "På insidan av handtaget har en liten men väldigt hård flisa av glansigt, färgat material lossnar."
+                }, dialogue: [
+                    "Har du en kommentar till kameran? Folket har rätt att veta!",
+                    "De lokala poliserna är inkompetenta. Jag kommer lösa det här före dem.",
+                    "Om det blöder, så leder det. Det är bara bra TV."
+                ]},
+                'cotton': { name: 'Cotton', role: 'Ex-Misstänkt', alive: true, isKiller: false, defeated: false, hint: "någon vars rörelsemönster kan spåras direkt tillbaka till statliga arkiv", desc: "Oskyldigt dömd. Bär på en tung byråkratisk börda och försöker ofta smälta in trots sin övervakade tillvaro.", clues: {
+                    'Sidneys Hus': "Du hittar en trasig del av en blankett märkt med ett statligt diarienummer för övervakning.",
+                    'Skolan': "Ett stelt pappersdokument med stämpeln 'Villkor uppfyllda' ligger slarvigt hopknycklat i papperskorgen.",
+                    'Köpcentret': "Nära utgången ligger ett utgånget plast-ID utfärdat av det lokala häktningsverket.",
+                    'Polisstationen': "En tung papp-mapp dedikerad till statliga rehabiliteringsprogram har flyttats i hast från sin plats.",
+                    'Parken': "En tyglapp med sex svarta siffror, typiska för ett intagningsnummer, har fastnat i en törnbuske.",
+                    'Festen': "Någon har lämnat ett obekvämt, grått identifikationsarmband med streckkod slängt på golvet."
+                }, dialogue: [
+                    "Jag satt inne ett år för något jag inte gjorde. Klart jag är arg.",
+                    "Håll dig borta från mig, jag vill inte ha mer trubbel med polisen.",
+                    "Sidney förstörde mitt liv när hon pekade ut mig..."
+                ]},
+                'casey': { name: 'Casey', role: 'Skräckfantasten', alive: true, isKiller: false, defeated: false, hint: "någon som verkar leva på rykande varma snacks", desc: "Skräckfantast. Har en tendens att alltid lämna spår av sina väldigt specifika, upphettade matvanor runt sig.", clues: {
+                    'Sidneys Hus': "Du känner en svag, ganska fet doft av smörarom dröja kvar i rummet.",
+                    'Skolan': "Någon har i all hast råkat tappa små, hårda, gula majskärnor över hela golvet i korridoren.",
+                    'Köpcentret': "På golvet ligger en tillknycklad papperspåse med ett innerhölje av folie, uppenbarligen avsedd för hög mikrovågsvärme.",
+                    'Polisstationen': "Mikrovågsugnen i lunchrummet är fortfarande igång och stinker svagt men tydligt av vidbränd vegetabilisk olja.",
+                    'Parken': "I lusthuset knastrar det till under din sko. Du tittar ner och ser en halvt uppsvälld torkad majsbit.",
+                    'Festen': "Mördaren har lämnat flottiga fingeravtryck fyllda av små, fina saltkristaller på dörrhandtaget till köket."
+                }, dialogue: [
+                    "Han frågade mig vad min favoritskräckfilm var... det var så kusligt.",
+                    "Jag borde aldrig ha svarat i telefonen igår kväll.",
+                    "Min pojkvän Steve är försvunnen, har ni sett honom?"
+                ]}
+            },
+
+            baseClues: {
+                'Sidneys Hus': "Någon har medvetet klippt av telefonledningarna på baksidan av huset.",
+                'Skolan': "Du hittar en sönderriven uppsats och krossat glas nära skåpen. Någon hade bråttom härifrån.",
+                'Köpcentret': "I maskeradbutiken gapar en hylla tom. Två Ghostface-masker och dräkter saknas.",
+                'Polisstationen': "En krossad övervakningskamera. Mördaren ville absolut inte bli sedd när den strök omkring.",
+                'Parken': "I buskarna hittar du fimpar och mörka rep. Någon hånar polisen genom att lämna en tom mask-förpackning.",
+                'Festen': "Någon har lämnat en påslagen röstförvrängare gömd bakom öltunnorna. Den sprakar av brus."
+            },
+
+            locationClues: {},
+
+            init() {
+                this.loadStats();
+
+                const charIds = Object.keys(this.characters);
+                for (let i = charIds.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [charIds[i], charIds[j]] = [charIds[j], charIds[i]];
+                }
+                const killers = charIds.slice(0, 2);
+                this.characters[killers[0]].isKiller = true;
+                this.characters[killers[1]].isKiller = true;
+
+                const locations = ['Sidneys Hus', 'Skolan', 'Köpcentret', 'Polisstationen', 'Parken', 'Festen'];
+                const shuffledLocs = [...locations];
+                for (let i = shuffledLocs.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledLocs[i], shuffledLocs[j]] = [shuffledLocs[j], shuffledLocs[i]];
+                }
+                
+                const killer1Loc = shuffledLocs[0];
+                const killer2Loc = shuffledLocs[1];
+
+                this.locationClues = {};
+                locations.forEach(loc => {
+                    if (loc === killer1Loc) {
+                        this.locationClues[loc] = this.characters[killers[0]].clues[loc];
+                    } else if (loc === killer2Loc) {
+                        this.locationClues[loc] = this.characters[killers[1]].clues[loc];
+                    } else {
+                        this.locationClues[loc] = this.baseClues[loc];
+                    }
+                });
+
+                const innocents = charIds.filter(id => !this.characters[id].isKiller);
+                
+                charIds.forEach(id => {
+                    const char = this.characters[id];
+                    if (char.isKiller) {
+                        const frameId = innocents[Math.floor(Math.random() * innocents.length)];
+                        char.dialogue.push(`Mellan oss... jag litar inte alls på ${this.characters[frameId].name}. Jag är säker på att mördaren är ${this.characters[frameId].hint}!`);
+                    } else {
+                        if (Math.random() > 0.5) {
+                            const randomKillerId = killers[Math.floor(Math.random() * killers.length)];
+                            char.dialogue.push(`Jag vågar knappt säga det högt, men jag misstänker starkt att mördaren är ${this.characters[randomKillerId].hint}...`);
+                        } else {
+                            const killerLocs = [killer1Loc, killer2Loc];
+                            const hintLoc = killerLocs[Math.floor(Math.random() * killerLocs.length)];
+                            char.dialogue.push(`Polisen är helt blinda. Om jag var du skulle jag undersöka ${hintLoc} väldigt noga.`);
+                        }
+                    }
+                    
+                    for (let i = char.dialogue.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [char.dialogue[i], char.dialogue[j]] = [char.dialogue[j], char.dialogue[i]];
+                    }
+                });
+
+                this.log("Välkommen till Woodsboro.", 'system');
+                this.log("Igår natt blev en elev brutalt mördad. Nu går Ghostface lös. Mördarna ändras varje gång du spelar. Vem kan du lita på?", 'system');
+                this.log("Välj en plats i rullistan och klicka på 'Undersök plats' för att söka efter ledtrådar.", 'system');
+                this.log("Hitta ledtrådar, prata med dina vänner, och anklaga mördarna innan tiden rinner ut. Du har 15 drag.", 'danger');
+                this.updateUI();
+            },
+
+            startGame() {
+                // Denna anropas från välkomstskärmen
+                document.getElementById('welcome-modal').classList.add('hidden');
+                audio.init();
+                this.init();
+            },
+
+            log(message, type = 'action') {
+                const container = document.getElementById('log-container');
+                const entry = document.createElement('div');
+                entry.className = `log-entry log-${type}`;
+                
+                let icon = '';
+                if(type === 'danger') icon = '🔪 ';
+                else if(type === 'clue') icon = '🔍 ';
+                else if(type === 'dialogue') icon = '💬 ';
+                else if(type === 'success') icon = '✔️ ';
+                else if(type === 'action') icon = '▶ ';
+
+                entry.innerHTML = `${icon}${message}`;
+                container.appendChild(entry);
+                container.scrollTop = container.scrollHeight;
+            },
+
+            updateUI() {
+                document.getElementById('turn-counter').innerText = this.turn;
+                document.getElementById('current-location-text').innerText = this.currentLocation;
+                document.getElementById('killers-caught-text').innerText = `Fångade mördare: ${this.killersFound}/2`;
+
+                const charContainer = document.getElementById('characters-container');
+                charContainer.innerHTML = '';
+                
+                for (const [id, char] of Object.entries(this.characters)) {
+                    let statusClass = char.alive ? (char.defeated ? 'text-blue-500' : 'text-green-500') : 'text-red-600 line-through';
+                    let statusText = char.alive ? (char.defeated ? '(Arresterad)' : '(Lever)') : '(DÖD)';
+                    let disableTalk = !char.alive || char.defeated || this.gameOver ? 'disabled' : '';
+
+                    charContainer.innerHTML += `
+                        <div class="bg-gray-900 p-2 border border-gray-800 rounded flex justify-between items-center">
+                            <div>
+                                <p class="text-white font-bold text-sm">${char.name} <span class="text-xs ${statusClass}">${statusText}</span></p>
+                                <p class="text-xs text-gray-500 pr-2">${char.desc}</p>
+                            </div>
+                            <button onclick="game.talk('${id}')" ${disableTalk} class="btn bg-gray-800 hover:bg-gray-700 text-xs px-2 py-1 rounded border border-gray-600 h-fit whitespace-nowrap">Prata</button>
+                        </div>
+                    `;
+                }
+
+                const cluesContainer = document.getElementById('clues-container');
+                if (this.clues.length > 0) {
+                    cluesContainer.innerHTML = '';
+                    this.clues.forEach(clue => {
+                        cluesContainer.innerHTML += `<li class="mb-1">${clue}</li>`;
+                    });
+                }
+
+                if (this.turn >= this.maxTurns && !this.gameOver) {
+                    this.triggerFinale();
+                }
+            },
+
+            loadStats() {
+                const wins = localStorage.getItem('scream_wins') || 0;
+                const streak = localStorage.getItem('scream_streak') || 0;
+                const best = localStorage.getItem('scream_best_turns') || '--';
+                
+                document.getElementById('stats-wins').innerText = wins;
+                document.getElementById('stats-streak').innerText = streak;
+                document.getElementById('stats-best').innerText = best;
+            },
+
+            saveWin() {
+                let wins = parseInt(localStorage.getItem('scream_wins') || 0) + 1;
+                let streak = parseInt(localStorage.getItem('scream_streak') || 0) + 1;
+                let best = localStorage.getItem('scream_best_turns');
+                
+                if (best === null || best === '--' || this.turn < parseInt(best)) {
+                    best = this.turn;
+                    localStorage.setItem('scream_best_turns', best);
+                }
+                
+                localStorage.setItem('scream_wins', wins);
+                localStorage.setItem('scream_streak', streak);
+                this.loadStats();
+            },
+
+            resetStreak() {
+                localStorage.setItem('scream_streak', 0);
+                this.loadStats();
+            },
+
+            advanceTurn() {
+                if (this.gameOver) return;
+                this.turn++;
+                
+                audio.playHeartbeat(this.turn);
+
+                if (this.turn === 2) {
+                    this.triggerIncomingCall();
+                }
+                else if ([3, 6, 9, 12].includes(this.turn)) {
+                    const innocents = Object.entries(this.characters)
+                        .filter(([id, char]) => !char.isKiller && char.alive && id !== 'sidney' && !char.defeated);
+                    
+                    if (innocents.length > 0) {
+                        const victimId = innocents[Math.floor(Math.random() * innocents.length)][0];
+                        this.characters[victimId].alive = false;
+                        
+                        if (this.turn === 3 || this.turn === 9) {
+                            this.log(`🚨 BREAKING: ${this.characters[victimId].name} har hittats brutalt ihjälhuggen! Mördaren slog till i mörkret.`, 'danger');
+                        } else {
+                            this.log(`🚨 BREAKING: ${this.characters[victimId].name} hittades död. Skräckfilmsreglerna räckte inte för att rädda dem.`, 'danger');
+                        }
+                    }
+                }
+                else if (this.turn === 14) {
+                    this.log("🔪 GHOSTFACE hoppar fram ur en garderob och svingar mot dig! Du lyckas ducka och flyr, men det var nära ögat. Mördarna vet att du är dem på spåren.", 'danger');
+                }
+
+                this.updateUI();
+            },
+
+            triggerIncomingCall() {
+                const modal = document.getElementById('phone-modal');
+                modal.classList.remove('hidden');
+                
+                audio.playRing();
+                this.phoneInterval = setInterval(() => {
+                    audio.playRing();
+                }, 3000);
+            },
+
+            answerPhone() {
+                clearInterval(this.phoneInterval);
+                document.getElementById('phone-calling').classList.add('hidden');
+                document.getElementById('phone-active').classList.remove('hidden');
+                
+                const optionsContainer = document.getElementById('phone-dialogue-options');
+                optionsContainer.innerHTML = `
+                    <button onclick="game.handlePhoneAnswer(1)" class="w-full text-left p-3 bg-red-900 bg-opacity-40 hover:bg-red-900 border border-red-800 rounded text-xs font-bold text-white transition-all mb-2">
+                        1. "Vem är du?! Sluta ring, annars ringer jag polisen!"
+                    </button>
+                    <button onclick="game.handlePhoneAnswer(2)" class="w-full text-left p-3 bg-red-900 bg-opacity-40 hover:bg-red-900 border border-red-800 rounded text-xs font-bold text-white transition-all mb-2">
+                        2. "Min favoritskräckfilm? Den som vi båda lever i just nu."
+                    </button>
+                    <button onclick="game.handlePhoneAnswer(3)" class="w-full text-left p-3 bg-red-900 bg-opacity-40 hover:bg-red-900 border border-red-800 rounded text-xs font-bold text-white transition-all mb-2">
+                        3. "Halloween! Michael Myers är den bästa mördaren."
+                    </button>
+                `;
+            },
+
+            handlePhoneAnswer(option) {
+                document.getElementById('phone-modal').classList.add('hidden');
+                
+                if (option === 1) {
+                    this.log("📱 Ghostface hånskrattar i luren: 'Dewey kan inte rädda dig. Du verkar nervös... Jag gillar när mina offer är rädda.'", 'danger');
+                    this.log("Ghostfaces hot gjorde dig så stressad att du tappar fokus. Du förlorar 2 drag!", 'system');
+                    this.turn += 2;
+                } 
+                else if (option === 2) {
+                    this.log("📱 Det blir tyst i luren ett ögonblick. Sedan väser rösten: 'Smart... väldigt smart. Låt oss se om du kan klara nästa scen.'", 'dialogue');
+                    const unsearched = Object.keys(this.locationClues).filter(loc => !this.locationsSearched.includes(loc));
+                    if (unsearched.length > 0) {
+                        const randomLoc = unsearched[Math.floor(Math.random() * unsearched.length)];
+                        const clue = this.locationClues[randomLoc];
+                        this.log("📱 En mystisk viskning avslöjar ett spår från " + randomLoc + ": " + clue, 'clue');
+                        this.clues.push("(Tips om " + randomLoc + "): " + clue);
+                        this.locationsSearched.push(randomLoc);
+                        audio.playClue();
+                    }
+                } 
+                else if (option === 3) {
+                    this.log("📱 Ghostface stönar: 'Ett klassiskt men tråkigt svar. Du saknar fantasi. Kanske jag ska visa dig hur man gör på riktigt?'", 'danger');
+                }
+                
+                this.updateUI();
+            },
+
+            investigate() {
+                if (this.gameOver) return;
+                const select = document.getElementById('location-select');
+                const selectedLoc = select.value;
+
+                if (this.locationsSearched.includes(selectedLoc)) {
+                    this.log(`Du har redan all information från ${selectedLoc}. Välj en annan plats!`, 'system');
+                    return;
+                }
+
+                this.currentLocation = selectedLoc;
+                this.log(`Du beger dig till ${selectedLoc} för att genomsöka området...`, 'action');
+                
+                const clue = this.locationClues[selectedLoc];
+                if (clue) {
+                    this.log(`HITTADE LEDTRÅD: ${clue}`, 'clue');
+                    this.clues.push(`(${selectedLoc}): ${clue}`);
+                    this.locationsSearched.push(selectedLoc);
+                    audio.playClue();
+                } else {
+                    this.log("Du finkammar området men hittar inget av värde här.", 'system');
+                    this.locationsSearched.push(selectedLoc);
+                }
+                
+                this.advanceTurn();
+            },
+
+            talk(charId) {
+                if (this.gameOver) return;
+                const char = this.characters[charId];
+                
+                const dialogueIndex = this.turn % char.dialogue.length; 
+                const line = char.dialogue[dialogueIndex];
+
+                this.log(`${char.name}: "${line}"`, 'dialogue');
+                this.advanceTurn();
+            },
+
+            showAccuseModal() {
+                if (this.gameOver) return;
+                const modal = document.getElementById('accuse-modal');
+                const options = document.getElementById('accuse-options');
+                options.innerHTML = '';
+
+                for (const [id, char] of Object.entries(this.characters)) {
+                    if (char.alive && !char.defeated) { 
+                        options.innerHTML += `
+                            <button onclick="game.accuse('${id}')" class="text-left py-2 px-3 bg-gray-800 hover:bg-red-900 text-white rounded border border-gray-700 hover:border-red-500 transition-colors text-xs flex flex-col justify-center">
+                                <span class="font-bold text-sm text-red-100">${char.name}</span>
+                                <span class="text-[10px] text-gray-400 font-sans tracking-wide mt-0.5">${char.role}</span>
+                            </button>
+                        `;
+                    }
+                }
+                modal.classList.remove('hidden');
+            },
+
+            hideAccuseModal() {
+                document.getElementById('accuse-modal').classList.add('hidden');
+            },
+
+            accuse(charId) {
+                this.hideAccuseModal();
+                const char = this.characters[charId];
+                
+                this.log(`DU ANKLAGAR ${char.name.toUpperCase()} FÖR ATT VARA GHOSTFACE!`, 'danger');
+
+                if (char.isKiller) {
+                    char.defeated = true;
+                    this.killersFound++;
+                    
+                    this.triggerSuccessReveal(char);
+                } else {
+                    this.log(`${char.name} tittar på dig i total chock. "Hur kan du tro det om mig?!"`, 'dialogue');
+                    char.alive = false;
+                    this.triggerUnmaskingReveal(char.name);
+                    this.endGame(false);
+                }
+            },
+
+            triggerSuccessReveal(char) {
+                const modal = document.getElementById('success-modal');
+                const content = document.getElementById('success-content');
+                const title = document.getElementById('success-title');
+                const btn = document.getElementById('success-btn');
+
+                if (this.killersFound === 1) {
+                    title.innerText = "EN MÖRDARE FÅNGAD!";
+                    title.className = "title-font text-3xl md:text-4xl text-green-500 tracking-wider animate-pulse";
+                    
+                    content.innerHTML = `
+                        <p class="text-green-400 font-bold text-sm mb-2">Du konfronterar ${char.name}. Ett plötsligt raseri bryter ut i deras ögon!</p>
+                        <p class="text-red-400 font-bold">"${char.name}: 'Du listade ut det... men det kommer inte att rädda dig!'"</p>
+                        <p class="text-gray-400 italic mt-2">En dold kniv dras fram, och ni hamnar i en desperat kamp på liv och död! Inredning krossas när ni slåss genom rummet. Precis när Ghostface ska hugga, lyckas du slå kniven ur handen på dem. Polisen stormar in i sista sekunden och övermannar ${char.name}!</p>
+                        <div class="flex items-start space-x-2 bg-green-950 bg-opacity-20 p-2 rounded border border-green-900 text-xs mt-3">
+                            <span class="text-xl">🚨</span>
+                            <div>
+                                <p class="text-white font-bold text-sm">${char.name} dras iväg i handklovar...</p>
+                                <p class="text-green-300 font-bold mt-1">"${char.name}: 'Du tror väl inte att jag jobbade ensam?!'"</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    btn.innerText = "Jakten fortsätter";
+                    btn.className = "w-full bg-green-700 hover:bg-green-600 text-white font-bold py-2.5 rounded text-sm uppercase shadow-lg border-2 border-green-500 hover:scale-[1.01] transition-all mt-2";
+                    btn.onclick = () => {
+                        modal.classList.add('hidden');
+                        this.log(`🚨 En mördare är fångad! Det var ${char.name}! Men den andra mördaren är fortfarande lös!`, 'success');
+                        this.advanceTurn();
+                    };
+                } else {
+                    title.innerText = "DU VANN!";
+                    title.className = "title-font text-4xl md:text-5xl text-yellow-500 tracking-wider animate-pulse";
+                    
+                    content.innerHTML = `
+                        <p class="text-yellow-400 font-bold text-sm mb-2">Du inser sanningen. Den sista mördaren är ${char.name}!</p>
+                        <p class="text-red-400 font-bold">"${char.name}: 'Överraskning! Det är dags för finalakten!'"</p>
+                        <p class="text-gray-300 italic mt-2">Innan du hinner agera kastar sig ${char.name} över dig med full kraft! Blodet sjuder, glas krossas och ni slåss brutalt genom rummet. Det är en episk slutstrid där du pressas till din absoluta bristningsgräns.</p>
+                        <p class="text-gray-400 italic mt-2">Du lyckas till slut få tag i ett tungt tillhygge och slår mördaren medvetslös! Du faller ihop, flämtande efter andan. Det är över.</p>
+                        <div class="flex items-start space-x-2 bg-yellow-950 bg-opacity-20 p-2 rounded border border-yellow-900 text-xs mt-3">
+                            <span class="text-xl">🏆</span>
+                            <div>
+                                <p class="text-white font-bold text-sm">Båda mördarna är besegrade!</p>
+                                <p class="text-yellow-300 mt-1">Polisen säkrar platsen och sätter handklovar på ${char.name}. Du har överlevt skräckfilmen och räddat Småstaden.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    btn.innerText = "Spela igen";
+                    btn.className = "w-full bg-yellow-700 hover:bg-yellow-600 text-white font-bold py-2.5 rounded text-sm uppercase shadow-lg border-2 border-yellow-500 hover:scale-[1.01] transition-all mt-2";
+                    btn.onclick = () => location.reload();
+                    
+                    this.saveWin();
+                    this.endGame(true);
+                }
+                
+                modal.classList.remove('hidden');
+            },
+
+            triggerUnmaskingReveal(wrongAccusedName = "") {
+                this.resetStreak();
+                const modal = document.getElementById('reveal-modal');
+                const revealContainer = document.getElementById('reveal-unmasking');
+                
+                const actualKillers = Object.values(this.characters).filter(char => char.isKiller);
+                const undefeatedKillers = actualKillers.filter(char => !char.defeated);
+                const isSingle = undefeatedKillers.length === 1;
+                
+                let introText = wrongAccusedName 
+                    ? `<p class="text-yellow-500 font-bold text-xs">Du anklagade felaktigt oskyldiga ${wrongAccusedName}. I förvirringen som uppstår huggs ${wrongAccusedName} ner av Ghostface. När du backar undan i panik ${isSingle ? 'kliver mördaren fram' : 'omringas du av mördarna'}...</p>`
+                    : `<p class="text-red-500 font-bold text-xs">Tiden rann ut. Du hör ett knarrande bildörrsljud och steg bakom dig. Ghostface slår till direkt ur mörkret...</p>`;
+
+                let actionText = isSingle
+                    ? `<p class="text-red-500 font-bold text-xs">Mördaren stannar upp, skrattar tyst, sträcker upp händerna och fattar tag i kanten av den skräckinjagande gummimasken...</p>`
+                    : `<p class="text-red-500 font-bold text-xs">Plötsligt stannar mördarna upp. Den ena skrattar tyst, sträcker upp händerna och fattar tag i kanten av den skräckinjagande gummimasken...</p>`;
+
+                let killersHTML = '';
+                undefeatedKillers.forEach((killer, i) => {
+                    let dialogue = "";
+                    if (i === 0 && !isSingle) {
+                        dialogue = `"${killer.name}: 'Alla är så blinda! Skräckfilmer har regler, och du glömde den viktigaste: lita aldrig på ${killer.role.toLowerCase()}! Det var jag som planerade allt!'"`;
+                    } else {
+                        const partnerMention = isSingle && wrongAccusedName === "" ? "oss" : (wrongAccusedName || "någon annan");
+                        dialogue = `"${killer.name}: 'Mitt drag nu! Mitt drag att skära! Jag kan inte fatta att du trodde det var ${partnerMention}! Vi ska göra vår egen uppföljare!'"`;
+                    }
+
+                    killersHTML += `
+                        <div class="flex items-start space-x-2 bg-red-950 bg-opacity-20 p-2 rounded border border-red-900 text-xs">
+                            <span class="text-xl">🎭</span>
+                            <div>
+                                <p class="text-white font-bold text-sm">${killer.name} (${killer.role})</p>
+                                <p class="text-[10px] text-gray-400 italic mb-1">Tar av sig masken med ett sadistiskt flin...</p>
+                                <p class="text-red-400 font-bold">${dialogue}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                let outroText = isSingle
+                    ? `<p class="text-center text-xs text-gray-500 mt-2 italic">Mördaren hånler mot dig en sista gång i rummets svaga sken innan skärmen fylls av blod...</p>`
+                    : `<p class="text-center text-xs text-gray-500 mt-2 italic">De två mördarna hånler mot dig en sista gång i rummets svaga sken innan skärmen fylls av blod...</p>`;
+
+                revealContainer.innerHTML = `
+                    ${introText}
+                    <div class="space-y-3 pt-3 border-t border-red-950">
+                        <p class="text-xs text-gray-400 italic">Du försöker fly, men dörren är låst. Du vänder dig om och ser Ghostface stå framför dig. Han höjer sin blänkande kniv...</p>
+                        ${actionText}
+                        
+                        ${killersHTML}
+                    </div>
+                    ${outroText}
+                `;
+
+                modal.classList.remove('hidden');
+            },
+
+            triggerFinale() {
+                this.triggerUnmaskingReveal();
+                this.endGame(false);
+            },
+
+            endGame(victory) {
+                this.gameOver = true;
+                this.updateUI();
+                
+                document.querySelectorAll('#action-panel button').forEach(btn => btn.disabled = true);
+            }
+        };
+
+        window.onload = () => {
+            // Visa modalen direkt, initiera inte game.init() förrän spelaren klickar på Starta
+        };
+    </script>
+</body>
+</html>

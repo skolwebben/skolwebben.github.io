@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shadow Heist</title>
+    <style>
+        /* CSS Reset och Grundläggande Inställningar */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #05050a;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            touch-action: none; /* Förhindrar zoom och scroll på mobil */
+        }
+
+        /* Spel-canvas */
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* UI Överlagringar */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(5, 5, 10, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Neon Estetik */
+        h1 {
+            font-size: 3rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #0088ff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #aaa;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .stats {
+            color: #ffcc00;
+            font-size: 1.5rem;
+            text-shadow: 0 0 5px #ffcc00;
+            margin-bottom: 30px;
+        }
+
+        /* Knappar */
+        button {
+            background: transparent;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-family: inherit;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 255, 255, 0.1);
+            transition: all 0.2s;
+            margin: 10px;
+        }
+
+        button:active {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        button:disabled {
+            border-color: #555;
+            color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* HUD */
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .hud-item {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        #hud-level { color: #00ffff; text-shadow: 0 0 5px #00ffff; }
+        #hud-security { color: #ff0055; text-shadow: 0 0 5px #ff0055; }
+        #hud-loot { color: #ffcc00; text-shadow: 0 0 5px #ffcc00; }
+
+        /* Virtuell Joystick */
+        #joystick-area {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            z-index: 5;
+        }
+
+        #joystick-base {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
+        }
+
+        #joystick-stick {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 255, 0.6);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        /* Uppgraderingsbutik */
+        .shop-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+
+        .shop-item span {
+            color: #fff;
+        }
+
+        .shop-item button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        /* Screen flash vid skada/upptäckt */
+        #damage-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 85, 0.4);
+            z-index: 8;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Spelyta -->
+    <canvas id="gameCanvas"></canvas>
+    <div id="damage-flash"></div>
+
+    <!-- Heads Up Display -->
+    <div id="hud" class="hidden">
+        <div id="hud-level" class="hud-item">Våning 1</div>
+        <div id="hud-security" class="hud-item">Säkerhet: Låg</div>
+        <div id="hud-loot" class="hud-item">$ 0</div>
+    </div>
+
+    <!-- Virtuell Joystick (Mobil) -->
+    <div id="joystick-area" class="hidden">
+        <div id="joystick-base">
+            <div id="joystick-stick"></div>
+        </div>
+    </div>
+
+    <!-- Huvudmeny -->
+    <div id="menu-screen" class="ui-layer">
+        <h1>Shadow Heist</h1>
+        <p>Infiltrera byggnaden. Undvik vakter och laserspärrar. Samla byte och nå utgången.</p>
+        <button onclick="startGame()">Börja Stöt</button>
+        <button onclick="showShop()">Uppgraderingar</button>
+    </div>
+
+    <!-- Game Over Skärm -->
+    <div id="game-over-screen" class="ui-layer hidden">
+        <h2>Fångad!</h2>
+        <p>Säkerhetsstyrkorna hann ifatt dig. Du förlorade ditt runda-byte.</p>
+        <div class="stats" id="go-stats">Total förmögenhet: $0</div>
+        <button onclick="resetGame()">Försök Igen</button>
+        <button onclick="showShop()">Uppgraderingar</button>
+    </div>
+
+    <!-- Framgångsskärm (Nivå klar) -->
+    <div id="success-screen" class="ui-layer hidden">
+        <h2 style="color: #00ff55; text-shadow: 0 0 10px #00ff55;">Våning Rensad!</h2>
+        <p id="success-desc">Du kom undan med bytet.</p>
+        <button onclick="nextLevel()">Nästa Våning</button>
+        <button onclick="showShop()">Gömställe (Butik)</button>
+    </div>
+
+    <!-- Uppgraderingsbutik -->
+    <div id="shop-screen" class="ui-layer hidden">
+        <h1 style="font-size: 2rem;">Svarta Marknaden</h1>
+        <div class="stats" id="shop-cash">Kapital: $0</div>
+        
+        <div class="shop-items">
+            <div class="shop-item">
+                <span>Cyber-Ben (Snabbhet) <br><small>Nivå <span id="lvl-speed">0</span></small></span>
+                <button id="btn-upg-speed" onclick="buyUpgrade('speed')">$50</button>
+            </div>
+            <div class="shop-item">
+                <span>Skuggdräkt (Mindre oväsen) <br><small>Nivå <span id="lvl-stealth">0</span></small></span>
+                <button id="btn-upg-stealth" onclick="buyUpgrade('stealth')">$50</button>
+            </div>
+        </div>
+
+        <button style="margin-top: 30px;" onclick="closeShop()">Tillbaka</button>
+    </div>
+
+    <script>
+        /** --- INITIALISERING & KONFIGURATION --- **/
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Hantera fönsterstorlek
+        let width, height;
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Metaprogression & Globala variabler
+        let totalCash = 0;
+        let upgrades = { speed: 0, stealth: 0 };
+        let costs = { speed: 50, stealth: 50 };
+
+        // Speltillstånd
+        let gameState = 'menu'; // menu, playing, gameover, success, shop
+        let currentLevel = 1;
+        let runCash = 0;
+
+        // Världskonfiguration
+        const TILE_SIZE = 40;
+        let mapWidth = 15;
+        let mapHeight = 15;
+        let grid = [];
+        let camera = { x: 0, y: 0 };
+
+        // Entiteter
+        let player = { x: 0, y: 0, vx: 0, vy: 0, radius: 12, speed: 200, noise: 0 };
+        let guards = [];
+        let loots = [];
+        let lasers = []; // Nya laserspärrar
+        let exitPoint = { x: 0, y: 0, radius: 15 };
+        let particles = [];
+
+        // Input
+        let input = { x: 0, y: 0 };
+        let keys = {};
+
+        // Tidsstyrning
+        let lastTime = 0;
+
+        /** --- INPUT HANTERING (Tangentbord & Joystick) --- **/
+        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+        const joyArea = document.getElementById('joystick-area');
+        const joyBase = document.getElementById('joystick-base');
+        const joyStick = document.getElementById('joystick-stick');
+        let touchId = null;
+        let joyOrigin = { x: 0, y: 0 };
+
+        joyArea.addEventListener('touchstart', e => {
+            if (gameState !== 'playing') return;
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            touchId = touch.identifier;
+            joyOrigin.x = touch.clientX;
+            joyOrigin.y = touch.clientY;
+            
+            joyBase.style.display = 'block';
+            joyBase.style.left = joyOrigin.x + 'px';
+            joyBase.style.top = joyOrigin.y + 'px';
+            joyStick.style.transform = `translate(-50%, -50%)`;
+            
+            updateJoystick(touch.clientX, touch.clientY);
+        }, {passive: false});
+
+        joyArea.addEventListener('touchmove', e => {
+            if (gameState !== 'playing') return;
+            e.preventDefault();
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                if (e.changedTouches[i].identifier === touchId) {
+                    updateJoystick(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
+                }
+            }
+        }, {passive: false});
+
+        joyArea.addEventListener('touchend', e => {
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                if (e.changedTouches[i].identifier === touchId) {
+                    touchId = null;
+                    joyBase.style.display = 'none';
+                    input.x = 0;
+                    input.y = 0;
+                }
+            }
+        });
+
+        function updateJoystick(clientX, clientY) {
+            let dx = clientX - joyOrigin.x;
+            let dy = clientY - joyOrigin.y;
+            let distance = Math.sqrt(dx*dx + dy*dy);
+            let maxDist = 40;
+            
+            if (distance > maxDist) {
+                dx = (dx / distance) * maxDist;
+                dy = (dy / distance) * maxDist;
+            }
+            
+            joyStick.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+            
+            // Normalisera input mellan -1 och 1
+            input.x = dx / maxDist;
+            input.y = dy / maxDist;
+        }
+
+        /** --- LINE TO CIRCLE COLLISION UTILITY --- **/
+        function distToSegment(px, py, x1, y1, x2, y2) {
+            let dx = x2 - x1;
+            let dy = y2 - y1;
+            let l2 = dx * dx + dy * dy;
+            if (l2 === 0) return Math.sqrt((px - x1)**2 + (py - y1)**2);
+            let t = ((px - x1) * dx + (py - y1) * dy) / l2;
+            t = Math.max(0, Math.min(1, t));
+            return Math.sqrt((px - (x1 + t * dx))**2 + (py - (y1 + t * dy))**2);
+        }
+
+        /** --- NIVÅGENERERING (Procedural - BSP/Random Walk Hybrid) --- **/
+        function generateLevel() {
+            // Öka kartans storlek kännbart per nivå
+            mapWidth = 15 + Math.min(currentLevel * 3, 30);
+            mapHeight = 15 + Math.min(currentLevel * 3, 30);
+            
+            // Fyll med väggar
+            grid = Array(mapHeight).fill().map(() => Array(mapWidth).fill(1));
+            
+            let rooms = [];
+            const numRooms = 4 + Math.floor(currentLevel / 1.5);
+            
+            for (let i = 0; i < numRooms; i++) {
+                let w = 4 + Math.floor(Math.random() * 4);
+                let h = 4 + Math.floor(Math.random() * 4);
+                let x = 1 + Math.floor(Math.random() * (mapWidth - w - 2));
+                let y = 1 + Math.floor(Math.random() * (mapHeight - h - 2));
+                
+                let room = {x, y, w, h, cx: Math.floor(x + w/2), cy: Math.floor(y + h/2)};
+                rooms.push(room);
+                
+                // Gräv ut rum
+                for (let ry = y; ry < y + h; ry++) {
+                    for (let rx = x; rx < x + w; rx++) {
+                        grid[ry][rx] = 0;
+                    }
+                }
+                
+                // Koppla till föregående rum
+                if (i > 0) {
+                    let prev = rooms[i-1];
+                    carveCorridor(prev.cx, prev.cy, room.cx, room.cy);
+                }
+            }
+
+            // Placera Spelaren i det allra första genererade rummet
+            let startRoom = rooms[0];
+            player.x = startRoom.cx * TILE_SIZE + TILE_SIZE/2;
+            player.y = startRoom.cy * TILE_SIZE + TILE_SIZE/2;
+            player.vx = 0;
+            player.vy = 0;
+
+            // Hitta rummet som är absolut LÄNGST bort från startrummet för att placera den gröna pricken
+            let furthestRoom = rooms[1] || rooms[0];
+            let maxDistance = 0;
+            for (let i = 1; i < rooms.length; i++) {
+                let r = rooms[i];
+                let dist = Math.sqrt(Math.pow(r.cx - startRoom.cx, 2) + Math.pow(r.cy - startRoom.cy, 2));
+                if (dist > maxDistance) {
+                    maxDistance = dist;
+                    furthestRoom = r;
+                }
+            }
+
+            // Placera Utgången i det rummet
+            exitPoint = {
+                x: furthestRoom.cx * TILE_SIZE + TILE_SIZE/2,
+                y: furthestRoom.cy * TILE_SIZE + TILE_SIZE/2,
+                radius: 15
+            };
+
+            // Spawna Vakter
+            guards = [];
+            const numGuards = Math.min(2 + currentLevel, 18); // Höjt max vakter från 14 till 18
+            for (let i = 1; i < rooms.length; i++) { // Undvik startrummet
+                if (guards.length >= numGuards) break;
+                let r = rooms[i];
+                let gx = (r.x + 1 + Math.random()*(r.w-2)) * TILE_SIZE;
+                let gy = (r.y + 1 + Math.random()*(r.h-2)) * TILE_SIZE;
+                
+                // Vakter rör sig snabbare på högre våningar (Snabbare skalning)
+                let baseGuardSpeed = 55 + Math.min(currentLevel * 7, 90);
+
+                guards.push({
+                    x: gx, y: gy,
+                    angle: Math.random() * Math.PI * 2,
+                    speed: baseGuardSpeed,
+                    patrolTarget: null,
+                    room: r,
+                    state: 'patrol', // patrol, suspicious, chase
+                    suspicion: 0,
+                    chaseTimer: 0,
+                    radioTimer: 0
+                });
+            }
+
+            // Spawna Bytet (Loot)
+            loots = [];
+            const numLoot = 3 + Math.floor(Math.random() * 3) + Math.floor(currentLevel / 2);
+            for (let i = 0; i < numLoot; i++) {
+                let r = rooms[Math.floor(Math.random() * rooms.length)];
+                let lx = (r.x + 1 + Math.floor(Math.random()*(r.w-2))) * TILE_SIZE + TILE_SIZE/2;
+                let ly = (r.y + 1 + Math.floor(Math.random()*(r.h-2))) * TILE_SIZE + TILE_SIZE/2;
+                loots.push({ x: lx, y: ly, value: 10 + (currentLevel * 5), collected: false, radius: 8 });
+            }
+
+            // Spawna Laserspärrar (Endast från nivå 2 och framåt)
+            lasers = [];
+            if (currentLevel >= 2) {
+                let maxLasers = Math.min(2 + Math.floor(currentLevel / 1.5), 8);
+                // Leta efter dörröppningar eller trånga passager
+                for (let y = 1; y < mapHeight - 1; y++) {
+                    for (let x = 1; x < mapWidth - 1; x++) {
+                        if (grid[y][x] === 0) {
+                            // Vertikal passage (väggar till vänster och höger)
+                            if (grid[y][x-1] === 1 && grid[y][x+1] === 1 && Math.random() < 0.15) {
+                                lasers.push({
+                                    x1: (x) * TILE_SIZE,
+                                    y1: (y + 0.5) * TILE_SIZE,
+                                    x2: (x + 1) * TILE_SIZE,
+                                    y2: (y + 0.5) * TILE_SIZE,
+                                    active: true,
+                                    timer: Math.random() * 2, // Desynka blinkningar
+                                    toggleRate: 1.5 + Math.random() * 1.0 // Hur ofta de slås på/av
+                                });
+                            }
+                            // Horisontell passage (väggar över och under)
+                            else if (grid[y-1][x] === 1 && grid[y+1][x] === 1 && Math.random() < 0.15) {
+                                lasers.push({
+                                    x1: (x + 0.5) * TILE_SIZE,
+                                    y1: (y) * TILE_SIZE,
+                                    x2: (x + 0.5) * TILE_SIZE,
+                                    y2: (y + 1) * TILE_SIZE,
+                                    active: true,
+                                    timer: Math.random() * 2,
+                                    toggleRate: 1.5 + Math.random() * 1.0
+                                });
+                            }
+                        }
+                        if (lasers.length >= maxLasers) break;
+                    }
+                    if (lasers.length >= maxLasers) break;
+                }
+            }
+            
+            particles = [];
+            runCash = 0;
+            updateHUD();
+        }
+
+        function carveCorridor(x1, y1, x2, y2) {
+            let x = x1; let y = y1;
+            while (x !== x2) {
+                grid[y][x] = 0;
+                grid[y+1][x] = 0; // Gör gången lite bredare
+                x += x < x2 ? 1 : -1;
+            }
+            while (y !== y2) {
+                grid[y][x] = 0;
+                grid[y][x+1] = 0;
+                y += y < y2 ? 1 : -1;
+            }
+        }
+
+        /** --- SPEL LOGIK & FYSIK --- **/
+        function isWall(gx, gy) {
+            if (gx < 0 || gx >= mapWidth || gy < 0 || gy >= mapHeight) return true;
+            return grid[gy][gx] === 1;
+        }
+
+        // Raycasting för vision
+        function castRay(ox, oy, angle, maxDist) {
+            let x = ox, y = oy;
+            let dx = Math.cos(angle) * 4; // Steglängd
+            let dy = Math.sin(angle) * 4;
+            let dist = 0;
+            while (dist < maxDist) {
+                x += dx; y += dy; dist += 4;
+                let gx = Math.floor(x / TILE_SIZE);
+                let gy = Math.floor(y / TILE_SIZE);
+                if (isWall(gx, gy)) return dist;
+            }
+            return maxDist;
+        }
+
+        // Global laser-larm trigger
+        function triggerLaserAlarm() {
+            // Skärmblink rött
+            let flash = document.getElementById('damage-flash');
+            flash.style.opacity = 1;
+            setTimeout(() => { flash.style.opacity = 0; }, 300);
+
+            if(navigator.vibrate) navigator.vibrate([150, 100, 150]);
+
+            createParticles(player.x, player.y, "#ff0055", 25);
+
+            // Sätt ALLA vakter i absolut jaktläge omedelbart!
+            for (let g of guards) {
+                g.state = 'chase';
+                g.suspicion = 100;
+                g.chaseTimer = 6.0; // Jagar i 6 sekunder mot spelarens position
+                g.patrolTarget = null;
+            }
+        }
+
+        function update(dt) {
+            if (gameState !== 'playing') return;
+
+            // Tangentbordsinput (Fallback för dator)
+            if (touchId === null) {
+                input.x = 0; input.y = 0;
+                if (keys['w'] || keys['arrowup']) input.y -= 1;
+                if (keys['s'] || keys['arrowdown']) input.y += 1;
+                if (keys['a'] || keys['arrowleft']) input.x -= 1;
+                if (keys['d'] || keys['arrowright']) input.x += 1;
+                
+                // Normalisera diagonal rörelse
+                let len = Math.sqrt(input.x*input.x + input.y*input.y);
+                if (len > 0) { input.x /= len; input.y /= len; }
+            }
+
+            // Uppdatera Spelare
+            let currentSpeed = player.speed + (upgrades.speed * 20);
+            player.vx = input.x * currentSpeed;
+            player.vy = input.y * currentSpeed;
+
+            // Generera oväsen (Ljud)
+            let isMoving = Math.abs(player.vx) > 0 || Math.abs(player.vy) > 0;
+            if (isMoving) {
+                // Stealth-uppgradering minskar radien
+                let maxNoise = 100 - (upgrades.stealth * 15);
+                player.noise = Math.min(player.noise + dt * 150, maxNoise);
+            } else {
+                player.noise = Math.max(player.noise - dt * 200, 0);
+            }
+
+            // Kollision med väggar (Spelare) - AABB med glidande kollision
+            let nextX = player.x + player.vx * dt;
+            let nextY = player.y + player.vy * dt;
+            
+            // X-axeln
+            let checkGridX = Math.floor((nextX + (player.vx > 0 ? player.radius : -player.radius)) / TILE_SIZE);
+            let checkGridYTop = Math.floor((player.y - player.radius) / TILE_SIZE);
+            let checkGridYBot = Math.floor((player.y + player.radius) / TILE_SIZE);
+            
+            if (isWall(checkGridX, checkGridYTop) || isWall(checkGridX, checkGridYBot)) {
+                nextX = player.x; // Blockera X
+            }
+            
+            // Y-axeln
+            let checkGridY = Math.floor((nextY + (player.vy > 0 ? player.radius : -player.radius)) / TILE_SIZE);
+            let checkGridXLeft = Math.floor((nextX - player.radius) / TILE_SIZE);
+            let checkGridXRight = Math.floor((nextX + player.radius) / TILE_SIZE);
+
+            if (isWall(checkGridXLeft, checkGridY) || isWall(checkGridXRight, checkGridY)) {
+                nextY = player.y; // Blockera Y
+            }
+
+            player.x = nextX;
+            player.y = nextY;
+
+            // Kameraföljning (mjuk)
+            camera.x += (player.x - width/2 - camera.x) * 5 * dt;
+            camera.y += (player.y - height/2 - camera.y) * 5 * dt;
+
+            // Uppdatera och kontrollera Lasrar
+            for (let l of lasers) {
+                l.timer += dt;
+                if (l.timer >= l.toggleRate) {
+                    l.active = !l.active;
+                    l.timer = 0;
+                    // Skapa lite sprakande partiklar vid toggling
+                    createParticles((l.x1+l.x2)/2, (l.y1+l.y2)/2, "rgba(255, 0, 85, 0.4)", 3);
+                }
+
+                // Kolla kollision med spelare om lasern är aktiv
+                if (l.active) {
+                    let dist = distToSegment(player.x, player.y, l.x1, l.y1, l.x2, l.y2);
+                    if (dist < player.radius) {
+                        triggerLaserAlarm();
+                    }
+                }
+            }
+
+            // Kollision med Loot
+            for (let l of loots) {
+                if (!l.collected) {
+                    let dx = player.x - l.x;
+                    let dy = player.y - l.y;
+                    if (dx*dx + dy*dy < (player.radius + l.radius)*(player.radius + l.radius)) {
+                        l.collected = true;
+                        runCash += l.value;
+                        updateHUD();
+                        createParticles(l.x, l.y, '#ffcc00', 10);
+                        // Haptisk feedback på mobil
+                        if(navigator.vibrate) navigator.vibrate(20);
+                    }
+                }
+            }
+
+            // Utgångskollision
+            let exDx = player.x - exitPoint.x;
+            let exDy = player.y - exitPoint.y;
+            if (exDx*exDx + exDy*exDy < (player.radius + exitPoint.radius)*(player.radius + exitPoint.radius)) {
+                levelComplete();
+            }
+
+            // Dynamiska vision-värden baserade på svårighetsgrad/nivå (Snabbare skalning)
+            let viewDistance = Math.min(140 + currentLevel * 6, 230);
+            let viewAngle = Math.PI / 4 + Math.min(currentLevel * 0.02, Math.PI / 6); // Upp till 75 graders FOV på höga banor
+
+            // Vakt AI
+            for (let g of guards) {
+                // Avstånd till spelaren
+                let dx = player.x - g.x;
+                let dy = player.y - g.y;
+                let distToPlayer = Math.sqrt(dx*dx + dy*dy);
+                
+                // Vision Cone Kollision (Kan vakten se spelaren?)
+                let playerVisible = false;
+
+                if (distToPlayer < viewDistance) {
+                    let angleToPlayer = Math.atan2(dy, dx);
+                    let diff = angleToPlayer - g.angle;
+                    diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+                    
+                    if (Math.abs(diff) < viewAngle / 2) {
+                        let distToWall = castRay(g.x, g.y, angleToPlayer, viewDistance);
+                        if (distToWall > distToPlayer) {
+                            playerVisible = true;
+                        }
+                    }
+                }
+
+                // Kan vakten höra spelaren?
+                let heardPlayer = distToPlayer < player.noise;
+
+                // Hantera misstänksamhet & tillstånd
+                if (playerVisible) {
+                    // Misstänksamheten ökar snabbare på högre nivåer
+                    let baseFillRate = 130 + (currentLevel * 8); 
+                    let fillRate = baseFillRate * (1 - distToPlayer / (viewDistance * 1.2));
+                    g.suspicion = Math.min(g.suspicion + fillRate * dt * 1.5, 100);
+
+                    if (g.suspicion >= 100) {
+                        if (g.state !== 'chase') {
+                            g.state = 'chase';
+                            g.radioTimer = 0; // Återställ radiosynktid
+                            if (navigator.vibrate) navigator.vibrate(100);
+                        }
+                        g.chaseTimer = 4.5; // Jaga lite längre
+                    } else if (g.state === 'patrol') {
+                        g.state = 'suspicious';
+                    }
+
+                    // Vänd mjukt mot spelaren vid misstanke/jakt
+                    let targetAngle = Math.atan2(dy, dx);
+                    let diff = targetAngle - g.angle;
+                    diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+                    g.angle += diff * 5 * dt;
+
+                } else {
+                    // Spelaren inte synlig: minska misstänksamhet gradvis
+                    if (g.state !== 'chase') {
+                        g.suspicion = Math.max(g.suspicion - 40 * dt, 0);
+                        if (g.suspicion <= 0 && g.state === 'suspicious') {
+                            g.state = 'patrol';
+                            g.patrolTarget = null;
+                        }
+                    } else {
+                        // Om vakten jagar men har tappat sikt
+                        g.chaseTimer -= dt;
+                        if (g.chaseTimer <= 0) {
+                            g.state = 'patrol';
+                            g.suspicion = 0;
+                            g.patrolTarget = null;
+                        }
+                    }
+                }
+
+                // Ljudreaktion (endast om vi inte redan jagar)
+                if (heardPlayer && g.state !== 'chase') {
+                    g.state = 'suspicious';
+                    let soundSuspicionRate = 120 + (currentLevel * 7);
+                    g.suspicion = Math.min(g.suspicion + soundSuspicionRate * dt, 80);
+                    
+                    let targetAngle = Math.atan2(dy, dx);
+                    let diff = targetAngle - g.angle;
+                    diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+                    g.angle += diff * 4 * dt;
+                }
+
+                // Rörelse baserat på tillstånd
+                if (g.state === 'patrol') {
+                    if (!g.patrolTarget) {
+                        g.patrolTarget = {
+                            x: (g.room.x + 1 + Math.random()*(g.room.w-2)) * TILE_SIZE,
+                            y: (g.room.y + 1 + Math.random()*(g.room.h-2)) * TILE_SIZE
+                        };
+                    }
+
+                    let tx = g.patrolTarget.x - g.x;
+                    let ty = g.patrolTarget.y - g.y;
+                    let dist = Math.sqrt(tx*tx + ty*ty);
+                    
+                    if (dist < 10) {
+                        g.patrolTarget = null;
+                    } else {
+                        let dirX = tx/dist; let dirY = ty/dist;
+                        g.x += dirX * g.speed * dt;
+                        g.y += dirY * g.speed * dt;
+                        
+                        let targetAngle = Math.atan2(ty, tx);
+                        let diff = targetAngle - g.angle;
+                        diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+                        g.angle += diff * 2 * dt;
+                    }
+                } else if (g.state === 'suspicious') {
+                    g.x += Math.cos(g.angle) * (g.speed * 0.2) * dt;
+                    g.y += Math.sin(g.angle) * (g.speed * 0.2) * dt;
+                } else if (g.state === 'chase') {
+                    // JAGA SPELAREN DIREKT!
+                    let chaseSpeed = g.speed * 1.35;
+                    let tx = dx / distToPlayer;
+                    let ty = dy / distToPlayer;
+
+                    // NYTT: Radiosamarbete (Varnar andra vakter i närheten var 1,5:e sekund)
+                    g.radioTimer += dt;
+                    if (g.radioTimer >= 1.5) {
+                        g.radioTimer = 0;
+                        for (let other of guards) {
+                            if (other !== g && other.state !== 'chase') {
+                                let odx = other.x - g.x;
+                                let ody = other.y - g.y;
+                                if (odx*odx + ody*ody < 300*300) { // Radio räckvidd: 300px
+                                    other.state = 'suspicious';
+                                    other.suspicion = Math.max(other.suspicion, 85); // Sätt misstanke till nästan full
+                                    other.patrolTarget = { x: player.x, y: player.y }; // Skicka vakten till spelarens läge
+                                }
+                            }
+                        }
+                    }
+
+                    // Enkel kollision mot väggar för vakten
+                    let nextGx = g.x + tx * chaseSpeed * dt;
+                    let nextGy = g.y + ty * chaseSpeed * dt;
+                    
+                    let gGridX = Math.floor(nextGx / TILE_SIZE);
+                    let gGridY = Math.floor(nextGy / TILE_SIZE);
+                    
+                    if (!isWall(gGridX, gGridY)) {
+                        g.x = nextGx;
+                        g.y = nextGy;
+                    } else {
+                        // Glid längs väggar
+                        let slideX = g.x + tx * chaseSpeed * 0.3 * dt;
+                        let slideY = g.y + ty * chaseSpeed * 0.3 * dt;
+                        if (!isWall(Math.floor(slideX / TILE_SIZE), Math.floor(g.y / TILE_SIZE))) g.x = slideX;
+                        if (!isWall(Math.floor(g.x / TILE_SIZE), Math.floor(slideY / TILE_SIZE))) g.y = slideY;
+                    }
+
+                    // Spelaren förlorar endast om vakten når hela vägen fram
+                    if (distToPlayer < (player.radius + 10)) {
+                        gameOver();
+                    }
+                }
+            }
+
+            // Uppdatera partiklar
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.life -= dt;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+        }
+
+        /** --- RENDERING --- **/
+        function render() {
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.save();
+            ctx.translate(-camera.x, -camera.y);
+
+            // Rita golv och väggar
+            for (let y = 0; y < mapHeight; y++) {
+                for (let x = 0; x < mapWidth; x++) {
+                    if (grid[y][x] === 1) {
+                        // Vägg
+                        ctx.fillStyle = "#1a1a3a";
+                        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                        ctx.strokeStyle = "#0055ff";
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    } else {
+                        // Golv
+                        ctx.fillStyle = "#0a0a1a";
+                        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    }
+                }
+            }
+
+            // Rita Laserspärrar
+            for (let l of lasers) {
+                ctx.save();
+                ctx.lineWidth = 3;
+                if (l.active) {
+                    ctx.strokeStyle = "#ff0055";
+                    ctx.shadowColor = "#ff0055";
+                    ctx.shadowBlur = 12;
+                    // Skapa laser-blinkande effekt
+                    ctx.globalAlpha = 0.8 + Math.sin(Date.now() / 30) * 0.2;
+                    ctx.beginPath();
+                    ctx.moveTo(l.x1, l.y1);
+                    ctx.lineTo(l.x2, l.y2);
+                    ctx.stroke();
+                } else {
+                    // Inaktiva lasrar visas som svaga och brutna
+                    ctx.strokeStyle = "rgba(255, 0, 85, 0.2)";
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(l.x1, l.y1);
+                    ctx.lineTo(l.x2, l.y2);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // Rita Utgång
+            ctx.fillStyle = "#00ff55";
+            ctx.shadowColor = "#00ff55";
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.arc(exitPoint.x, exitPoint.y, exitPoint.radius, 0, Math.PI * 2);
+            ctx.fill();
+            // Pulse effekt på utgången
+            ctx.beginPath();
+            ctx.arc(exitPoint.x, exitPoint.y, exitPoint.radius + Math.sin(Date.now() / 150) * 5, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(0, 255, 85, 0.5)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Rita Loot
+            for (let l of loots) {
+                if (!l.collected) {
+                    ctx.fillStyle = "#ffcc00";
+                    ctx.shadowColor = "#ffcc00";
+                    ctx.shadowBlur = 10;
+                    ctx.beginPath();
+                    ctx.arc(l.x, l.y, l.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.shadowBlur = 0;
+
+            // Rita Oväsen (Ljudring)
+            if (player.noise > 0) {
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 10]);
+                ctx.beginPath();
+                ctx.arc(player.x, player.y, player.noise, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Rita Spelare
+            ctx.fillStyle = "#00ffff";
+            ctx.shadowColor = "#00ffff";
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Rita färdriktning
+            if (input.x !== 0 || input.y !== 0) {
+                ctx.beginPath();
+                ctx.moveTo(player.x, player.y);
+                ctx.lineTo(player.x + input.x * 20, player.y + input.y * 20);
+                ctx.strokeStyle = "#fff";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            ctx.shadowBlur = 0;
+
+            // Rita Vakter och deras Vision Cones med dynamisk räckvidd/vinkel
+            let viewDistance = Math.min(140 + currentLevel * 6, 230);
+            let viewAngle = Math.PI / 4 + Math.min(currentLevel * 0.02, Math.PI / 6);
+
+            for (let g of guards) {
+                // Vision Cone Färg baserad på tillstånd
+                let coneColor = "rgba(0, 255, 255, 0.12)"; // Normal patrull (Cyan)
+                if (g.state === 'suspicious') {
+                    coneColor = `rgba(255, 200, 0, ${0.15 + (g.suspicion / 100) * 0.15})`; // Gul
+                } else if (g.state === 'chase') {
+                    coneColor = "rgba(255, 0, 85, 0.25)"; // Neon Röd vid full jakt
+                }
+
+                ctx.fillStyle = coneColor;
+                ctx.beginPath();
+                ctx.moveTo(g.x, g.y);
+                let rays = 20;
+                for (let i = 0; i <= rays; i++) {
+                    let rayAngle = g.angle - viewAngle/2 + (viewAngle / rays) * i;
+                    let dist = castRay(g.x, g.y, rayAngle, viewDistance);
+                    ctx.lineTo(g.x + Math.cos(rayAngle) * dist, g.y + Math.sin(rayAngle) * dist);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                // Vaktkropp färg baserad på status
+                let guardColor = "#00cccc"; // Lugn
+                if (g.state === 'suspicious') guardColor = "#ffcc00"; // Misstänksam
+                if (g.state === 'chase') guardColor = "#ff0055"; // Arg/Jagar
+
+                ctx.fillStyle = guardColor;
+                ctx.shadowColor = guardColor;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(g.x, g.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Riktning (liten prick)
+                ctx.fillStyle = "#fff";
+                ctx.beginPath();
+                ctx.arc(g.x + Math.cos(g.angle)*8, g.y + Math.sin(g.angle)*8, 3, 0, Math.PI*2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // UI-indikatorer ovanför vakten
+                if (g.suspicion > 0 && g.state !== 'chase') {
+                    // Svart bakgrund till mätare
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+                    ctx.fillRect(g.x - 15, g.y - 20, 30, 4);
+                    // Gul misstänksamhetsindikator
+                    ctx.fillStyle = "#ffcc00";
+                    ctx.fillRect(g.x - 15, g.y - 20, 30 * (g.suspicion / 100), 4);
+                } else if (g.state === 'chase') {
+                    // Rött utropstecken vid jakt! (Blinkande)
+                    if (Math.floor(Date.now() / 150) % 2 === 0) {
+                        ctx.fillStyle = "#ff0055";
+                        ctx.font = "bold 18px Courier New";
+                        ctx.textAlign = "center";
+                        ctx.fillText("!", g.x, g.y - 18);
+                    }
+                }
+            }
+            ctx.shadowBlur = 0;
+
+            // Rita partiklar
+            for (let p of particles) {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+
+            ctx.restore();
+        }
+
+        // Partikeleffekt system
+        function createParticles(x, y, color, count) {
+            for(let i=0; i<count; i++) {
+                let angle = Math.random() * Math.PI * 2;
+                let speed = 50 + Math.random() * 100;
+                particles.push({
+                    x: x, y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 0.5 + Math.random() * 0.5,
+                    color: color
+                });
+            }
+        }
+
+        /** --- STATE MANAGEMENT --- **/
+        function gameLoop(timestamp) {
+            let dt = (timestamp - lastTime) / 1000;
+            if (dt > 0.1) dt = 0.1; // Fixa spikar om tabben är i bakgrunden
+            lastTime = timestamp;
+
+            if (gameState === 'playing') {
+                update(dt);
+                render();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function setUIState(state) {
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('success-screen').classList.add('hidden');
+            document.getElementById('shop-screen').classList.add('hidden');
+            document.getElementById('hud').classList.add('hidden');
+            document.getElementById('joystick-area').classList.add('hidden');
+
+            if (state === 'menu') document.getElementById('menu-screen').classList.remove('hidden');
+            if (state === 'gameover') document.getElementById('game-over-screen').classList.remove('hidden');
+            if (state === 'success') document.getElementById('success-screen').classList.remove('hidden');
+            if (state === 'shop') document.getElementById('shop-screen').classList.remove('hidden');
+            
+            if (state === 'playing') {
+                document.getElementById('hud').classList.remove('hidden');
+                document.getElementById('joystick-area').classList.remove('hidden');
+            }
+        }
+
+        function startGame() {
+            currentLevel = 1;
+            totalCash = 0; // Om man startar om helt från menyn (permadeath för total session)
+            runCash = 0;
+            upgrades = { speed: 0, stealth: 0 };
+            updateShopUI();
+            startLevel();
+        }
+
+        function startLevel() {
+            gameState = 'playing';
+            setUIState('playing');
+            generateLevel();
+        }
+
+        function resetGame() {
+            currentLevel = 1;
+            // Behåll totalCash från metaprogression, men nollställ runCash
+            runCash = 0;
+            startLevel();
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            totalCash += runCash; // Spara inkomsterna permanent
+            runCash = 0;
+            startLevel();
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+            runCash = 0; // Förlorar allt man plockat denna nivå
+            
+            // Screen flash
+            let flash = document.getElementById('damage-flash');
+            flash.style.opacity = 1;
+            setTimeout(() => { flash.style.opacity = 0; }, 200);
+
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Kraftig vibration
+
+            document.getElementById('go-stats').innerText = `Kvarvarande kapital: $${totalCash}`;
+            setUIState('gameover');
+        }
+
+        function levelComplete() {
+            gameState = 'success';
+            document.getElementById('success-desc').innerText = `Du kom undan med $${runCash}!`;
+            setUIState('success');
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-level').innerText = `Våning ${currentLevel}`;
+            document.getElementById('hud-loot').innerText = `$ ${runCash}`;
+            
+            // Hantera visuell text för säkerhetsgrad baserat på aktuell våning
+            let secText = "Låg";
+            let secColor = "#00ff55";
+            if (currentLevel >= 3 && currentLevel < 5) {
+                secText = "Medel";
+                secColor = "#ffcc00";
+            } else if (currentLevel >= 5 && currentLevel < 7) {
+                secText = "Hög";
+                secColor = "#ff6600";
+            } else if (currentLevel >= 7) {
+                secText = "Maximal";
+                secColor = "#ff0055";
+            }
+            
+            let secHUD = document.getElementById('hud-security');
+            secHUD.innerText = `Säkerhet: ${secText}`;
+            secHUD.style.color = secColor;
+            secHUD.style.textShadow = `0 0 5px ${secColor}`;
+        }
+
+        /** --- METAPROGRESSION (BUTIK) --- **/
+        let previousState = 'menu';
+        
+        function showShop() {
+            previousState = gameState;
+            gameState = 'shop';
+            updateShopUI();
+            setUIState('shop');
+        }
+
+        function closeShop() {
+            gameState = previousState;
+            setUIState(gameState);
+        }
+
+        function updateShopUI() {
+            // Om vi kom från 'success' läggs runCash till totalen tillfälligt för visning
+            let displayCash = totalCash;
+            if (previousState === 'success') {
+                displayCash = totalCash + runCash; 
+            }
+
+            document.getElementById('shop-cash').innerText = `Kapital: $${displayCash}`;
+            
+            document.getElementById('lvl-speed').innerText = upgrades.speed;
+            document.getElementById('lvl-stealth').innerText = upgrades.stealth;
+
+            let btnSpeed = document.getElementById('btn-upg-speed');
+            btnSpeed.innerText = `$${costs.speed}`;
+            btnSpeed.disabled = displayCash < costs.speed || upgrades.speed >= 5;
+            if(upgrades.speed >= 5) btnSpeed.innerText = "MAX";
+
+            let btnStealth = document.getElementById('btn-upg-stealth');
+            btnStealth.innerText = `$${costs.stealth}`;
+            btnStealth.disabled = displayCash < costs.stealth || upgrades.stealth >= 5;
+            if(upgrades.stealth >= 5) btnStealth.innerText = "MAX";
+        }
+
+        function buyUpgrade(type) {
+            let availableCash = previousState === 'success' ? (totalCash + runCash) : totalCash;
+
+            if (availableCash >= costs[type] && upgrades[type] < 5) {
+                // Dra pengar
+                if (previousState === 'success' && runCash > 0) {
+                    let deduct = Math.min(runCash, costs[type]);
+                    runCash -= deduct;
+                    totalCash -= (costs[type] - deduct);
+                } else {
+                    totalCash -= costs[type];
+                }
+
+                upgrades[type]++;
+                costs[type] = Math.floor(costs[type] * 1.5); // Öka priset
+                updateShopUI();
+            }
+        }
+
+        // Starta loopen
+        requestAnimationFrame(gameLoop);
+
+    </script>
+</body>
+</html>

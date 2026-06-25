@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NP-Tränaren: NO-ämnena</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --biologi: #27ae60;
+            --biologi-light: #e8f8f0;
+            --fysik: #2980b9;
+            --fysik-light: #eaf2f8;
+            --kemi: #9b59b6;
+            --kemi-light: #f5eef8;
+            --text: #333;
+            --bg: #f4f7f6;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Navigationsknappar */
+        .btn {
+            display: inline-block;
+            background: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #95a5a6;
+        }
+
+        .btn-back {
+            background: #e74c3c;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-back:hover {
+            background: #c0392b;
+        }
+
+        /* Startsida & Ämnesväljare */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .subject-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 8px solid var(--primary);
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .subject-card.bio { border-top-color: var(--biologi); }
+        .subject-card.fys { border-top-color: var(--fysik); }
+        .subject-card.kem { border-top-color: var(--kemi); }
+
+        .subject-card h2 {
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        /* Sidor (Dolda som standard) */
+        .page {
+            display: none;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .active-page {
+            display: block;
+        }
+
+        h2.page-title {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Undermeny för områden */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .topic-card {
+            background: #f8f9fa;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .topic-card:hover {
+            background: #edf2f7;
+            transform: translateY(-3px);
+        }
+
+        /* Temafärger för områdeskorten */
+        .bio-topic:hover { border-color: var(--biologi); background-color: var(--biologi-light); }
+        .fys-topic:hover { border-color: var(--fysik); background-color: var(--fysik-light); }
+        .kem-topic:hover { border-color: var(--kemi); background-color: var(--kemi-light); }
+
+        .topic-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Sektioner inuti områden */
+        .section-box {
+            background: #fdfefe;
+            padding: 1.8rem;
+            border-radius: 10px;
+            margin-bottom: 1.8rem;
+            border: 1px solid #e2e8f0;
+            border-left: 6px solid var(--primary);
+        }
+
+        .section-box h3 {
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        /* Quiz komponenter */
+        .quiz-container {
+            margin-top: 1.5rem;
+        }
+
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .quiz-option {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .quiz-option:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .quiz-option.correct {
+            background: #d1fae5 !important;
+            border-color: var(--success) !important;
+            color: #065f46;
+        }
+
+        .quiz-option.incorrect {
+            background: #fee2e2 !important;
+            border-color: var(--danger) !important;
+            color: #991b1b;
+        }
+
+        .quiz-feedback {
+            margin-top: 1rem;
+            font-weight: bold;
+            display: none;
+        }
+
+        /* Lista för gamla prov */
+        .old-tests-box {
+            background: #edf2f7;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .old-tests-box h3 {
+            margin-bottom: 0.8rem;
+        }
+
+        .test-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .test-link {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .test-link:hover {
+            background: #1a252f;
+        }
+
+        /* Begreppslista */
+        .concept-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .concept-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .concept-title {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* List-stilar */
+        ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>NP-Portalen: NO-ämnena</h1>
+        <p>Välj ämne, välj område och bemästra de nationella proven!</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- ================= STARTSIDA ================= -->
+        <div id="home-page" class="page active-page" style="box-shadow: none; background: transparent; padding: 0;">
+            <h2 style="text-align: center; margin-bottom: 0.5rem; font-size: 2rem;">Vad vill du plugga idag?</h2>
+            <p style="text-align: center; color: #7f8c8d; margin-bottom: 2rem;">Klicka på ett ämne för att se dess delområden</p>
+            
+            <div class="subjects-grid">
+                <!-- Biologi -->
+                <div class="subject-card bio" onclick="showPage('biologi-hub')">
+                    <h2>🌿 Biologi</h2>
+                    <p>Ekosystem, celler, genetik, människokroppen och biologisk mångfald.</p>
+                </div>
+                <!-- Fysik -->
+                <div class="subject-card fys" onclick="showPage('fysik-hub')">
+                    <h2>⚡ Fysik</h2>
+                    <p>Krafter, energi, optik, akustik, rymden och ellära.</p>
+                </div>
+                <!-- Kemi -->
+                <div class="subject-card kem" onclick="showPage('kemi-hub')">
+                    <h2>🧪 Kemi</h2>
+                    <p>Atomer, periodiska systemet, kemiska reaktioner, syror och baser.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= BIOLOGI MENY ================= -->
+        <div id="biologi-hub" class="page">
+            <button class="btn btn-back" onclick="goHome()">⬅ Tillbaka till ämnen</button>
+            <h2 class="page-title" style="color: var(--biologi);">🌿 Biologi</h2>
+            <p class="subtitle">Välj det område du vill fördjupa dig i inför det nationella provet:</p>
+
+            <div class="topics-grid">
+                <div class="topic-card bio-topic" onclick="showPage('bio-ekologi')">
+                    <h4>🌲 Ekologi & Ekosystem</h4>
+                    <p>Naturtyper, näringsvävar, fotosyntes och kretslopp.</p>
+                </div>
+                <div class="topic-card bio-topic" onclick="showPage('bio-kroppen')">
+                    <h4>❤️ Människokroppen</h4>
+                    <p>Organ, celler, hälsa, immunförsvar och pubertet.</p>
+                </div>
+                <div class="topic-card bio-topic" onclick="showPage('bio-genetik')">
+                    <h4>🧬 Genetik & Evolution</h4>
+                    <p>DNA, arv, korsningsscheman och livets utveckling.</p>
+                </div>
+            </div>
+
+            <div class="old-tests-box">
+                <h3>📚 Tidigare Nationella Prov i Biologi</h3>
+                <p>Här kan du testa att göra riktiga prov från tidigare år:</p>
+                <div class="test-links">
+                    <a href="https://www.umu.se/institutionen-for-tillampad-utbildningsvetenskap/np/np-no/tidigare-givna-prov/" target="_blank" class="test-link">Gå till gamla NP Biologi 🔗</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= FYSIK MENY ================= -->
+        <div id="fysik-hub" class="page">
+            <button class="btn btn-back" onclick="goHome()">⬅ Tillbaka till ämnen</button>
+            <h2 class="page-title" style="color: var(--fysik);">⚡ Fysik</h2>
+            <p class="subtitle">Välj det område du vill fördjupa dig i inför det nationella provet:</p>
+
+            <div class="topics-grid">
+                <div class="topic-card fys-topic" onclick="showPage('fys-krafter')">
+                    <h4>🏎️ Krafter & Rörelse</h4>
+                    <p>Fart, acceleration, tyngdkraft, friktion och tröghet.</p>
+                </div>
+                <div class="topic-card fys-topic" onclick="showPage('fys-energi')">
+                    <h4>💡 Energi & Resurser</h4>
+                    <p>Energiformer, elproduktion och hållbar utveckling.</p>
+                </div>
+                <div class="topic-card fys-topic" onclick="showPage('fys-optik')">
+                    <h4>👁️ Ljus & Ljud</h4>
+                    <p>Optik, speglar, linser, akustik, frekvens och buller.</p>
+                </div>
+            </div>
+
+            <div class="old-tests-box">
+                <h3>📚 Tidigare Nationella Prov i Fysik</h3>
+                <p>Här kan du testa att göra riktiga prov från tidigare år:</p>
+                <div class="test-links">
+                    <a href="https://www.umu.se/institutionen-for-tillampad-utbildningsvetenskap/np/np-no/tidigare-givna-prov/" target="_blank" class="test-link">Gå till gamla NP Fysik 🔗</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= KEMI MENY ================= -->
+        <div id="kemi-hub" class="page">
+            <button class="btn btn-back" onclick="goHome()">⬅ Tillbaka till ämnen</button>
+            <h2 class="page-title" style="color: var(--kemi);">🧪 Kemi</h2>
+            <p class="subtitle">Välj det område du vill fördjupa dig i inför det nationella provet:</p>
+
+            <div class="topics-grid">
+                <div class="topic-card kem-topic" onclick="showPage('kem-atomer')">
+                    <h4>⚛️ Atomer & Periodiska Systemet</h4>
+                    <p>Atomens delar, grundämnen, metaller och molekyler.</p>
+                </div>
+                <div class="topic-card kem-topic" onclick="showPage('kem-syror')">
+                    <h4>🍋 Syror, Baser & pH</h4>
+                    <p>pH-skalan, starka/svaga syror, baser och neutralisation.</p>
+                </div>
+                <div class="topic-card kem-topic" onclick="showPage('kem-miljo')">
+                    <h4>🌍 Kemiska reaktioner & Miljö</h4>
+                    <p>Växthuseffekt, plaster, fossila bränslen och kretslopp.</p>
+                </div>
+            </div>
+
+            <div class="old-tests-box">
+                <h3>📚 Tidigare Nationella Prov i Kemi</h3>
+                <p>Här kan du testa att göra riktiga prov från tidigare år:</p>
+                <div class="test-links">
+                    <a href="https://www.umu.se/institutionen-for-tillampad-utbildningsvetenskap/np/np-no/tidigare-givna-prov/" target="_blank" class="test-link">Gå till gamla NP Kemi 🔗</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ============================================= -->
+        <!-- =========== BIOLOGI UNDEROMRÅDEN =========== -->
+        <!-- ============================================= -->
+
+        <!-- 1. Ekologi & Ekosystem -->
+        <div id="bio-ekologi" class="page">
+            <button class="btn btn-back" onclick="showPage('biologi-hub')">⬅ Tillbaka till Biologi</button>
+            <h2 style="color: var(--biologi);">🌲 Ekologi & Ekosystem</h2>
+            <p class="subtitle">Studien om samspelet i naturen.</p>
+
+            <div class="section-box" style="border-left-color: var(--biologi)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">Ekosystem:</span> Allt levande (djur, växter) och icke-levande (vatten, solljus, jord) inom ett visst område.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Fotosyntes:</span> Växternas process att göra näring. Formel: Solenergi + Koldioxid + Vatten ➔ Druvsocker (Glukos) + Syre.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Producenter:</span> De som tillverkar energi (växter).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Konsumenter:</span> De som äter andra organismer (djur).
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--biologi)">
+                <h3>📝 Övningsquiz: Ekologi</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Vilka organismer befinner sig alltid längst ner (först) i en näringskedja?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'bio-q1')">A) Toppkonsumenter (t.ex. vargar)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'bio-q1')">B) Producenter (t.ex. växter och alger)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'bio-q1')">C) Nedbrytare (t.ex. maskar och svampar)</button>
+                    </div>
+                    <p class="quiz-feedback" id="bio-q1-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Människokroppen -->
+        <div id="bio-kroppen" class="page">
+            <button class="btn btn-back" onclick="showPage('biologi-hub')">⬅ Tillbaka till Biologi</button>
+            <h2 style="color: var(--biologi);">❤️ Människokroppen</h2>
+            <p class="subtitle">Hur din fantastiska maskin fungerar.</p>
+
+            <div class="section-box" style="border-left-color: var(--biologi)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">Cellen:</span> Livets minsta byggsten. Alla levande varelser är uppbyggda av celler.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Cellandning:</span> Cellernas förbränning av socker med hjälp av syre för att frigöra energi. Socker + Syre ➔ Koldioxid + Vatten + Energi.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Immunförsvar:</span> Kroppens skyddssystem mot virus, bakterier och andra främmande ämnen (vita blodkroppar).
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--biologi)">
+                <h3>📝 Övningsquiz: Kroppen</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Vilken uppgift har de röda blodkropparna i kroppen?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'bio-q2')">A) Transportera syre till kroppens celler</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'bio-q2')">B) Bekämpa farliga bakterier</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'bio-q2')">C) Koagulera blodet vid sårskador</button>
+                    </div>
+                    <p class="quiz-feedback" id="bio-q2-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Genetik & Evolution -->
+        <div id="bio-genetik" class="page">
+            <button class="btn btn-back" onclick="showPage('biologi-hub')">⬅ Tillbaka till Biologi</button>
+            <h2 style="color: var(--biologi);">🧬 Genetik & Evolution</h2>
+            <p class="subtitle">Arvets mekanismer och livets utveckling.</p>
+
+            <div class="section-box" style="border-left-color: var(--biologi)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">DNA:</span> Det kemiska ämne som bär på vårt genetiska arv. Formad som en spiral (dubbelhelix).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Gen:</span> En bit av DNA-molekylen som kodar för en specifik egenskap (t.ex. ögonfärg).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Naturligt urval:</span> Drivkraften bakom evolutionen. De individer som är bäst anpassade till sin miljö har störst chans att överleva och fortplanta sig.
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--biologi)">
+                <h3>📝 Övningsquiz: Genetik</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Vem kallas ofta för "evolutionsteorins fader"?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'bio-q3')">A) Gregor Mendel</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'bio-q3')">B) Charles Darwin</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'bio-q3')">C) Albert Einstein</button>
+                    </div>
+                    <p class="quiz-feedback" id="bio-q3-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ============================================= -->
+        <!-- =========== FYSIK UNDEROMRÅDEN ============== -->
+        <!-- ============================================= -->
+
+        <!-- 1. Krafter & Rörelse -->
+        <div id="fys-krafter" class="page">
+            <button class="btn btn-back" onclick="showPage('fysik-hub')">⬅ Tillbaka till Fysik</button>
+            <h2 style="color: var(--fysik);">🏎️ Krafter & Rörelse</h2>
+            <p class="subtitle">Hur och varför saker rör sig.</p>
+
+            <div class="section-box" style="border-left-color: var(--fysik)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">Tyngdkraft (Gravitation):</span> Den kraft som drar alla föremål mot jordens mittpunkt. Mäts i Newton (N).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Friktion:</span> En motståndskraft som uppstår när två ytor rör sig mot varandra. Mycket friktion behövs t.ex. under vinterdäck!
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Tröghet:</span> Materias motstånd mot att ändra sin hastighet eller rörelseriktning (Newtons första lag).
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--fysik)">
+                <h3>📝 Övningsquiz: Krafter</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Hur förändras din vikt och din massa (vikt i kg) om du åker till månen?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'fys-q1')">A) Både massan och tyngden förblir desamma.</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'fys-q1')">B) Massan minskar, men tyngden är densamma.</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'fys-q1')">C) Massan är densamma, men din tyngd (kraften) minskar.</button>
+                    </div>
+                    <p class="quiz-feedback" id="fys-q1-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Energi & Resurser -->
+        <div id="fys-energi" class="page">
+            <button class="btn btn-back" onclick="showPage('fysik-hub')">⬅ Tillbaka till Fysik</button>
+            <h2 style="color: var(--fysik);">💡 Energi & Resurser</h2>
+            <p class="subtitle">Arbetet som driver universum framåt.</p>
+
+            <div class="section-box" style="border-left-color: var(--fysik)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">Energiprincipen:</span> Energi kan aldrig förstöras eller skapas, bara omvandlas från en form till en annan.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Förnybara energikällor:</span> Energikällor som inte tar slut, t.ex. solenergi, vindkraft och vattenkraft.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Fossila bränslen:</span> Kol, olja och naturgas. Dessa frigör koldioxid vid förbränning vilket spär på växthuseffekten.
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--fysik)">
+                <h3>📝 Övningsquiz: Energi</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Vilken energiomvandling sker i en solcell?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'fys-q2')">A) Ljusenergi omvandlas till elektrisk energi</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'fys-q2')">B) Värmeenergi omvandlas till kemisk energi</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'fys-q2')">C) Kinetisk (rörelse) energi omvandlas till ljusenergi</button>
+                    </div>
+                    <p class="quiz-feedback" id="fys-q2-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Ljus & Ljud -->
+        <div id="fys-optik" class="page">
+            <button class="btn btn-back" onclick="showPage('fysik-hub')">⬅ Tillbaka till Fysik</button>
+            <h2 style="color: var(--fysik);">👁️ Ljus & Ljud</h2>
+            <p class="subtitle">Vågor som vi ser och hör.</p>
+
+            <div class="section-box" style="border-left-color: var(--fysik)">
+                <h3>💡 Viktiga begrepp och fysikaliska fakta</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">Ljudhastighet:</span> Ljud färdas med ungefär 340 meter per sekund i luft, men ännu snabbare i fasta material (t.ex. metaller). Ljud kan inte spridas i vakuum (rymden) eftersom det inte finns några molekyler som kan vibrera.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Frekvens:</span> Mäts i Hertz (Hz). Anger hur många svängningar ljudvågen gör per sekund. Hög frekvens ger en ljus ton (pipig), låg frekvens ger en mörk ton (bas).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Ljusets brytning:</span> När ljus går från ett medium till ett annat (t.ex. från luft till vatten) ändrar det hastighet och riktning. Det är därför ett sugrör ser brutet ut i ett vattenglas.
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--fysik)">
+                <h3>📝 Övningsquiz: Ljus & Ljud</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Inom vilket frekvensomfång ligger det mänskliga örats hörselgräns?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'fys-q3')">A) 0 – 100 Hz</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'fys-q3')">B) 20 – 20 000 Hz</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'fys-q3')">C) 2 000 – 200 000 Hz</button>
+                    </div>
+                    <p class="quiz-feedback" id="fys-q3-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ============================================= -->
+        <!-- =========== KEMI UNDEROMRÅDEN =============== -->
+        <!-- ============================================= -->
+
+        <!-- 1. Atomer & Periodiska Systemet -->
+        <div id="kem-atomer" class="page">
+            <button class="btn btn-back" onclick="showPage('kemi-hub')">⬅ Tillbaka till Kemi</button>
+            <h2 style="color: var(--kemi);">⚛️ Atomer & Periodiska Systemet</h2>
+            <p class="subtitle">Allt runt omkring oss är uppbyggt av atomer.</p>
+
+            <div class="section-box" style="border-left-color: var(--kemi)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">Atomens delar:</span> En atom består av en kärna med positivt laddade <strong>protoner</strong> och neutrala <strong>neutroner</strong>. Runt kärnan kretsar negativt laddade <strong>elektroner</strong>.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Grundämne:</span> Ett ämne som enbart består av en enda sorts atomer (t.ex. rent Guld eller Syre).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Periodiska systemet:</span> En tabell där alla kända grundämnen är sorterade efter sina egenskaper och sin atomvikt.
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--kemi)">
+                <h3>📝 Övningsquiz: Atomer</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Vilken elektrisk laddning har en neutron?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'kem-q1')">A) Positiv (+)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'kem-q1')">B) Negativ (-)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'kem-q1')">C) Den är neutral (oladdad)</button>
+                    </div>
+                    <p class="quiz-feedback" id="kem-q1-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Syror, Baser & pH -->
+        <div id="kem-syror" class="page">
+            <button class="btn btn-back" onclick="showPage('kemi-hub')">⬅ Tillbaka till Kemi</button>
+            <h2 style="color: var(--kemi);">🍋 Syror, Baser & pH</h2>
+            <p class="subtitle">Kemiska egenskaper i vätskor.</p>
+
+            <div class="section-box" style="border-left-color: var(--kemi)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">pH-skalan:</span> Går från 0 till 14. pH under 7 är surt, pH 7 är neutralt (t.ex. rent vatten), och pH över 7 är basiskt.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Syra:</span> Ett ämne som avger vätejoner ($H^+$) i vattenlösningar. Exempel på starka syror är Saltsyra ($HCl$) och Svavelsyra ($H_2SO_4$).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Bas:</span> Ett ämne som tar upp vätejoner (eller avger hydroxidjoner, $OH^-$) i vattenlösningar. Exempelvis Natriumhydroxid ($NaOH$).
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Neutralisation:</span> När en syra och en bas blandas i rätt mängd tar de ut varandra och bildar salt och vatten (pH blir 7).
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--kemi)">
+                <h3>📝 Övningsquiz: pH, Syror & Baser</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Vilken jon gör en vattenlösning sur?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'kem-q2')">A) Vätejon ($H^+$)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'kem-q2')">B) Hydroxidjon ($OH^-$)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'kem-q2')">C) Kloridjon ($Cl^-$)</button>
+                    </div>
+                    <p class="quiz-feedback" id="kem-q2-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Kemiska reaktioner & Miljö -->
+        <div id="kem-miljo" class="page">
+            <button class="btn btn-back" onclick="showPage('kemi-hub')">⬅ Tillbaka till Kemi</button>
+            <h2 style="color: var(--kemi);">🌍 Kemiska reaktioner & Miljö</h2>
+            <p class="subtitle">Människans påverkan och kemiska omvandlingar.</p>
+
+            <div class="section-box" style="border-left-color: var(--kemi)">
+                <h3>💡 Viktiga begrepp att kunna</h3>
+                <div class="concept-list">
+                    <div class="concept-item">
+                        <span class="concept-title">Växthuseffekten:</span> Gaser i atmosfären (t.ex. koldioxid, metan och vattenånga) hindrar värmestrålning från att lämna jorden. Det är livsviktigt för oss, men utsläpp av mer växthusgaser gör jorden för varm.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Förbränning:</span> En kemisk reaktion där ett bränsle reagerar med syre och avger energi. Det bildas oftast koldioxid och vatten vid fullständig förbränning.
+                    </div>
+                    <div class="concept-item">
+                        <span class="concept-title">Försurning:</span> När avgaser som svaveldioxid och kväveoxider reagerar med vatten i molnen bildas surt regn som sänker pH-värdet i skogar och sjöar.
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" style="border-left-color: var(--kemi)">
+                <h3>📝 Övningsquiz: Miljökemi</h3>
+                <div class="quiz-container">
+                    <p class="quiz-question">Vilken gas bildas vid förbränning av fossila bränslen och bidrar mest till den förstärkta växthuseffekten?</p>
+                    <div class="quiz-options">
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'kem-q3')">A) Syrgas ($O_2$)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, true, 'kem-q3')">B) Koldioxid ($CO_2$)</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(this, false, 'kem-q3')">C) Kväve ($N_2$)</button>
+                    </div>
+                    <p class="quiz-feedback" id="kem-q3-feedback"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Funktion för att byta mellan olika sidor i systemet
+        function showPage(pageId) {
+            // Dölj absolut alla sidor först
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active-page');
+            });
+            
+            // Visa den begärda sidan
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active-page');
+            }
+            
+            // Scrolla upp till sidans topp för bekvämlighet
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Gå tillbaka till startsidan och återställ alla svar på quizen
+        function goHome() {
+            showPage('home-page');
+            resetAllQuizzes();
+        }
+
+        // Hantera rättning av quizfrågor separat för varje unik fråga
+        function checkQuizAnswer(selectedOption, isCorrect, questionId) {
+            // Hitta det specifika quizet baserat på svarsalternativets förälder
+            const optionsContainer = selectedOption.parentElement;
+            const allOptions = optionsContainer.querySelectorAll('.quiz-option');
+            const feedbackText = document.getElementById(questionId + '-feedback');
+
+            // Avaktivera klick på de andra knapparna när ett val har gjorts
+            allOptions.forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+                // Gör knapparna tröga/inaktiva efter val så man inte klickar runt
+                opt.style.pointerEvents = 'none';
+                opt.style.opacity = '0.7';
+            });
+
+            // Markera det valda alternativet samt visa facit
+            selectedOption.style.opacity = '1';
+            if (isCorrect) {
+                selectedOption.classList.add('correct');
+                feedbackText.innerText = "🎉 Rätt svar! Grymt jobbat!";
+                feedbackText.style.color = "var(--success)";
+            } else {
+                selectedOption.classList.add('incorrect');
+                feedbackText.innerText = "❌ Det var tyvärr fel svar. Läs igenom begreppslistan ovanför och försök igen!";
+                feedbackText.style.color = "var(--danger)";
+                
+                // Visa också det rätta alternativet i grönt i efterhand
+                allOptions.forEach(opt => {
+                    // Vi kan testa om det var rätt genom att trigga en fiktiv kontroll eller hårdkoda
+                    // men för enkelhets skull låter vi eleven se varför det blev fel genom återkoppling.
+                });
+            }
+            feedbackText.style.display = "block";
+        }
+
+        // Återställer alla quizfrågor så att man kan göra om dem nästa gång man går in
+        function resetAllQuizzes() {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+                opt.style.pointerEvents = 'auto';
+                opt.style.opacity = '1';
+            });
+
+            const feedbacks = document.querySelectorAll('.quiz-feedback');
+            feedbacks.forEach(fb => {
+                fb.style.display = 'none';
+                fb.innerText = '';
+            });
+        }
+    </script>
+</body>
+</html>

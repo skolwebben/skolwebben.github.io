@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidslinjen - Musikspelet</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'bounce-slight': 'bounce-slight 2s infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            }
+                        },
+                        'bounce-slight': {
+                            '0%, 100%': { transform: 'translateY(-5%)' },
+                            '50%': { transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom Audio Player */
+        #audio-progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+        #audio-progress { height: 100%; background: #4ade80; width: 0%; transition: width 0.1s linear; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 min-h-screen text-white overflow-x-hidden animate-gradient-x">
+
+    <!-- App Container -->
+    <div id="app" class="max-w-4xl mx-auto p-4 min-h-screen flex flex-col items-center justify-center relative">
+        <!-- Content gets rendered here by JS -->
+    </div>
+
+    <!-- Modals & Toasts Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+    <div id="modal-container" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4"></div>
+
+    <!-- Audio Element (Hidden) -->
+    <audio id="game-audio" preload="auto"></audio>
+
+    <script type="module">
+        // ==========================================
+        // 1. FIREBASE & ONLINE SETUP
+        // ==========================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Fallback for app ID if not in standard environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'tidslinjen-app';
+        let db, auth, user;
+
+        try {
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            if (firebaseConfig) {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+            }
+        } catch (e) {
+            console.warn("Firebase config inte hittad, online-läge kanske inte fungerar.");
+        }
+
+        // ==========================================
+        // 2. STATE MANAGEMENT
+        // ==========================================
+        const defaultState = {
+            screen: 'menu', // menu, local-setup, online-setup, lobby, game, result, gameover
+            mode: 'local', // local, online
+            roomCode: null,
+            hostId: null,
+            targetScore: 10,
+            category: 'mixed',
+            players: [], // { id, name, score, streak, timeline: [songObjects] }
+            deck: [],
+            turnIndex: 0,
+            activeSong: null,
+            status: 'playing', // playing, guessing-exact, revealing
+            pendingPlacementIndex: null, // Index where user wants to place the card
+            isLoading: false
+        };
+
+        let state = { ...defaultState };
+        let unsubscribeRoom = null;
+        let localPlayerId = crypto.randomUUID(); // Unique ID for this browser
+        let audioTimer = null;
+
+        // ==========================================
+        // 3. UTILS & UI HELPERS
+        // ==========================================
+        const appDiv = document.getElementById('app');
+        const toastContainer = document.getElementById('toast-container');
+        const modalContainer = document.getElementById('modal-container');
+        const gameAudio = document.getElementById('game-audio');
+
+        function showToast(msg, type = 'info') {
+            const toast = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-500' : (type === 'success' ? 'bg-green-500' : 'bg-blue-500');
+            toast.className = `${bg} text-white px-4 py-3 rounded shadow-lg opacity-0 transition-opacity duration-300 transform translate-x-10`;
+            toast.innerHTML = `<p class="font-semibold">${msg}</p>`;
+            toastContainer.appendChild(toast);
+            
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.remove('opacity-0', 'translate-x-10');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function updateState(newState, sync = true) {
+            state = { ...state, ...newState };
+            render();
+            if (state.mode === 'online' && sync && state.roomCode && state.hostId === localPlayerId) {
+                syncToFirebase();
+            }
+        }
+
+        // ==========================================
+        // 4. MUSIC DATABASE (iTunes API)
+        // ==========================================
+        const categories = {
+            '70s': { name: '70-tal', term: '1970s hit' },
+            '80s': { name: '80-tal', term: '1980s hit' },
+            '90s': { name: '90-tal', term: '1990s hit' },
+            '00s': { name: '2000-tal', term: '2000s hit' },
+            '10s': { name: '2010-tal', term: '2010s hit' },
+            'mixed': { name: 'Blandat (Alla tider)', term: 'greatest hits' },
+            'swe': { name: 'Svenskt', term: 'svensk pop' }
+        };
+
+        async function fetchSongs(categoryKey) {
+            try {
+                updateState({ isLoading: true }, false);
+                const term = categories[categoryKey].term;
+                const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=100`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                let songs = data.results
+                    .filter(s => s.previewUrl && s.releaseDate && s.trackName)
+                    .map(s => ({
+                        id: s.trackId,
+                        artist: s.artistName,
+                        title: s.trackName,
+                        year: parseInt(s.releaseDate.substring(0, 4)),
+                        audio: s.previewUrl,
+                        cover: s.artworkUrl100 ? s.artworkUrl100.replace('100x100', '300x300') : ''
+                    }));
+
+                // Shuffle array
+                songs = songs.sort(() => Math.random() - 0.5);
+                
+                // Keep only top 40 to avoid massive payloads if online
+                songs = songs.slice(0, 40);
+
+                if (songs.length < 10) throw new Error("Hittade inte tillräckligt med låtar");
+                return songs;
+            } catch (err) {
+                console.error(err);
+                showToast("Kunde inte hämta låtar. Kontrollera anslutning.", "error");
+                return null;
+            } finally {
+                updateState({ isLoading: false }, false);
+            }
+        }
+
+        // ==========================================
+        // 5. GAME LOGIC
+        // ==========================================
+        async function startNewGame() {
+            if (state.players.length === 0) {
+                showToast("Du måste lägga till spelare!", "error");
+                return;
+            }
+
+            const deck = await fetchSongs(state.category);
+            if (!deck) return;
+
+            // Deal 1 starting song to each player
+            const players = [...state.players].map(p => {
+                p.score = 0;
+                p.streak = 0;
+                p.timeline = [deck.pop()]; // Give one initial correct song
+                return p;
+            });
+
+            const activeSong = deck.pop();
+
+            updateState({
+                screen: 'game',
+                deck: deck,
+                players: players,
+                turnIndex: 0,
+                activeSong: activeSong,
+                status: 'playing'
+            });
+        }
+
+        function handlePlacementGuess(insertIndex) {
+            gameAudio.pause();
+            updateState({ pendingPlacementIndex: insertIndex, status: 'guessing-exact' });
+        }
+
+        function submitExactYear(exactYearInput) {
+            const index = state.pendingPlacementIndex;
+            const currentPlayer = state.players[state.turnIndex];
+            const song = state.activeSong;
+            const timeline = currentPlayer.timeline;
+            
+            // Validate chronological placement
+            let isPlacementCorrect = true;
+            
+            if (timeline.length > 0) {
+                if (index === 0) {
+                    // Placing at the very beginning
+                    if (song.year > timeline[0].year) isPlacementCorrect = false;
+                } else if (index === timeline.length) {
+                    // Placing at the very end
+                    if (song.year < timeline[timeline.length - 1].year) isPlacementCorrect = false;
+                } else {
+                    // Placing between two cards
+                    const prevYear = timeline[index - 1].year;
+                    const nextYear = timeline[index].year;
+                    if (song.year < prevYear || song.year > nextYear) {
+                        isPlacementCorrect = false;
+                    }
+                }
+            }
+
+            let exactCorrect = false;
+            if (exactYearInput && parseInt(exactYearInput) === song.year) {
+                exactCorrect = true;
+            }
+
+            let pointsGained = 0;
+            let currentStreak = currentPlayer.streak;
+
+            if (isPlacementCorrect) {
+                pointsGained += 1;
+                currentStreak += 1;
+                // Streak bonus: Every 3 correct in a row gives +1 extra
+                if (currentStreak >= 3 && currentStreak % 3 === 0) pointsGained += 1;
+                if (exactCorrect) pointsGained += 1; // Bonus for exact year
+                
+                // Insert into timeline
+                timeline.splice(index, 0, song);
+            } else {
+                currentStreak = 0; // Reset streak on miss
+            }
+
+            const updatedPlayers = [...state.players];
+            updatedPlayers[state.turnIndex].score += pointsGained;
+            updatedPlayers[state.turnIndex].streak = currentStreak;
+            updatedPlayers[state.turnIndex].timeline = timeline;
+
+            updateState({
+                status: 'revealing',
+                players: updatedPlayers,
+                lastResult: {
+                    correct: isPlacementCorrect,
+                    exactCorrect: exactCorrect,
+                    pointsGained: pointsGained
+                }
+            });
+        }
+
+        function continueNextTurn() {
+            const players = state.players;
+            
+            // Check win condition
+            const winner = players.find(p => p.score >= state.targetScore || p.timeline.length >= state.targetScore + 1); // +1 because start card
+            
+            if (winner) {
+                updateState({ screen: 'gameover', winner: winner });
+                return;
+            }
+
+            let nextTurn = (state.turnIndex + 1) % players.length;
+            let deck = [...state.deck];
+            
+            if (deck.length === 0) {
+                showToast("Låtarna är slut! Spelet är oavgjort.", "error");
+                updateState({ screen: 'gameover', winner: null });
+                return;
+            }
+
+            const nextSong = deck.pop();
+
+            updateState({
+                turnIndex: nextTurn,
+                activeSong: nextSong,
+                deck: deck,
+                status: 'playing',
+                pendingPlacementIndex: null,
+                lastResult: null
+            });
+        }
+
+        // ==========================================
+        // 6. ONLINE FIREBASE SYNC LOGIC
+        // ==========================================
+        async function initAuth() {
+            if (!auth) return false;
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                user = auth.currentUser;
+                return true;
+            } catch (e) {
+                console.error("Auth error", e);
+                return false;
+            }
+        }
+
+        function generateRoomCode() {
+            return Math.random().toString(36).substring(2, 6).toUpperCase();
+        }
+
+        async function createOnlineRoom() {
+            updateState({ isLoading: true }, false);
+            const authOk = await initAuth();
+            if (!authOk) {
+                showToast("Kunde inte ansluta till servern.", "error");
+                updateState({ isLoading: false }, false);
+                return;
+            }
+
+            const code = generateRoomCode();
+            const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', code);
+            
+            const initialRoomState = {
+                hostId: localPlayerId,
+                roomCode: code,
+                screen: 'lobby',
+                targetScore: state.targetScore,
+                category: state.category,
+                players: [{
+                    id: localPlayerId,
+                    name: "Host", // Can be changed later
+                    score: 0,
+                    streak: 0,
+                    timeline: []
+                }],
+                deck: [],
+                turnIndex: 0,
+                activeSong: null,
+                status: 'playing'
+            };
+
+            await setDoc(roomRef, initialRoomState);
+            
+            state.mode = 'online';
+            state.roomCode = code;
+            state.hostId = localPlayerId;
+            listenToRoom(code);
+            updateState({ isLoading: false }, false);
+        }
+
+        async function joinOnlineRoom(code) {
+            updateState({ isLoading: true }, false);
+            const authOk = await initAuth();
+            if (!authOk) return;
+
+            const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', code.toUpperCase());
+            const docSnap = await getDoc(roomRef);
+            
+            if (docSnap.exists()) {
+                state.mode = 'online';
+                state.roomCode = code.toUpperCase();
+                
+                // Add ourselves to players if not there
+                const roomData = docSnap.data();
+                if (!roomData.players.find(p => p.id === localPlayerId)) {
+                    roomData.players.push({
+                        id: localPlayerId,
+                        name: `Spelare ${roomData.players.length + 1}`,
+                        score: 0, streak: 0, timeline: []
+                    });
+                    await updateDoc(roomRef, { players: roomData.players });
+                }
+                
+                listenToRoom(state.roomCode);
+            } else {
+                showToast("Rummet hittades inte!", "error");
+            }
+            updateState({ isLoading: false }, false);
+        }
+
+        function listenToRoom(code) {
+            if (unsubscribeRoom) unsubscribeRoom();
+            const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', code);
+            
+            unsubscribeRoom = onSnapshot(roomRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // Merge remote state to local state
+                    // We don't overwrite local mode/hostId
+                    const mode = state.mode; 
+                    state = { ...state, ...data, mode: mode };
+                    render();
+                } else {
+                    showToast("Rummet har stängts.", "error");
+                    state = { ...defaultState };
+                    render();
+                }
+            }, (err) => {
+                console.error(err);
+                showToast("Kopplades bort från rummet.", "error");
+            });
+        }
+
+        async function syncToFirebase() {
+            if (state.mode === 'online' && state.roomCode) {
+                const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', state.roomCode);
+                // Clean payload
+                const payload = {
+                    screen: state.screen,
+                    targetScore: state.targetScore,
+                    category: state.category,
+                    players: state.players,
+                    deck: state.deck,
+                    turnIndex: state.turnIndex,
+                    activeSong: state.activeSong,
+                    status: state.status,
+                    lastResult: state.lastResult || null
+                };
+                try {
+                    await updateDoc(roomRef, payload);
+                } catch(e) { console.error("Sync failed", e); }
+            }
+        }
+
+        async function updateOnlinePlayerName(newName) {
+            if(state.mode !== 'online' || !state.roomCode) return;
+            const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', state.roomCode);
+            const updatedPlayers = state.players.map(p => p.id === localPlayerId ? { ...p, name: newName } : p);
+            await updateDoc(roomRef, { players: updatedPlayers });
+        }
+
+
+        // ==========================================
+        // 7. RENDER ENGINE (UI Templates)
+        // ==========================================
+        function render() {
+            if (state.isLoading) {
+                appDiv.innerHTML = `
+                    <div class="flex flex-col items-center justify-center animate-pulse">
+                        <i class="fas fa-compact-disc fa-spin text-6xl text-pink-500 mb-4"></i>
+                        <h2 class="text-2xl font-bold">Laddar låtar...</h2>
+                    </div>
+                `;
+                return;
+            }
+
+            switch (state.screen) {
+                case 'menu':
+                    appDiv.innerHTML = renderMainMenu();
+                    break;
+                case 'local-setup':
+                    appDiv.innerHTML = renderLocalSetup();
+                    break;
+                case 'online-setup':
+                    appDiv.innerHTML = renderOnlineSetup();
+                    break;
+                case 'lobby':
+                    appDiv.innerHTML = renderLobby();
+                    break;
+                case 'game':
+                    appDiv.innerHTML = renderGame();
+                    break;
+                case 'gameover':
+                    appDiv.innerHTML = renderGameOver();
+                    break;
+            }
+            
+            // Render Modals inside game state
+            if (state.screen === 'game' && state.status === 'guessing-exact') {
+                modalContainer.innerHTML = renderExactYearModal();
+                modalContainer.classList.remove('hidden');
+                modalContainer.classList.add('flex');
+            } else {
+                modalContainer.classList.add('hidden');
+                modalContainer.classList.remove('flex');
+                modalContainer.innerHTML = '';
+            }
+        }
+
+        // --- View Components ---
+
+        function renderMainMenu() {
+            return `
+                <div class="text-center animate-bounce-slight mb-10">
+                    <h1 class="text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-500 tracking-tighter drop-shadow-lg mb-2">
+                        TIDSLINJEN
+                    </h1>
+                    <p class="text-xl text-white/80 font-medium">Lyssna. Gissa året. Vinn.</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6 w-full max-w-2xl justify-center">
+                    <button data-action="goto-local" class="glass group flex-1 p-8 rounded-3xl hover:bg-white/20 transition-all text-center flex flex-col items-center gap-4 cursor-pointer">
+                        <div class="bg-blue-500 w-20 h-20 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fas fa-users text-4xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold">Spela Lokalt</h2>
+                        <p class="text-sm text-white/70">Dela på en skärm, perfekt för festen!</p>
+                    </button>
+                    
+                    <button data-action="goto-online" class="glass group flex-1 p-8 rounded-3xl hover:bg-white/20 transition-all text-center flex flex-col items-center gap-4 cursor-pointer">
+                        <div class="bg-pink-500 w-20 h-20 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fas fa-globe text-4xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold">Spela Online</h2>
+                        <p class="text-sm text-white/70">Anslut via kod från egna enheter.</p>
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderLocalSetup() {
+            const pList = state.players.map((p, i) => `
+                <div class="flex justify-between items-center bg-white/10 p-3 rounded-lg mb-2">
+                    <span class="font-bold">${p.name}</span>
+                    <button data-action="remove-player" data-idx="${i}" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+
+            const catOptions = Object.entries(categories).map(([k, v]) => 
+                `<option class="text-black" value="${k}" ${state.category === k ? 'selected' : ''}>${v.name}</option>`
+            ).join('');
+
+            return `
+                <div class="glass p-8 rounded-3xl w-full max-w-xl">
+                    <button data-action="go-back" class="text-white/60 hover:text-white mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Tillbaka</button>
+                    <h2 class="text-3xl font-bold mb-6 text-yellow-400">Lokal Setup</h2>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Lägg till spelare (max 8)</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-player-name" placeholder="Namn..." class="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 outline-none focus:border-yellow-400" onkeypress="if(event.key==='Enter') document.getElementById('btn-add-player').click()">
+                            <button id="btn-add-player" data-action="add-player" class="bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors">Lägg till</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 max-h-48 overflow-y-auto hide-scrollbar">
+                        ${pList || '<p class="text-white/50 text-center italic">Inga spelare tillagda ännu</p>'}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Kategori</label>
+                            <select id="cat-select" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 outline-none appearance-none">
+                                ${catOptions}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Poäng för vinst</label>
+                            <input type="number" id="target-score" value="${state.targetScore}" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 outline-none">
+                        </div>
+                    </div>
+
+                    <button data-action="start-game" class="w-full bg-gradient-to-r from-pink-500 to-orange-500 py-4 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50">STARTA SPELET</button>
+                </div>
+            `;
+        }
+
+        function renderOnlineSetup() {
+            return `
+                <div class="glass p-8 rounded-3xl w-full max-w-xl text-center">
+                    <button data-action="go-back" class="text-white/60 hover:text-white mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Tillbaka</button>
+                    <h2 class="text-3xl font-bold mb-8 text-pink-400">Online Multiplayer</h2>
+                    
+                    <div class="flex flex-col gap-6">
+                        <button data-action="create-room" class="bg-pink-600 hover:bg-pink-500 py-4 rounded-xl font-bold text-xl transition-colors shadow-lg">Skapa nytt rum (Host)</button>
+                        
+                        <div class="relative flex items-center py-4">
+                            <div class="flex-grow border-t border-white/20"></div>
+                            <span class="flex-shrink-0 mx-4 text-white/50">ELLER</span>
+                            <div class="flex-grow border-t border-white/20"></div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <input type="text" id="join-code" placeholder="Rumskod (t.ex. ABCD)" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 outline-none text-center text-xl font-mono uppercase tracking-widest" maxlength="4">
+                            <button data-action="join-room" class="bg-blue-600 hover:bg-blue-500 font-bold px-8 py-3 rounded-lg transition-colors">Gå med</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLobby() {
+            const isHost = state.mode === 'local' || (state.mode === 'online' && state.hostId === localPlayerId);
+            
+            const pList = state.players.map(p => `
+                <div class="flex items-center gap-3 bg-white/10 p-4 rounded-xl">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br ${p.id === localPlayerId ? 'from-green-400 to-blue-500 border-2 border-white' : 'from-gray-500 to-gray-700'} flex items-center justify-center font-bold">
+                        ${p.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span class="font-bold text-lg">${p.name} ${p.id === localPlayerId ? '(Du)' : ''}</span>
+                    ${p.id === state.hostId ? '<i class="fas fa-crown text-yellow-400 ml-auto" title="Host"></i>' : ''}
+                </div>
+            `).join('');
+
+            const catOptions = Object.entries(categories).map(([k, v]) => 
+                `<option class="text-black" value="${k}" ${state.category === k ? 'selected' : ''}>${v.name}</option>`
+            ).join('');
+
+            return `
+                <div class="glass p-8 rounded-3xl w-full max-w-2xl">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h2 class="text-3xl font-bold text-white">Lobby</h2>
+                            ${state.mode === 'online' ? `<p class="text-lg mt-2">Rumskod: <span class="bg-white/20 px-3 py-1 rounded font-mono font-bold tracking-widest">${state.roomCode}</span></p>` : ''}
+                        </div>
+                        <button data-action="leave-room" class="bg-red-500/20 text-red-300 hover:bg-red-500/40 px-4 py-2 rounded-lg transition-colors">Lämna</button>
+                    </div>
+
+                    ${state.mode === 'online' ? `
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">Ditt namn</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="my-name-input" value="${state.players.find(p=>p.id === localPlayerId)?.name || ''}" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 outline-none">
+                                <button data-action="update-name" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-semibold">Uppdatera</button>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        ${pList}
+                    </div>
+
+                    ${isHost ? `
+                        <div class="grid grid-cols-2 gap-4 mb-8 bg-black/20 p-4 rounded-xl">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Kategori</label>
+                                <select id="lobby-cat" class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 outline-none appearance-none">
+                                    ${catOptions}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Mål (poäng)</label>
+                                <input type="number" id="lobby-target" value="${state.targetScore}" class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 outline-none">
+                            </div>
+                        </div>
+                        <button data-action="start-game" class="w-full bg-gradient-to-r from-green-400 to-emerald-600 py-4 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">Starta Spelet</button>
+                    ` : `
+                        <div class="text-center p-6 bg-black/20 rounded-xl">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
+                            <p class="font-semibold text-lg">Väntar på att hosten ska starta spelet...</p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderGame() {
+            const currentPlayer = state.players[state.turnIndex];
+            const isMyTurn = state.mode === 'local' || currentPlayer.id === localPlayerId;
+            const timeline = currentPlayer.timeline;
+
+            // Header (Scores)
+            const scoresHTML = state.players.map((p, i) => `
+                <div class="flex flex-col items-center ${i === state.turnIndex ? 'bg-white/20 scale-110 shadow-lg' : 'bg-white/5 opacity-70'} px-4 py-2 rounded-xl transition-all">
+                    <span class="text-xs uppercase font-bold truncate w-16 text-center">${p.name}</span>
+                    <span class="text-xl font-black">${p.score} <span class="text-xs font-normal">/${state.targetScore}</span></span>
+                    ${p.streak >= 3 ? '<i class="fas fa-fire text-orange-400 text-xs mt-1" title="Streak Bonus!"></i>' : ''}
+                </div>
+            `).join('');
+
+            // Status Area
+            let statusArea = '';
+            if (state.status === 'playing') {
+                statusArea = `
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold mb-2">${isMyTurn ? '<span class="text-green-400">Din tur!</span>' : `${currentPlayer.name}s tur`}</h2>
+                        <div class="glass inline-block p-6 rounded-2xl relative overflow-hidden group w-full max-w-sm">
+                            <div class="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-pink-500/30 z-0"></div>
+                            <button ${!isMyTurn ? 'disabled' : ''} data-action="toggle-audio" class="relative z-10 w-20 h-20 bg-white text-pink-600 rounded-full flex items-center justify-center text-3xl shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed mx-auto mb-4">
+                                <i class="fas fa-play" id="audio-icon"></i>
+                            </button>
+                            <p class="relative z-10 font-medium">${isMyTurn ? 'Klicka för att lyssna' : 'Lyssnar...'}</p>
+                            
+                            <div id="audio-progress-container" class="relative z-10 mt-4 h-2">
+                                <div id="audio-progress"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (state.status === 'revealing' && state.lastResult) {
+                const r = state.lastResult;
+                const song = state.activeSong;
+                statusArea = `
+                    <div class="text-center mb-6 animate-fade-in">
+                        <h2 class="text-4xl font-black mb-4 ${r.correct ? 'text-green-400' : 'text-red-400'}">${r.correct ? 'RÄTT PLACERAT!' : 'FEL!'}</h2>
+                        <div class="glass p-6 rounded-2xl max-w-sm mx-auto flex flex-col items-center shadow-2xl bg-black/40">
+                            <img src="${song.cover}" class="w-48 h-48 rounded-lg shadow-lg mb-4 object-cover" alt="Omslag">
+                            <h3 class="text-2xl font-bold text-center leading-tight">${song.title}</h3>
+                            <p class="text-lg text-white/80 text-center mb-2">${song.artist}</p>
+                            <div class="bg-yellow-500 text-black px-4 py-1 rounded-full font-black text-2xl">${song.year}</div>
+                        </div>
+                        
+                        <div class="mt-4 flex flex-col items-center gap-2">
+                            <span class="text-xl font-bold text-yellow-300">+${r.pointsGained} poäng</span>
+                            ${r.exactCorrect ? '<span class="text-sm bg-purple-600 px-2 py-1 rounded">EXAKT ÅR BONUS!</span>' : ''}
+                        </div>
+
+                        ${isMyTurn || state.mode === 'local' ? `
+                            <button data-action="next-turn" class="mt-6 bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 transition-colors shadow-lg">Nästa Tur <i class="fas fa-arrow-right ml-2"></i></button>
+                        ` : '<p class="mt-6 text-white/50 italic">Väntar på att turen ska skickas vidare...</p>'}
+                    </div>
+                `;
+            }
+
+            // Timeline View (Only visible/interactive during 'playing')
+            let timelineArea = '';
+            if (state.status === 'playing') {
+                let nodes = [];
+                // First insertion point
+                nodes.push(createInsertionNode(0, isMyTurn));
+
+                // Interleave cards and insertion points
+                timeline.forEach((song, i) => {
+                    nodes.push(`
+                        <div class="glass w-full max-w-md mx-auto p-4 rounded-xl flex items-center gap-4 my-1 relative z-10 border-l-4 border-l-blue-400 shadow-md transform hover:scale-[1.01] transition-transform">
+                            <div class="bg-blue-600 font-black text-xl px-3 py-2 rounded shadow-inner">${song.year}</div>
+                            <div class="flex-1 overflow-hidden">
+                                <p class="font-bold truncate text-lg">${song.title}</p>
+                                <p class="text-sm text-white/70 truncate">${song.artist}</p>
+                            </div>
+                        </div>
+                    `);
+                    nodes.push(createInsertionNode(i + 1, isMyTurn));
+                });
+
+                timelineArea = `
+                    <div class="w-full max-w-md mx-auto relative px-2">
+                        <!-- Vertical line behind -->
+                        <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-white/10 -translate-x-1/2 rounded z-0"></div>
+                        <h3 class="text-center font-bold text-white/50 mb-4 uppercase tracking-widest text-sm">Tidslinje</h3>
+                        ${nodes.join('')}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="w-full flex flex-col flex-1 pb-20">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-2xl mb-8 overflow-x-auto hide-scrollbar gap-2">
+                        ${scoresHTML}
+                    </div>
+
+                    ${statusArea}
+                    ${timelineArea}
+                </div>
+            `;
+        }
+
+        function createInsertionNode(index, interactive) {
+            if (!interactive) return `<div class="h-6"></div>`; // spacer for non-active players
+            return `
+                <div class="flex justify-center my-1 relative z-10 group">
+                    <button data-action="place-here" data-idx="${index}" class="bg-white/10 hover:bg-green-500 border border-dashed border-white/30 hover:border-green-400 text-white/50 hover:text-white px-8 py-2 rounded-full text-sm font-bold transition-all shadow-sm hover:shadow-green-500/50">
+                        <i class="fas fa-plus mr-1"></i> Placera Här
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderExactYearModal() {
+            return `
+                <div class="bg-slate-800 border border-white/20 p-8 rounded-3xl w-full max-w-sm text-center shadow-2xl transform scale-100 animate-fade-in-up">
+                    <div class="w-16 h-16 bg-yellow-500/20 text-yellow-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Chans till bonus!</h3>
+                    <p class="text-white/70 mb-6 text-sm">Du får +1 extra poäng om du kan det exakta året. Lämna tomt om du är osäker.</p>
+                    
+                    <input type="number" id="exact-year-input" placeholder="ÅÅÅÅ" class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-4 text-center text-2xl font-bold outline-none focus:border-yellow-400 mb-6" autofocus onkeypress="if(event.key==='Enter') document.getElementById('btn-submit-exact').click()">
+                    
+                    <div class="flex gap-3">
+                        <button data-action="skip-exact" class="flex-1 bg-white/10 hover:bg-white/20 py-3 rounded-xl font-semibold transition-colors">Hoppa över</button>
+                        <button id="btn-submit-exact" data-action="submit-exact" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-black py-3 rounded-xl font-bold hover:shadow-lg transition-all">Svara</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGameOver() {
+            const winner = state.winner;
+            return `
+                <div class="text-center bg-black/30 p-10 rounded-3xl backdrop-blur-md w-full max-w-lg border border-white/10">
+                    <i class="fas fa-trophy text-6xl text-yellow-400 mb-6 animate-bounce"></i>
+                    <h1 class="text-5xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600">VINNARE!</h1>
+                    <h2 class="text-3xl font-bold mb-8">${winner ? winner.name : 'Ingen?'}</h2>
+                    
+                    <div class="bg-white/5 rounded-xl p-4 mb-8 text-left">
+                        <h3 class="font-bold text-white/50 mb-3 uppercase tracking-wider text-sm">Slutställning</h3>
+                        ${[...state.players].sort((a,b) => b.score - a.score).map((p, i) => `
+                            <div class="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+                                <span class="font-medium">${i+1}. ${p.name}</span>
+                                <span class="font-bold bg-white/10 px-3 py-1 rounded">${p.score} p</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <button data-action="go-home" class="bg-white text-black font-bold px-8 py-4 rounded-full text-lg shadow-xl hover:scale-105 transition-transform w-full">Spela Igen</button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 8. EVENT DELEGATION
+        // ==========================================
+        document.body.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action');
+
+            if (state.isLoading) return;
+
+            switch(action) {
+                case 'goto-local':
+                    updateState({ mode: 'local', screen: 'local-setup' });
+                    break;
+                case 'goto-online':
+                    updateState({ screen: 'online-setup' });
+                    break;
+                case 'go-back':
+                    updateState({ screen: 'menu', players: [] });
+                    break;
+                case 'add-player':
+                    const input = document.getElementById('new-player-name');
+                    const name = input.value.trim();
+                    if (name && state.players.length < 8) {
+                        const newPlayers = [...state.players, { id: crypto.randomUUID(), name, score: 0, streak: 0, timeline: [] }];
+                        updateState({ players: newPlayers }, false);
+                        input.value = '';
+                    }
+                    break;
+                case 'remove-player':
+                    const idx = parseInt(btn.getAttribute('data-idx'));
+                    const pList = [...state.players];
+                    pList.splice(idx, 1);
+                    updateState({ players: pList }, false);
+                    break;
+                case 'start-game':
+                    // Update settings if in setup or host lobby
+                    if (document.getElementById('cat-select')) state.category = document.getElementById('cat-select').value;
+                    if (document.getElementById('target-score')) state.targetScore = parseInt(document.getElementById('target-score').value) || 10;
+                    if (document.getElementById('lobby-cat')) state.category = document.getElementById('lobby-cat').value;
+                    if (document.getElementById('lobby-target')) state.targetScore = parseInt(document.getElementById('lobby-target').value) || 10;
+                    
+                    await startNewGame();
+                    updateState({}); // Trigger sync
+                    break;
+                case 'create-room':
+                    createOnlineRoom();
+                    break;
+                case 'join-room':
+                    const code = document.getElementById('join-code').value.trim();
+                    if (code.length === 4) joinOnlineRoom(code);
+                    else showToast("Ogiltig kod", "error");
+                    break;
+                case 'leave-room':
+                    if (unsubscribeRoom) unsubscribeRoom();
+                    updateState({ ...defaultState }, false);
+                    break;
+                case 'update-name':
+                    const myName = document.getElementById('my-name-input').value.trim();
+                    if(myName) updateOnlinePlayerName(myName);
+                    break;
+                case 'toggle-audio':
+                    if (gameAudio.src !== state.activeSong.audio) {
+                        gameAudio.src = state.activeSong.audio;
+                    }
+                    if (gameAudio.paused) {
+                        gameAudio.play();
+                        document.getElementById('audio-icon').classList.replace('fa-play', 'fa-pause');
+                    } else {
+                        gameAudio.pause();
+                        document.getElementById('audio-icon').classList.replace('fa-pause', 'fa-play');
+                    }
+                    break;
+                case 'place-here':
+                    const placeIdx = parseInt(btn.getAttribute('data-idx'));
+                    handlePlacementGuess(placeIdx);
+                    break;
+                case 'skip-exact':
+                    submitExactYear("");
+                    break;
+                case 'submit-exact':
+                    const exactVal = document.getElementById('exact-year-input').value.trim();
+                    submitExactYear(exactVal);
+                    break;
+                case 'next-turn':
+                    continueNextTurn();
+                    break;
+                case 'go-home':
+                    if (unsubscribeRoom) unsubscribeRoom();
+                    updateState({ ...defaultState, mode: 'local' }, false);
+                    break;
+            }
+        });
+
+        // Audio progress tracking logic
+        gameAudio.addEventListener('timeupdate', () => {
+            const progress = document.getElementById('audio-progress');
+            if (progress && gameAudio.duration) {
+                // Max 15 seconds for fast pace
+                const percentage = (gameAudio.currentTime / 15) * 100;
+                progress.style.width = Math.min(percentage, 100) + '%';
+                
+                if (gameAudio.currentTime >= 15) {
+                    gameAudio.pause();
+                    document.getElementById('audio-icon')?.classList.replace('fa-pause', 'fa-play');
+                }
+            }
+        });
+        gameAudio.addEventListener('ended', () => {
+            document.getElementById('audio-icon')?.classList.replace('fa-pause', 'fa-play');
+        });
+
+        // ==========================================
+        // 9. INITIAL BOOT
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stjärnhästen - Jorviks Stall & Tävlingar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            touch-action: none; /* Förhindra dubbeltryck-zoom på mobil */
+            overflow: hidden;
+            background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 100%);
+        }
+        #game-container {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        canvas {
+            display: block;
+            border-radius: 1rem;
+        }
+        /* Skapa en fin "glöd" på magiska knappar */
+        .btn-magical {
+            background: linear-gradient(45deg, #ec4899, #8b5cf6);
+            transition: all 0.3s ease;
+        }
+        .btn-magical:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(236, 72, 153, 0.4);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen font-sans p-4">
+
+    <!-- Toppmeny och Statistik -->
+    <div class="w-full max-w-4xl flex justify-between items-center mb-4 px-2">
+        <div>
+            <h1 class="text-4xl font-black text-white tracking-tight drop-shadow-md font-serif">STJÄRNHÄSTEN ✨</h1>
+            <p class="text-pink-100 text-sm font-semibold tracking-wide drop-shadow-sm">Välj din häst, gren & rid ut på äventyr!</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <!-- Musik-kontroll -->
+            <button id="musicToggleBtn" onclick="toggleMusic()" class="bg-white/95 px-4 py-2 rounded-2xl shadow-lg border border-pink-200 text-sm font-bold text-pink-600 transition-all hover:bg-pink-50 active:scale-95">
+                🔊 Musik: På
+            </button>
+            <div class="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-lg border border-pink-200 text-right">
+                <p class="text-gray-500 text-xs uppercase tracking-wider font-bold">Bästa poäng: <span id="highScore" class="text-pink-600">0</span></p>
+                <p class="text-2xl font-black text-gray-800">Poäng: <span id="score" class="text-pink-600">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Huvudbehållare för Spelet -->
+    <div id="game-container" class="w-full max-w-4xl relative bg-white rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+        
+        <!-- Spelytan (Canvas) -->
+        <canvas id="gameCanvas" width="800" height="400" class="w-full aspect-[2/1]"></canvas>
+
+        <!-- STALL & MENY (Startskärm) -->
+        <div id="lobbyScreen" class="absolute inset-0 bg-gradient-to-br from-pink-50 via-white to-purple-50 flex flex-col justify-between p-6 z-10 overflow-y-auto">
+            
+            <div class="text-center mb-2">
+                <h2 class="text-2xl font-extrabold text-gray-800">Mitt Häststall & Ridklubb 🐎</h2>
+                <p class="text-gray-500 text-xs">Välj häst, tävlingsbana och disciplin inför dagens ritt</p>
+            </div>
+
+            <!-- VAL AV GREN -->
+            <div class="mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-pink-600 mb-2">1. Välj Disciplin</h3>
+                <div id="disciplineSelector" class="grid grid-cols-2 gap-4">
+                    <!-- Banhoppning -->
+                    <button onclick="selectDiscipline('jumping')" id="discipline-jumping" class="py-3 px-4 rounded-xl border-2 border-pink-500 bg-pink-100 text-pink-900 font-extrabold text-sm transition-all flex items-center justify-center gap-2">
+                        <span>🚧</span> Banhoppning (Hoppa hinder)
+                    </button>
+                    <!-- Dressyr -->
+                    <button onclick="selectDiscipline('dressage')" id="discipline-dressage" class="py-3 px-4 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-sm transition-all flex items-center justify-center gap-2 hover:border-pink-300">
+                        <span>🎀</span> Dressyrturnering (Rytmspel)
+                    </button>
+                </div>
+            </div>
+
+            <!-- VAL AV HÄST -->
+            <div class="mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-pink-600 mb-2">2. Välj din springare</h3>
+                <div id="horseSelector" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Häst 1 -->
+                    <div onclick="selectHorse(0)" id="horse-card-0" class="cursor-pointer border-2 border-pink-400 bg-pink-50/50 p-3 rounded-xl transition-all duration-200 transform hover:scale-[1.01]">
+                        <div class="flex justify-between items-center">
+                            <span class="text-3xl">🐎</span>
+                            <span class="bg-pink-100 text-pink-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Standard</span>
+                        </div>
+                        <h4 class="font-bold text-gray-800 mt-1 text-base">Gullan</h4>
+                        <p class="text-gray-500 text-[11px] leading-tight">Stabil och trygg. Utmärkt rytmkänsla i dressyren!</p>
+                        <div class="mt-2 text-[10px] space-y-0.5">
+                            <div class="flex justify-between"><span>Fart/Takt:</span> <span class="font-bold text-pink-600">⭐⭐⭐</span></div>
+                            <div class="flex justify-between"><span>Smidighet:</span> <span class="font-bold text-pink-600">⭐⭐⭐</span></div>
+                        </div>
+                    </div>
+                    <!-- Häst 2 -->
+                    <div onclick="selectHorse(1)" id="horse-card-1" class="cursor-pointer border-2 border-gray-200 bg-white p-3 rounded-xl transition-all duration-200 transform hover:scale-[1.01]">
+                        <div class="flex justify-between items-center">
+                            <span class="text-3xl">🦄</span>
+                            <span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Magisk</span>
+                        </div>
+                        <h4 class="font-bold text-gray-800 mt-1 text-base">Stjärnvind</h4>
+                        <p class="text-gray-500 text-[11px] leading-tight">Fjäderlätt galopp. Svävar länge och rör sig graciöst.</p>
+                        <div class="mt-2 text-[10px] space-y-0.5">
+                            <div class="flex justify-between"><span>Fart/Takt:</span> <span class="font-bold text-purple-600">⭐⭐</span></div>
+                            <div class="flex justify-between"><span>Smidighet:</span> <span class="font-bold text-purple-600">⭐⭐⭐⭐⭐</span></div>
+                        </div>
+                    </div>
+                    <!-- Häst 3 -->
+                    <div onclick="selectHorse(2)" id="horse-card-2" class="cursor-pointer border-2 border-gray-200 bg-white p-3 rounded-xl transition-all duration-200 transform hover:scale-[1.01]">
+                        <div class="flex justify-between items-center">
+                            <span class="text-3xl">🦓</span>
+                            <span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Snabb</span>
+                        </div>
+                        <h4 class="font-bold text-gray-800 mt-1 text-base">Blixten</h4>
+                        <p class="text-gray-500 text-[11px] leading-tight">En racer-ponny! Väldigt snabb takt i dressyrstegen.</p>
+                        <div class="mt-2 text-[10px] space-y-0.5">
+                            <div class="flex justify-between"><span>Fart/Takt:</span> <span class="font-bold text-blue-600">⭐⭐⭐⭐⭐</span></div>
+                            <div class="flex justify-between"><span>Smidighet:</span> <span class="font-bold text-blue-600">⭐⭐</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VAL AV NIVÅ -->
+            <div class="mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-pink-600 mb-2">3. Välj Tävlingsplats</h3>
+                <div id="levelSelector" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <!-- Nivå 1 -->
+                    <button onclick="selectLevel(0)" id="level-btn-0" class="py-2.5 px-4 rounded-xl border-2 border-pink-500 bg-pink-100 text-pink-900 font-bold text-xs transition-all">
+                        🌾 Jorviks Ängar<br><span class="text-[10px] font-normal text-pink-700">Lätt - Jämnt tempo</span>
+                    </button>
+                    <!-- Nivå 2 -->
+                    <button onclick="selectLevel(1)" id="level-btn-1" class="py-2.5 px-4 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs transition-all hover:border-pink-300">
+                        🍁 Gyllenåsen<br><span class="text-[10px] font-normal text-gray-500">Mellan - Snabba takter</span>
+                    </button>
+                    <!-- Nivå 3 -->
+                    <button onclick="selectLevel(2)" id="level-btn-2" class="py-2.5 px-4 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs transition-all hover:border-pink-300">
+                        ❄️ Vinterdalen<br><span class="text-[10px] font-normal text-gray-500">Svårt - Komplicerade mönster</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Start-knapp -->
+            <div class="text-center mt-2">
+                <button id="startBtn" class="w-full md:w-auto px-12 py-3.5 rounded-full text-white font-extrabold text-lg shadow-xl btn-magical transform transition-transform active:scale-95">
+                    Sitt upp och Rid! 🏇
+                </button>
+                <p id="instructionText" class="text-gray-400 text-[11px] mt-2">Tryck på MELLANSLAG, PILARNA eller på knapparna för att spela</p>
+            </div>
+        </div>
+
+        <!-- GAME OVER SKÄRM -->
+        <div id="gameOverScreen" class="absolute inset-0 bg-gray-950/90 backdrop-blur-md flex flex-col items-center justify-center hidden z-20">
+            <span id="gameOverEmoji" class="text-7xl mb-4 animate-bounce">🥕</span>
+            <h2 id="gameOverTitle" class="text-4xl font-black text-white mb-2 tracking-tight">Klara för idag!</h2>
+            <p id="gameOverText" class="text-gray-400 text-center max-w-sm mb-6 px-4">
+                Hästen blev lite trött efter att ha missat hindret. Ge den ett äpple och försök igen!
+            </p>
+            <div class="bg-white/10 p-4 rounded-2xl mb-8 text-center min-w-[200px]">
+                <p class="text-gray-400 text-xs uppercase font-bold tracking-widest">Dina poäng</p>
+                <p id="finalScore" class="text-5xl font-black text-pink-400">0</p>
+            </div>
+            <div class="flex gap-4">
+                <button id="lobbyBtn" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-full font-bold transition-all border border-gray-700">
+                    Till Stallet 🏠
+                </button>
+                <button id="restartBtn" class="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-full font-extrabold shadow-lg shadow-pink-500/30 transition-all transform active:scale-95">
+                    Spela Igen 🔁
+                </button>
+            </div>
+        </div>
+
+        <!-- Touch-kontroller på skärmen (för mobilspel) -->
+        <div id="touchControls" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-4 z-10 hidden">
+            <button onpointerdown="triggerTouchInput('LEFT')" class="w-14 h-14 bg-white/20 active:bg-white/40 border border-white/30 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-lg backdrop-blur-sm select-none">⬅️</button>
+            <button onpointerdown="triggerTouchInput('UP')" class="w-14 h-14 bg-white/20 active:bg-white/40 border border-white/30 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-lg backdrop-blur-sm select-none">⬆️</button>
+            <button onpointerdown="triggerTouchInput('DOWN')" class="w-14 h-14 bg-white/20 active:bg-white/40 border border-white/30 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-lg backdrop-blur-sm select-none">⬇️</button>
+            <button onpointerdown="triggerTouchInput('RIGHT')" class="w-14 h-14 bg-white/20 active:bg-white/40 border border-white/30 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-lg backdrop-blur-sm select-none">➡️</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // UI Element
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('highScore');
+        const lobbyScreen = document.getElementById('lobbyScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const lobbyBtn = document.getElementById('lobbyBtn');
+        const finalScoreElement = document.getElementById('finalScore');
+        const touchControls = document.getElementById('touchControls');
+        const gameOverEmoji = document.getElementById('gameOverEmoji');
+        const gameOverTitle = document.getElementById('gameOverTitle');
+        const gameOverText = document.getElementById('gameOverText');
+        const instructionText = document.getElementById('instructionText');
+        const musicToggleBtn = document.getElementById('musicToggleBtn');
+
+        // Audio Context för ljudeffekter & musik (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Musiksystem variabler
+        let isMusicOn = true;
+        let isMusicPlaying = false;
+        let nextNoteTime = 0.0;
+        let beatCount = 0;
+        const lookahead = 25.0; // millisekunder
+        const scheduleAheadTime = 0.1; // sekunder
+        let musicTimerID;
+        let musicTempo = 115.0; // Slumpas/Anpassas efter bana
+
+        function toggleMusic() {
+            isMusicOn = !isMusicOn;
+            if (isMusicOn) {
+                musicToggleBtn.innerText = "🔊 Musik: På";
+                musicToggleBtn.classList.remove('text-gray-400', 'border-gray-300');
+                musicToggleBtn.classList.add('text-pink-600', 'border-pink-200');
+                if (isPlaying) {
+                    startMusic();
+                }
+            } else {
+                musicToggleBtn.innerText = "🔇 Musik: Av";
+                musicToggleBtn.classList.add('text-gray-400', 'border-gray-300');
+                musicToggleBtn.classList.remove('text-pink-600', 'border-pink-200');
+                stopMusic();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'jump') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.15);
+                } else if (type === 'apple' || type === 'dressagePerfect') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(780, audioCtx.currentTime + 0.08);
+                    osc.frequency.setValueAtTime(1040, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'dressageGood') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(660, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'crash') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                } else if (type === 'dressageMiss') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(110, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(90, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                }
+            } catch (err) {
+                console.log("Kunde inte spela upp ljud: ", err);
+            }
+        }
+
+        // --- MUSIKSYNTENS SEKVENSER ---
+        function playMusicTone(freq, time, duration, type, vol) {
+            if (!isMusicOn) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, time);
+                
+                // Mjuk insvängning och utsvängning så det låter behagligt
+                gainNode.gain.setValueAtTime(0, time);
+                gainNode.gain.linearRampToValueAtTime(vol, time + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, time + duration - 0.01);
+                
+                osc.start(time);
+                osc.stop(time + duration);
+            } catch (e) {
+                console.log("Fel i syntmusikspelaren: ", e);
+            }
+        }
+
+        function scheduleNote(beatNumber, time) {
+            // Skapa olika melodier baserat på vald disciplin
+            if (selectedDiscipline === 'jumping') {
+                // --- BANHOPPNINGSMUSIK (Snabb, glad galopp i 4/4) ---
+                const step = beatNumber % 16;
+                const secondsPerBeat = 60.0 / musicTempo;
+                const noteLength = 0.25 * secondsPerBeat; // 16-delsnot
+
+                // Basslinga på bastonerna (Gullan-vibe)
+                if (step % 4 === 0) {
+                    const bassProgression = [110.00, 110.00, 130.81, 130.81, 146.83, 146.83, 164.81, 196.00]; // A2, C3, D3, E3, G3
+                    const bassFreq = bassProgression[Math.floor(step / 2) % bassProgression.length];
+                    playMusicTone(bassFreq, time, noteLength * 2.5, 'triangle', 0.06);
+                }
+
+                // Glad diskantmelodi i pentatonisk skala
+                if (step % 2 === 0) {
+                    // Melodimönster
+                    const melodyNotes = [329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00]; // E4, G4, A4, C5, D5, E5, G5, A5
+                    // Enkel algoritmisk melodi
+                    const noteIndex = (step * 3 + (selectedLevelIndex * 2)) % melodyNotes.length;
+                    const melodyFreq = melodyNotes[noteIndex];
+                    
+                    // Slumpa lite rytmvariation
+                    if (step % 8 !== 6) {
+                        playMusicTone(melodyFreq, time, noteLength * 1.5, 'sine', 0.03);
+                    }
+                }
+            } else {
+                // --- DRESSYRMUSIK (Vacker, elegant waltz i 3/4-takt) ---
+                const step = beatNumber % 12; // 12 steg motsvarar 4 takter av 3 slag
+                const secondsPerBeat = 60.0 / musicTempo;
+                const noteLength = 0.5 * secondsPerBeat; // Halvslag
+
+                // Takt 1: BASSLAG på slag 1
+                if (step % 3 === 0) {
+                    // Gå ner i klangfull djup baston
+                    const bassNotes = [130.81, 146.83, 164.81, 196.00]; // C3, D3, E3, G3
+                    const bassFreq = bassNotes[Math.floor(step / 3) % bassNotes.length];
+                    playMusicTone(bassFreq, time, noteLength * 2, 'triangle', 0.08);
+                } else {
+                    // Takt 2 & 3: Lätta ackordslag (efterslag) på slag 2 och 3
+                    const chordNotes = [261.63, 329.63, 392.00]; // C-ackord harmonier (C4, E4, G4)
+                    chordNotes.forEach(f => {
+                        playMusicTone(f, time, noteLength * 0.8, 'sine', 0.02);
+                    });
+                }
+
+                // Graceful dressyrmelodi på varannan takt
+                if (step % 6 === 0) {
+                    const dressMelody = [392.00, 440.00, 523.25, 587.33, 659.25, 493.88]; // G4, A4, C5, D5, E5, B4
+                    const note = dressMelody[Math.floor(step / 6) % dressMelody.length];
+                    playMusicTone(note, time, noteLength * 1.8, 'sine', 0.04);
+                }
+            }
+        }
+
+        function nextMusicNote() {
+            const secondsPerBeat = 60.0 / musicTempo;
+            nextNoteTime += 0.25 * secondsPerBeat; // Fortskrid med en sextondels-takt
+            beatCount = (beatCount + 1) % 48; // Loopa mönstret
+        }
+
+        function musicScheduler() {
+            while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
+                scheduleNote(beatCount, nextNoteTime);
+                nextMusicNote();
+            }
+            musicTimerID = setTimeout(musicScheduler, lookahead);
+        }
+
+        function startMusic() {
+            if (!isMusicOn || isMusicPlaying) return;
+            isMusicPlaying = true;
+            nextNoteTime = audioCtx.currentTime;
+            beatCount = 0;
+            musicScheduler();
+        }
+
+        function stopMusic() {
+            isMusicPlaying = false;
+            clearTimeout(musicTimerID);
+        }
+
+
+        // --- INSTÄLLNINGAR FÖR HÄSTAR ---
+        const HORSES = [
+            { name: "Gullan", emoji: "🐎", jumpPower: -11.5, gravity: 0.55, speedBonus: 0, color: "#f472b6" },
+            { name: "Stjärnvind", emoji: "🦄", jumpPower: -14.5, gravity: 0.5, speedBonus: -0.5, color: "#a78bfa" },
+            { name: "Blixten", emoji: "🦓", jumpPower: -10, gravity: 0.6, speedBonus: 2.0, color: "#60a5fa" }
+        ];
+
+        // --- INSTÄLLNINGAR FÖR NIVÅER ---
+        const LEVELS = [
+            {
+                name: "Jorviks Ängar",
+                baseSpeed: 5,
+                skyColor: "#bae6fd",
+                groundColor: "#4ade80",
+                groundDetailColor: "#22c55e",
+                obstacleEmoji: "🪵",
+                obstacleType: "wooden",
+                particleEmoji: "🌸",
+                fog: false,
+                dressageInterval: 120, // Hur ofta noter skapas i dressyren
+                tempo: 110 // Musiktempo (BPM)
+            },
+            {
+                name: "Gyllenåsen",
+                baseSpeed: 7,
+                skyColor: "#ffedd5",
+                groundColor: "#f97316",
+                groundDetailColor: "#ea580c",
+                obstacleEmoji: "🪵",
+                obstacleType: "autumn",
+                particleEmoji: "🍁",
+                fog: false,
+                dressageInterval: 90,
+                tempo: 125
+            },
+            {
+                name: "Vinterdalen",
+                baseSpeed: 9,
+                skyColor: "#e2e8f0",
+                groundColor: "#f1f5f9",
+                groundDetailColor: "#cbd5e1",
+                obstacleEmoji: "🧊",
+                obstacleType: "ice",
+                particleEmoji: "❄️",
+                fog: true,
+                dressageInterval: 70,
+                tempo: 140
+            }
+        ];
+
+        // Speltillstånd / Globala variabler
+        let selectedHorseIndex = 0;
+        let selectedLevelIndex = 0;
+        let selectedDiscipline = 'jumping'; // 'jumping' eller 'dressage'
+
+        let frames = 0;
+        let score = 0;
+        let highScore = localStorage.getItem('starhorse_v2_highscore') || 0;
+        let gameSpeed = 5;
+        let isPlaying = false;
+        let animationId;
+
+        // Dressyr-specifik data
+        let dressageNotes = [];
+        let dressageFeedbackText = "";
+        let dressageFeedbackColor = "white";
+        let dressageFeedbackTimer = 0;
+        let dressageCombo = 0;
+        let dressageLives = 3; // Man tål 3 missar i dressyren
+        const targetX = 180; // Koordinat för träffzonen
+        const dressageLetters = ["A", "F", "B", "M", "C", "H", "E", "K"]; // Klassiska dressyrbokstäver
+
+        highScoreElement.innerText = highScore;
+
+        const groundHeight = 60;
+        const groundY = canvas.height - groundHeight;
+
+        // --- VAL AV DISCIPLIN, HÄST OCH NIVÅ ---
+        function selectDiscipline(discipline) {
+            selectedDiscipline = discipline;
+            const jumpingBtn = document.getElementById('discipline-jumping');
+            const dressageBtn = document.getElementById('discipline-dressage');
+
+            if (discipline === 'jumping') {
+                jumpingBtn.className = "py-3 px-4 rounded-xl border-2 border-pink-500 bg-pink-100 text-pink-900 font-extrabold text-sm transition-all flex items-center justify-center gap-2";
+                dressageBtn.className = "py-3 px-4 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-sm transition-all flex items-center justify-center gap-2 hover:border-pink-300";
+                instructionText.innerText = "Tryck på MELLANSLAG, PIL UPP eller på skärmen för att hoppa";
+                touchControls.classList.add('hidden');
+            } else {
+                dressageBtn.className = "py-3 px-4 rounded-xl border-2 border-pink-500 bg-pink-100 text-pink-900 font-extrabold text-sm transition-all flex items-center justify-center gap-2";
+                jumpingBtn.className = "py-3 px-4 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-sm transition-all flex items-center justify-center gap-2 hover:border-pink-300";
+                instructionText.innerText = "Matcha pilarna (VÄNSTER, UPP, NER, HÖGER) i takt för att dansa!";
+                touchControls.classList.remove('hidden');
+            }
+            playSound('apple');
+        }
+
+        function selectHorse(index) {
+            selectedHorseIndex = index;
+            for (let i = 0; i < HORSES.length; i++) {
+                const card = document.getElementById(`horse-card-${i}`);
+                if (i === index) {
+                    card.classList.add('border-pink-400', 'bg-pink-50/50');
+                    card.classList.remove('border-gray-200', 'bg-white');
+                } else {
+                    card.classList.remove('border-pink-400', 'bg-pink-50/50');
+                    card.classList.add('border-gray-200', 'bg-white');
+                }
+            }
+            playSound('apple');
+        }
+
+        function selectLevel(index) {
+            selectedLevelIndex = index;
+            for (let i = 0; i < LEVELS.length; i++) {
+                const btn = document.getElementById(`level-btn-${i}`);
+                if (i === index) {
+                    btn.className = "py-2.5 px-4 rounded-xl border-2 border-pink-500 bg-pink-100 text-pink-900 font-bold text-xs transition-all";
+                } else {
+                    btn.className = "py-2.5 px-4 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs transition-all hover:border-pink-300";
+                }
+            }
+            playSound('jump');
+        }
+
+        // --- SPELOBJEKT: HÄSTEN ---
+        const horse = {
+            x: 120,
+            y: groundY - 50,
+            width: 50,
+            height: 50,
+            dy: 0,
+            jumpPower: -12,
+            gravity: 0.6,
+            grounded: false,
+            emoji: "🐎",
+            rotation: 0,
+            yOffset: 0, // Används för dressyrsteg-animationer
+            xOffset: 0,
+            
+            draw() {
+                ctx.save();
+                // Flytta till hästens mittpunkt inklusive dressyrstegs-offset
+                ctx.translate(this.x + this.width / 2 + this.xOffset, this.y + this.height / 2 + this.yOffset);
+                ctx.rotate(this.rotation);
+                
+                ctx.font = "52px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(this.emoji, 0, 0);
+                
+                ctx.restore();
+            },
+            
+            update() {
+                const stats = HORSES[selectedHorseIndex];
+                this.emoji = stats.emoji;
+
+                if (selectedDiscipline === 'jumping') {
+                    // Klassisk hopp-fysik
+                    this.gravity = stats.gravity;
+                    this.jumpPower = stats.jumpPower;
+
+                    this.dy += this.gravity;
+                    this.y += this.dy;
+
+                    if (this.y + this.height >= groundY) {
+                        this.y = groundY - this.height;
+                        this.dy = 0;
+                        this.grounded = true;
+                        this.rotation = 0;
+                    } else {
+                        this.grounded = false;
+                        this.rotation = this.dy * 0.03;
+                    }
+                } else {
+                    // Dressyrläge: Hästen rör sig graciöst i trav/galopp på plats
+                    this.y = groundY - this.height;
+                    this.grounded = true;
+
+                    // Skapa en elegant guppande travrytm
+                    const trotCycle = frames * 0.15;
+                    this.yOffset = Math.sin(trotCycle) * 6;
+                    this.rotation = Math.cos(trotCycle) * 0.04;
+
+                    // Minska eventuella utfall (offsets) från perfekta steg tillbaka till 0
+                    this.xOffset *= 0.9;
+                }
+
+                this.draw();
+            },
+            
+            jump() {
+                if (this.grounded && selectedDiscipline === 'jumping') {
+                    this.dy = this.jumpPower;
+                    this.grounded = false;
+                    playSound('jump');
+                }
+            },
+
+            // Unika dressyrrörelser beroende på riktning
+            performDressageMove(dir) {
+                if (dir === 'UP') {
+                    this.rotation = -0.3; // Stegra uppåt
+                    this.yOffset = -20;
+                } else if (dir === 'DOWN') {
+                    this.rotation = 0.15; // Elegant bugning
+                    this.yOffset = 10;
+                } else if (dir === 'LEFT') {
+                    this.xOffset = -25; // Snabbt sidosteg bakåt
+                } else if (dir === 'RIGHT') {
+                    this.xOffset = 25; // Sladdsteg framåt
+                }
+            }
+        };
+
+        // Arrays för hinder, föremål och dekorativa partiklar
+        let obstacles = [];
+        let collectibles = [];
+        let particles = [];
+
+        // --- KLASS: PARTIKLAR (Dekorativt fallande effekter / glitter) ---
+        class Particle {
+            constructor(emoji, x, y, options = {}) {
+                this.x = x !== undefined ? x : Math.random() * canvas.width;
+                this.y = y !== undefined ? y : -20;
+                this.size = Math.random() * 10 + 15;
+                this.emoji = emoji;
+                this.speedY = options.speedY || Math.random() * 2 + 1;
+                this.speedX = options.speedX || (Math.random() - 0.5) * 1.5 - (gameSpeed * 0.2);
+            }
+
+            draw() {
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillText(this.emoji, this.x, this.y);
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.x < -20 && !this.fromSource) this.x = canvas.width + 20;
+                this.draw();
+            }
+        }
+
+        // --- KLASS: HINDER (Endast för Banhoppning) ---
+        class Obstacle {
+            constructor(level) {
+                this.width = 24;
+                this.height = Math.random() * 35 + 40;
+                this.x = canvas.width;
+                this.y = groundY - this.height;
+                this.type = level.obstacleType;
+            }
+
+            draw() {
+                if (this.type === "wooden") {
+                    ctx.fillStyle = '#b45309';
+                    ctx.fillRect(this.x, this.y, 6, this.height);
+                    ctx.fillRect(this.x + this.width - 6, this.y, 6, this.height);
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(this.x - 4, this.y + 12, this.width + 8, 8);
+                    ctx.fillRect(this.x - 4, this.y + 32, this.width + 8, 8);
+                    
+                    ctx.fillStyle = '#dc2626';
+                    ctx.fillRect(this.x + 4, this.y + 12, 6, 8);
+                    ctx.fillRect(this.x + 14, this.y + 32, 6, 8);
+                } 
+                else if (this.type === "autumn") {
+                    ctx.font = "32px Arial";
+                    ctx.fillText("🪵", this.x - 5, this.y + 24);
+                    ctx.fillText("🌾", this.x + 3, this.y + this.height - 5);
+                } 
+                else if (this.type === "ice") {
+                    ctx.fillStyle = '#93c5fd';
+                    ctx.strokeStyle = '#3b82f6';
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                    ctx.strokeRect(this.x, this.y, this.width, this.height);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(this.x - 2, this.y - 2, this.width + 4, 6);
+                }
+            }
+
+            update() {
+                this.x -= gameSpeed;
+                this.draw();
+            }
+        }
+
+        // --- KLASS: ÄPPLEN (Endast för Banhoppning) ---
+        class Collectible {
+            constructor() {
+                this.width = 30;
+                this.height = 30;
+                this.x = canvas.width;
+                this.y = Math.random() > 0.4 ? groundY - 45 : groundY - 125;
+                this.collected = false;
+            }
+
+            draw() {
+                if (this.collected) return;
+                ctx.font = "32px Arial";
+                ctx.fillText("🍎", this.x, this.y + 25);
+            }
+
+            update() {
+                if (!this.collected) {
+                    this.x -= gameSpeed;
+                    this.draw();
+                }
+            }
+        }
+
+        // --- KLASS: DRESSYRPIL (Endast för Dressyrturnering) ---
+        class DressageNote {
+            constructor(dir, speed) {
+                this.direction = dir; // 'UP', 'DOWN', 'LEFT', 'RIGHT'
+                this.x = canvas.width;
+                this.y = 80; // Raden där pilarna rinner fram
+                this.speed = speed;
+                this.hit = false;
+                this.missed = false;
+                
+                // Koppla riktning till emoji
+                const arrowEmojis = { 'LEFT': "⬅️", 'UP': "⬆️", 'DOWN': "⬇️", 'RIGHT': "➡️" };
+                this.emoji = arrowEmojis[dir];
+            }
+
+            draw() {
+                if (this.hit) return;
+                ctx.save();
+                ctx.font = "36px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(this.emoji, this.x, this.y);
+                ctx.restore();
+            }
+
+            update() {
+                this.x -= this.speed;
+                this.draw();
+
+                // Kolla om pilen passerat träffzonen utan att man tryckt
+                if (!this.hit && !this.missed && this.x < targetX - 45) {
+                    this.missed = true;
+                    handleDressageMiss();
+                }
+            }
+        }
+
+        // --- SPELLOGIK FÖR DRESSYR ---
+        function handleDressage() {
+            const level = LEVELS[selectedLevelIndex];
+
+            // 1. Spawna dressyrpilar rytmiskt
+            if (frames % level.dressageInterval === 0) {
+                const directions = ['LEFT', 'UP', 'DOWN', 'RIGHT'];
+                const randomDir = directions[Math.floor(Math.random() * directions.length)];
+                dressageNotes.push(new DressageNote(randomDir, gameSpeed));
+            }
+
+            // 2. Uppdatera och rita pilar
+            for (let i = 0; i < dressageNotes.length; i++) {
+                const note = dressageNotes[i];
+                note.update();
+
+                // Ta bort noter som åkt långt utanför skärmen till vänster
+                if (note.x < 50) {
+                    dressageNotes.splice(i, 1);
+                    i--;
+                }
+            }
+
+            // 3. Rita ut dressyrmatchen-målet (Träffzonen)
+            drawDressageTargetZone();
+
+            // 4. Rita dressyrbokstäver på ridbanans staket
+            drawDressageArenaLetters();
+
+            // 5. Rita dressyrpoäng och liven (livlinor) kvar
+            drawDressageUI();
+        }
+
+        // Rita den runda cirkeln där pilarna ska matchas
+        function drawDressageTargetZone() {
+            // Skuggad bakgrundscirkel för målet
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(targetX, 80, 26, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+            ctx.lineWidth = 3;
+            ctx.fill();
+            ctx.stroke();
+
+            // Söt rosa rosett eller stjärna som markerar mitten
+            ctx.font = "16px Arial";
+            ctx.fillText("🎀", targetX - 8, 85);
+            ctx.restore();
+        }
+
+        // Rita traditionella dressyrbokstäver (A, K, E, H, C etc.) längs staketet
+        function drawDressageArenaLetters() {
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.font = "bold 14px Arial";
+            
+            for (let i = 0; i < dressageLetters.length; i++) {
+                let x = ((i * 140) - (frames * gameSpeed * 0.3)) % (canvas.width + 140);
+                if (x < -20) x += canvas.width + 140;
+                
+                // Ritas precis ovanför marken
+                ctx.fillText(`[ ${dressageLetters[i]} ]`, x, groundY - 22);
+            }
+        }
+
+        // UI för liven i dressyr (Hästskor eller Hjärten)
+        function drawDressageUI() {
+            ctx.save();
+            ctx.fillStyle = "white";
+            ctx.font = "bold 16px Arial";
+            ctx.fillText("HÄSTENS FOKUS:", 30, 40);
+            
+            // Rita liv-symboler
+            let livesStr = "";
+            for (let i = 0; i < 3; i++) {
+                livesStr += i < dressageLives ? "🐴" : "💤";
+            }
+            ctx.font = "24px Arial";
+            ctx.fillText(livesStr, 30, 70);
+
+            // Visa feedback i mitten av skärmen (t.ex. "Perfekt! ✨")
+            if (dressageFeedbackTimer > 0) {
+                ctx.fillStyle = dressageFeedbackColor;
+                ctx.font = "extrabold 32px sans-serif";
+                ctx.textAlign = "center";
+                ctx.shadowColor = "black";
+                ctx.shadowBlur = 4;
+                ctx.fillText(dressageFeedbackText, canvas.width / 2, 180);
+                
+                // Combo text under feedbacken
+                if (dressageCombo > 1) {
+                    ctx.font = "bold 20px sans-serif";
+                    ctx.fillStyle = "#fbcfe8";
+                    ctx.fillText(`${dressageCombo} Steg i Rad! 🌟`, canvas.width / 2, 215);
+                }
+                dressageFeedbackTimer--;
+            }
+            ctx.restore();
+        }
+
+        // Hantera indata för dressyr
+        function triggerDressageInput(dir) {
+            if (!isPlaying || selectedDiscipline !== 'dressage') return;
+
+            let hitProcessed = false;
+
+            // Hitta den närmsta pilen i banan som inte har träffats än
+            for (let i = 0; i < dressageNotes.length; i++) {
+                const note = dressageNotes[i];
+                if (!note.hit && !note.missed) {
+                    // Beräkna avstånd till målzonen (targetX = 180)
+                    const distance = Math.abs(note.x - targetX);
+
+                    // Om den är tillräckligt nära för att räknas
+                    if (distance < 50) {
+                        hitProcessed = true;
+                        
+                        // Kolla om rätt knapp trycktes
+                        if (note.direction === dir) {
+                            note.hit = true;
+                            
+                            // Räkna ut träffens precision
+                            if (distance < 16) {
+                                // PERFEKT
+                                score += 100;
+                                dressageCombo++;
+                                dressageFeedbackText = "PERFEKT! ✨";
+                                dressageFeedbackColor = "#f472b6"; // Rosa glöd
+                                playSound('dressagePerfect');
+                                triggerStepGlitter(note.direction);
+                            } else {
+                                // BRA
+                                score += 50;
+                                dressageCombo++;
+                                dressageFeedbackText = "Bra ritt! 👍";
+                                dressageFeedbackColor = "#fde047"; // Gul
+                                playSound('dressageGood');
+                            }
+                            
+                            // Animera hästens dressyrsteg
+                            horse.performDressageMove(dir);
+                            scoreElement.innerText = score;
+                            dressageFeedbackTimer = 40;
+                        } else {
+                            // Fel pil tryckt
+                            note.missed = true;
+                            handleDressageMiss();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Om vi tryckte på en knapp men det inte fanns någon pil i närheten
+            if (!hitProcessed) {
+                handleDressageMiss();
+            }
+        }
+
+        // Generera lite stjärnglitter vid lyckat dressyrsteg
+        function triggerStepGlitter(dir) {
+            for (let i = 0; i < 6; i++) {
+                particles.push(new Particle(
+                    "✨", 
+                    horse.x + 25, 
+                    groundY - 40, 
+                    {
+                        speedY: (Math.random() - 0.5) * 6 - 2,
+                        speedX: (Math.random() - 0.5) * 6
+                    }
+                ));
+            }
+        }
+
+        // Hantera miss eller felaktigt steg i dressyr
+        function handleDressageMiss() {
+            dressageCombo = 0;
+            dressageLives--;
+            dressageFeedbackText = "Missa! ⚠️";
+            dressageFeedbackColor = "#f87171"; // Röd
+            dressageFeedbackTimer = 30;
+            playSound('dressageMiss');
+
+            if (dressageLives <= 0) {
+                gameOver();
+            }
+        }
+
+        // --- SPELLOGIK FÖR BANHOPPNING ---
+        function handleObstacles() {
+            const level = LEVELS[selectedLevelIndex];
+            
+            if (frames % (Math.floor(Math.random() * 50) + 75) === 0) {
+                obstacles.push(new Obstacle(level));
+            }
+
+            for (let i = 0; i < obstacles.length; i++) {
+                const obs = obstacles[i];
+                obs.update();
+
+                // Generös kollisionsbox
+                const hitMarginX = 14; 
+                const hitMarginY = 8; 
+
+                if (
+                    horse.x < obs.x + obs.width - hitMarginX &&
+                    horse.x + horse.width > obs.x + hitMarginX &&
+                    horse.y < obs.y + obs.height &&
+                    horse.y + horse.height > obs.y + hitMarginY
+                ) {
+                    playSound('crash');
+                    gameOver();
+                }
+
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(i, 1);
+                    i--;
+                    score += 15;
+                    scoreElement.innerText = score;
+                }
+            }
+        }
+
+        function handleCollectibles() {
+            if (frames % 140 === 0 && Math.random() > 0.3) {
+                collectibles.push(new Collectible());
+            }
+
+            for (let i = 0; i < collectibles.length; i++) {
+                const apple = collectibles[i];
+                apple.update();
+
+                if (!apple.collected &&
+                    horse.x < apple.x + apple.width &&
+                    horse.x + horse.width > apple.x &&
+                    horse.y < apple.y + apple.height &&
+                    horse.y + horse.height > apple.y
+                ) {
+                    apple.collected = true;
+                    playSound('apple');
+                    score += 50;
+                    scoreElement.innerText = score;
+                    
+                    // Skapa glitter på äpplets plats
+                    for(let p=0; p<5; p++) {
+                        particles.push(new Particle(
+                            "✨", 
+                            apple.x + 15, 
+                            apple.y + 15, 
+                            {
+                                speedY: (Math.random() - 0.5) * 4,
+                                speedX: (Math.random() - 0.5) * 4 - 2
+                            }
+                        ));
+                    }
+                }
+
+                if (apple.x + apple.width < 0) {
+                    collectibles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        // Hantera fallande löv/snö/partiklar
+        function handleParticles() {
+            const level = LEVELS[selectedLevelIndex];
+            
+            if (frames % 8 === 0 && particles.length < 45) {
+                particles.push(new Particle(level.particleEmoji));
+            }
+
+            for (let i = 0; i < particles.length; i++) {
+                const part = particles[i];
+                part.update();
+
+                if (part.y > canvas.height + 20) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        // Rita den dynamiska bakgrunden baserat på vald nivå
+        let bgOffset = 0;
+        function drawBackground() {
+            const level = LEVELS[selectedLevelIndex];
+
+            // 1. Himmel
+            ctx.fillStyle = level.skyColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Parallaxberg / Kullar i fjärran
+            bgOffset -= gameSpeed * 0.15;
+            if (bgOffset <= -800) bgOffset = 0;
+
+            if (selectedLevelIndex === 0) {
+                ctx.fillStyle = '#86efac';
+            } else if (selectedLevelIndex === 1) {
+                ctx.fillStyle = '#fde047';
+            } else {
+                ctx.fillStyle = '#cbd5e1';
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(bgOffset, groundY);
+            ctx.lineTo(bgOffset + 250, 140);
+            ctx.lineTo(bgOffset + 500, groundY);
+            ctx.lineTo(bgOffset + 750, 90);
+            ctx.lineTo(bgOffset + 1000, groundY);
+            ctx.lineTo(bgOffset + 1300, 150);
+            ctx.lineTo(bgOffset + 1600, groundY);
+            ctx.fill();
+
+            // 3. Mark & Gräs / Dressyrsand
+            if (selectedDiscipline === 'dressage') {
+                // Dressyrbanor har en fin sandig färg
+                ctx.fillStyle = '#fef08a'; // Ljus gulaktig sandfärg
+                ctx.fillRect(0, groundY, canvas.width, groundHeight);
+                
+                // Träbalkar för dressyrstaket
+                ctx.strokeStyle = '#d97706';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(0, groundY - 12);
+                ctx.lineTo(canvas.width, groundY - 12);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = level.groundColor;
+                ctx.fillRect(0, groundY, canvas.width, groundHeight);
+
+                // Vita staket för banhoppning
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(0, groundY - 15);
+                ctx.lineTo(canvas.width, groundY - 15);
+                ctx.stroke();
+
+                for (let i = 0; i < 15; i++) {
+                    let x = ((i * 120) - (frames * gameSpeed * 0.4)) % (canvas.width + 120);
+                    if (x < -20) x += canvas.width + 120;
+                    ctx.beginPath();
+                    ctx.moveTo(x, groundY - 25);
+                    ctx.lineTo(x, groundY);
+                    ctx.stroke();
+                }
+            }
+
+            // Sand- eller gräsdetaljer på markytan
+            ctx.fillStyle = selectedDiscipline === 'dressage' ? '#f59e0b' : level.groundDetailColor;
+            for (let i = 0; i < 25; i++) {
+                let x = ((i * 40) - (frames * gameSpeed)) % canvas.width;
+                if (x < 0) x += canvas.width;
+                ctx.fillRect(x, groundY + 12, 12, 4);
+                ctx.fillRect(x + 15, groundY + 34, 18, 4);
+            }
+
+            // 4. Vinterdimma / Atmosfärseffekt på nivå 3
+            if (level.fog) {
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+                gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.05)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // --- HUVUDLOOPEN ---
+        function animate() {
+            if (!isPlaying) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawBackground();
+            handleParticles();
+            horse.update();
+
+            if (selectedDiscipline === 'jumping') {
+                handleCollectibles();
+                handleObstacles();
+            } else {
+                handleDressage();
+            }
+            
+            // Hastigheten ökar långsamt över tid
+            if (frames % 400 === 0 && gameSpeed < 15) {
+                gameSpeed += 0.4;
+            }
+
+            frames++;
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // --- STARTA OCH ÅTERSTÄLLA SPELET ---
+        function initGame() {
+            const selectedHorse = HORSES[selectedHorseIndex];
+            const selectedLevel = LEVELS[selectedLevelIndex];
+
+            horse.y = groundY - horse.height;
+            horse.dy = 0;
+            horse.rotation = 0;
+            horse.xOffset = 0;
+            horse.yOffset = 0;
+
+            obstacles = [];
+            collectibles = [];
+            particles = [];
+            dressageNotes = [];
+            
+            // Dressyråterställning
+            dressageCombo = 0;
+            dressageLives = 3;
+            dressageFeedbackTimer = 0;
+
+            frames = 0;
+            score = 0;
+            
+            gameSpeed = selectedLevel.baseSpeed + selectedHorse.speedBonus;
+            scoreElement.innerText = score;
+            
+            lobbyScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            
+            // Hantera synlighet av kontrollknappar på skärmen (mobilstöd för båda discipliner)
+            if (selectedDiscipline === 'dressage') {
+                touchControls.classList.remove('hidden');
+            } else {
+                touchControls.classList.add('hidden');
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Starta den procedurgenererade musiken!
+            musicTempo = selectedLevel.tempo + (selectedHorse.speedBonus * 4); // Anpassa musikhastigheten efter bana och häst!
+            startMusic();
+
+            isPlaying = true;
+            animate();
+        }
+
+        function gameOver() {
+            isPlaying = false;
+            cancelAnimationFrame(animationId);
+            touchControls.classList.add('hidden');
+            
+            // Stoppa bakgrundsmusiken
+            stopMusic();
+
+            if (score > highScore) {
+                highScore = score;
+                highScoreElement.innerText = highScore;
+                localStorage.setItem('starhorse_v2_highscore', highScore);
+            }
+            
+            finalScoreElement.innerText = score;
+
+            // Anpassa game over-skärmen efter disciplin
+            if (selectedDiscipline === 'dressage') {
+                gameOverEmoji.innerText = "🎀";
+                gameOverTitle.innerText = "Fint dansat!";
+                gameOverText.innerText = "Hästen tappade takten till slut, men visade upp otroligt vackra steg. Belöna den med en morot!";
+            } else {
+                gameOverEmoji.innerText = "🥕";
+                gameOverTitle.innerText = "Klara för idag!";
+                gameOverText.innerText = "Hästen blev lite trött efter att ha nuddat hindret. Ge den ett gott äpple och försök igen!";
+            }
+
+            gameOverScreen.classList.remove('hidden');
+        }
+
+        function goToLobby() {
+            gameOverScreen.classList.add('hidden');
+            lobbyScreen.classList.remove('hidden');
+            
+            // Säkerställ att musiken är tyst i lobbyn
+            stopMusic();
+
+            if (selectedDiscipline === 'dressage') {
+                touchControls.classList.remove('hidden');
+            } else {
+                touchControls.classList.add('hidden');
+            }
+
+            drawBackground();
+            horse.draw();
+        }
+
+        // --- STYRNING ---
+        function triggerTouchInput(dir) {
+            if (selectedDiscipline === 'dressage') {
+                triggerDressageInput(dir);
+            } else {
+                // I hoppning tolkar vi alla tryck på kontrollerna som hopp
+                horse.jump();
+            }
+        }
+
+        // Tangentbordslyssnare
+        window.addEventListener('keydown', (e) => {
+            if (isPlaying) {
+                if (selectedDiscipline === 'jumping') {
+                    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+                        e.preventDefault();
+                        horse.jump();
+                    }
+                } else {
+                    // Dressyrsteg via piltangenterna eller WASD
+                    if (e.code === 'ArrowLeft' || e.code === 'KeyA') { e.preventDefault(); triggerDressageInput('LEFT'); }
+                    if (e.code === 'ArrowUp' || e.code === 'KeyW') { e.preventDefault(); triggerDressageInput('UP'); }
+                    if (e.code === 'ArrowDown' || e.code === 'KeyS') { e.preventDefault(); triggerDressageInput('DOWN'); }
+                    if (e.code === 'ArrowRight' || e.code === 'KeyD') { e.preventDefault(); triggerDressageInput('RIGHT'); }
+                }
+            } else if (lobbyScreen.classList.contains('hidden') && !gameOverScreen.classList.contains('hidden')) {
+                // Om spelet är slut och man klickar Enter startar vi om
+                if (e.code === 'Enter') {
+                    initGame();
+                }
+            }
+        });
+
+        // Klick på själva spelplanen (canvasen) fungerar som hopp i banhoppning
+        canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            if (selectedDiscipline === 'jumping' && isPlaying) {
+                horse.jump();
+            }
+        });
+
+        // Koppla knappar
+        startBtn.addEventListener('click', initGame);
+        restartBtn.addEventListener('click', initGame);
+        lobbyBtn.addEventListener('click', goToLobby);
+
+        // Initiera lobbyn vid uppstart
+        selectDiscipline('jumping');
+        selectHorse(0);
+        selectLevel(0);
+        drawBackground();
+        horse.draw();
+
+    </script>
+</body>
+</html>

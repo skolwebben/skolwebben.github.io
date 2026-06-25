@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baklänges-Stavaren</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Lite animationer för feedback-rutan */
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop-in {
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 font-sans text-slate-100 selection:bg-indigo-500/30">
+
+    <!-- Header & Stats -->
+    <div class="w-full max-w-lg flex justify-between items-center mb-8 px-4">
+        <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            Baklänges-Stavaren
+        </h1>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1.5 bg-slate-900 px-3 py-1.5 rounded-full border border-slate-800 shadow-inner">
+                <!-- Trophy Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-yellow-500">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                </svg>
+                <span id="score-display" class="font-mono font-bold">0</span>
+            </div>
+            
+            <div id="streak-container" class="hidden flex items-center gap-1.5 bg-orange-950/50 text-orange-400 px-3 py-1.5 rounded-full border border-orange-900/50 shadow-inner animate-pulse">
+                <span id="streak-text" class="text-xs font-bold uppercase tracking-wider"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spel-kortet -->
+    <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-800 overflow-hidden relative">
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <p class="text-slate-400 text-sm uppercase tracking-widest font-semibold mb-2">Klura ut ordet</p>
+                <p class="text-slate-300">Halva ordet saknas. Lista ut vilket ord det är, och skriv in det <strong class="text-indigo-400">baklänges</strong> för att få poäng!</p>
+            </div>
+
+            <!-- Ordet som visas -->
+            <div class="bg-slate-950 rounded-2xl py-8 px-4 mb-8 flex justify-center shadow-inner border border-slate-800">
+                <div id="word-display" class="flex gap-2 sm:gap-3 flex-wrap justify-center">
+                    <!-- Bokstäver genereras här av JavaScript -->
+                </div>
+            </div>
+
+            <!-- Interaktion / Input -->
+            <div class="space-y-4">
+                <div class="relative">
+                    <input
+                        id="guess-input"
+                        type="text"
+                        placeholder="SKRIV BAKLÄNGES..."
+                        class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl px-6 py-4 text-xl font-mono text-center text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-50 uppercase tracking-[0.2em]"
+                        autocomplete="off"
+                        spellcheck="false"
+                    />
+                </div>
+
+                <!-- Spelknappar (Gissa & Hoppa över) -->
+                <div id="playing-ui" class="flex gap-3">
+                    <button id="guess-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 shadow-lg shadow-indigo-900/20">
+                        Gissa 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                    <button id="skip-btn" title="Hoppa över" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-4 rounded-xl flex justify-center items-center transition-colors border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                </div>
+
+                <!-- Feedback (Rätt/Fel) -->
+                <div id="feedback-ui" class="hidden p-6 rounded-xl border text-center animate-pop-in">
+                    
+                    <div id="feedback-content" class="space-y-3">
+                        <!-- Check icon (Rätt) -->
+                        <svg id="icon-correct" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto text-emerald-500 hidden"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        
+                        <!-- Alert icon (Fel) -->
+                        <svg id="icon-wrong" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto text-rose-500 hidden"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        
+                        <h3 id="feedback-title" class="text-xl font-bold"></h3>
+                        <p id="feedback-text" class="text-sm"></p>
+                    </div>
+
+                    <button id="next-btn" class="mt-6 w-full font-bold py-3 px-6 rounded-lg flex justify-center items-center gap-2 transition-all">
+                        Nästa ord 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logik -->
+    <script>
+        const WORD_LIST = [
+            "ÄVENTYR", "CHOKLAD", "DATORMUS", "ELEFANT", "FOTBOLL", "GIRAFF", 
+            "HELIKOPTER", "IGELKOTT", "JORDGUBBE", "KAMELONT", "LAKRITS", 
+            "MARMELAD", "NOSHÖRNING", "OSTRON", "PANNKAKA", "RULLSKRIDSKOR", 
+            "SJUKHUS", "TROMBON", "UNDERVATTEN", "VATTENMELON", "XYLOFON", 
+            "YOGHURT", "ZEBRA", "BIBLIOTEK", "TANGENTBORD", "PROMENAD",
+            "CYKELPUMP", "SOLGLASÖGON", "SKÖLDPADDA", "ASTRONAUT", "PROGRAMMERING"
+        ];
+
+        let currentWord = '';
+        let maskedWord = '';
+        let score = 0;
+        let streak = 0;
+        let status = 'idle'; // idle, playing, correct, wrong
+        let errorMessage = '';
+
+        // Element Referenser
+        const guessInput = document.getElementById('guess-input');
+        const scoreDisplay = document.getElementById('score-display');
+        const streakContainer = document.getElementById('streak-container');
+        const streakText = document.getElementById('streak-text');
+        const wordDisplay = document.getElementById('word-display');
+        const playingUI = document.getElementById('playing-ui');
+        const feedbackUI = document.getElementById('feedback-ui');
+        const iconCorrect = document.getElementById('icon-correct');
+        const iconWrong = document.getElementById('icon-wrong');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Funktion för att dölja halva ordet slumpmässigt
+        const maskString = (word) => {
+            const chars = word.split('');
+            const hideCount = Math.floor(chars.length / 2);
+            
+            let indices = chars.map((_, i) => i);
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            
+            const hiddenIndices = new Set(indices.slice(0, hideCount));
+            return chars.map((char, i) => hiddenIndices.has(i) ? '_' : char).join('');
+        };
+
+        const renderWord = () => {
+            wordDisplay.innerHTML = maskedWord.split('').map(char => {
+                if (char === '_') {
+                    return `<span class="flex items-center justify-center w-10 h-14 sm:w-12 sm:h-16 rounded-lg text-2xl font-mono font-bold bg-slate-800 border-2 border-dashed border-slate-700 text-slate-600">?</span>`;
+                } else {
+                    return `<span class="flex items-center justify-center w-10 h-14 sm:w-12 sm:h-16 rounded-lg text-2xl font-mono font-bold bg-indigo-600 border border-indigo-500 text-white shadow-lg">${char}</span>`;
+                }
+            }).join('');
+        };
+
+        const renderUI = () => {
+            scoreDisplay.textContent = score;
+            
+            if (streak > 1) {
+                streakContainer.classList.remove('hidden');
+                streakText.textContent = `${streak} i rad!`;
+            } else {
+                streakContainer.classList.add('hidden');
+            }
+
+            guessInput.disabled = (status !== 'playing');
+
+            if (status === 'playing') {
+                playingUI.classList.remove('hidden');
+                feedbackUI.classList.add('hidden');
+                guessInput.focus();
+            } else {
+                playingUI.classList.add('hidden');
+                feedbackUI.classList.remove('hidden');
+                
+                // Rensa gamla klasser från feedback
+                feedbackUI.className = 'p-6 rounded-xl border text-center animate-pop-in';
+                
+                if (status === 'correct') {
+                    feedbackUI.classList.add('bg-emerald-950/30', 'border-emerald-900/50');
+                    iconCorrect.classList.remove('hidden');
+                    iconWrong.classList.add('hidden');
+                    
+                    feedbackTitle.textContent = 'Helt rätt!';
+                    feedbackTitle.className = 'text-xl font-bold text-emerald-400';
+                    feedbackText.textContent = `Ordet var ${currentWord}.`;
+                    feedbackText.className = 'text-emerald-200/70';
+                    
+                    nextBtn.className = 'mt-6 w-full font-bold py-3 px-6 rounded-lg flex justify-center items-center gap-2 transition-all bg-emerald-600 hover:bg-emerald-500 text-white';
+                } else {
+                    feedbackUI.classList.add('bg-rose-950/30', 'border-rose-900/50');
+                    iconCorrect.classList.add('hidden');
+                    iconWrong.classList.remove('hidden');
+                    
+                    feedbackTitle.textContent = 'Inte riktigt!';
+                    feedbackTitle.className = 'text-xl font-bold text-rose-400';
+                    feedbackText.textContent = errorMessage;
+                    feedbackText.className = 'text-rose-200/70';
+                    
+                    nextBtn.className = 'mt-6 w-full font-bold py-3 px-6 rounded-lg flex justify-center items-center gap-2 transition-all bg-rose-600 hover:bg-rose-500 text-white';
+                }
+            }
+        };
+
+        const startNewRound = () => {
+            const randomIndex = Math.floor(Math.random() * WORD_LIST.length);
+            currentWord = WORD_LIST[randomIndex];
+            maskedWord = maskString(currentWord);
+            
+            guessInput.value = '';
+            status = 'playing';
+            errorMessage = '';
+            
+            renderWord();
+            renderUI();
+        };
+
+        const handleGuess = () => {
+            const guess = guessInput.value.trim().toUpperCase();
+            if (!guess) return;
+
+            const reversedWord = currentWord.split('').reverse().join('');
+
+            if (guess === reversedWord) {
+                status = 'correct';
+                score += 10 + (streak * 2);
+                streak += 1;
+            } else {
+                status = 'wrong';
+                streak = 0;
+                
+                if (guess === currentWord) {
+                    errorMessage = 'Rätt ord, men kom ihåg att det ska stavas BAKLÄNGES!';
+                } else {
+                    errorMessage = `Fel! Ordet var ${currentWord} (baklänges: ${reversedWord}).`;
+                }
+            }
+            renderUI();
+        };
+
+        // Event Listeners
+        guessInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        guessInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (status === 'playing') {
+                    handleGuess();
+                } else {
+                    startNewRound();
+                }
+            }
+        });
+
+        document.getElementById('guess-btn').addEventListener('click', handleGuess);
+        document.getElementById('skip-btn').addEventListener('click', startNewRound);
+        document.getElementById('next-btn').addEventListener('click', startNewRound);
+
+        // Starta spelet när sidan laddas
+        startNewRound();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliff & Platform Diver 3D Ultra Realism</title>
+    <!-- Tailwind CSS för lyxigt och modernt gränssnitt -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .fancy-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white overflow-hidden h-screen w-screen flex flex-col justify-between">
+
+    <!-- LJUD & MUSIK-IKONER -->
+    <div class="absolute top-4 right-4 z-50 flex gap-2">
+        <button id="audioToggle" class="bg-slate-900/80 hover:bg-slate-800 p-3 rounded-full border border-slate-700/50 transition-all shadow-lg text-xl pointer-events-auto">
+            🔊
+        </button>
+    </div>
+
+    <!-- HUVUDMENY / ANPASSNINGSSKÄRM -->
+    <div id="mainMenu" class="absolute inset-0 bg-slate-950/95 flex flex-col justify-center items-center z-40 p-4 transition-all duration-500 overflow-y-auto">
+        <div class="max-w-5xl w-full flex flex-col md:flex-row gap-8 items-stretch bg-slate-900/50 p-6 md:p-10 rounded-3xl border border-slate-800 backdrop-blur-md">
+            
+            <!-- Karaktärs-anpassning (Vänster) -->
+            <div class="w-full md:w-1/2 space-y-6 flex flex-col justify-between">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-cyan-400 fancy-title text-center md:text-left">
+                        DIVER <span class="text-white">3D REALISM</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm text-center md:text-left mt-2">
+                        Skapa din 3D-hoppare med realistiska proportioner och kasta dig ut från extrema höjder!
+                    </p>
+                </div>
+
+                <!-- Anpassningsreglage -->
+                <div class="space-y-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
+                    <h3 class="text-lg font-bold text-slate-300 border-b border-slate-800 pb-2">Anpassa Hoppare</h3>
+                    
+                    <!-- Kön / Kroppstyp -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">KÖN</label>
+                            <select id="genderSelect" onchange="updateCharacterConfig()" class="w-full bg-slate-900 text-white p-2 rounded-lg text-xs border border-slate-700 focus:outline-none focus:border-cyan-500">
+                                <option value="Kvinna">Kvinna</option>
+                                <option value="Man">Man</option>
+                                <option value="Icke-binar">Icke-binär</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">FRISYR</label>
+                            <select id="hairStyleSelect" onchange="updateCharacterConfig()" class="w-full bg-slate-900 text-white p-2 rounded-lg text-xs border border-slate-700 focus:outline-none focus:border-cyan-500">
+                                <option value="0">Kort</option>
+                                <option value="1">Långt</option>
+                                <option value="2">Tofs</option>
+                                <option value="3">Flätor</option>
+                                <option value="4">Afro</option>
+                                <option value="5">Mohawk</option>
+                                <option value="6">Snedbena</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">BADKLÄDER</label>
+                            <select id="swimwearSelect" onchange="updateCharacterConfig()" class="w-full bg-slate-900 text-white p-2 rounded-lg text-xs border border-slate-700 focus:outline-none focus:border-cyan-500">
+                                <option value="Baddräkt">Baddräkt</option>
+                                <option value="Badbyxor">Badbyxor</option>
+                                <option value="Bikini">Bikini</option>
+                                <option value="Våtdräkt">Våtdräkt</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Hudfärg -->
+                    <div>
+                        <label class="text-[10px] text-slate-400 block mb-1 font-semibold">HUDFÄRG</label>
+                        <div class="grid grid-cols-5 gap-1.5" id="skinColorContainer">
+                            <!-- Fylls i av JS -->
+                        </div>
+                    </div>
+
+                    <!-- Färgval (Hår & Kläder) -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1 font-semibold">HÅRFÄRG</label>
+                            <input type="color" id="hairColor" value="#e5c158" onchange="updateCharacterConfig()" class="w-full h-8 rounded cursor-pointer bg-transparent border border-slate-700">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1 font-semibold">FÄRG PÅ BADKLÄDER</label>
+                            <input type="color" id="swimwearColor" value="#ef4444" onchange="updateCharacterConfig()" class="w-full h-8 rounded cursor-pointer bg-transparent border border-slate-700">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nivå- och hoppväljare (Höger) -->
+            <div class="w-full md:w-1/2 flex flex-col justify-between gap-6">
+                <!-- Miljö-väljare -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-slate-300">Välj Arena & Höjd</h3>
+                    <div class="grid grid-cols-1 gap-2 max-h-56 overflow-y-auto pr-1">
+                        <button onclick="selectLevel(0)" id="lvl0" class="level-card text-left p-3 rounded-xl border transition-all flex justify-between items-center bg-cyan-950/40 border-cyan-500/50">
+                            <div>
+                                <span class="font-bold text-white block">Inomhus-Simhallen</span>
+                                <span class="text-xs text-slate-400">Flexibel Svikt - Höjd: 15m</span>
+                            </div>
+                            <span class="text-xs font-semibold px-2 py-1 rounded bg-green-500/20 text-green-400">UPPLÅST</span>
+                        </button>
+                        
+                        <button onclick="selectLevel(1)" id="lvl1" class="level-card text-left p-3 rounded-xl border transition-all flex justify-between items-center bg-slate-900 border-slate-800 opacity-60">
+                            <div>
+                                <span class="font-bold text-white block">Storstadens Hustak</span>
+                                <span class="text-xs text-slate-400">Extremt stadsfall - Höjd: 35m</span>
+                            </div>
+                            <span id="lvlLock1" class="text-xs font-semibold px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">🔒 1 000 poäng</span>
+                        </button>
+
+                        <button onclick="selectLevel(2)" id="lvl2" class="level-card text-left p-3 rounded-xl border transition-all flex justify-between items-center bg-slate-900 border-slate-800 opacity-60">
+                            <div>
+                                <span class="font-bold text-white block">Paradisklippan</span>
+                                <span class="text-xs text-slate-400">Dödsbrant klippa - Höjd: 60m</span>
+                            </div>
+                            <span id="lvlLock2" class="text-xs font-semibold px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">🔒 3 500 poäng</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Starta-knapp -->
+                <div>
+                    <button onclick="startGame()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold py-4 rounded-2xl text-lg shadow-xl shadow-cyan-500/20 transition-all transform hover:-translate-y-1 active:translate-y-0">
+                        GÅ TILL AVSATSEN 🚀
+                    </button>
+
+                    <div class="text-center text-xs text-slate-500 mt-3">
+                        Totalt intjänade poäng: <span id="totalPointsDisplay" class="font-bold text-cyan-400">0</span>p
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPELGRÄNSSNITT (HUD & NOTIFIKATIONER) -->
+    <div id="gameUI" class="hidden absolute inset-0 pointer-events-none z-30 flex flex-col justify-between p-4 md:p-6">
+        
+        <!-- Översta Raden: Poäng & Höjd & Hopptyper -->
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
+            <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl flex items-center gap-4 backdrop-blur-md pointer-events-auto shadow-lg">
+                <button onclick="exitToMenu()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300 font-semibold transition-all">
+                    ↩ Meny
+                </button>
+                <div>
+                    <div class="text-xs text-slate-400 font-bold tracking-wider">HÖJD</div>
+                    <div id="hudHeight" class="text-xl font-extrabold text-cyan-400">15m</div>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-700"></div>
+                <div>
+                    <div class="text-xs text-slate-400 font-bold tracking-wider">SCORE</div>
+                    <div id="hudScore" class="text-xl font-extrabold text-yellow-400">0</div>
+                </div>
+            </div>
+
+            <!-- Hoppinställningar -->
+            <div class="bg-slate-900/90 border border-slate-800 p-2 rounded-2xl backdrop-blur-md pointer-events-auto flex flex-wrap gap-1 shadow-lg max-w-full">
+                <button onclick="setDiveType(0)" id="dive0" class="dive-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-cyan-600 text-white">Framåt</button>
+                <button onclick="setDiveType(1)" id="dive1" class="dive-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700">Bakåt</button>
+                <button onclick="setDiveType(2)" id="dive2" class="dive-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700">Tyska</button>
+                <button onclick="setDiveType(3)" id="dive3" class="dive-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700">Molbergare</button>
+            </div>
+        </div>
+
+        <!-- Instruktions-overlay i mitten -->
+        <div id="actionHint" class="self-center bg-slate-900/80 border border-cyan-500/30 px-6 py-3 rounded-2xl text-center backdrop-blur-md transition-all duration-300 transform scale-95 opacity-0">
+            <span id="hintText" class="text-lg font-bold text-cyan-300">Klicka för att ladda fart på svikten!</span>
+        </div>
+
+        <!-- Botten: Mätare och Kontroller -->
+        <div class="w-full flex flex-col items-center gap-3">
+            
+            <!-- Timing/Styrke-mätare för Uthopp -->
+            <div id="meterContainer" class="w-64 bg-slate-950/80 border border-slate-800 p-2.5 rounded-2xl backdrop-blur-md flex flex-col gap-1 transition-all opacity-100">
+                <div class="flex justify-between text-[10px] text-slate-400 font-extrabold px-1">
+                    <span>DÅLIGT</span>
+                    <span class="text-cyan-400 font-black">PERFEKT STUDSTUD 🎯</span>
+                    <span>DÅLIGT</span>
+                </div>
+                <div class="w-full h-5 bg-slate-900 rounded-lg overflow-hidden relative border border-slate-700">
+                    <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-12 bg-gradient-to-r from-cyan-500 via-emerald-400 to-cyan-500 blur-[2px]"></div>
+                    <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-8 bg-emerald-400"></div>
+                    <div id="powerIndicator" class="absolute inset-y-0 w-1.5 bg-white border border-slate-950 shadow-md rounded transition-all" style="left: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Styrnings-info -->
+            <div class="text-[11px] text-slate-300 text-center bg-slate-950/85 px-4 py-2 rounded-xl border border-slate-800/80 pointer-events-none max-w-md shadow-lg">
+                <span class="font-bold text-cyan-400">Proffstips:</span> Drag skärmen för att styra 3D-kameran fritt!<br>
+                <span>Klicka/håll [VÄNSTERMUS] eller [MELLANSLAG]</span> för att dra ihop kroppen i tuck och öka farten!
+            </div>
+        </div>
+    </div>
+
+    <!-- DOMAR-RESULTAT / POPUP -->
+    <div id="resultsScreen" class="hidden absolute inset-0 bg-slate-950/80 flex flex-col justify-center items-center z-40 p-4 backdrop-blur-md pointer-events-auto transition-all duration-300">
+        <div class="max-w-md w-full bg-slate-900 border-2 border-slate-800 p-6 rounded-3xl text-center space-y-5 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-500/10 rounded-full blur-2xl"></div>
+
+            <h2 id="resultTitle" class="text-3xl font-extrabold text-cyan-400 fancy-title">Grym landning!</h2>
+            <p id="resultSubtitle" class="text-sm text-slate-400">Landade med perfekt precision</p>
+
+            <!-- Domarbetyg -->
+            <div class="space-y-2 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/60">
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase block">Domarnas Betyg</span>
+                <div class="flex justify-center gap-3">
+                    <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Domare 1</span>
+                        <span id="score1" class="text-xl font-bold text-yellow-400">8.5</span>
+                    </div>
+                    <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Domare 2</span>
+                        <span id="score2" class="text-xl font-bold text-yellow-400">9.0</span>
+                    </div>
+                    <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Domare 3</span>
+                        <span id="score3" class="text-xl font-bold text-yellow-400">8.5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Poängfakta -->
+            <div class="flex justify-around text-xs py-1">
+                <div>
+                    <span class="text-slate-400 block">Rotationer</span>
+                    <span id="infoFlips" class="font-bold text-white text-base">1.5 varv</span>
+                </div>
+                <div class="h-8 w-[1px] bg-slate-800 self-center"></div>
+                <div>
+                    <span class="text-slate-400 block">Uthopp precision</span>
+                    <span id="infoLaunch" class="font-bold text-cyan-400 text-base">95%</span>
+                </div>
+                <div class="h-8 w-[1px] bg-slate-800 self-center"></div>
+                <div>
+                    <span class="text-slate-400 block">Stänkfaktor</span>
+                    <span id="infoSplash" class="font-bold text-rose-400 text-base">Liten</span>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="retryDive()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-extrabold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/10">
+                    HOPPA IGEN ↩
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANVAS WRAPPER FOR THREE.JS -->
+    <div id="canvasContainer" class="w-full h-full absolute inset-0 z-10"></div>
+
+    <script>
+        // --- LJUD-SYSTEM (Syntetiserat med Web Audio API) ---
+        let audioCtx = null;
+        let audioEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioEnabled || !audioCtx) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            try {
+                const now = audioCtx.currentTime;
+                if (type === 'boing') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(110, now);
+                    osc.frequency.exponentialRampToValueAtTime(340, now + 0.2);
+                    gain.gain.setValueAtTime(0.35, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(now + 0.3);
+                } 
+                else if (type === 'splash') {
+                    const bufferSize = audioCtx.sampleRate * 0.6;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    const filter = audioCtx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(900, now);
+                    filter.frequency.exponentialRampToValueAtTime(80, now + 0.55);
+                    const gain = audioCtx.createGain();
+                    gain.gain.setValueAtTime(0.75, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    noise.start();
+                } 
+                else if (type === 'cheer') {
+                    const osc = audioCtx.createOscillator();
+                    const filter = audioCtx.createBiquadFilter();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(280, now);
+                    osc.frequency.linearRampToValueAtTime(440, now + 0.18);
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(950, now);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(now + 0.75);
+                } 
+                else if (type === 'gasp') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(60, now + 0.4);
+                    gain.gain.setValueAtTime(0.45, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(now + 0.55);
+                }
+            } catch (e) {
+                console.warn("Ljudfel: ", e);
+            }
+        }
+
+        // --- GLOBAL CONFIG & SPELTILLSTÅND ---
+        const STATE_MENU = 0;
+        const STATE_STANDBY = 1;
+        const STATE_POWER = 2;
+        const STATE_AIRBORNE = 3;
+        const STATE_WATER = 4;
+        const STATE_RESULTS = 5;
+
+        let gameState = STATE_MENU;
+        let totalPoints = 0;
+        let currentLevelIdx = 0;
+        let currentDiveTypeIdx = 0;
+
+        // Fysikparametrar (Anpassat för mycket högre höjder)
+        const GRAVITY = -0.018;
+        const ROT_BASE = 0.048;
+        const TUCK_BOOST = 3.3; // Snabbare rotation vid gruppering
+
+        let powerVal = 0;
+        let powerSpeed = 0.045;
+        let powerDir = 1;
+        let scoreTriggered = false;
+
+        // Karaktärskonfiguration
+        const skinColors = [
+            { name: "Ljus", hex: "#ffe3d1" },
+            { name: "Persika", hex: "#ffd1b3" },
+            { name: "Solbränd", hex: "#e8b28d" },
+            { name: "Gyllene", hex: "#c6865c" },
+            { name: "Mörk", hex: "#633c24" }
+        ];
+        let chosenSkinIdx = 1;
+
+        let charConfig = {
+            gender: 'Kvinna',
+            hairStyle: 0,
+            hairColor: '#e5c158',
+            swimwearStyle: 'Baddräkt',
+            swimwearColor: '#ef4444',
+            skinColor: skinColors[1].hex
+        };
+
+        const diveTypes = [
+            { name: "Framåt", rotDir: -1, isBackwards: false, label: "Framåtvolt" },
+            { name: "Bakåt", rotDir: 1, isBackwards: true, label: "Bakåtvolt (Hoppar baklänges)" },
+            { name: "Tyska", rotDir: 1, isBackwards: false, label: "Isanders hopp (Framåt ut, bakåt rotation)" },
+            { name: "Molbergare", rotDir: -1, isBackwards: true, label: "Molbergare (Bakåt ut, framåt rotation)" }
+        ];
+
+        // Nivåer med mycket högre höjdskalor
+        const levels = [
+            { name: "Inomhus-Simhallen", height: 15, scale: 1.0, waterY: -10, platformY: 8, color: 0x0f1c2b },
+            { name: "Storstadens Hustak", height: 35, scale: 0.8, waterY: -22, platformY: 18, color: 0x05010a },
+            { name: "Paradisklippan", height: 60, scale: 0.65, waterY: -35, platformY: 30, color: 0x140c06 }
+        ];
+
+        // --- 3D-OBJEKT & MILJÖ (THREE.JS) ---
+        let scene, camera, renderer, clock;
+        let diverGroup, dModel = {}; // Referenser till simhopparens 3D-delar
+        let particles = [];
+        let environmentMeshes = [];
+        let platformMesh;
+        let waterPlane;
+        let sviktGroup;
+
+        // Kamera-orbit variabler
+        let camTheta = 0; // Horisontell vinkel
+        let camPhi = 0.15;  // Vertikal vinkel
+        let camRadius = 18;
+        let isOrbiting = false;
+        let prevMouseX = 0, prevMouseY = 0;
+
+        // Initiera karaktärsredigerarens färger i UI
+        function setupSkinColorUI() {
+            const container = document.getElementById('skinColorContainer');
+            container.innerHTML = '';
+            skinColors.forEach((color, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `h-7 rounded-lg border-2 transition-all ${idx === chosenSkinIdx ? 'border-cyan-400 scale-105' : 'border-slate-800 hover:border-slate-600'}`;
+                btn.style.backgroundColor = color.hex;
+                btn.onclick = () => {
+                    chosenSkinIdx = idx;
+                    charConfig.skinColor = color.hex;
+                    setupSkinColorUI();
+                    rebuildDiverModel();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // --- THREE.JS INITIALISERING ---
+        function initThree() {
+            const container = document.getElementById('canvasContainer');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a1020, 0.012);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            clock = new THREE.Clock();
+
+            // Avancerat ljus för djup och realism
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
+            scene.add(ambientLight);
+
+            // Starkt solljus för vackra skuggor
+            const dirLight = new THREE.DirectionalLight(0xfff8ee, 1.1);
+            dirLight.position.set(15, 45, 20);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.camera.near = 0.5;
+            dirLight.shadow.camera.far = 150;
+            dirLight.shadow.camera.left = -40;
+            dirLight.shadow.camera.right = 40;
+            dirLight.shadow.camera.top = 40;
+            dirLight.shadow.camera.bottom = -40;
+            dirLight.shadow.bias = -0.0005;
+            scene.add(dirLight);
+
+            // Blått fyllnadsljus underifrån (reflektion från vattnet)
+            const fillLight = new THREE.DirectionalLight(0x0088ff, 0.3);
+            fillLight.position.set(-10, -20, -10);
+            scene.add(fillLight);
+
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.35);
+            scene.add(hemiLight);
+
+            buildEnvironment();
+            buildDiverModel();
+
+            // Event-lyssnare för att vrida på 3D-kameran med musen
+            window.addEventListener('mousedown', (e) => {
+                if (e.target.closest('button') || e.target.closest('select') || e.target.closest('input')) return;
+                isOrbiting = true;
+                prevMouseX = e.clientX;
+                prevMouseY = e.clientY;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isOrbiting) return;
+                const deltaX = e.clientX - prevMouseX;
+                const deltaY = e.clientY - prevMouseY;
+                prevMouseX = e.clientX;
+                prevMouseY = e.clientY;
+
+                camTheta -= deltaX * 0.007;
+                camPhi = Math.max(-Math.PI/4, Math.min(Math.PI/4, camPhi + deltaY * 0.007));
+            });
+
+            window.addEventListener('mouseup', () => { isOrbiting = false; });
+            
+            // Touch-stöd för kameravridning
+            window.addEventListener('touchstart', (e) => {
+                initAudio();
+                if (e.target.closest('button') || e.target.closest('select') || e.target.closest('input')) return;
+                isOrbiting = true;
+                prevMouseX = e.touches[0].clientX;
+                prevMouseY = e.touches[0].clientY;
+            });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!isOrbiting) return;
+                const deltaX = e.touches[0].clientX - prevMouseX;
+                const deltaY = e.touches[0].clientY - prevMouseY;
+                prevMouseX = e.touches[0].clientX;
+                prevMouseY = e.touches[0].clientY;
+
+                camTheta -= deltaX * 0.009;
+                camPhi = Math.max(-Math.PI/4, Math.min(Math.PI/4, camPhi + deltaY * 0.009));
+            });
+
+            window.addEventListener('touchend', () => { isOrbiting = false; });
+        }
+
+        // --- BYGG 3D MILJÖ ---
+        function buildEnvironment() {
+            // Rensa tidigare miljöobjekt
+            environmentMeshes.forEach(mesh => scene.remove(mesh));
+            environmentMeshes = [];
+
+            const lvl = levels[currentLevelIdx];
+            
+            scene.fog.color.setHex(lvl.color);
+            renderer.setClearColor(lvl.color);
+
+            // 1. Skapa Dynamiskt Vattenplan med fler polygoner för vågformning
+            const waterGeom = new THREE.PlaneGeometry(160, 160, 64, 64);
+            const waterMat = new THREE.MeshStandardMaterial({
+                color: 0x0077c8,
+                roughness: 0.08,
+                metalness: 0.2,
+                transparent: true,
+                opacity: 0.75,
+                flatShading: true
+            });
+            waterPlane = new THREE.Mesh(waterGeom, waterMat);
+            waterPlane.rotation.x = -Math.PI / 2;
+            waterPlane.position.y = lvl.waterY;
+            waterPlane.receiveShadow = true;
+            scene.add(waterPlane);
+            environmentMeshes.push(waterPlane);
+
+            // Havsbotten
+            const bottomGeom = new THREE.PlaneGeometry(200, 200);
+            const bottomMat = new THREE.MeshStandardMaterial({ color: 0x000810, roughness: 1.0 });
+            const bottom = new THREE.Mesh(bottomGeom, bottomMat);
+            bottom.rotation.x = -Math.PI/2;
+            bottom.position.y = lvl.waterY - 30;
+            scene.add(bottom);
+            environmentMeshes.push(bottom);
+
+            // 2. Skapa den mekaniska svikten (Böjbar plattform)
+            sviktGroup = new THREE.Group();
+            sviktGroup.position.set(-6, lvl.platformY, 0);
+
+            // Själva sviktbrädan (lång och fjädrande)
+            const boardG = new THREE.BoxGeometry(6.5, 0.25, 2.2);
+            const boardM = new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.5 });
+            const boardMesh = new THREE.Mesh(boardG, boardM);
+            boardMesh.position.set(3, 0, 0);
+            boardMesh.castShadow = true;
+            boardMesh.receiveShadow = true;
+            sviktGroup.add(boardMesh);
+            dModel.springboard = boardMesh;
+
+            // Halkskydd i 3D
+            const gripG = new THREE.BoxGeometry(1.8, 0.02, 2.18);
+            const gripM = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.9 });
+            const gripMesh = new THREE.Mesh(gripG, gripM);
+            gripMesh.position.set(5.3, 0.13, 0);
+            boardMesh.add(gripMesh);
+
+            scene.add(sviktGroup);
+            environmentMeshes.push(sviktGroup);
+
+            // Rejäl betongpelare / klippvägg i bakgrunden
+            if (currentLevelIdx === 2) {
+                // Paradisklippan - massiv stenbergsvägg
+                const rockG = new THREE.CylinderGeometry(4, 15, lvl.platformY - lvl.waterY + 15, 8);
+                const rockM = new THREE.MeshStandardMaterial({ color: 0x3d2b1f, roughness: 0.95 });
+                const rock = new THREE.Mesh(rockG, rockM);
+                rock.position.set(-8, lvl.platformY/2 + lvl.waterY/2 - 2, 0);
+                rock.castShadow = true;
+                rock.receiveShadow = true;
+                scene.add(rock);
+                environmentMeshes.push(rock);
+            } else {
+                // Betongtorn för simhall och hustak
+                const towerG = new THREE.BoxGeometry(4, lvl.platformY - lvl.waterY + 15, 4);
+                const towerM = new THREE.MeshStandardMaterial({ color: 0x556677, roughness: 0.8 });
+                const tower = new THREE.Mesh(towerG, towerM);
+                tower.position.set(-8, lvl.platformY/2 + lvl.waterY/2 - 2, 0);
+                tower.castShadow = true;
+                tower.receiveShadow = true;
+                scene.add(tower);
+                environmentMeshes.push(tower);
+            }
+
+            // Simhallens bakgrundsdekor
+            if (currentLevelIdx === 0) {
+                const wallG = new THREE.BoxGeometry(160, 80, 2);
+                const wallM = new THREE.MeshStandardMaterial({ color: 0x1a2936, roughness: 0.9 });
+                const backWall = new THREE.Mesh(wallG, wallM);
+                backWall.position.set(0, lvl.platformY + 10, -35);
+                backWall.receiveShadow = true;
+                scene.add(backWall);
+                environmentMeshes.push(backWall);
+
+                // Kakelränder på väggen
+                const stripeG = new THREE.BoxGeometry(160, 1.5, 2.1);
+                const stripeM = new THREE.MeshStandardMaterial({ color: 0x06b6d4 });
+                const stripe = new THREE.Mesh(stripeG, stripeM);
+                stripe.position.set(0, lvl.platformY, -35);
+                scene.add(stripe);
+                environmentMeshes.push(stripe);
+            } 
+            else if (currentLevelIdx === 1) {
+                // Storstadens silhuett
+                for (let i = 0; i < 22; i++) {
+                    const w = 8 + Math.random() * 12;
+                    const h = 35 + Math.random() * 55;
+                    const d = 8 + Math.random() * 12;
+                    const bGeom = new THREE.BoxGeometry(w, h, d);
+                    const bMat = new THREE.MeshStandardMaterial({ color: 0x020008, roughness: 0.9 });
+                    const building = new THREE.Mesh(bGeom, bMat);
+                    building.position.set(-40 + Math.random() * 90, lvl.waterY + h/2, -25 - Math.random() * 30);
+                    building.castShadow = true;
+                    scene.add(building);
+                    environmentMeshes.push(building);
+                }
+            }
+        }
+
+        // --- BYGG REALISTISK 3D SIMHOPPARE (KORTADE NER BENEN YTTERLIGARE FÖR PERFEKT REALISM) ---
+        function buildDiverModel() {
+            if (diverGroup) scene.remove(diverGroup);
+
+            diverGroup = new THREE.Group();
+            
+            const skinMat = new THREE.MeshStandardMaterial({ color: charConfig.skinColor, roughness: 0.45 });
+            const swimMat = new THREE.MeshStandardMaterial({ color: charConfig.swimwearColor, roughness: 0.5 });
+            const hairMat = new THREE.MeshStandardMaterial({ color: charConfig.hairColor, roughness: 0.85 });
+
+            // Torso (Förlängd och gjord lite fylligare för realism)
+            const torsoG = new THREE.CylinderGeometry(0.35, 0.28, 1.3, 10);
+            const torsoMat = charConfig.swimwearStyle === 'Baddräkt' || charConfig.swimwearStyle === 'Våtdräkt' ? swimMat : skinMat;
+            const torso = new THREE.Mesh(torsoG, torsoMat);
+            torso.position.y = 0.65;
+            torso.castShadow = true;
+            diverGroup.add(torso);
+            dModel.torso = torso;
+
+            // Badbyxor eller Bikini överdel detaljer
+            if (charConfig.swimwearStyle === 'Bikini') {
+                const bikiniTopG = new THREE.CylinderGeometry(0.36, 0.36, 0.25, 10);
+                const bikiniTop = new THREE.Mesh(bikiniTopG, swimMat);
+                bikiniTop.position.y = 0.35;
+                torso.add(bikiniTop);
+            }
+
+            // Pelvis (Höftparti - snyggare övergång)
+            const pelvisG = new THREE.SphereGeometry(0.32, 10, 10);
+            const pelvisMat = charConfig.swimwearStyle !== 'Våtdräkt' && charConfig.swimwearStyle !== 'Baddräkt' && charConfig.swimwearStyle !== 'Badbyxor' && charConfig.swimwearStyle !== 'Bikini' ? skinMat : swimMat;
+            const pelvis = new THREE.Mesh(pelvisG, pelvisMat);
+            pelvis.position.y = -0.05;
+            pelvis.castShadow = true;
+            diverGroup.add(pelvis);
+            dModel.pelvis = pelvis;
+
+            // Huvud med enkla ansiktsdetaljer för att se realistisk ut
+            const headG = new THREE.SphereGeometry(0.24, 12, 12);
+            const head = new THREE.Mesh(headG, skinMat);
+            head.position.y = 0.85;
+            head.castShadow = true;
+            torso.add(head);
+            dModel.head = head;
+
+            // Ögon
+            const eyeG = new THREE.SphereGeometry(0.03, 6, 6);
+            const eyeM = new THREE.MeshBasicMaterial({ color: 0x111111 });
+            const eyeLeft = new THREE.Mesh(eyeG, eyeM);
+            eyeLeft.position.set(0.08, 0.05, 0.2);
+            const eyeRight = eyeLeft.clone();
+            eyeRight.position.x = -0.08;
+            head.add(eyeLeft, eyeRight);
+
+            // Mun (Litet realistiskt streck)
+            const mouthG = new THREE.BoxGeometry(0.08, 0.02, 0.02);
+            const mouthM = new THREE.MeshBasicMaterial({ color: 0xaa4444 });
+            const mouth = new THREE.Mesh(mouthG, mouthM);
+            mouth.position.set(0, -0.08, 0.2);
+            head.add(mouth);
+
+            // Frisyrer
+            const hairGroup = new THREE.Group();
+            const hStyle = parseInt(charConfig.hairStyle);
+
+            if (hStyle === 0) { // Kort
+                const hairCapG = new THREE.SphereGeometry(0.25, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2);
+                const hairCap = new THREE.Mesh(hairCapG, hairMat);
+                hairCap.position.y = 0.03;
+                hairGroup.add(hairCap);
+            } 
+            else if (hStyle === 1) { // Långt
+                const hairCapG = new THREE.SphereGeometry(0.25, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2);
+                const hairCap = new THREE.Mesh(hairCapG, hairMat);
+                hairCap.position.y = 0.03;
+                hairGroup.add(hairCap);
+                const backHairG = new THREE.BoxGeometry(0.4, 0.5, 0.15);
+                const backHair = new THREE.Mesh(backHairG, hairMat);
+                backHair.position.set(0, -0.18, -0.16);
+                hairGroup.add(backHair);
+            } 
+            else if (hStyle === 2) { // Tofs
+                const hairCapG = new THREE.SphereGeometry(0.25, 10, 10);
+                const hairCap = new THREE.Mesh(hairCapG, hairMat);
+                hairCap.position.y = 0.03;
+                hairGroup.add(hairCap);
+                const ponyG = new THREE.CylinderGeometry(0.04, 0.09, 0.4, 6);
+                const pony = new THREE.Mesh(ponyG, hairMat);
+                pony.position.set(0, 0.08, -0.28);
+                pony.rotation.x = -Math.PI / 4;
+                hairGroup.add(pony);
+            } 
+            else if (hStyle === 3) { // Flätor
+                const hairCapG = new THREE.SphereGeometry(0.25, 10, 10);
+                const hairCap = new THREE.Mesh(hairCapG, hairMat);
+                hairCap.position.y = 0.03;
+                hairGroup.add(hairCap);
+                const braidG = new THREE.CylinderGeometry(0.03, 0.02, 0.45, 6);
+                const b1 = new THREE.Mesh(braidG, hairMat);
+                b1.position.set(-0.2, -0.18, -0.08);
+                const b2 = b1.clone();
+                b2.position.x = 0.2;
+                hairGroup.add(b1, b2);
+            } 
+            else if (hStyle === 4) { // Afro
+                const afroG = new THREE.SphereGeometry(0.34, 10, 10);
+                const afro = new THREE.Mesh(afroG, hairMat);
+                afro.position.set(0, 0.12, 0);
+                hairGroup.add(afro);
+            } 
+            else if (hStyle === 5) { // Mohawk
+                const mohawkG = new THREE.BoxGeometry(0.1, 0.15, 0.5);
+                const mohawk = new THREE.Mesh(mohawkG, hairMat);
+                mohawk.position.set(0, 0.28, 0);
+                hairGroup.add(mohawk);
+            } 
+            else if (hStyle === 6) { // Snedbena
+                const sideG = new THREE.BoxGeometry(0.45, 0.12, 0.45);
+                const side = new THREE.Mesh(sideG, hairMat);
+                side.position.set(0, 0.18, 0.01);
+                side.rotation.z = 0.1;
+                hairGroup.add(side);
+            }
+
+            head.add(hairGroup);
+
+            // Armar
+            const armG = new THREE.CylinderGeometry(0.09, 0.07, 1.1, 6);
+            const armMat = charConfig.swimwearStyle === 'Våtdräkt' ? swimMat : skinMat;
+
+            const leftArm = new THREE.Mesh(armG, armMat);
+            leftArm.position.set(-0.48, 0.45, 0);
+            leftArm.castShadow = true;
+            torso.add(leftArm);
+            dModel.leftArm = leftArm;
+
+            const rightArm = new THREE.Mesh(armG, armMat);
+            rightArm.position.set(0.48, 0.45, 0);
+            rightArm.castShadow = true;
+            torso.add(rightArm);
+            dModel.rightArm = rightArm;
+
+            // Ben (KORTADE NER YTTERLIGARE FÖR PERFEKT PROFFSIG REALISM)
+            // Lår: 0.65 (tidigare 0.75), Vad: 0.55 (tidigare 0.65)
+            const legG = new THREE.CylinderGeometry(0.12, 0.09, 0.65, 8);
+            const legMat = charConfig.swimwearStyle === 'Våtdräkt' ? swimMat : skinMat;
+
+            // Vänster ben-grupp
+            const leftLegGroup = new THREE.Group();
+            leftLegGroup.position.set(-0.16, -0.05, 0);
+            const leftThigh = new THREE.Mesh(legG, legMat);
+            leftThigh.position.y = -0.30; // Centrerad pivotoffset
+            leftThigh.castShadow = true;
+            leftLegGroup.add(leftThigh);
+            pelvis.add(leftLegGroup);
+            dModel.leftLeg = leftLegGroup;
+
+            // Vänster vad
+            const shinG = new THREE.CylinderGeometry(0.09, 0.06, 0.55, 8);
+            const leftShinGroup = new THREE.Group();
+            leftShinGroup.position.y = -0.62; // Fästpunkt vid knät
+            const leftShin = new THREE.Mesh(shinG, legMat);
+            leftShin.position.y = -0.25; // Centrerad pivotoffset
+            leftShin.castShadow = true;
+            leftShinGroup.add(leftShin);
+            leftThigh.add(leftShinGroup);
+            dModel.leftShin = leftShinGroup;
+
+            // Höger ben-grupp
+            const rightLegGroup = new THREE.Group();
+            rightLegGroup.position.set(0.16, -0.05, 0);
+            const rightThigh = new THREE.Mesh(legG, legMat);
+            rightThigh.position.y = -0.30;
+            rightThigh.castShadow = true;
+            rightLegGroup.add(rightThigh);
+            pelvis.add(rightLegGroup);
+            dModel.rightLeg = rightLegGroup;
+
+            // Höger vad
+            const rightShinGroup = new THREE.Group();
+            rightShinGroup.position.y = -0.62;
+            const rightShin = new THREE.Mesh(shinG, legMat);
+            rightShin.position.y = -0.25;
+            rightShin.castShadow = true;
+            rightShinGroup.add(rightShin);
+            rightThigh.add(rightShinGroup);
+            dModel.rightShin = rightShinGroup;
+
+            scene.add(diverGroup);
+            resetDiverSkeletalPose();
+        }
+
+        function updateCharacterConfig() {
+            charConfig.gender = document.getElementById('genderSelect').value;
+            charConfig.hairStyle = document.getElementById('hairStyleSelect').value;
+            charConfig.swimwearStyle = document.getElementById('swimwearSelect').value;
+            charConfig.hairColor = document.getElementById('hairColor').value;
+            charConfig.swimwearColor = document.getElementById('swimwearColor').value;
+
+            rebuildDiverModel();
+        }
+
+        function rebuildDiverModel() {
+            if (gameState === STATE_STANDBY) {
+                buildDiverModel();
+                positionDiverOnEdge();
+            } else {
+                buildDiverModel();
+            }
+        }
+
+        // Återställer simhopparens skelett-delar till stående
+        function resetDiverSkeletalPose() {
+            if (!dModel.torso) return;
+            dModel.torso.rotation.set(0, 0, 0);
+            dModel.head.rotation.set(0, 0, 0);
+            dModel.leftArm.rotation.set(0, 0, 0);
+            dModel.rightArm.rotation.set(0, 0, 0);
+            dModel.leftLeg.rotation.set(0, 0, 0);
+            dModel.rightLeg.rotation.set(0, 0, 0);
+            dModel.leftShin.rotation.set(0, 0, 0);
+            dModel.rightShin.rotation.set(0, 0, 0);
+        }
+
+        // --- REALISTISK POSITIONERING PÅ KANTEN ---
+        function positionDiverOnEdge() {
+            const lvl = levels[currentLevelIdx];
+            const dive = diveTypes[currentDiveTypeIdx];
+
+            // Karaktären står stabilare och har sänkts något för att fötterna ska nudda brädan perfekt
+            diverGroup.position.set(-0.1, lvl.platformY + 1.15, 0);
+            diverGroup.rotation.set(0, 0, 0);
+
+            if (dive.isBackwards) {
+                // Bakåt / Molbergare: Vänder ryggen mot vattnet, hälarna på kanten (tittar till vänster)
+                diverGroup.rotation.y = Math.PI;
+                diverGroup.position.x = -0.55; 
+                
+                // Armarna fokuserat framåt (balans)
+                dModel.leftArm.rotation.x = -Math.PI / 2.2;
+                dModel.rightArm.rotation.x = -Math.PI / 2.2;
+            } else {
+                // Framåt / Tyska: Tittar ut över bassängen (tittar till höger)
+                diverGroup.rotation.y = 0;
+                
+                // Armarna rakt upp, sträckta inför språnget
+                dModel.leftArm.rotation.x = Math.PI * 0.95;
+                dModel.rightArm.rotation.x = Math.PI * 0.95;
+            }
+        }
+
+        // --- KONTROLLER ---
+        function handleActionStart() {
+            if (gameState === STATE_STANDBY) {
+                gameState = STATE_POWER;
+                powerVal = 0.5;
+                powerDir = 1;
+                document.getElementById('meterContainer').style.opacity = '100%';
+                document.getElementById('actionHint').classList.add('opacity-0');
+            } 
+            else if (gameState === STATE_POWER) {
+                performJump();
+            } 
+            else if (gameState === STATE_AIRBORNE) {
+                diver.isTucking = true;
+            }
+        }
+
+        function handleActionEnd() {
+            if (gameState === STATE_AIRBORNE) {
+                diver.isTucking = false;
+            }
+        }
+
+        function startGame() {
+            initAudio();
+            document.getElementById('mainMenu').classList.add('pointer-events-none', 'opacity-0');
+            setTimeout(() => {
+                document.getElementById('mainMenu').classList.add('hidden');
+                document.getElementById('gameUI').classList.remove('hidden');
+            }, 500);
+            
+            gameState = STATE_STANDBY;
+            resetToStandby();
+        }
+
+        function exitToMenu() {
+            document.getElementById('mainMenu').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('mainMenu').classList.remove('pointer-events-none', 'opacity-0');
+                document.getElementById('gameUI').classList.add('hidden');
+            }, 50);
+            gameState = STATE_MENU;
+        }
+
+        function resetToStandby() {
+            const lvl = levels[currentLevelIdx];
+            document.getElementById('hudHeight').innerText = lvl.height + "m";
+            document.getElementById('hudScore').innerText = totalPoints;
+
+            resetDiverSkeletalPose();
+            positionDiverOnEdge();
+
+            // Sätt en filmisk startkamera
+            camTheta = -0.4;
+            camPhi = 0.08;
+            camRadius = 16;
+
+            document.getElementById('actionHint').classList.remove('opacity-0');
+            document.getElementById('hintText').innerText = "Klicka en gång för att sikta in den optimala studs-timingen!";
+            document.getElementById('meterContainer').style.opacity = '30%';
+
+            powerVal = 0;
+            scoreTriggered = false;
+            
+            particles.forEach(p => scene.remove(p.mesh));
+            particles = [];
+
+            if (dModel.springboard) {
+                dModel.springboard.rotation.z = 0; // Återställ sviktböjning
+            }
+
+            gameState = STATE_STANDBY;
+        }
+
+        // Fysiskt simulerad hoppare
+        let diver = {
+            vx: 0, vy: 0,
+            angle: 0,
+            rotSpeed: 0,
+            tuckFactor: 0,
+            totalRotation: 0,
+            launchPrecision: 0,
+            splashFactor: 0,
+            isTucking: false
+        };
+
+        function performJump() {
+            const lvl = levels[currentLevelIdx];
+            const dive = diveTypes[currentDiveTypeIdx];
+            
+            playSound('boing');
+
+            // Beräkna uthoppets precision
+            const precision = 1.0 - Math.min(1.0, Math.abs(powerVal - 0.5) * 2.0);
+            diver.launchPrecision = precision;
+
+            // Fysikaliskt uthopp (X och Y rörelse)
+            let horizontalPush = 0.065 + (precision * 0.095);
+            let verticalPush = 0.17 + (precision * 0.15); // Högre hopp vid perfekt träff!
+
+            // Animera en häftig fjädrande rekyl på svikten!
+            if (dModel.springboard) {
+                dModel.springboard.rotation.z = 0.15; // Snärtar uppåt!
+            }
+
+            if (dive.isBackwards) {
+                // Hoppar bakåt utåt (till vänster från kanten) i en elegant båge
+                diver.vx = -horizontalPush * 0.72;
+            } else {
+                // Hoppar framåt (till höger)
+                diver.vx = horizontalPush * 0.95;
+            }
+
+            diver.vy = verticalPush;
+            diver.angle = 0;
+            diver.totalRotation = 0;
+            diver.isTucking = false;
+            diver.tuckFactor = 0;
+
+            diver.rotSpeed = ROT_BASE * dive.rotDir;
+
+            gameState = STATE_AIRBORNE;
+            document.getElementById('meterContainer').style.opacity = '0%';
+
+            const hint = document.getElementById('actionHint');
+            const hintText = document.getElementById('hintText');
+            hint.classList.remove('opacity-0');
+            hintText.innerText = "HÅLL IN för att rulla ihop i tuck!";
+        }
+
+        function setDiveType(idx) {
+            currentDiveTypeIdx = idx;
+            document.querySelectorAll('.dive-btn').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = "dive-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-cyan-600 text-white";
+                } else {
+                    btn.className = "dive-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700";
+                }
+            });
+
+            const hint = document.getElementById('actionHint');
+            const hintText = document.getElementById('hintText');
+            hint.classList.remove('opacity-0', 'scale-95');
+            hint.classList.add('opacity-100', 'scale-100');
+            hintText.innerText = "Valt hopp: " + diveTypes[idx].label;
+            
+            if (gameState === STATE_STANDBY) {
+                positionDiverOnEdge();
+            }
+
+            setTimeout(() => {
+                if (gameState === STATE_STANDBY) {
+                    hint.classList.remove('opacity-100', 'scale-100');
+                    hint.classList.add('opacity-0', 'scale-95');
+                }
+            }, 1800);
+        }
+
+        function selectLevel(idx) {
+            if (idx === 1 && totalPoints < 1000) return;
+            if (idx === 2 && totalPoints < 3500) return;
+
+            currentLevelIdx = idx;
+            document.querySelectorAll('.level-card').forEach((card, i) => {
+                if (i === idx) {
+                    card.className = "level-card text-left p-3 rounded-xl border transition-all flex justify-between items-center bg-cyan-950/40 border-cyan-500/50";
+                } else {
+                    const locked = (i === 1 && totalPoints < 1000) || (i === 2 && totalPoints < 3500);
+                    card.className = "level-card text-left p-3 rounded-xl border transition-all flex justify-between items-center bg-slate-900 border-slate-800" + (locked ? " opacity-60" : "");
+                }
+            });
+
+            buildEnvironment();
+            if (gameState === STATE_STANDBY) {
+                resetToStandby();
+            }
+        }
+
+        function checkLevelLocks() {
+            if (totalPoints >= 1000) {
+                document.getElementById('lvl1').classList.remove('opacity-60');
+                document.getElementById('lvlLock1').innerHTML = "🔓 UPPLÅST";
+                document.getElementById('lvlLock1').className = "text-xs font-semibold px-2 py-1 rounded bg-green-500/20 text-green-400";
+            }
+            if (totalPoints >= 3500) {
+                document.getElementById('lvl2').classList.remove('opacity-60');
+                document.getElementById('lvlLock2').innerHTML = "🔓 UPPLÅST";
+                document.getElementById('lvlLock2').className = "text-xs font-semibold px-2 py-1 rounded bg-green-500/20 text-green-400";
+            }
+        }
+
+        function retryDive() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            resetToStandby();
+        }
+
+        // --- 3D PARTIKELEFFEKTER ---
+        function createSplash(x, y, z, intensity) {
+            const count = 35 + Math.floor(intensity * 95);
+            const color = 0xe0f7ff;
+            const geom = new THREE.SphereGeometry(0.14, 5, 5);
+            const mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.1, transparent: true, opacity: 0.95 });
+
+            playSound('splash');
+            if (intensity > 0.42) {
+                playSound('gasp');
+            } else {
+                playSound('cheer');
+            }
+
+            for (let i = 0; i < count; i++) {
+                const mesh = new THREE.Mesh(geom, mat);
+                mesh.position.set(x + (Math.random() - 0.5) * 1.8, y + 0.1, z + (Math.random() - 0.5) * 1.8);
+                scene.add(mesh);
+
+                const angle = Math.random() * Math.PI * 2;
+                const force = 0.06 + Math.random() * 0.18 * (intensity * 1.4 + 0.5);
+                
+                particles.push({
+                    mesh: mesh,
+                    vx: Math.cos(angle) * force,
+                    vy: 0.12 + Math.random() * 0.22,
+                    vz: Math.sin(angle) * force,
+                    life: 1.0,
+                    decay: 0.018 + Math.random() * 0.018
+                });
+            }
+        }
+
+        function createBubbles(x, y, z, count) {
+            const geom = new THREE.SphereGeometry(0.1, 4, 4);
+            const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
+            
+            for (let i = 0; i < count; i++) {
+                const mesh = new THREE.Mesh(geom, mat);
+                mesh.position.set(x + (Math.random() - 0.5) * 1.4, y - Math.random() * 3, z + (Math.random() - 0.5) * 1.4);
+                scene.add(mesh);
+
+                particles.push({
+                    mesh: mesh,
+                    vx: (Math.random() - 0.5) * 0.025,
+                    vy: 0.03 + Math.random() * 0.05,
+                    vz: (Math.random() - 0.5) * 0.025,
+                    life: 1.0,
+                    decay: 0.012
+                });
+            }
+        }
+
+        // --- POÄNGBEDÖMNING ---
+        function calculateScoreAndShow() {
+            const dive = diveTypes[currentDiveTypeIdx];
+            
+            const rotationsInDegrees = (diver.totalRotation * 180 / Math.PI);
+            const halfFlips = Math.round(rotationsInDegrees / 180);
+            const flipCountText = (halfFlips / 2) + " varv";
+
+            const launchPrecPercent = Math.round(diver.launchPrecision * 100);
+
+            let splashText = "Minimalt";
+            if (diver.splashFactor > 0.72) splashText = "KATASTROFALT (Magplask!)";
+            else if (diver.splashFactor > 0.42) splashText = "Stort (Massa stänk)";
+            else if (diver.splashFactor > 0.16) splashText = "Måttligt (Lite stänk)";
+            else splashText = "Perfekt (Stänklöst!)";
+
+            const angleScore = Math.max(0, (1.0 - diver.splashFactor) * 10);
+            const launchScore = diver.launchPrecision * 10;
+            const judgeBase = (angleScore * 0.85 + launchScore * 0.15);
+
+            let s1 = Math.min(10, Math.max(1, judgeBase + (Math.random() * 0.8 - 0.4)));
+            let s2 = Math.min(10, Math.max(1, judgeBase + (Math.random() * 0.6 - 0.3)));
+            let s3 = Math.min(10, Math.max(1, judgeBase + (Math.random() * 0.9 - 0.45)));
+
+            s1 = Math.round(s1 * 2) / 2;
+            s2 = Math.round(s2 * 2) / 2;
+            s3 = Math.round(s3 * 2) / 2;
+
+            const levelHeightFactor = levels[currentLevelIdx].height;
+            const difficultyMultiplier = 1.0 + (halfFlips * 0.55) + (currentDiveTypeIdx * 0.3);
+            const runScore = Math.round((s1 + s2 + s3) * (levelHeightFactor / 1.5) * difficultyMultiplier);
+
+            document.getElementById('score1').innerText = s1.toFixed(1);
+            document.getElementById('score2').innerText = s2.toFixed(1);
+            document.getElementById('score3').innerText = s3.toFixed(1);
+
+            document.getElementById('infoFlips').innerText = flipCountText;
+            document.getElementById('infoLaunch').innerText = launchPrecPercent + "%";
+            document.getElementById('infoSplash').innerText = splashText;
+
+            const titleEl = document.getElementById('resultTitle');
+            const subEl = document.getElementById('resultSubtitle');
+            if (diver.splashFactor > 0.68) {
+                titleEl.innerText = "Aj! KATASTROF!";
+                titleEl.className = "text-3xl font-extrabold text-rose-500 fancy-title";
+                subEl.innerText = "Det där magplasket sved rejält från den höjden!";
+            } else if (diver.splashFactor > 0.32) {
+                titleEl.innerText = "Helt okej!";
+                titleEl.className = "text-3xl font-extrabold text-yellow-500 fancy-title";
+                subEl.innerText = "Bra kontroll i luften, men spänn fötterna bättre vid nedslaget.";
+            } else {
+                titleEl.innerText = "MAJESTÄTISKT NEDSLAG! 🌟";
+                titleEl.className = "text-3xl font-extrabold text-emerald-400 fancy-title";
+                subEl.innerText = "Rakt som en spik! Domarna är djupt imponerade.";
+            }
+
+            totalPoints += runScore;
+            localStorage.setItem('simhopp_score', totalPoints);
+            document.getElementById('totalPointsDisplay').innerText = totalPoints;
+            checkLevelLocks();
+
+            gameState = STATE_RESULTS;
+            document.getElementById('resultsScreen').classList.remove('hidden');
+        }
+
+        // --- SPEL-LOOP (UPDATE & ANIMATION) ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const lvl = levels[currentLevelIdx];
+            const time = clock.getElapsedTime();
+
+            // 1. Svikten böjer sig under laddningsfasen
+            if (gameState === STATE_POWER) {
+                powerVal += powerSpeed * powerDir;
+                if (powerVal >= 1.0) { powerVal = 1.0; powerDir = -1; }
+                else if (powerVal <= 0.0) { powerVal = 0.0; powerDir = 1; }
+                document.getElementById('powerIndicator').style.left = (powerVal * 100) + "%";
+
+                // Låt sviktbrädan svikta neråt baserat på laddningsstyrkan
+                if (dModel.springboard) {
+                    dModel.springboard.rotation.z = -powerVal * 0.12;
+                    // Låt hopparen sjunka med svikten för realism
+                    diverGroup.position.y = lvl.platformY + 1.15 - (powerVal * 0.35);
+                }
+            }
+
+            // Återställ svikten mjukt efter språng
+            if (gameState === STATE_AIRBORNE && dModel.springboard) {
+                dModel.springboard.rotation.z *= 0.88;
+            }
+
+            // Realistisk våg-animering på vattenytan
+            if (waterPlane) {
+                const posAttr = waterPlane.geometry.attributes.position;
+                for (let i = 0; i < posAttr.count; i++) {
+                    const u = posAttr.getX(i);
+                    const v = posAttr.getY(i);
+                    // Kombinerade sinusvågor för ett trovärdigt 3D-vågmönster
+                    const z = Math.sin(u * 0.15 + time * 1.8) * 0.25 + Math.cos(v * 0.15 + time * 1.5) * 0.25;
+                    posAttr.setZ(i, z);
+                }
+                waterPlane.geometry.computeVertexNormals();
+                waterPlane.geometry.attributes.position.needsUpdate = true;
+            }
+
+            // 2. Fysikuppdateringar i luften (Extrema höjder)
+            if (gameState === STATE_AIRBORNE) {
+                diver.vy += GRAVITY;
+                diverGroup.position.x += diver.vx;
+                diverGroup.position.y += diver.vy;
+
+                // Hantera Tuck (Kryp ihop skelett-animering)
+                if (diver.isTucking) {
+                    diver.tuckFactor += (1.0 - diver.tuckFactor) * 0.22;
+                } else {
+                    diver.tuckFactor += (0.0 - diver.tuckFactor) * 0.16;
+                }
+
+                const t = diver.tuckFactor;
+
+                // Realistiskt hopparbeteende (Kompaktare gruppering)
+                dModel.torso.rotation.x = t * 0.45;
+                // Knän dras upp mot bröstet
+                dModel.leftLeg.rotation.x = -t * 2.3;
+                dModel.rightLeg.rotation.x = -t * 2.3;
+                // Benen viks tätt ihop
+                dModel.leftShin.rotation.x = t * 2.4;
+                dModel.rightShin.rotation.x = t * 2.4;
+                // Armarna fattar stadigt grepp om smalbenen
+                dModel.leftArm.rotation.x = t * 2.25;
+                dModel.rightArm.rotation.x = t * 2.25;
+
+                // Dynamisk rotationshastighet beroende på tröghet
+                const currentSpin = diver.rotSpeed * (1.0 + (t * TUCK_BOOST));
+                diverGroup.rotation.z += currentSpin;
+                diver.totalRotation += Math.abs(currentSpin);
+
+                // Kameran fokuserar på den fallande hopparen och zoomar ut dynamiskt från de extrema höjderna
+                if (!isOrbiting) {
+                    camTheta = camTheta * 0.94 + (-0.25) * 0.06;
+                    camPhi = camPhi * 0.94 + (0.08) * 0.06;
+                    // Öka avståndet baserat på fallhastighet för storslagen vy
+                    const speedZ = Math.abs(diver.vy);
+                    camRadius = camRadius * 0.94 + (15 + speedZ * 12) * 0.06;
+                }
+
+                // Vattenintrång vid träff
+                if (diverGroup.position.y <= lvl.waterY + 0.4) {
+                    gameState = STATE_WATER;
+
+                    // Beräkna rotations-landning
+                    let normAngle = Math.abs(diverGroup.rotation.z) % (Math.PI * 2);
+                    
+                    const diffHeadFirst = Math.abs(normAngle - Math.PI);
+                    const diffFeetFirst = Math.min(normAngle, Math.abs(normAngle - Math.PI * 2));
+                    const smallestDiff = Math.min(diffHeadFirst, diffFeetFirst);
+
+                    diver.splashFactor = Math.min(1.0, smallestDiff / (Math.PI / 2));
+
+                    createSplash(diverGroup.position.x, lvl.waterY, diverGroup.position.z, diver.splashFactor);
+                    createBubbles(diverGroup.position.x, lvl.waterY, diverGroup.position.z, 28);
+                }
+            }
+
+            // 3. Bromsverkan i vattnet (Karaktären dyker ner under ytan!)
+            if (gameState === STATE_WATER) {
+                diver.vy *= 0.72; // Snabbt motstånd
+                diver.vx *= 0.72;
+                diverGroup.position.y += diver.vy;
+                diverGroup.position.x += diver.vx;
+                
+                diverGroup.rotation.z += diver.rotSpeed * 0.04;
+
+                // Sträck ut kroppen reflexmässigt under ytan
+                diver.tuckFactor += (0.0 - diver.tuckFactor) * 0.25;
+                const t = diver.tuckFactor;
+                dModel.torso.rotation.x = t * 0.45;
+                dModel.leftLeg.rotation.x = -t * 2.3;
+                dModel.rightLeg.rotation.x = -t * 2.3;
+                dModel.leftShin.rotation.x = t * 2.4;
+                dModel.rightShin.rotation.x = t * 2.4;
+
+                // Kameran stannar upp vid vattenytan för att titta ner på simmaren under ytan
+                if (!isOrbiting) {
+                    camRadius = camRadius * 0.9 + 11 * 0.1;
+                }
+
+                if (Math.abs(diver.vy) < 0.008 && !scoreTriggered) {
+                    scoreTriggered = true;
+                    setTimeout(() => {
+                        calculateScoreAndShow();
+                    }, 850);
+                }
+            }
+
+            // Uppdatera partiklar (vattenspray)
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.vy += GRAVITY * 0.4;
+                p.mesh.position.x += p.vx;
+                p.mesh.position.y += p.vy;
+                p.mesh.position.z += p.vz;
+                p.life -= p.decay;
+
+                p.mesh.scale.setScalar(p.life);
+
+                if (p.life <= 0) {
+                    scene.remove(p.mesh);
+                    particles.splice(i, 1);
+                }
+            }
+
+            // 4. Avancerad kameraföljning
+            let targetX = 0;
+            let targetY = lvl.platformY - 2;
+            let targetZ = 0;
+
+            if (gameState === STATE_AIRBORNE || gameState === STATE_WATER) {
+                targetX = diverGroup.position.x;
+                targetY = Math.max(lvl.waterY - 3, diverGroup.position.y); // Låt inte kameran gå för djupt under golvet
+                targetZ = diverGroup.position.z;
+            }
+
+            camera.position.x = targetX + camRadius * Math.cos(camTheta) * Math.cos(camPhi);
+            camera.position.y = targetY + camRadius * Math.sin(camPhi);
+            camera.position.z = targetZ + camRadius * Math.sin(camTheta) * Math.cos(camPhi);
+            camera.lookAt(targetX, targetY, targetZ);
+
+            renderer.render(scene, camera);
+        }
+
+        // --- RESPONSER & UPSTART ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Tangentbords-lyssnare
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                handleActionStart();
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                handleActionEnd();
+            }
+        });
+
+        // Mobil-interaktionslyssnare
+        window.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button') || e.target.closest('select') || e.target.closest('input')) return;
+            handleActionStart();
+        });
+        window.addEventListener('touchend', (e) => {
+            handleActionEnd();
+        });
+
+        // Starta spelet
+        window.onload = function() {
+            initThree();
+            setupSkinColorUI();
+            
+            if (localStorage.getItem('simhopp_score')) {
+                totalPoints = parseInt(localStorage.getItem('simhopp_score'));
+                document.getElementById('totalPointsDisplay').innerText = totalPoints;
+                checkLevelLocks();
+            }
+
+            animate();
+        };
+    </script>
+</body>
+</html>

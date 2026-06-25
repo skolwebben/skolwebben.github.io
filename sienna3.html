@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Blomster-Snake</title>
+    <style>
+        :root {
+            --primary-color: #52b788;
+            --snake-head: #2d6a4f;
+            --snake-body: #74c69d;
+            --bg-color: #e0f2e9;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            /* Ett vackert, upprepande SVG-mönster med blommor */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%23ffb3c6' d='M40 25c-5 0-10-5-10-10s5-10 10-10 10 5 10 10-5 10-10 10zm0 30c-5 0-10 5-10 10s5 10 10 10 10-5 10-10-5-10-10-10zm-15-15c0-5-5-10-10-10s-10 5-10 10 5 10 10 10 10-5 10-10zm30 0c0-5 5-10 10-10s10 5 10 10-5 10-10 10-10-5-10-10z'/%3E%3Ccircle cx='40' cy='40' r='6' fill='%23ffd166'/%3E%3C/svg%3E");
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Förhindra scroll på mobilen */
+            touch-action: none;
+        }
+
+        #game-wrapper {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            text-align: center;
+            position: relative;
+            max-width: 95vw;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            color: #2d6a4f;
+            font-size: 28px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        #score-board {
+            font-size: 20px;
+            font-weight: bold;
+            color: #40916c;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        canvas {
+            background-color: #d8f3dc;
+            border: 4px solid var(--primary-color);
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto;
+            box-shadow: inset 0 0 15px rgba(82, 183, 136, 0.2);
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Overlay för Start och Game Over */
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        #overlay h2 {
+            color: #d90429;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        #overlay p {
+            font-size: 18px;
+            color: #2b2d42;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 10px rgba(82, 183, 136, 0.4);
+        }
+
+        button:hover {
+            background-color: #40916c;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #instructions {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+            background: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 500px) {
+            #game-wrapper {
+                padding: 15px;
+            }
+            h1 { font-size: 24px; }
+            canvas { width: 300px; height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-wrapper">
+        <h1>🌸 Blomster-Snake 🌸</h1>
+        
+        <div id="score-board">
+            <span>Poäng: <span id="score">0</span></span>
+            <span>Bästa: <span id="high-score">0</span></span>
+        </div>
+
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <div id="overlay">
+            <h2 id="overlay-title">Välkommen!</h2>
+            <p id="overlay-text">Ät blommorna för att växa.</p>
+            <button id="start-btn">Starta Spelet</button>
+        </div>
+    </div>
+
+    <div id="instructions">
+        💻 Dator: Använd piltangenterna eller WASD.<br>
+        📱 Mobil: Svep med fingret (swipe) över spelfältet.
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('high-score');
+        const overlay = document.getElementById('overlay');
+        const overlayTitle = document.getElementById('overlay-title');
+        const overlayText = document.getElementById('overlay-text');
+        const startBtn = document.getElementById('start-btn');
+
+        // Spelinställningar
+        const gridSize = 20; // Storlek på varje ruta
+        const tileCount = canvas.width / gridSize;
+        
+        let snake = [];
+        let dx = 0; // Hastighet X
+        let dy = 0; // Hastighet Y
+        let foodX;
+        let foodY;
+        let score = 0;
+        let highScore = localStorage.getItem('blomsterSnakeHighScore') || 0;
+        highScoreElement.textContent = highScore;
+        
+        let gameLoop;
+        let gameActive = false;
+        let speed = 120; // Millisekunder per frame (lägre = snabbare)
+        
+        // Emojis som mat
+        const flowers = ['🌸', '🌺', '🌻', '🌼', '🌷', '🌹'];
+        let currentFlower = flowers[0];
+
+        // Initiera spelet
+        function initGame() {
+            // Startposition (mitten)
+            snake = [
+                { x: 10, y: 10 },
+                { x: 10, y: 11 },
+                { x: 10, y: 12 }
+            ];
+            
+            // Startriktning (uppåt)
+            dx = 0;
+            dy = -1;
+            
+            score = 0;
+            speed = 130;
+            scoreElement.textContent = score;
+            
+            placeFood();
+            
+            gameActive = true;
+            overlay.classList.add('hidden');
+            
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(update, speed);
+        }
+
+        // Huvudloop
+        function update() {
+            if (!gameActive) return;
+
+            // Beräkna nytt huvud
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // Kolla kollision med väggar
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                return gameOver();
+            }
+
+            // Kolla kollision med sig själv
+            for (let i = 0; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return gameOver();
+                }
+            }
+
+            snake.unshift(head); // Lägg till nytt huvud
+
+            // Kolla om ormen äter mat
+            if (head.x === foodX && head.y === foodY) {
+                score += 10;
+                scoreElement.textContent = score;
+                
+                // Öka hastigheten lite grann varje gång man äter
+                if (speed > 50) {
+                    speed -= 2;
+                    clearInterval(gameLoop);
+                    gameLoop = setInterval(update, speed);
+                }
+                
+                placeFood();
+            } else {
+                snake.pop(); // Ta bort sista svansbiten om ingen mat åts
+            }
+
+            draw();
+        }
+
+        // Rita ut spelet
+        function draw() {
+            // Rensa canvas
+            ctx.fillStyle = '#d8f3dc'; // Samma som canvas background
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Rita rutnät (valfritt, men ger en fin trädgårdskänsla)
+            ctx.strokeStyle = 'rgba(82, 183, 136, 0.1)';
+            for(let i=0; i<tileCount; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i*gridSize, 0);
+                ctx.lineTo(i*gridSize, canvas.height);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i*gridSize);
+                ctx.lineTo(canvas.width, i*gridSize);
+                ctx.stroke();
+            }
+
+            // Rita mat (Blomma)
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            // Emoji centreras i rutan
+            ctx.fillText(currentFlower, foodX * gridSize + gridSize/2, foodY * gridSize + gridSize/2 + 2);
+
+            // Rita ormen (Vinranka/blad)
+            snake.forEach((part, index) => {
+                // Gör huvudet mörkare
+                ctx.fillStyle = index === 0 ? 'var(--snake-head)' : 'var(--snake-body)';
+                
+                // Mjuka, rundade hörn på ormen
+                ctx.beginPath();
+                ctx.roundRect(part.x * gridSize + 1, part.y * gridSize + 1, gridSize - 2, gridSize - 2, 5);
+                ctx.fill();
+
+                // Rita ögon på huvudet
+                if (index === 0) {
+                    ctx.fillStyle = 'white';
+                    let eyeOffsetX = 0;
+                    let eyeOffsetY = 0;
+                    
+                    // Ögonens position beror på riktningen
+                    if (dx === 1) { eyeOffsetX = 5; } // Höger
+                    else if (dx === -1) { eyeOffsetX = -5; } // Vänster
+                    else if (dy === 1) { eyeOffsetY = 5; } // Ner
+                    else if (dy === -1) { eyeOffsetY = -5; } // Upp
+
+                    // Vänster öga
+                    ctx.beginPath();
+                    ctx.arc(part.x * gridSize + gridSize/2 + eyeOffsetX - (dy !== 0 ? 4 : 0), 
+                            part.y * gridSize + gridSize/2 + eyeOffsetY - (dx !== 0 ? 4 : 0), 
+                            2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Höger öga
+                    ctx.beginPath();
+                    ctx.arc(part.x * gridSize + gridSize/2 + eyeOffsetX + (dy !== 0 ? 4 : 0), 
+                            part.y * gridSize + gridSize/2 + eyeOffsetY + (dx !== 0 ? 4 : 0), 
+                            2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        }
+
+        // Slumpa ut mat
+        function placeFood() {
+            // Välj en slumpmässig blomma
+            currentFlower = flowers[Math.floor(Math.random() * flowers.length)];
+            
+            let newFoodX;
+            let newFoodY;
+            let onSnake = true;
+
+            // Se till att maten inte hamnar på ormen
+            while (onSnake) {
+                newFoodX = Math.floor(Math.random() * tileCount);
+                newFoodY = Math.floor(Math.random() * tileCount);
+                onSnake = snake.some(part => part.x === newFoodX && part.y === newFoodY);
+            }
+            foodX = newFoodX;
+            foodY = newFoodY;
+        }
+
+        // Hantera Game Over
+        function gameOver() {
+            gameActive = false;
+            clearInterval(gameLoop);
+            
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('blomsterSnakeHighScore', highScore);
+                highScoreElement.textContent = highScore;
+            }
+
+            overlayTitle.textContent = "Spelet är slut!";
+            overlayTitle.style.color = "#d90429"; // Röd text
+            overlayText.textContent = `Du samlade ${score} poäng.`;
+            startBtn.textContent = "Spela Igen";
+            overlay.classList.remove('hidden');
+        }
+
+        // Tangentbordskontroller
+        window.addEventListener('keydown', e => {
+            // Förhindra att sidan scrollar när man spelar
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].indexOf(e.code) > -1) {
+                e.preventDefault();
+            }
+
+            if (!gameActive) return;
+
+            switch (e.key) {
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    if (dy !== 1) { dx = 0; dy = -1; }
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    if (dy !== -1) { dx = 0; dy = 1; }
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    if (dx !== 1) { dx = -1; dy = 0; }
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    if (dx !== -1) { dx = 1; dy = 0; }
+                    break;
+            }
+        });
+
+        // Touch/Svep-kontroller för mobil
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            e.preventDefault();
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault(); // Stoppa mobilen från att scrolla skärmen
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', e => {
+            if (!gameActive) return;
+            
+            let touchEndX = e.changedTouches[0].screenX;
+            let touchEndY = e.changedTouches[0].screenY;
+            
+            handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+        }, {passive: false});
+
+        function handleSwipe(startX, startY, endX, endY) {
+            let diffX = endX - startX;
+            let diffY = endY - startY;
+            
+            // Kollar om det var en tydlig svepning (förhindrar misstag vid små klick)
+            if (Math.abs(diffX) < 20 && Math.abs(diffY) < 20) return;
+
+            // Om X-skillnaden är större än Y, betyder det horisontell svepning
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                // Höger eller Vänster
+                if (diffX > 0 && dx !== -1) {
+                    dx = 1; dy = 0; // Höger
+                } else if (diffX < 0 && dx !== 1) {
+                    dx = -1; dy = 0; // Vänster
+                }
+            } else {
+                // Upp eller Ner
+                if (diffY > 0 && dy !== -1) {
+                    dx = 0; dy = 1; // Ner
+                } else if (diffY < 0 && dy !== 1) {
+                    dx = 0; dy = -1; // Upp
+                }
+            }
+        }
+
+        // Startknapp
+        startBtn.addEventListener('click', initGame);
+
+        // Rita startskärmen direkt
+        draw();
+
+    </script>
+</body>
+</html>

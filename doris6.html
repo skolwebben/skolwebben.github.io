@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="sv" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonTetra - Ett modernt pusselspel</title>
+    <!-- Tailwind CSS för snabb och snygg styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide ikoner för gränssnittet -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0b0f19;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Neon-effekter */
+        .neon-border {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), inset 0 0 15px rgba(59, 130, 246, 0.2);
+            border: 2px solid rgba(59, 130, 246, 0.8);
+        }
+        .neon-text-blue {
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+        }
+        .neon-text-pink {
+            text-shadow: 0 0 8px rgba(236, 72, 153, 0.8);
+        }
+        /* Custom scrollbar för highscores */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-100 flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur py-3 px-4 flex justify-between items-center z-10 shrink-0">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-pink-500 flex items-center justify-center animate-pulse">
+                <i data-lucide="layout-grid" class="w-5 h-5 text-white"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-widest font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-pink-500">
+                NEONTETRA
+            </h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <!-- Ljudkontroller -->
+            <button id="musicToggle" class="p-2 bg-slate-900 hover:bg-slate-800 rounded-lg border border-slate-700 transition flex items-center justify-center" title="Slå på/av musik">
+                <i id="musicIcon" data-lucide="music-4" class="w-5 h-5 text-slate-400"></i>
+            </button>
+            <button id="sfxToggle" class="p-2 bg-slate-900 hover:bg-slate-800 rounded-lg border border-slate-700 transition flex items-center justify-center" title="Slå på/av ljudeffekter">
+                <i id="sfxIcon" data-lucide="volume-2" class="w-5 h-5 text-slate-400"></i>
+            </button>
+            <button id="rulesBtn" class="p-2 bg-slate-900 hover:bg-slate-800 rounded-lg border border-slate-700 transition flex items-center justify-center" title="Visa regler">
+                <i data-lucide="info" class="w-5 h-5 text-slate-400"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center p-2 sm:p-4 max-w-6xl mx-auto w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full h-full max-h-[85vh]">
+            
+            <!-- VÄNSTER PANEL: Info & Inställningar -->
+            <div class="lg:col-span-3 flex flex-col gap-3 justify-between order-2 lg:order-1">
+                <!-- Poängtavla -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 backdrop-blur-sm shadow-xl">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 font-orbitron">Status</h2>
+                    <div class="grid grid-cols-3 lg:grid-cols-1 gap-2">
+                        <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/80">
+                            <span class="text-xs text-slate-500 uppercase font-bold">Poäng</span>
+                            <div id="scoreVal" class="text-xl sm:text-2xl font-black font-orbitron neon-text-blue text-blue-400">0</div>
+                        </div>
+                        <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/80">
+                            <span class="text-xs text-slate-500 uppercase font-bold">Nivå</span>
+                            <div id="levelVal" class="text-xl sm:text-2xl font-black font-orbitron text-emerald-400">1</div>
+                        </div>
+                        <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/80">
+                            <span class="text-xs text-slate-500 uppercase font-bold">Rader</span>
+                            <div id="linesVal" class="text-xl sm:text-2xl font-black font-orbitron text-pink-400">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temaväljare -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 backdrop-blur-sm">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 font-orbitron mb-3">Välj Tema</h2>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setTheme('neon')" class="theme-btn py-2 px-3 rounded-lg border border-blue-500/50 bg-blue-950/20 text-blue-400 font-bold text-sm transition hover:scale-105 active:scale-95">Neon Glow</button>
+                        <button onclick="setTheme('retro')" class="theme-btn py-2 px-3 rounded-lg border border-amber-500/30 bg-amber-950/10 text-amber-400 font-bold text-sm transition hover:scale-105 active:scale-95">Retro 8-bit</button>
+                        <button onclick="setTheme('cyberpunk')" class="theme-btn py-2 px-3 rounded-lg border border-pink-500/30 bg-pink-950/10 text-pink-400 font-bold text-sm transition hover:scale-105 active:scale-95">Cyberpunk</button>
+                        <button onclick="setTheme('pastel')" class="theme-btn py-2 px-3 rounded-lg border border-purple-500/30 bg-purple-950/10 text-purple-300 font-bold text-sm transition hover:scale-105 active:scale-95">Pastell</button>
+                    </div>
+                </div>
+
+                <!-- High Score Topplista -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 flex-grow flex flex-col justify-between backdrop-blur-sm min-h-[150px]">
+                    <div>
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 font-orbitron mb-2 flex items-center gap-1.5">
+                            <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> High Scores
+                        </h2>
+                        <div id="highscoresList" class="space-y-1.5 text-sm max-h-[110px] overflow-y-auto">
+                            <!-- Fylls med JS -->
+                        </div>
+                    </div>
+                    <button id="resetScoresBtn" class="text-xs text-slate-500 hover:text-slate-300 transition text-left mt-2 underline">Nollställ topplistan</button>
+                </div>
+            </div>
+
+            <!-- SPELBANA (Mitten) -->
+            <div class="lg:col-span-6 flex flex-col items-center justify-center order-1 lg:order-2">
+                <!-- Wrapper för canvas och dess overlays -->
+                <div class="relative w-full max-w-[340px] aspect-[1/2] rounded-2xl overflow-hidden neon-border bg-slate-950/90 shadow-2xl flex items-center justify-center">
+                    <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+
+                    <!-- Startskärm / Game Over-skärm -->
+                    <div id="gameOverlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 z-20">
+                        <div id="overlayContent" class="space-y-6">
+                            <h2 id="overlayTitle" class="text-3xl font-black font-orbitron tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500">
+                                REDO ATT SPELA?
+                            </h2>
+                            <p id="overlayText" class="text-slate-400 max-w-xs text-sm">
+                                Upplev klassisk Tetris med pulserande neon-look, härlig synth-musik och ökande utmaning!
+                            </p>
+                            
+                            <!-- Namnfält för Highscore -->
+                            <div class="space-y-1.5 text-left max-w-[200px] mx-auto">
+                                <label class="text-xs text-slate-400 uppercase font-bold">Ditt Spelarnamn</label>
+                                <input type="text" id="playerName" value="Spelare" maxlength="10" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-center font-bold tracking-wide focus:outline-none focus:border-blue-500 text-slate-100">
+                            </div>
+
+                            <button id="startBtn" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold tracking-widest rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 font-orbitron uppercase text-sm">
+                                Starta Spelet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Touchkontroller (Visa endast på touch-enheter, eller alltid som backup) -->
+                <div class="w-full max-w-[340px] mt-3 grid grid-cols-5 gap-1.5 px-2">
+                    <button id="ctrlHold" class="p-2.5 bg-slate-900 active:bg-slate-800 rounded-lg border border-slate-800 text-slate-400 hover:text-white flex flex-col items-center justify-center text-xs" title="Spara Block">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 mb-0.5"></i>Hold
+                    </button>
+                    <button id="ctrlLeft" class="p-2.5 bg-slate-900 active:bg-slate-800 rounded-lg border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </button>
+                    <button id="ctrlRotate" class="p-2.5 bg-blue-900/40 active:bg-blue-800/60 rounded-lg border border-blue-800 text-blue-300 hover:text-white flex flex-col items-center justify-center text-xs">
+                        <i data-lucide="rotate-cw" class="w-4 h-4 mb-0.5"></i>Vrid
+                    </button>
+                    <button id="ctrlRight" class="p-2.5 bg-slate-900 active:bg-slate-800 rounded-lg border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                    <button id="ctrlDrop" class="p-2.5 bg-pink-950/40 active:bg-pink-900/60 rounded-lg border border-pink-800 text-pink-300 hover:text-white flex flex-col items-center justify-center text-xs">
+                        <i data-lucide="arrow-down-to-line" class="w-4 h-4 mb-0.5"></i>Släpp
+                    </button>
+                </div>
+            </div>
+
+            <!-- HÖGER PANEL: Förhandsvisning & Sparat block -->
+            <div class="lg:col-span-3 flex flex-col gap-3 justify-between order-3">
+                <!-- Nästa block -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 backdrop-blur-sm flex flex-col items-center">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 font-orbitron mb-3 w-full text-center">Nästa block</h2>
+                    <div class="w-24 h-24 bg-slate-900/50 rounded-lg border border-slate-800 flex items-center justify-center">
+                        <canvas id="nextCanvas" width="80" height="80"></canvas>
+                    </div>
+                </div>
+
+                <!-- Sparat block -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 backdrop-blur-sm flex flex-col items-center">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 font-orbitron mb-3 w-full text-center">Sparat block</h2>
+                    <div class="w-24 h-24 bg-slate-900/50 rounded-lg border border-slate-800 flex items-center justify-center">
+                        <canvas id="holdCanvas" width="80" height="80"></canvas>
+                    </div>
+                </div>
+
+                <!-- Snabba Spelkontroller Guide (Dator) -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 backdrop-blur-sm hidden sm:block">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 font-orbitron mb-2.5">Styrning (Tangentbord)</h2>
+                    <ul class="text-xs space-y-1.5 text-slate-400">
+                        <li class="flex justify-between"><span>Flytta block:</span> <span class="font-bold text-slate-200">←  →</span></li>
+                        <li class="flex justify-between"><span>Rotera:</span> <span class="font-bold text-slate-200">↑  eller  Z</span></li>
+                        <li class="flex justify-between"><span>Snabbt fall (Soft):</span> <span class="font-bold text-slate-200">↓</span></li>
+                        <li class="flex justify-between"><span>Direktfall (Hard):</span> <span class="font-bold text-slate-200">Mellanslag</span></li>
+                        <li class="flex justify-between"><span>Spara Block:</span> <span class="font-bold text-slate-200">C  eller  Skift</span></li>
+                        <li class="flex justify-between"><span>Pausa spel:</span> <span class="font-bold text-slate-200">P</span></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Regler Modal -->
+    <div id="rulesModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full relative">
+            <button id="closeRulesBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="text-2xl font-black font-orbitron text-blue-400 mb-4 flex items-center gap-2">
+                <i data-lucide="book-open"></i> NeonTetra Regler
+            </h3>
+            <div class="space-y-3 text-slate-300 text-sm">
+                <p>Målet är att rotera och placera fallande figurer (tetrominoes) för att skapa kompletta horisontella rader.</p>
+                <ul class="list-disc pl-5 space-y-1.5">
+                    <li>När en hel rad fylls försvinner den och du får poäng!</li>
+                    <li>Rensa flera rader samtidigt för massiva poäng och kombo-bonusar!</li>
+                    <li>Hastigheten ökar successivt var 10:e rad du rensar.</li>
+                    <li>Använd <strong>Hold (Spara)</strong> för att lägga undan en besvärlig bit till senare.</li>
+                    <li>Spelet slutar om blocken når ända upp till skärmens topp.</li>
+                </ul>
+                <div class="bg-slate-950 p-3 rounded border border-slate-800 mt-4">
+                    <h4 class="font-bold text-slate-200 mb-1">Poängfördelning:</h4>
+                    <div class="grid grid-cols-2 gap-1 text-xs text-slate-400">
+                        <span>1 rad: 100 poäng</span>
+                        <span>2 rader: 300 poäng</span>
+                        <span>3 rader: 500 poäng</span>
+                        <span>4 rader (TETRA!): 800 poäng</span>
+                    </div>
+                </div>
+            </div>
+            <button id="closeRulesBtn2" class="w-full py-2.5 mt-5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg transition">
+                Jag förstår, låt mig spela!
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-2.5 text-center text-xs text-slate-600 border-t border-slate-900 bg-slate-950/40 shrink-0">
+        NeonTetra © 2026 - Skapat med kärlek, CSS-glow och Synth-ljud.
+    </footer>
+
+    <!-- JS Logik -->
+    <script>
+        // Initiera Lucide-ikoner
+        lucide.createIcons();
+
+        // --- AUDIO SYSTEM (Web Audio API Synth) ---
+        class SoundSystem {
+            constructor() {
+                this.audioCtx = null;
+                this.musicEnabled = false;
+                this.sfxEnabled = true;
+                this.musicInterval = null;
+                this.seqIndex = 0;
+                
+                // Korobeiniki (Tetris-låten) i noter [ton, varaktighet i sekunder]
+                // 0 representerar en paus (tystnad)
+                this.themeSong = [
+                    ['E5', 0.5], ['B4', 0.25], ['C5', 0.25], ['D5', 0.5], ['C5', 0.25], ['B4', 0.25],
+                    ['A4', 0.5], ['A4', 0.25], ['C5', 0.25], ['E5', 0.5], ['D5', 0.25], ['C5', 0.25],
+                    ['B4', 0.75], ['C5', 0.25], ['D5', 0.5], ['E5', 0.5],
+                    ['C5', 0.5], ['A4', 0.5], ['A4', 0.5], [0, 0.5],
+
+                    ['D5', 0.75], ['F5', 0.25], ['A5', 0.5], ['G5', 0.25], ['F5', 0.25],
+                    ['E5', 0.75], ['C5', 0.25], ['E5', 0.5], ['D5', 0.25], ['C5', 0.25],
+                    ['B4', 0.5], ['B4', 0.25], ['C5', 0.25], ['D5', 0.5], ['E5', 0.5],
+                    ['C5', 0.5], ['A4', 0.5], ['A4', 0.5], [0, 0.5]
+                ];
+                
+                this.frequencies = {
+                    'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
+                    'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25, 'E5': 659.25,
+                    'F5': 698.46, 'F#5': 739.99, 'G5': 783.99, 'G#5': 830.61, 'A5': 880.00
+                };
+            }
+
+            init() {
+                if (!this.audioCtx) {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+            }
+
+            playSFX(type) {
+                if (!this.sfxEnabled) return;
+                this.init();
+
+                const now = this.audioCtx.currentTime;
+                
+                if (type === 'move') {
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } 
+                else if (type === 'rotate') {
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(450, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                }
+                else if (type === 'clear') {
+                    // Ackord för att fira radrensning
+                    [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+                        const osc = this.audioCtx.createOscillator();
+                        const gain = this.audioCtx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(freq, now + (idx * 0.05));
+                        gain.gain.setValueAtTime(0.08, now + (idx * 0.05));
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35 + (idx * 0.05));
+                        osc.connect(gain);
+                        gain.connect(this.audioCtx.destination);
+                        osc.start(now + (idx * 0.05));
+                        osc.stop(now + 0.4 + (idx * 0.05));
+                    });
+                }
+                else if (type === 'gameover') {
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(80, now + 1.0);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 1.0);
+                }
+                else if (type === 'levelup') {
+                    // En glad fanfar
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const osc = this.audioCtx.createOscillator();
+                        const gain = this.audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + (idx * 0.1));
+                        gain.gain.setValueAtTime(0.12, now + (idx * 0.1));
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4 + (idx * 0.1));
+                        osc.connect(gain);
+                        gain.connect(this.audioCtx.destination);
+                        osc.start(now + (idx * 0.1));
+                        osc.stop(now + 0.5 + (idx * 0.1));
+                    });
+                }
+            }
+
+            startMusic() {
+                if (!this.musicEnabled) return;
+                this.init();
+                this.stopMusic();
+
+                let nextNoteTime = this.audioCtx.currentTime;
+
+                const playNextNote = () => {
+                    if (!this.musicEnabled) return;
+
+                    const noteData = this.themeSong[this.seqIndex];
+                    const note = noteData[0];
+                    const duration = noteData[1] * 0.85; // Snabbare tempo
+
+                    if (note !== 0) {
+                        const osc = this.audioCtx.createOscillator();
+                        const gain = this.audioCtx.createGain();
+                        
+                        // Chiptune-aktig röst
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(this.frequencies[note], nextNoteTime);
+                        
+                        gain.gain.setValueAtTime(0.08, nextNoteTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + duration - 0.02);
+                        
+                        osc.connect(gain);
+                        gain.connect(this.audioCtx.destination);
+                        
+                        osc.start(nextNoteTime);
+                        osc.stop(nextNoteTime + duration);
+                    }
+
+                    nextNoteTime += duration;
+                    this.seqIndex = (this.seqIndex + 1) % this.themeSong.length;
+
+                    const timeUntilNext = (nextNoteTime - this.audioCtx.currentTime) * 1000;
+                    this.musicInterval = setTimeout(playNextNote, Math.max(10, timeUntilNext));
+                };
+
+                playNextNote();
+            }
+
+            stopMusic() {
+                if (this.musicInterval) {
+                    clearTimeout(this.musicInterval);
+                    this.musicInterval = null;
+                }
+            }
+        }
+
+        const sounds = new SoundSystem();
+
+        // Musik och SFX Toggles
+        const musicToggle = document.getElementById('musicToggle');
+        const musicIcon = document.getElementById('musicIcon');
+        const sfxToggle = document.getElementById('sfxToggle');
+        const sfxIcon = document.getElementById('sfxIcon');
+
+        musicToggle.addEventListener('click', () => {
+            sounds.musicEnabled = !sounds.musicEnabled;
+            if (sounds.musicEnabled) {
+                musicIcon.setAttribute('data-lucide', 'music');
+                musicToggle.classList.add('bg-blue-900/40', 'border-blue-500');
+                sounds.startMusic();
+            } else {
+                musicIcon.setAttribute('data-lucide', 'music-4');
+                musicToggle.classList.remove('bg-blue-900/40', 'border-blue-500');
+                sounds.stopMusic();
+            }
+            lucide.createIcons();
+        });
+
+        sfxToggle.addEventListener('click', () => {
+            sounds.sfxEnabled = !sounds.sfxEnabled;
+            if (sounds.sfxEnabled) {
+                sfxIcon.setAttribute('data-lucide', 'volume-2');
+                sfxToggle.classList.add('bg-blue-900/40', 'border-blue-500');
+            } else {
+                sfxIcon.setAttribute('data-lucide', 'volume-x');
+                sfxToggle.classList.remove('bg-blue-900/40', 'border-blue-500');
+            }
+            lucide.createIcons();
+        });
+
+        // Trigger på SFX vid start för att lysa upp ikonen automatiskt
+        sfxToggle.classList.add('bg-blue-900/40', 'border-blue-500');
+
+
+        // --- REGELMODAL KONTROLL ---
+        const rulesBtn = document.getElementById('rulesBtn');
+        const rulesModal = document.getElementById('rulesModal');
+        const closeRulesBtn = document.getElementById('closeRulesBtn');
+        const closeRulesBtn2 = document.getElementById('closeRulesBtn2');
+
+        const toggleRules = (show) => {
+            if (show) {
+                rulesModal.classList.remove('hidden');
+            } else {
+                rulesModal.classList.add('hidden');
+            }
+        };
+
+        rulesBtn.addEventListener('click', () => toggleRules(true));
+        closeRulesBtn.addEventListener('click', () => toggleRules(false));
+        closeRulesBtn2.addEventListener('click', () => toggleRules(false));
+
+
+        // --- TETRIS SPELMOTOR ---
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const nextCanvas = document.getElementById('nextCanvas');
+        const nextCtx = nextCanvas.getContext('2d');
+        const holdCanvas = document.getElementById('holdCanvas');
+        const holdCtx = holdCanvas.getContext('2d');
+
+        // Spelplanens storlek (Standard Tetris 10x20)
+        const COLS = 10;
+        const ROWS = 20;
+        let blockSize = 30; // Anpassas dynamiskt till fönstret
+
+        let board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+
+        let score = 0;
+        let level = 1;
+        let lines = 0;
+        let gameOver = true;
+        let isPaused = false;
+
+        let lastTime = 0;
+        let dropCounter = 0;
+        let dropInterval = 1000; // Start hastighet (ms)
+
+        // Blocktyper & deras standardmatriser
+        const SHAPES = {
+            'I': [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]],
+            'J': [[1,0,0], [1,1,1], [0,0,0]],
+            'L': [[0,0,1], [1,1,1], [0,0,0]],
+            'O': [[1,1], [1,1]],
+            'S': [[0,1,1], [1,1,0], [0,0,0]],
+            'T': [[0,1,0], [1,1,1], [0,0,0]],
+            'Z': [[1,1,0], [0,1,1], [0,0,0]]
+        };
+
+        // Färgteman
+        const THEMES = {
+            neon: {
+                colors: {
+                    'I': '#00f0f0', // Cyan
+                    'J': '#0000f0', // Blå
+                    'L': '#f0a000', // Orange
+                    'O': '#f0f000', // Gul
+                    'S': '#00f000', // Grön
+                    'T': '#a000f0', // Lila
+                    'Z': '#f00000'  // Röd
+                },
+                bg: '#0f172a',
+                grid: '#1e293b',
+                style: 'glow'
+            },
+            retro: {
+                colors: {
+                    'I': '#e11d48',
+                    'J': '#d97706',
+                    'h': '#2563eb',
+                    'L': '#2563eb',
+                    'O': '#ca8a04',
+                    'S': '#16a34a',
+                    'T': '#7c3aed',
+                    'Z': '#db2777'
+                },
+                bg: '#171717',
+                grid: '#262626',
+                style: 'flat'
+            },
+            cyberpunk: {
+                colors: {
+                    'I': '#ff0055',
+                    'J': '#00ffcc',
+                    'L': '#ffcc00',
+                    'O': '#9900ff',
+                    'S': '#33ff33',
+                    'T': '#ff00ff',
+                    'Z': '#ff6600'
+                },
+                bg: '#05050a',
+                grid: '#111122',
+                style: 'neonLines'
+            },
+            pastel: {
+                colors: {
+                    'I': '#93c5fd',
+                    'J': '#a7f3d0',
+                    'L': '#fbcfe8',
+                    'O': '#fef08a',
+                    'S': '#c084fc',
+                    'T': '#f9a8d4',
+                    'Z': '#fda4af'
+                },
+                bg: '#1e1b4b',
+                grid: '#312e81',
+                style: 'smooth'
+            }
+        };
+
+        let currentTheme = 'neon';
+
+        // Aktivt och kommande block
+        let playerPiece = {
+            matrix: null,
+            pos: { x: 0, y: 0 },
+            type: ''
+        };
+
+        let nextPieceType = '';
+        let holdPieceType = '';
+        let canHold = true;
+
+        // Skapa slumpmässig piece-generator
+        let bag = [];
+        function getRandomPieceType() {
+            if (bag.length === 0) {
+                bag = Object.keys(SHAPES);
+                // Shuffle bag
+                for (let i = bag.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [bag[i], bag[j]] = [bag[j], bag[i]];
+                }
+            }
+            return bag.pop();
+        }
+
+        function createPiece(type) {
+            return {
+                matrix: JSON.parse(JSON.stringify(SHAPES[type])),
+                pos: { x: 0, y: 0 },
+                type: type
+            };
+        }
+
+        // --- HÖGSTA POÄNG (HIGHSCORES) ---
+        let highscores = [];
+
+        function loadScores() {
+            const raw = localStorage.getItem('neontetra_scores');
+            if (raw) {
+                highscores = JSON.parse(raw);
+            } else {
+                // Defaultvärden
+                highscores = [
+                    { name: "Kalle", score: 5000 },
+                    { name: "Svea", score: 3000 },
+                    { name: "Blixten", score: 1200 }
+                ];
+                saveScores();
+            }
+            renderHighscores();
+        }
+
+        function saveScores() {
+            localStorage.setItem('neontetra_scores', JSON.stringify(highscores));
+        }
+
+        function checkAndAddScore(playerName, finalScore) {
+            highscores.push({ name: playerName || "Okänd", score: finalScore });
+            // Sortera fallande
+            highscores.sort((a, b) => b.score - a.score);
+            // Spara topp 5
+            highscores = highscores.slice(0, 5);
+            saveScores();
+            renderHighscores();
+        }
+
+        function renderHighscores() {
+            const listEl = document.getElementById('highscoresList');
+            listEl.innerHTML = '';
+            
+            highscores.forEach((entry, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center py-1 border-b border-slate-900/40 text-slate-300";
+                
+                // Guld, silver, brons-färger
+                let rankColor = "text-slate-400";
+                if (idx === 0) rankColor = "text-amber-400 font-bold";
+                else if (idx === 1) rankColor = "text-slate-300 font-bold";
+                else if (idx === 2) rankColor = "text-amber-600 font-bold";
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="${rankColor}">${idx + 1}.</span>
+                        <span class="font-bold truncate max-w-[100px]">${entry.name}</span>
+                    </div>
+                    <span class="font-orbitron text-xs text-blue-400 font-bold">${entry.score}</span>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        document.getElementById('resetScoresBtn').addEventListener('click', () => {
+            if (confirm("Vill du verkligen nollställa alla high scores?")) {
+                localStorage.removeItem('neontetra_scores');
+                loadScores();
+            }
+        });
+
+
+        // --- GRAFIK & RITNING ---
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const rect = container.getBoundingClientRect();
+            
+            // Anpassa spelplanen utifrån dess wrapper
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            blockSize = canvas.width / COLS;
+            draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function setTheme(themeKey) {
+            currentTheme = themeKey;
+            
+            // Hantera aktiva knappar i UI
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('scale-105', 'border-blue-500/80', 'bg-blue-950/40');
+                btn.classList.add('border-slate-800', 'bg-slate-900/20');
+            });
+            
+            draw();
+        }
+
+        // Rita en enskild block-cell
+        function drawBlock(context, x, y, type, mini = false) {
+            const size = mini ? 18 : blockSize;
+            const theme = THEMES[currentTheme];
+            const color = theme.colors[type];
+            
+            context.fillStyle = color;
+
+            if (theme.style === 'glow') {
+                // Neon glow
+                context.shadowColor = color;
+                context.shadowBlur = mini ? 2 : 10;
+                context.fillRect(x * size + 2, y * size + 2, size - 4, size - 4);
+                // Vit inner-kärna för mer "laser"-effekt
+                context.fillStyle = '#ffffff';
+                context.fillRect(x * size + (size/3), y * size + (size/3), size/3, size/3);
+                // Återställ shadow
+                context.shadowBlur = 0;
+            } 
+            else if (theme.style === 'cyberpunk') {
+                // Futurism med linjer
+                context.strokeStyle = color;
+                context.lineWidth = 2;
+                context.strokeRect(x * size + 2, y * size + 2, size - 4, size - 4);
+                context.fillStyle = color + '44'; // Transparens
+                context.fillRect(x * size + 4, y * size + 4, size - 8, size - 8);
+            }
+            else if (theme.style === 'flat') {
+                // Klassisk 8-bit, tjock ram
+                context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+                context.strokeStyle = '#000';
+                context.lineWidth = 2;
+                context.strokeRect(x * size, y * size, size, size);
+                // Ljus blipp uppe till vänster
+                context.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                context.fillRect(x * size + 2, y * size + 2, size/4, size/4);
+            }
+            else {
+                // Soft / Pastell
+                context.fillRect(x * size + 1.5, y * size + 1.5, size - 3, size - 3);
+                context.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                context.strokeRect(x * size + 1, y * size + 1, size - 2, size - 2);
+            }
+        }
+
+        // Rita hela spelplanen
+        function draw() {
+            const theme = THEMES[currentTheme];
+            
+            // 1. Rensa bakgrund
+            ctx.fillStyle = theme.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Rita rutmönster (Grid)
+            ctx.strokeStyle = theme.grid;
+            ctx.lineWidth = 0.5;
+            for (let c = 0; c <= COLS; c++) {
+                ctx.beginPath();
+                ctx.moveTo(c * blockSize, 0);
+                ctx.lineTo(c * blockSize, canvas.height);
+                ctx.stroke();
+            }
+            for (let r = 0; r <= ROWS; r++) {
+                ctx.beginPath();
+                ctx.moveTo(0, r * blockSize);
+                ctx.lineTo(canvas.width, r * blockSize);
+                ctx.stroke();
+            }
+
+            // 3. Rita fasta block på spelplanen
+            for (let y = 0; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
+                    if (board[y][x]) {
+                        drawBlock(ctx, x, y, board[y][x]);
+                    }
+                }
+            }
+
+            // 4. Rita aktivt spelarblock (om spelet körs)
+            if (!gameOver && playerPiece.matrix) {
+                // Rita spökblock (där biten kommer landa om man drop-hardar)
+                drawGhostPiece();
+
+                // Rita riktiga blocket
+                playerPiece.matrix.forEach((row, y) => {
+                    row.forEach((value, x) => {
+                        if (value) {
+                            drawBlock(ctx, playerPiece.pos.x + x, playerPiece.pos.y + y, playerPiece.type);
+                        }
+                    });
+                });
+            }
+
+            // Rita förhandsvisningar på sidorna
+            drawMiniPreview(nextCtx, nextPieceType);
+            drawMiniPreview(holdCtx, holdPieceType);
+        }
+
+        // Rita vart blocket kommer hamna (Spök-effekt)
+        function drawGhostPiece() {
+            let ghostY = playerPiece.pos.y;
+            while (!collide(board, { ...playerPiece, pos: { x: playerPiece.pos.x, y: ghostY + 1 } })) {
+                ghostY++;
+            }
+
+            const theme = THEMES[currentTheme];
+            const color = theme.colors[playerPiece.type];
+
+            ctx.strokeStyle = color + '66'; // semi-transparent
+            ctx.lineWidth = 1.5;
+
+            playerPiece.matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        ctx.strokeRect(
+                            (playerPiece.pos.x + x) * blockSize + 3,
+                            (ghostY + y) * blockSize + 3,
+                            blockSize - 6,
+                            blockSize - 6
+                        );
+                    }
+                });
+            });
+        }
+
+        // Rita nästa/sparad bit i mindre canvasser på sidan
+        function drawMiniPreview(context, type) {
+            context.clearRect(0, 0, 80, 80);
+            if (!type) return;
+
+            const matrix = SHAPES[type];
+            const size = 18; // Fast ministorlek på celler
+            
+            // Centrera blocket i 80x80 rutan
+            const offsetX = (80 - matrix[0].length * size) / 2;
+            const offsetY = (80 - matrix.length * size) / 2;
+
+            context.save();
+            context.translate(offsetX, offsetY);
+
+            matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        drawBlock(context, x, y, type, true);
+                    }
+                });
+            });
+
+            context.restore();
+        }
+
+
+        // --- SPEL-FUNKTIONALITET ---
+
+        // Kollisiondetektering
+        function collide(board, piece) {
+            const matrix = piece.matrix;
+            const offset = piece.pos;
+            for (let y = 0; y < matrix.length; ++y) {
+                for (let x = 0; x < matrix[y].length; ++x) {
+                    if (matrix[y][x] !== 0 &&
+                       (board[y + offset.y] === undefined ||
+                        board[y + offset.y][x + offset.x] === undefined ||
+                        board[y + offset.y][x + offset.x] !== 0)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Slå ihop blocket med spelplanen
+        function merge(board, piece) {
+            piece.matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        board[y + piece.pos.y][x + piece.pos.x] = piece.type;
+                    }
+                });
+            });
+        }
+
+        // Rotera matris
+        function rotateMatrix(matrix, dir) {
+            for (let y = 0; y < matrix.length; ++y) {
+                for (let x = 0; x < y; ++x) {
+                    [
+                        matrix[x][y],
+                        matrix[y][x],
+                    ] = [
+                        matrix[y][x],
+                        matrix[x][y],
+                    ];
+                }
+            }
+            if (dir > 0) {
+                matrix.forEach(row => row.reverse());
+            } else {
+                matrix.reverse();
+            }
+        }
+
+        // Spelare roterar block (och flyttar vid kollision mot kanter, s.k. wall kick)
+        function playerRotate(dir) {
+            const pos = playerPiece.pos.x;
+            let offset = 1;
+            rotateMatrix(playerPiece.matrix, dir);
+            while (collide(board, playerPiece)) {
+                playerPiece.pos.x += offset;
+                offset = -(offset + (offset > 0 ? 1 : -1));
+                if (offset > playerPiece.matrix[0].length) {
+                    rotateMatrix(playerPiece.matrix, -dir);
+                    playerPiece.pos.x = pos;
+                    return;
+                }
+            }
+            sounds.playSFX('rotate');
+        }
+
+        // Flytta block i sidled
+        function playerMove(dir) {
+            playerPiece.pos.x += dir;
+            if (collide(board, playerPiece)) {
+                playerPiece.pos.x -= dir;
+            } else {
+                sounds.playSFX('move');
+            }
+        }
+
+        // Drop-funktion (Fall ett steg)
+        function playerDrop() {
+            playerPiece.pos.y++;
+            if (collide(board, playerPiece)) {
+                playerPiece.pos.y--;
+                merge(board, playerPiece);
+                playerReset();
+                arenaSweep();
+            }
+            dropCounter = 0;
+        }
+
+        // Direktfall (Mellanslag)
+        function playerHardDrop() {
+            if (gameOver || isPaused) return;
+            while (!collide(board, playerPiece)) {
+                playerPiece.pos.y++;
+            }
+            playerPiece.pos.y--;
+            merge(board, playerPiece);
+            playerReset();
+            arenaSweep();
+            sounds.playSFX('move');
+        }
+
+        // Spara block (Hold)
+        function playerHold() {
+            if (!canHold || gameOver || isPaused) return;
+
+            if (holdPieceType === '') {
+                // Inget block sparat än
+                holdPieceType = playerPiece.type;
+                playerPiece = createPiece(nextPieceType);
+                nextPieceType = getRandomPieceType();
+            } else {
+                // Byt sparat block mot aktivt
+                const temp = holdPieceType;
+                holdPieceType = playerPiece.type;
+                playerPiece = createPiece(temp);
+            }
+
+            // Centrera nya biten
+            playerPiece.pos.y = 0;
+            playerPiece.pos.x = Math.floor(COLS / 2) - Math.floor(playerPiece.matrix[0].length / 2);
+            
+            canHold = false;
+            sounds.playSFX('rotate');
+            draw();
+        }
+
+        // Återställ bit till toppen efter landing
+        function playerReset() {
+            playerPiece = createPiece(nextPieceType);
+            nextPieceType = getRandomPieceType();
+            
+            playerPiece.pos.y = 0;
+            playerPiece.pos.x = Math.floor(COLS / 2) - Math.floor(playerPiece.matrix[0].length / 2);
+
+            if (collide(board, playerPiece)) {
+                // Game Over!
+                handleGameOver();
+            }
+
+            canHold = true;
+        }
+
+        // Rensa fulla rader
+        function arenaSweep() {
+            let rowCount = 0;
+            outer: for (let y = ROWS - 1; y >= 0; --y) {
+                for (let x = 0; x < COLS; ++x) {
+                    if (board[y][x] === 0) {
+                        continue outer;
+                    }
+                }
+
+                // Ta bort fylld rad och lägg till tom rad högst upp
+                const row = board.splice(y, 1)[0].fill(0);
+                board.unshift(row);
+                ++y;
+                rowCount++;
+            }
+
+            if (rowCount > 0) {
+                // Räkna ut poäng (Klassiskt system med svårighetsskalning)
+                const scoreTable = [0, 100, 300, 500, 800];
+                score += scoreTable[rowCount] * level;
+                lines += rowCount;
+
+                // Öka nivå var 10:e rensad rad
+                const newLevel = Math.floor(lines / 10) + 1;
+                if (newLevel > level) {
+                    level = newLevel;
+                    // Öka hastigheten (kortare fall-intervall)
+                    dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+                    sounds.playSFX('levelup');
+                } else {
+                    sounds.playSFX('clear');
+                }
+
+                updateScoreboard();
+            }
+        }
+
+        function updateScoreboard() {
+            document.getElementById('scoreVal').innerText = score;
+            document.getElementById('levelVal').innerText = level;
+            document.getElementById('linesVal').innerText = lines;
+        }
+
+
+        // --- GAME LOOP & KONTROLLER ---
+
+        function update(time = 0) {
+            if (gameOver || isPaused) return;
+
+            const deltaTime = time - lastTime;
+            lastTime = time;
+
+            dropCounter += deltaTime;
+            if (dropCounter > dropInterval) {
+                playerDrop();
+            }
+
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function startNewGame() {
+            board.forEach(row => row.fill(0));
+            score = 0;
+            level = 1;
+            lines = 0;
+            dropInterval = 1000;
+            gameOver = false;
+            isPaused = false;
+            holdPieceType = '';
+            canHold = true;
+
+            updateScoreboard();
+
+            // Sätt de första bitarna
+            nextPieceType = getRandomPieceType();
+            playerReset();
+
+            // Göm overlay
+            document.getElementById('gameOverlay').classList.add('hidden');
+
+            // Ljud & Musik igång
+            sounds.init();
+            if (sounds.musicEnabled) {
+                sounds.startMusic();
+            }
+
+            // Starta loop
+            lastTime = performance.now();
+            update();
+        }
+
+        function handleGameOver() {
+            gameOver = true;
+            sounds.playSFX('gameover');
+            sounds.stopMusic();
+
+            const pName = document.getElementById('playerName').value || "Spelare";
+            checkAndAddScore(pName, score);
+
+            // Visa Game Over overlay
+            document.getElementById('overlayTitle').innerText = "SPELET SLUT!";
+            document.getElementById('overlayText').innerHTML = `Du fick <strong>${score}</strong> poäng och nådde nivå <strong>${level}</strong>. Försök igen!`;
+            document.getElementById('startBtn').innerText = "Spela Igen";
+            document.getElementById('gameOverlay').classList.remove('hidden');
+        }
+
+        // Tangentbords-lyssnare
+        window.addEventListener('keydown', event => {
+            if (gameOver) return;
+
+            if (event.key === 'p' || event.key === 'P') {
+                isPaused = !isPaused;
+                if (!isPaused) {
+                    lastTime = performance.now();
+                    update();
+                } else {
+                    // Rita paus-text på skärmen
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '24px Orbitron';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('PAUS', canvas.width / 2, canvas.height / 2);
+                }
+                return;
+            }
+
+            if (isPaused) return;
+
+            switch (event.key) {
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    playerMove(-1);
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    playerMove(1);
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    playerDrop();
+                    break;
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    playerRotate(1);
+                    break;
+                case 'z':
+                case 'Z':
+                    playerRotate(-1);
+                    break;
+                case ' ': // Hard drop
+                    playerHardDrop();
+                    break;
+                case 'Shift':
+                case 'c':
+                case 'C':
+                    playerHold();
+                    break;
+            }
+            draw();
+        });
+
+        // Touchkontroll-lyssnare (Mobilgränssnitt)
+        document.getElementById('ctrlLeft').addEventListener('touchstart', (e) => { e.preventDefault(); if(!isPaused) playerMove(-1); draw(); });
+        document.getElementById('ctrlLeft').addEventListener('click', () => { if(!isPaused) playerMove(-1); draw(); });
+
+        document.getElementById('ctrlRight').addEventListener('touchstart', (e) => { e.preventDefault(); if(!isPaused) playerMove(1); draw(); });
+        document.getElementById('ctrlRight').addEventListener('click', () => { if(!isPaused) playerMove(1); draw(); });
+
+        document.getElementById('ctrlRotate').addEventListener('touchstart', (e) => { e.preventDefault(); if(!isPaused) playerRotate(1); draw(); });
+        document.getElementById('ctrlRotate').addEventListener('click', () => { if(!isPaused) playerRotate(1); draw(); });
+
+        document.getElementById('ctrlDrop').addEventListener('touchstart', (e) => { e.preventDefault(); playerHardDrop(); draw(); });
+        document.getElementById('ctrlDrop').addEventListener('click', () => { playerHardDrop(); draw(); });
+
+        document.getElementById('ctrlHold').addEventListener('touchstart', (e) => { e.preventDefault(); playerHold(); draw(); });
+        document.getElementById('ctrlHold').addEventListener('click', () => { playerHold(); draw(); });
+
+
+        // Start-knappen
+        document.getElementById('startBtn').addEventListener('click', startNewGame);
+
+        // Ladda in sparasystemet direkt på start
+        loadScores();
+        setTheme('neon');
+        resizeCanvas();
+
+    </script>
+</body>
+</html>

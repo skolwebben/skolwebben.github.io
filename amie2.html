@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mormors Gamla Hus - Skräckspel</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 24px;
+            text-shadow: 2px 2px 0 #000;
+            display: none;
+            line-height: 1.4;
+        }
+
+        #stealth-indicator {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        #interaction-prompt {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffff66;
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px #000;
+            display: none;
+            text-align: center;
+        }
+
+        #hide-timer-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #ff3333;
+            font-size: 26px;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+            display: none;
+            text-align: right;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 5, 5, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+            pointer-events: auto;
+            z-index: 20;
+        }
+
+        h1 {
+            font-size: 50px;
+            color: #cc2222;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px #ff0000;
+        }
+
+        p {
+            font-size: 18px;
+            max-width: 650px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .highlight {
+            color: #ffcc00;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+        }
+
+        button {
+            padding: 12px 35px;
+            font-size: 22px;
+            background-color: #2b0c0c;
+            color: #ff4444;
+            border: 2px solid #ff4444;
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #ff4444;
+            color: #000;
+            box-shadow: 0 0 20px #ff4444;
+        }
+
+        #blood-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 15%, rgba(130, 0, 0, 0.95) 100%);
+            opacity: 0;
+            z-index: 5;
+            transition: opacity 0.1s; /* Snabbare respons för pulsering */
+            pointer-events: none;
+        }
+        
+        .pulse {
+            animation: pulsate 1s infinite alternate;
+        }
+
+        @keyframes pulsate {
+            from { text-shadow: 0 0 10px #ff0000; }
+            to { text-shadow: 0 0 25px #ff0000, 0 0 35px #ff0000; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container"></div>
+    
+    <div id="ui-layer">
+        <div id="crosshair"></div>
+        <div id="hud">
+            <div>Nycklar hittade: <span id="key-count" class="highlight">0</span> / 3</div>
+            <div id="stealth-indicator">Mormor: <span id="stealth-status" style="color: #66ff66;">Väntar</span></div>
+        </div>
+        <div id="interaction-prompt">Tryck [E] för att gömma dig</div>
+        <div id="hide-timer-container">Luftnivå: <span id="hide-timer-val">45</span>s</div>
+        <div id="blood-overlay"></div>
+    </div>
+
+    <div id="overlay">
+        <h1 id="menu-title" class="pulse">Mormors Gamla Hus</h1>
+        <div id="menu-text">
+            <p>Du har blivit instängd i mormors gamla, knarrande trähus. Luften är tung och tapeterna flagnar...</p>
+            <p>Mormor har blivit <span style="color: #ff3333; font-weight: bold;">mer aggressiv</span>. Hon lyssnar efter dina fotsteg och hennes kropp rycker okontrollerat när hon får syn på dig.</p>
+            <p>Göm dig i de stora <span class="highlight">trägarderoberna</span> runt om i huset för att skaka av henne. Genom gallerfönstret i dörren kan du kika ut, men hon kan inte se dig!</p>
+            <p>Se upp! Du kan bara gömma dig i **max 45 sekunder** innan du får panik!</p>
+            <p>Använd <span class="highlight">W, A, S, D</span> eller <span class="highlight">PIL-TANGENTERNA</span> på tangentbordet för att gå, och musen för att se dig omkring.</p>
+        </div>
+        <button id="start-btn">Stig in</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // --- Spelkonfiguration och globala variabler ---
+        let camera, scene, renderer;
+        let flashLight, handLight;
+        let time = 0;
+        let prevTime = performance.now();
+        let gameState = 'menu'; 
+        
+        // Ljudsyntes
+        let audioCtx = null;
+        let ambientOsc = null;
+        let ambientGain = null;
+        let nextCreakTime = 0;
+        let lastHeartbeatTime = 0;
+        let heartbeatInterval = 1.5; 
+
+        // Spelare
+        const playerSpeed = 7.0;
+        let velocity = new THREE.Vector3();
+        let direction = new THREE.Vector3();
+        let moveForward = false;
+        let moveBackward = false;
+        let moveLeft = false;
+        let moveRight = false;
+        
+        // Kamera/Mus
+        const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+        const PI_2 = Math.PI / 2;
+
+        // Gömma sig-mekanik
+        let cabinets = [];
+        let isHiding = false;
+        let currentCabinet = null;
+        let hideTimer = 45.0;
+        const maxHideTime = 45.0;
+        let originalPlayerPos = new THREE.Vector3();
+        let exitGraceTimer = 0;
+
+        // Objekt och karta
+        const blockSize = 4;
+        let walls = [];
+        let keys = [];
+        let exitDoor = null;
+        let houseProps = [];
+        
+        // Mormor
+        let granny = null;
+        let grannyVisuals = null; 
+        let grannyClub = null; 
+        let grannyEyes = []; 
+        let grannyState = 'patrol'; 
+        let grannyTargetGrid = { x: 13, z: 12 };
+        let lastKnownPlayerGrid = { x: 1, z: 1 };
+        let searchTimer = 0;
+        let changePatrolTimer = 0;
+
+        let keysCollected = 0;
+        const totalKeys = 3;
+
+        // HUSKARTA
+        const mapData = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,0,0,1,0,0,0,1,0,0,0,0,1,1], 
+            [1,0,0,0,1,0,1,0,1,0,0,0,0,1,1],
+            [1,0,0,0,0,0,1,0,0,0,1,1,0,1,1], 
+            [1,1,1,0,1,1,1,0,1,1,1,1,0,1,1],
+            [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1], 
+            [1,1,1,1,1,0,1,0,1,1,1,1,0,1,1],
+            [1,0,0,0,1,0,1,0,1,0,0,0,0,1,1], 
+            [1,0,0,0,1,0,0,0,0,0,0,0,0,1,1],
+            [1,0,0,0,1,1,1,0,1,1,1,1,1,1,1], 
+            [1,1,0,1,1,0,0,0,0,0,1,0,0,0,1],
+            [1,0,0,0,1,0,1,1,1,0,1,0,1,0,1],
+            [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+            [1,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
+            [1,1,1,1,1,1,1,2,1,1,1,1,1,1,1]  
+        ];
+
+        const overlay = document.getElementById('overlay');
+        const startBtn = document.getElementById('start-btn');
+        const menuTitle = document.getElementById('menu-title');
+        const menuText = document.getElementById('menu-text');
+        const crosshair = document.getElementById('crosshair');
+        const hud = document.getElementById('hud');
+        const keyCountSpan = document.getElementById('key-count');
+        const stealthStatusSpan = document.getElementById('stealth-status');
+        const bloodOverlay = document.getElementById('blood-overlay');
+        const interactionPrompt = document.getElementById('interaction-prompt');
+        const hideTimerContainer = document.getElementById('hide-timer-container');
+        const hideTimerVal = document.getElementById('hide-timer-val');
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x040201); 
+            scene.fog = new THREE.FogExp2(0x040201, 0.05); 
+
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
+            scene.add(camera);
+
+            flashLight = new THREE.SpotLight(0xfff3cc, 3.8, 60, Math.PI / 4.5, 0.5, 1.2); 
+            flashLight.position.set(0, 0, 0);
+            flashLight.target.position.set(0, 0, -1);
+            camera.add(flashLight);
+            camera.add(flashLight.target);
+
+            const flGroup = new THREE.Group();
+            const flGeo = new THREE.CylinderGeometry(0.05, 0.03, 0.35, 12);
+            flGeo.rotateX(Math.PI / 2);
+            const flMat = new THREE.MeshLambertMaterial({ color: 0x2e2319 }); 
+            const flMesh = new THREE.Mesh(flGeo, flMat);
+            
+            const lensGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.02, 12);
+            lensGeo.rotateX(Math.PI / 2);
+            const lensMat = new THREE.MeshBasicMaterial({ color: 0xfff9e6 });
+            const lensMesh = new THREE.Mesh(lensGeo, lensMat);
+            lensMesh.position.set(0, 0, -0.185);
+            
+            handLight = new THREE.PointLight(0xfff3cc, 0.8, 3);
+            handLight.position.set(0, 0, -0.2);
+            
+            flGroup.add(flMesh, lensMesh, handLight);
+            flGroup.position.set(0.35, -0.35, -0.55); 
+            flGroup.rotation.y = -0.05;
+            camera.add(flGroup);
+
+            const ambientLight = new THREE.AmbientLight(0x1a120c, 0.35); 
+            scene.add(ambientLight);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('game-container').appendChild(renderer.domElement);
+
+            buildHouse();
+            spawnRandomKeys();
+            createGranny();
+
+            document.addEventListener('mousemove', onMouseMove, false);
+            document.addEventListener('keydown', onKeyDown, false);
+            document.addEventListener('keyup', onKeyUp, false);
+            window.addEventListener('resize', onWindowResize, false);
+
+            startBtn.addEventListener('click', startOrResumeGame);
+            document.addEventListener('pointerlockchange', pointerLockChange, false);
+
+            animate();
+        }
+
+        // --- Texturer ---
+        function createWallpaperTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#6e5643';
+            ctx.fillRect(0, 0, 256, 256);
+            ctx.fillStyle = '#544132';
+            for (let i = 0; i < 256; i += 32) {
+                ctx.fillRect(i, 0, 8, 256);
+            }
+            ctx.fillStyle = 'rgba(25, 20, 15, 0.3)';
+            for (let i = 0; i < 40; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * 256, Math.random() * 256, Math.random() * 20 + 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(1, 2);
+            return texture;
+        }
+
+        function createWoodFloorTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#402a1b';
+            ctx.fillRect(0, 0, 512, 512);
+            ctx.strokeStyle = '#24170e';
+            ctx.lineWidth = 4;
+            const plankWidth = 64;
+            for (let x = 0; x < 512; x += plankWidth) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, 512);
+                ctx.stroke();
+                for (let y = 0; y < 512; y += 128) {
+                    const offset = (x / plankWidth) % 2 === 0 ? 30 : 80;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + offset);
+                    ctx.lineTo(x + plankWidth, y + offset);
+                    ctx.stroke();
+                }
+            }
+            ctx.strokeStyle = 'rgba(100, 70, 50, 0.15)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 400; i++) {
+                ctx.beginPath();
+                const rx = Math.random() * 512;
+                const ry = Math.random() * 512;
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx + Math.random() * 60 - 30, ry + Math.random() * 100);
+                ctx.stroke();
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(6, 6);
+            return texture;
+        }
+
+        function createPortraitTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1a120b';
+            ctx.fillRect(0, 0, 128, 128);
+            ctx.fillStyle = '#3a2d24';
+            ctx.beginPath();
+            ctx.arc(64, 50, 25, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(39, 128);
+            ctx.lineTo(64, 75);
+            ctx.lineTo(89, 128);
+            ctx.fill();
+            ctx.fillStyle = '#991111';
+            ctx.beginPath();
+            ctx.arc(58, 48, 2, 0, Math.PI * 2);
+            ctx.arc(70, 48, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#856116';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(4, 4, 120, 120);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // --- Skåp (Garderob för att gömma sig i med fönsterspringa) ---
+        function createCabinetModel() {
+            const group = new THREE.Group();
+            const woodMat = new THREE.MeshLambertMaterial({ color: 0x22140a }); 
+            const handleMat = new THREE.MeshStandardMaterial({ color: 0xc9a054, metalness: 0.7, roughness: 0.3 }); 
+            const metalMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.9, roughness: 0.5 }); 
+
+            const back = new THREE.Mesh(new THREE.BoxGeometry(1.6, 3.4, 0.1), woodMat);
+            back.position.set(0, 1.7, -0.65);
+            group.add(back);
+
+            const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.1, 3.4, 1.3), woodMat);
+            leftWall.position.set(-0.75, 1.7, 0);
+            group.add(leftWall);
+
+            const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.1, 3.4, 1.3), woodMat);
+            rightWall.position.set(0.75, 1.7, 0);
+            group.add(rightWall);
+
+            const floorMesh = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.1, 1.4), woodMat);
+            floorMesh.position.set(0, 0.05, 0);
+            group.add(floorMesh);
+
+            const roofMesh = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.1, 1.4), woodMat);
+            roofMesh.position.set(0, 3.35, 0);
+            group.add(roofMesh);
+
+            const doorLower = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.8, 0.1), woodMat);
+            doorLower.position.set(0, 0.9, 0.65);
+            group.add(doorLower);
+
+            const doorUpper = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.0, 0.1), woodMat);
+            doorUpper.position.set(0, 2.9, 0.65);
+            group.add(doorUpper);
+
+            const doorLeft = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), woodMat);
+            doorLeft.position.set(-0.6, 2.1, 0.65);
+            group.add(doorLeft);
+
+            const doorRight = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), woodMat);
+            doorRight.position.set(0.6, 2.1, 0.65);
+            group.add(doorRight);
+
+            for (let i = -2; i <= 2; i++) {
+                const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.6), metalMat);
+                bar.position.set(i * 0.13, 2.1, 0.65);
+                group.add(bar);
+            }
+
+            const handle = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.05), handleMat);
+            handle.position.set(0.12, 1.6, 0.72);
+            group.add(handle);
+
+            const topList = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.15, 1.5), woodMat);
+            topList.position.y = 3.4;
+            group.add(topList);
+
+            return group;
+        }
+
+        // --- Möbler ---
+        function createGrandfatherClock() {
+            const group = new THREE.Group();
+            const woodMat = new THREE.MeshLambertMaterial({ color: 0x3d2716 });
+            const base = new THREE.Mesh(new THREE.BoxGeometry(1, 0.4, 0.8), woodMat);
+            base.position.y = 0.2;
+            group.add(base);
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 2.2, 0.6), woodMat);
+            body.position.y = 1.5;
+            group.add(body);
+            const glass = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.2, 0.1), new THREE.MeshPhysicalMaterial({ color: 0x111111, transparent: true, opacity: 0.6, roughness: 0.1 }));
+            glass.position.set(0, 1.6, 0.3);
+            group.add(glass);
+            const pendulum = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.8), new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.8 }));
+            pendulum.position.set(0, 1.5, 0.15);
+            group.add(pendulum);
+            const head = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.8, 0.7), woodMat);
+            head.position.y = 3.0;
+            group.add(head);
+            const face = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.05, 16), new THREE.MeshBasicMaterial({ color: 0xeeeecc }));
+            face.rotateX(Math.PI / 2);
+            face.position.set(0, 3.0, 0.35);
+            group.add(face);
+            return group;
+        }
+
+        function createBookshelf() {
+            const group = new THREE.Group();
+            const frameMat = new THREE.MeshLambertMaterial({ color: 0x24160d });
+            const frame = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.8, 0.6), frameMat);
+            frame.position.y = 1.4;
+            group.add(frame);
+            const colors = [0x5c2c16, 0x16345c, 0x1c5c16, 0x545c16, 0x48165c];
+            for (let shelf = 0; shelf < 4; shelf++) {
+                const shelfY = 0.4 + shelf * 0.7;
+                for (let b = 0; b < 10; b++) {
+                    if (Math.random() > 0.3) {
+                        const book = new THREE.Mesh(new THREE.BoxGeometry(0.07 + Math.random() * 0.05, 0.3 + Math.random() * 0.2, 0.4), new THREE.MeshLambertMaterial({ color: colors[Math.floor(Math.random() * colors.length)] }));
+                        book.position.set(-0.7 + b * 0.16, shelfY, 0.15);
+                        group.add(book);
+                    }
+                }
+            }
+            return group;
+        }
+
+        // --- Bygg huset ---
+        function buildHouse() {
+            const wallTexture = createWallpaperTexture();
+            const floorTexture = createWoodFloorTexture();
+            const wallMat = new THREE.MeshLambertMaterial({ map: wallTexture });
+            const floorMat = new THREE.MeshLambertMaterial({ map: floorTexture });
+            const ceilMat = new THREE.MeshLambertMaterial({ color: 0x110d0a }); 
+            const exitMat = new THREE.MeshLambertMaterial({ color: 0x881111 }); 
+
+            const wallGeo = new THREE.BoxGeometry(blockSize, blockSize * 2, blockSize);
+            const floorGeo = new THREE.PlaneGeometry(mapData[0].length * blockSize, mapData.length * blockSize);
+
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.set((mapData[0].length * blockSize) / 2 - blockSize/2, 0, (mapData.length * blockSize) / 2 - blockSize/2);
+            scene.add(floor);
+
+            const ceiling = new THREE.Mesh(floorGeo, ceilMat);
+            ceiling.rotation.x = Math.PI / 2;
+            ceiling.position.copy(floor.position);
+            ceiling.position.y = blockSize * 2;
+            scene.add(ceiling);
+
+            const portraitMat = new THREE.MeshBasicMaterial({ map: createPortraitTexture() });
+
+            cabinets = [];
+            let cabinetCandidates = [];
+
+            for (let z = 0; z < mapData.length; z++) {
+                for (let x = 0; x < mapData[z].length; x++) {
+                    const type = mapData[z][x];
+                    const posX = x * blockSize;
+                    const posZ = z * blockSize;
+
+                    if (type === 1) {
+                        const wall = new THREE.Mesh(wallGeo, wallMat);
+                        wall.position.set(posX, blockSize, posZ);
+                        scene.add(wall);
+                        walls.push(wall);
+                        
+                        if (x > 0 && x < mapData[z].length - 1 && z > 0 && z < mapData.length - 1) {
+                            if (Math.random() < 0.12) {
+                                const portrait = new THREE.Mesh(new THREE.BoxGeometry(1.5, 2.0, 0.1), portraitMat);
+                                portrait.position.set(posX, 2.2, posZ + 2.01);
+                                scene.add(portrait);
+                            }
+                        }
+                    } else if (type === 2) {
+                        const exit = new THREE.Mesh(wallGeo, exitMat);
+                        exit.position.set(posX, blockSize, posZ);
+                        scene.add(exit);
+                        exitDoor = exit;
+                        walls.push(exit);
+                    } else if (type === 4) {
+                        camera.position.set(posX, 1.8, posZ);
+                    }
+
+                    if (type === 0) {
+                        const wallLeft = mapData[z][x-1] === 1;
+                        const wallRight = mapData[z][x+1] === 1;
+                        const wallUp = mapData[z-1] && mapData[z-1][x] === 1;
+                        const wallDown = mapData[z+1] && mapData[z+1][x] === 1;
+                        
+                        if (wallLeft && wallUp && Math.random() < 0.2) {
+                            const clock = createGrandfatherClock();
+                            clock.position.set(posX - 1.4, 0, posZ - 1.4);
+                            clock.rotation.y = Math.PI / 4;
+                            scene.add(clock);
+                            houseProps.push(clock);
+                        } else if (wallRight && Math.random() < 0.15) {
+                            const shelf = createBookshelf();
+                            shelf.position.set(posX + 1.6, 0, posZ);
+                            shelf.rotation.y = -Math.PI / 2;
+                            scene.add(shelf);
+                            houseProps.push(shelf);
+                        }
+                        
+                        if (wallLeft || wallRight || wallDown || wallUp) {
+                            const distToStart = Math.sqrt((x - 1)**2 + (z - 1)**2);
+                            if (distToStart > 3) {
+                                cabinetCandidates.push({ x, z, posX, posZ, wallLeft, wallRight, wallDown, wallUp });
+                            }
+                        }
+                    }
+                }
+            }
+
+            cabinetCandidates.sort(() => Math.random() - 0.5);
+            let chosenCabinets = [];
+            const minGridDistance = 4;
+
+            for (let cand of cabinetCandidates) {
+                if (chosenCabinets.length >= 5) break;
+                let tooClose = false;
+                for (let chosen of chosenCabinets) {
+                    if (Math.sqrt((cand.x - chosen.x)**2 + (cand.z - chosen.z)**2) < minGridDistance) {
+                        tooClose = true; break;
+                    }
+                }
+                if (!tooClose) chosenCabinets.push(cand);
+            }
+
+            if (chosenCabinets.length < 4) {
+                for (let cand of cabinetCandidates) {
+                    if (chosenCabinets.length >= 5) break;
+                    if (!chosenCabinets.includes(cand)) chosenCabinets.push(cand);
+                }
+            }
+
+            chosenCabinets.forEach(cand => {
+                const cabinet = createCabinetModel();
+                if (cand.wallLeft) {
+                    cabinet.position.set(cand.posX - 1.25, 0, cand.posZ);
+                    cabinet.rotation.y = Math.PI / 2;
+                } else if (cand.wallRight) {
+                    cabinet.position.set(cand.posX + 1.25, 0, cand.posZ);
+                    cabinet.rotation.y = -Math.PI / 2;
+                } else if (cand.wallDown) {
+                    cabinet.position.set(cand.posX, 0, cand.posZ + 1.25);
+                    cabinet.rotation.y = Math.PI;
+                } else {
+                    cabinet.position.set(cand.posX, 0, cand.posZ - 1.25);
+                    cabinet.rotation.y = 0;
+                }
+                scene.add(cabinet);
+                cabinets.push(cabinet);
+            });
+        }
+
+        // --- Slumpmässig nyckelplacering ---
+        function spawnRandomKeys() {
+            keys.forEach(k => scene.remove(k));
+            keys = [];
+
+            const keyGeo = new THREE.OctahedronGeometry(0.4);
+            const keyMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xaa7700, roughness: 0.1, metalness: 0.9 });
+
+            let walkableTiles = [];
+            for (let z = 0; z < mapData.length; z++) {
+                for (let x = 0; x < mapData[z].length; x++) {
+                    if (mapData[z][x] === 0) {
+                        if (Math.sqrt((x - 1)**2 + (z - 1)**2) > 3) {
+                            walkableTiles.push({ x, z });
+                        }
+                    }
+                }
+            }
+
+            for (let i = 0; i < totalKeys; i++) {
+                if (walkableTiles.length === 0) break;
+                const tile = walkableTiles.splice(Math.floor(Math.random() * walkableTiles.length), 1)[0];
+                const keyMesh = new THREE.Mesh(keyGeo, keyMat);
+                keyMesh.position.set(tile.x * blockSize, 1.4, tile.z * blockSize);
+                keyMesh.add(new THREE.PointLight(0xffaa00, 0.6, 4));
+                scene.add(keyMesh);
+                keys.push(keyMesh);
+            }
+        }
+
+        // --- Skapa Mormor ---
+        function createGranny() {
+            granny = new THREE.Group();
+            grannyEyes = []; 
+            grannyVisuals = new THREE.Group();
+            granny.add(grannyVisuals);
+
+            const shadow = new THREE.Mesh(new THREE.RingGeometry(0.1, 1.1, 16), new THREE.MeshBasicMaterial({ color: 0x110000, side: THREE.DoubleSide, transparent: true, opacity: 0.6 }));
+            shadow.rotation.x = Math.PI / 2;
+            shadow.position.y = 0.02;
+            grannyVisuals.add(shadow);
+            
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.9, 2.6, 12), new THREE.MeshLambertMaterial({ color: 0x332e2a }));
+            body.position.y = 1.3;
+            grannyVisuals.add(body);
+
+            const bloodPatch1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.1), new THREE.MeshLambertMaterial({ color: 0x550000 }));
+            bloodPatch1.position.set(0.1, 1.4, 0.72);
+            grannyVisuals.add(bloodPatch1);
+
+            const bloodPatch2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.1), new THREE.MeshLambertMaterial({ color: 0x440000 }));
+            bloodPatch2.position.set(-0.2, 1.1, 0.76);
+            grannyVisuals.add(bloodPatch2);
+
+            const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.2, 12), new THREE.MeshLambertMaterial({ color: 0x1a1816 }));
+            collar.position.y = 2.5;
+            grannyVisuals.add(collar);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.55, 16, 16), new THREE.MeshLambertMaterial({ color: 0x5e5650 }));
+            head.position.set(0, 3.1, 0.1);
+            grannyVisuals.add(head);
+
+            const hairMat = new THREE.MeshLambertMaterial({ color: 0xc4beba });
+            for (let i = 0; i < 9; i++) {
+                const hairCluster = new THREE.Mesh(new THREE.SphereGeometry(0.21, 8, 8), hairMat);
+                hairCluster.position.set(Math.cos((i / 9) * Math.PI * 2) * 0.44, 3.3, Math.sin((i / 9) * Math.PI * 2) * 0.44 - 0.1);
+                grannyVisuals.add(hairCluster);
+            }
+            const bun = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8), hairMat);
+            bun.position.set(0, 3.4, -0.3);
+            grannyVisuals.add(bun);
+
+            const eyeGeo = new THREE.SphereGeometry(0.09, 8, 8);
+            const eye1 = new THREE.Mesh(eyeGeo, new THREE.MeshBasicMaterial({ color: 0xffaa00 }));
+            eye1.position.set(-0.2, 3.15, 0.55);
+            grannyVisuals.add(eye1);
+            grannyEyes.push(eye1);
+
+            const eye2 = new THREE.Mesh(eyeGeo, new THREE.MeshBasicMaterial({ color: 0xffaa00 }));
+            eye2.position.set(0.2, 3.15, 0.55);
+            grannyVisuals.add(eye2);
+            grannyEyes.push(eye2);
+
+            grannyClub = new THREE.Group();
+            const batMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.16, 1.4, 8), new THREE.MeshLambertMaterial({ color: 0x1a120b }));
+            batMesh.geometry.rotateX(Math.PI / 2);
+            batMesh.position.set(0, 0, -0.5); 
+            grannyClub.add(batMesh);
+
+            const clubBlood = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.4, 8), new THREE.MeshLambertMaterial({ color: 0x660000 }));
+            clubBlood.geometry.rotateX(Math.PI / 2);
+            clubBlood.position.set(0, 0, -0.9);
+            grannyClub.add(clubBlood);
+
+            grannyClub.position.set(0.8, 1.3, 0.2);
+            grannyClub.rotation.x = 0.5; 
+            grannyVisuals.add(grannyClub);
+
+            const grannyLight = new THREE.PointLight(0xff8800, 1.5, 10);
+            grannyLight.position.set(0, 2.8, 0.4);
+            grannyVisuals.add(grannyLight);
+            granny.userData.light = grannyLight;
+
+            granny.position.set(13 * blockSize, 0, 12 * blockSize);
+            granny.userData.gridX = 13;
+            granny.userData.gridZ = 12;
+            granny.userData.nextGridX = 13;
+            granny.userData.nextGridZ = 12;
+            granny.userData.isMoving = false;
+
+            scene.add(granny);
+        }
+
+        // --- Procedurellt ljud ---
+        function initAudio() {
+            if (audioCtx) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                ambientOsc = audioCtx.createOscillator();
+                ambientOsc.type = 'sawtooth';
+                ambientOsc.frequency.setValueAtTime(45, audioCtx.currentTime); 
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(80, audioCtx.currentTime);
+                ambientGain = audioCtx.createGain();
+                ambientGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                ambientOsc.connect(filter);
+                filter.connect(ambientGain);
+                ambientGain.connect(audioCtx.destination);
+                ambientOsc.start();
+            } catch(e) { console.log(e); }
+        }
+
+        function playScreechSound() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 1.2);
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(1100, now);
+            filter.Q.setValueAtTime(1.5, now);
+            
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(now + 1.2);
+        }
+
+        function playHeartbeatSound() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            
+            const osc1 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(55, now);
+            osc1.frequency.exponentialRampToValueAtTime(15, now + 0.15);
+            gain1.gain.setValueAtTime(0.35, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            osc1.start();
+            osc1.stop(now + 0.15);
+            
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(50, now + 0.16);
+            osc2.frequency.exponentialRampToValueAtTime(15, now + 0.31);
+            gain2.gain.setValueAtTime(0.28, now + 0.16);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.31);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.start();
+            osc2.stop(now + 0.31);
+        }
+
+        function playCabinetDoorSound() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(110, now);
+            osc.frequency.linearRampToValueAtTime(50, now + 0.15);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(now + 0.15);
+        }
+
+        function triggerFloorCreak() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150 + Math.random() * 100, now);
+            const mod = audioCtx.createOscillator();
+            mod.frequency.setValueAtTime(15, now);
+            const modGain = audioCtx.createGain();
+            modGain.gain.setValueAtTime(50, now);
+            const g = audioCtx.createGain();
+            g.gain.setValueAtTime(0.0, now);
+            g.gain.linearRampToValueAtTime(0.08, now + 0.05);
+            g.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+            mod.connect(modGain);
+            modGain.connect(osc.frequency);
+            osc.connect(g);
+            g.connect(audioCtx.destination);
+            mod.start(); osc.start();
+            mod.stop(now + 0.8); osc.stop(now + 0.8);
+        }
+
+        // --- Menysystem & PointerLock ---
+        function startOrResumeGame() {
+            document.body.requestPointerLock = document.body.requestPointerLock || document.body.mozRequestPointerLock;
+            document.body.requestPointerLock();
+            initAudio();
+        }
+
+        function pointerLockChange() {
+            if (document.pointerLockElement === document.body) {
+                if(['menu', 'gameover', 'won'].includes(gameState)) {
+                    resetGame();
+                    gameState = 'playing';
+                    overlay.style.display = 'none';
+                    crosshair.style.display = 'block';
+                    hud.style.display = 'block';
+                    bloodOverlay.style.opacity = '0';
+                    prevTime = performance.now();
+                }
+            } else {
+                if (gameState === 'playing') {
+                    gameState = 'menu';
+                    overlay.style.display = 'flex';
+                    menuTitle.innerText = "PAUSAD";
+                    menuTitle.classList.remove('pulse');
+                    menuTitle.style.color = "#ffffff";
+                    menuText.innerHTML = "<p>Spelet är tillfälligt pausat.</p>";
+                    startBtn.innerText = "Återgå till spelet";
+                    crosshair.style.display = 'none';
+                    hud.style.display = 'none';
+                }
+            }
+        }
+
+        // --- Gömma sig interaktionsfunktioner ---
+        function toggleHiding(cabinet) {
+            if (isHiding) {
+                isHiding = false;
+                playCabinetDoorSound();
+                
+                const exitOffset = new THREE.Vector3(0, 0, 1.3).applyQuaternion(cabinet.quaternion);
+                camera.position.copy(cabinet.position).add(exitOffset);
+                camera.position.y = 1.8;
+
+                velocity.set(0, 0, 0);
+                direction.set(0, 0, 0);
+                moveForward = false;
+                moveBackward = false;
+                moveLeft = false;
+                moveRight = false;
+
+                // ÅTGÄRD: Ge spelaren lite försprång så mormor inte dödar direkt när man kliver ut
+                exitGraceTimer = 1.5;
+
+                hideTimerContainer.style.display = 'none';
+                currentCabinet = null;
+            } else {
+                originalPlayerPos.copy(camera.position); 
+                isHiding = true;
+                currentCabinet = cabinet;
+                hideTimer = maxHideTime;
+                playCabinetDoorSound();
+
+                camera.position.copy(cabinet.position);
+                camera.position.y = 1.8;
+
+                camera.rotation.copy(cabinet.rotation);
+                euler.setFromQuaternion(camera.quaternion);
+
+                hideTimerContainer.style.display = 'block';
+                interactionPrompt.style.display = 'none';
+
+                const dx = camera.position.x - granny.position.x;
+                const dz = camera.position.z - granny.position.z;
+                const distToPlayer = Math.sqrt(dx*dx + dz*dz);
+                
+                // ÅTGÄRD: Om mormor ser dig gömma dig byter hon direkt till sök-läge framför skåpet, istället för att fastna i chase.
+                if (grannyState === 'chase' && distToPlayer < 7.5) {
+                    lastKnownPlayerGrid = { 
+                        x: Math.round(cabinet.position.x / blockSize), 
+                        z: Math.round(cabinet.position.z / blockSize) 
+                    };
+                    grannyState = 'searching';
+                    searchTimer = 6.0;
+                    updateGrannyVisuals();
+                } else {
+                    grannyState = 'patrol';
+                    grannyTargetGrid = getRandomWalkableTile();
+                    updateGrannyVisuals();
+                }
+            }
+        }
+
+        // --- Tangentbords-lyssnare ---
+        function onKeyDown(event) {
+            if (gameState !== 'playing') return;
+
+            if (event.code === 'KeyE') {
+                if (isHiding && currentCabinet) {
+                    toggleHiding(currentCabinet);
+                    return;
+                } else {
+                    let closestCabinet = null;
+                    let closestDist = 2.0; 
+                    cabinets.forEach(cab => {
+                        const dist = camera.position.distanceTo(cab.position);
+                        if (dist < closestDist) {
+                            closestDist = dist;
+                            closestCabinet = cab;
+                        }
+                    });
+                    if (closestCabinet) {
+                        toggleHiding(closestCabinet);
+                        return;
+                    }
+                }
+            }
+
+            if (isHiding) return;
+
+            switch (event.code) {
+                case 'ArrowUp':
+                case 'KeyW': moveForward = true; break;
+                case 'ArrowLeft':
+                case 'KeyA': moveLeft = true; break;
+                case 'ArrowDown':
+                case 'KeyS': moveBackward = true; break;
+                case 'ArrowRight':
+                case 'KeyD': moveRight = true; break;
+            }
+        }
+
+        function onKeyUp(event) {
+            switch (event.code) {
+                case 'ArrowUp':
+                case 'KeyW': moveForward = false; break;
+                case 'ArrowLeft':
+                case 'KeyA': moveLeft = false; break;
+                case 'ArrowDown':
+                case 'KeyS': moveBackward = false; break;
+                case 'ArrowRight':
+                case 'KeyD': moveRight = false; break;
+            }
+        }
+
+        function onMouseMove(event) {
+            if (gameState !== 'playing') return;
+            if (document.pointerLockElement === document.body) {
+                const movementX = event.movementX || event.mozMovementX || 0;
+                const movementY = event.movementY || event.mozMovementY || 0;
+
+                euler.setFromQuaternion(camera.quaternion);
+                
+                if (isHiding) {
+                    euler.y -= movementX * 0.0022; 
+                    const limitX = 0.5;
+                    euler.x -= movementY * 0.0012;
+                    euler.x = Math.max(-limitX, Math.min(limitX, euler.x));
+                } else {
+                    euler.y -= movementX * 0.0022;
+                    euler.x -= movementY * 0.0022;
+                    euler.x = Math.max(-PI_2, Math.min(PI_2, euler.x));
+                }
+                
+                camera.quaternion.setFromEuler(euler);
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- Kollisioner ---
+        function checkPlayerCollision(newX, newZ) {
+            const playerRadius = 0.95; 
+            const halfBlock = blockSize / 2;
+            
+            const minX = Math.floor((newX - playerRadius + halfBlock) / blockSize);
+            const maxX = Math.floor((newX + playerRadius + halfBlock) / blockSize);
+            const minZ = Math.floor((newZ - playerRadius + halfBlock) / blockSize);
+            const maxZ = Math.floor((newZ + playerRadius + halfBlock) / blockSize);
+
+            for (let z = minZ; z <= maxZ; z++) {
+                for (let x = minX; x <= maxX; x++) {
+                    if (z < 0 || z >= mapData.length || x < 0 || x >= mapData[0].length) return true;
+                    const cellType = mapData[z][x];
+                    if (cellType === 1 || (cellType === 2 && keysCollected < totalKeys)) {
+                        const wallCenterX = x * blockSize;
+                        const wallCenterZ = z * blockSize;
+
+                        const closestX = Math.max(wallCenterX - halfBlock, Math.min(newX, wallCenterX + halfBlock));
+                        const closestZ = Math.max(wallCenterZ - halfBlock, Math.min(newZ, wallCenterZ + halfBlock));
+                        
+                        if (((newX - closestX)**2 + (newZ - closestZ)**2) < playerRadius**2) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function getRandomWalkableTile() {
+            let walkable = [];
+            for (let z = 0; z < mapData.length; z++) {
+                for (let x = 0; x < mapData[z].length; x++) {
+                    if ([0, 4].includes(mapData[z][x])) walkable.push({ x, z });
+                }
+            }
+            return walkable[Math.floor(Math.random() * walkable.length)];
+        }
+
+        function hasLineOfSight(x1, z1, x2, z2) {
+            let dx = Math.abs(x2 - x1), dy = Math.abs(z2 - z1);
+            let sx = (x1 < x2) ? 1 : -1, sz = (z1 < z2) ? 1 : -1;
+            let err = dx - dy;
+            let cx = x1, cz = z1;
+            while (true) {
+                if (cx === x2 && cz === z2) return true;
+                if (mapData[cz][cx] === 1 || (mapData[cz][cx] === 2 && keysCollected < totalKeys)) return false;
+                let e2 = 2 * err;
+                if (e2 > -dy) { err -= dy; cx += sx; }
+                if (e2 < dx) { err += dx; cz += sz; }
+            }
+        }
+
+        // --- AI Pathfinding ---
+        function findNextStep(startGridX, startGridZ, targetGridX, targetGridZ) {
+            if (startGridX === targetGridX && startGridZ === targetGridZ) return { x: startGridX, z: startGridZ };
+            const queue = [[startGridX, startGridZ]];
+            const visited = {};
+            visited[`${startGridX},${startGridZ}`] = null;
+            let found = false;
+
+            while (queue.length > 0) {
+                const [cx, cz] = queue.shift();
+                if (cx === targetGridX && cz === targetGridZ) { found = true; break; }
+                const neighbors = [[cx + 1, cz], [cx - 1, cz], [cx, cz + 1], [cx, cz - 1]];
+                for (const [nx, nz] of neighbors) {
+                    if (nx >= 0 && nx < mapData[0].length && nz >= 0 && nz < mapData.length) {
+                        const isWall = mapData[nz][nx] === 1 || (mapData[nz][nx] === 2 && keysCollected < totalKeys);
+                        if (!isWall && visited[`${nx},${nz}`] === undefined) {
+                            visited[`${nx},${nz}`] = [cx, cz];
+                            queue.push([nx, nz]);
+                        }
+                    }
+                }
+            }
+            if (!found) return { x: startGridX, z: startGridZ };
+            let curr = [targetGridX, targetGridZ], prev = null;
+            while (curr !== null) {
+                const parent = visited[`${curr[0]},${curr[1]}`];
+                if (parent === null) break;
+                prev = curr; curr = parent;
+            }
+            return prev ? { x: prev[0], z: prev[1] } : { x: startGridX, z: startGridZ };
+        }
+
+        // --- Vinst / Förlust ---
+        function gameOver() {
+            gameState = 'gameover';
+            document.exitPointerLock();
+            overlay.style.display = 'flex';
+            menuTitle.innerText = "MORMOR FICK DIG";
+            menuTitle.classList.add('pulse');
+            menuTitle.style.color = "#ff0000";
+            menuText.innerHTML = "<p>Mormor var alldeles för nära! Hon ryckte fram ur mörkret med sin blodiga klubba.</p>";
+            startBtn.innerText = "Försök Igen";
+            crosshair.style.display = 'none';
+            hud.style.display = 'none';
+            bloodOverlay.style.opacity = '1';
+            interactionPrompt.style.display = 'none';
+            hideTimerContainer.style.display = 'none';
+            isHiding = false;
+            if (ambientGain) ambientGain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+        }
+
+        function winGame() {
+            if(gameState === 'won') return;
+            gameState = 'won';
+            document.exitPointerLock();
+            overlay.style.display = 'flex';
+            menuTitle.innerText = "DU FLYDDE!";
+            menuTitle.classList.remove('pulse');
+            menuTitle.style.color = "#44ff44";
+            menuText.innerHTML = "<p>Du lyckades låsa upp dörren och sprang ut ur det gamla huset i säkerhet!</p>";
+            startBtn.innerText = "Spela Igen";
+            crosshair.style.display = 'none';
+            hud.style.display = 'none';
+            interactionPrompt.style.display = 'none';
+            hideTimerContainer.style.display = 'none';
+            isHiding = false;
+            startBtn.style.borderColor = "#44ff44";
+            startBtn.style.color = "#44ff44";
+            if (ambientGain) ambientGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+        }
+
+        function resetGame() {
+            keysCollected = 0;
+            keyCountSpan.innerText = keysCollected;
+            for (let z = 0; z < mapData.length; z++) {
+                for (let x = 0; x < mapData[z].length; x++) {
+                    if (mapData[z][x] === 4) {
+                        camera.position.set(x * blockSize, 1.8, z * blockSize);
+                        camera.rotation.set(0, 0, 0);
+                        euler.set(0,0,0);
+                    }
+                }
+            }
+            
+            spawnRandomKeys(); 
+
+            if(exitDoor) exitDoor.material.color.setHex(0x881111);
+            grannyState = 'patrol';
+            grannyTargetGrid = getRandomWalkableTile();
+            granny.position.set(13 * blockSize, 0, 12 * blockSize);
+            granny.userData.gridX = 13; granny.userData.gridZ = 12;
+            granny.userData.nextGridX = 13; granny.userData.nextGridZ = 12;
+            granny.userData.isMoving = false;
+            
+            if (grannyVisuals) grannyVisuals.position.set(0,0,0);
+
+            isHiding = false;
+            currentCabinet = null;
+            interactionPrompt.style.display = 'none';
+            hideTimerContainer.style.display = 'none';
+
+            velocity.set(0, 0, 0);
+            direction.set(0, 0, 0);
+            moveForward = false;
+            moveBackward = false;
+            moveLeft = false;
+            moveRight = false;
+
+            updateGrannyVisuals();
+            startBtn.style.borderColor = "#ff4444";
+            startBtn.style.color = "#ff4444";
+            if (ambientGain && audioCtx) ambientGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        }
+
+        function updateGrannyVisuals() {
+            if (!granny) return;
+            let colorHex = 0xff8800;
+            let statusText = '<span style="color: #44ff44;">Letar efter dig...</span>';
+            if (grannyState === 'chase') {
+                colorHex = 0xff0000;
+                statusText = '<span style="color: #ff3333; font-weight: bold;" class="pulse">JAGAR DIG!</span>';
+            } else if (grannyState === 'searching') {
+                colorHex = 0xeeee00;
+                statusText = '<span style="color: #ffff44;">Söker vid sista spår...</span>';
+            }
+            grannyEyes.forEach(eye => eye.material.color.setHex(colorHex));
+            granny.userData.light.color.setHex(colorHex);
+            stealthStatusSpan.innerHTML = statusText;
+        }
+
+        // --- Spelloopen ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (gameState === 'playing') {
+                const timeNow = performance.now();
+                const delta = (timeNow - prevTime) / 1000;
+                prevTime = timeNow;
+                time += delta;
+
+                if (audioCtx && timeNow > nextCreakTime) {
+                    triggerFloorCreak();
+                    nextCreakTime = timeNow + 8000 + Math.random() * 12000;
+                }
+
+                // --- Gömma sig Nedräkning ---
+                if (isHiding && currentCabinet) {
+                    hideTimer -= delta;
+                    hideTimerVal.innerText = Math.max(0, Math.ceil(hideTimer));
+
+                    if (hideTimer <= 0) toggleHiding(currentCabinet);
+                }
+
+                // --- Spelarrörelse ---
+                if (!isHiding) {
+                    velocity.x -= velocity.x * 10.0 * delta;
+                    velocity.z -= velocity.z * 10.0 * delta;
+
+                    direction.z = Number(moveForward) - Number(moveBackward);
+                    direction.x = Number(moveRight) - Number(moveLeft);
+                    direction.normalize();
+
+                    if (moveForward || moveBackward) velocity.z -= direction.z * playerSpeed * delta;
+                    if (moveLeft || moveRight) velocity.x += direction.x * playerSpeed * delta;
+
+                    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+                    forward.y = 0; forward.normalize();
+                    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+                    right.y = 0; right.normalize();
+
+                    const moveVec = new THREE.Vector3().addScaledVector(forward, -velocity.z).addScaledVector(right, velocity.x);
+                    const nextX = camera.position.x + moveVec.x;
+                    const nextZ = camera.position.z + moveVec.z;
+
+                    if (!checkPlayerCollision(nextX, camera.position.z)) camera.position.x = nextX;
+                    if (!checkPlayerCollision(camera.position.x, nextZ)) camera.position.z = nextZ;
+                    
+                    if (moveForward || moveBackward || moveLeft || moveRight) {
+                        camera.position.y = 1.8 + Math.sin(time * 9.5) * 0.05;
+                    } else {
+                        camera.position.y = 1.8;
+                    }
+
+                    // Sök skåp prompt
+                    let nearCabinet = false;
+                    cabinets.forEach(cab => {
+                        if (camera.position.distanceTo(cab.position) < 2.0) nearCabinet = true;
+                    });
+                    interactionPrompt.style.display = nearCabinet ? 'block' : 'none';
+                    interactionPrompt.innerHTML = "Tryck [E] för att gömma dig";
+                } else {
+                    interactionPrompt.innerHTML = "Tryck [E] för att kliva ut";
+                    interactionPrompt.style.display = 'block';
+                }
+
+                if (keysCollected === totalKeys) {
+                    if (Math.sqrt((camera.position.x - 7 * blockSize)**2 + (camera.position.z - 14 * blockSize)**2) < 2.0) {
+                        winGame();
+                    }
+                }
+
+                // --- Mormors AI ---
+                const pGridX = Math.round(camera.position.x / blockSize);
+                const pGridZ = Math.round(camera.position.z / blockSize);
+                const gGridX = granny.userData.gridX;
+                const gGridZ = granny.userData.gridZ;
+
+                const dxPlayer = camera.position.x - granny.position.x;
+                const dzPlayer = camera.position.z - granny.position.z;
+                const distToPlayer = Math.sqrt(dxPlayer*dxPlayer + dzPlayer*dzPlayer);
+
+                const hasSight = !isHiding && distToPlayer < 22 && hasLineOfSight(gGridX, gGridZ, pGridX, pGridZ);
+                const hasHeard = !isHiding && distToPlayer < 4.5 && (moveForward || moveBackward || moveLeft || moveRight);
+
+                const oldState = grannyState;
+                
+                // ÅTGÄRDAD: Om hon är i chase och du är gömd MÅSTE hon övergå till searching och inte fastna i chase!
+                if (hasSight || hasHeard) {
+                    grannyState = 'chase';
+                    lastKnownPlayerGrid = { x: pGridX, z: pGridZ };
+                } else if (grannyState === 'chase') {
+                    grannyState = 'searching';
+                    searchTimer = 5.0;
+                }
+                
+                if (oldState !== 'chase' && grannyState === 'chase') playScreechSound();
+                if (oldState !== grannyState) updateGrannyVisuals();
+
+                let activeTargetGrid = (grannyState === 'chase' || grannyState === 'searching') ? lastKnownPlayerGrid : grannyTargetGrid;
+
+                const targetWorldX = granny.userData.nextGridX * blockSize;
+                const targetWorldZ = granny.userData.nextGridZ * blockSize;
+                const distToTarget = Math.sqrt((targetWorldX - granny.position.x)**2 + (targetWorldZ - granny.position.z)**2);
+
+                if (distToTarget < 0.05) {
+                    granny.position.x = targetWorldX; granny.position.z = targetWorldZ;
+                    granny.userData.gridX = granny.userData.nextGridX; granny.userData.gridZ = granny.userData.nextGridZ;
+                    granny.userData.isMoving = false;
+                }
+
+                if (!granny.userData.isMoving) {
+                    if (grannyState === 'searching' && granny.userData.gridX === lastKnownPlayerGrid.x && granny.userData.gridZ === lastKnownPlayerGrid.z) {
+                        searchTimer -= delta;
+                        grannyEyes.forEach(eye => eye.material.color.setHex((Math.floor(time * 6) % 2 === 0) ? 0xeeee00 : 0x555500));
+                        granny.rotation.y += 3.5 * delta;
+                        if (searchTimer <= 0) {
+                            grannyState = 'patrol'; grannyTargetGrid = getRandomWalkableTile(); updateGrannyVisuals();
+                        }
+                    } else {
+                        const nextStep = findNextStep(granny.userData.gridX, granny.userData.gridZ, activeTargetGrid.x, activeTargetGrid.z);
+                        if (nextStep.x !== granny.userData.gridX || nextStep.z !== granny.userData.gridZ) {
+                            granny.userData.nextGridX = nextStep.x; granny.userData.nextGridZ = nextStep.z; granny.userData.isMoving = true;
+                        } else if (grannyState === 'patrol') {
+                            grannyTargetGrid = getRandomWalkableTile();
+                        }
+                    }
+                }
+
+                if (granny.userData.isMoving) {
+                    const tX = granny.userData.nextGridX * blockSize, tZ = granny.userData.nextGridZ * blockSize;
+                    const stepDx = tX - granny.position.x, stepDz = tZ - granny.position.z;
+                    const stepDist = Math.sqrt(stepDx*stepDx + stepDz*stepDz);
+                    const speedFactor = grannyState === 'chase' ? 1.75 : (grannyState === 'searching' ? 1.2 : 0.85);
+                    const grannySpeed = (1.3 + (keysCollected * 0.35)) * speedFactor;
+
+                    if (stepDist > 0) {
+                        const moveDistance = grannySpeed * delta;
+                        if (moveDistance >= stepDist) {
+                            granny.position.x = tX; granny.position.z = tZ;
+                            granny.userData.gridX = granny.userData.nextGridX; granny.userData.gridZ = granny.userData.nextGridZ;
+                            granny.userData.isMoving = false;
+                        } else {
+                            granny.position.x += (stepDx / stepDist) * moveDistance; granny.position.z += (stepDz / stepDist) * moveDistance;
+                        }
+                        granny.lookAt(tX, granny.position.y, tZ);
+                    }
+                } else if (grannyState !== 'searching') {
+                    granny.lookAt(camera.position.x, granny.position.y, camera.position.z);
+                }
+
+                if (granny.userData.isMoving) {
+                    granny.position.y = Math.sin(time * 7.0) * 0.12;
+                    grannyClub.rotation.x = 0.5 + Math.sin(time * 7.0) * 0.4;
+                } else {
+                    granny.position.y = 0; grannyClub.rotation.x = 0.5;
+                }
+
+                if (grannyState === 'chase') {
+                    grannyVisuals.position.x = (Math.random() - 0.5) * 0.12;
+                    grannyVisuals.position.z = (Math.random() - 0.5) * 0.12;
+                    grannyVisuals.position.y = (Math.random() - 0.5) * 0.05;
+                } else {
+                    grannyVisuals.position.set(0, 0, 0);
+                }
+
+                // ÅTGÄRDAD: Grace-timer
+                if (exitGraceTimer > 0) exitGraceTimer -= delta;
+
+                // ÅTGÄRDAD: Mormor kan inte döda dig i skåpet, och du har 1.5 sekunders odödlighet när du hoppar ut
+                if (distToPlayer < 1.3 && !isHiding && exitGraceTimer <= 0) {
+                    gameOver();
+                }
+
+                if (grannyState === 'chase' && distToPlayer < 12 && !isHiding) {
+                    const flickerChance = 0.1 + (1 - (distToPlayer / 12)) * 0.25;
+                    if (Math.random() < flickerChance) {
+                        flashLight.intensity = Math.random() < 0.3 ? 0 : Math.random() * 1.5;
+                        handLight.intensity = flashLight.intensity * 0.2;
+                    } else {
+                        flashLight.intensity = 3.8;
+                        handLight.intensity = 0.8;
+                    }
+                } else {
+                    flashLight.intensity = 3.8;
+                    handLight.intensity = 0.8;
+                }
+
+                if (grannyState === 'chase' && distToPlayer < 8 && !isHiding) {
+                    const shakeAmount = (1 - (distToPlayer / 8)) * 0.04;
+                    camera.position.x += (Math.random() - 0.5) * shakeAmount;
+                    camera.position.y += (Math.random() - 0.5) * shakeAmount;
+                    camera.position.z += (Math.random() - 0.5) * shakeAmount;
+                }
+
+                let heartbeatWave = 0;
+                let virtualDist = 18;
+                if (gameState === 'playing' && audioCtx) {
+                    if (isHiding) {
+                        virtualDist = 18 - Math.pow(1 - (hideTimer / maxHideTime), 2) * 16.7; 
+                    } else {
+                        virtualDist = Math.max(1.3, distToPlayer);
+                    }
+
+                    if (virtualDist < 18) {
+                        const t = Math.max(0, Math.min(1, (virtualDist - 1.3) / 16.7));
+                        heartbeatInterval = 0.15 + Math.pow(t, 2) * 1.35; 
+                    } else {
+                        heartbeatInterval = 1.5;
+                    }
+
+                    const elapsedSinceLastBeat = timeNow - lastHeartbeatTime;
+                    if (elapsedSinceLastBeat > heartbeatInterval * 1000) {
+                        playHeartbeatSound();
+                        lastHeartbeatTime = timeNow;
+                    }
+
+                    const beatPhase = (elapsedSinceLastBeat / 1000) / heartbeatInterval;
+                    if (beatPhase < 0.15) {
+                        heartbeatWave = Math.sin((beatPhase / 0.15) * Math.PI) * 0.45; 
+                    } else if (beatPhase > 0.18 && beatPhase < 0.33) {
+                        heartbeatWave = Math.sin(((beatPhase - 0.18) / 0.15) * Math.PI) * 0.35; 
+                    }
+                }
+
+                const baseBloodOpacity = (!isHiding && distToPlayer < 8) ? (1 - (distToPlayer / 8)) * 0.65 : 0;
+                const cabinBlood = isHiding ? Math.pow(1 - (hideTimer / maxHideTime), 2) * 0.8 : 0;
+
+                const dynamicBlood = Math.max(baseBloodOpacity, cabinBlood) + heartbeatWave * (1 - Math.min(virtualDist, 15) / 15);
+                bloodOverlay.style.opacity = Math.min(0.95, dynamicBlood);
+
+                for (let i = keys.length - 1; i >= 0; i--) {
+                    const key = keys[i];
+                    key.rotation.y += 2.5 * delta;
+                    key.position.y = 1.4 + Math.sin(time * 3 + i) * 0.1;
+                    if (Math.sqrt((camera.position.x - key.position.x)**2 + (camera.position.z - key.position.z)**2) < 1.4) {
+                        scene.remove(key); keys.splice(i, 1); keysCollected++;
+                        keyCountSpan.innerText = keysCollected;
+                        
+                        if (audioCtx) {
+                            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
+                            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                            osc.connect(gain); gain.connect(audioCtx.destination);
+                            osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+                        }
+
+                        if (keysCollected === totalKeys) {
+                            keyCountSpan.style.color = "#44ff44";
+                            hud.innerHTML = "Nycklar hittade: 3 / 3 <br><span style='color:#44ff44; font-weight:bold;'>SÖK UPP YTTERDÖRREN!</span><br><div id='stealth-indicator'>Mormor: <span id='stealth-status'></span></div>";
+                            updateGrannyVisuals();
+                            if(exitDoor) {
+                                exitDoor.material.color.setHex(0xff3333);
+                                exitDoor.material.emissive = new THREE.Color(0x550000);
+                            }
+                        }
+                    }
+                }
+            }
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+</body>
+</html>

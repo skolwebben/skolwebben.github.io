@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mario Kart - Flappy Cup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Förhindra skrollning och konstiga gester på mobil */
+        body {
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+        }
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body class="bg-indigo-950 flex flex-col items-center justify-center min-h-screen font-sans">
+
+    <div class="text-center mb-4 z-10 px-4">
+        <h1 class="text-4xl md:text-5xl font-black text-amber-400 drop-shadow-[0_4px_0_rgba(0,0,0,1)] tracking-wider uppercase">Flappy Cup 🏎️💨</h1>
+        <p class="text-indigo-200 mt-2 font-semibold">Klicka, tryck på skärmen eller tryck på Blanksteg för att hoppa!</p>
+    </div>
+
+    <div class="relative shadow-2xl rounded-2xl overflow-hidden border-4 border-yellow-400 bg-sky-400">
+        <!-- Spelytan -->
+        <canvas id="gameCanvas" width="400" height="500"></canvas>
+
+        <!-- UI Overlays -->
+        <!-- Startskärm -->
+        <div id="startScreen" class="absolute inset-0 bg-indigo-950/85 flex flex-col items-center justify-center p-6 text-center transition-all duration-300">
+            <h2 class="text-3xl font-extrabold text-white mb-2">Gör dig redo, Mario!</h2>
+            <p class="text-indigo-200 mb-6 max-w-xs text-sm">Undvik de gröna rören och försök sätta ett nytt banrekord!</p>
+            <button id="startBtn" class="bg-red-600 hover:bg-red-500 text-white font-black py-4 px-10 rounded-full border-b-4 border-red-800 shadow-lg transform transition active:scale-95 text-xl tracking-wider uppercase">
+                STARTA RACE
+            </button>
+        </div>
+
+        <!-- Game Over-skärm -->
+        <div id="gameOverScreen" class="absolute inset-0 bg-red-950/90 flex flex-col items-center justify-center p-6 text-center hidden transition-all duration-300">
+            <h2 class="text-5xl font-black text-yellow-400 mb-2 tracking-wide drop-shadow-[0_3px_0_rgba(0,0,0,1)]">MAMA MIA!</h2>
+            <p class="text-white text-xl mb-6">Du kraschade!</p>
+            <div class="bg-black/40 p-4 rounded-xl mb-6 min-w-[200px]">
+                <p class="text-gray-300 text-sm uppercase font-bold">Poäng</p>
+                <p id="finalScore" class="font-black text-white text-4xl">0</p>
+                <p class="text-gray-300 text-xs uppercase font-bold mt-2">Bästa Rekord</p>
+                <p id="highScoreDisplay" class="font-black text-yellow-400 text-2xl">0</p>
+            </div>
+            <button id="restartBtn" class="bg-green-500 hover:bg-green-400 text-white font-black py-4 px-10 rounded-full border-b-4 border-green-700 shadow-lg transform transition active:scale-95 text-xl tracking-wider uppercase">
+                FÖRSÖK IGEN
+            </button>
+        </div>
+        
+        <!-- Live Poängvisning -->
+        <div id="scoreDisplay" class="absolute top-4 left-0 right-0 text-center text-4xl font-black text-white drop-shadow-[0_3px_0_rgba(0,0,0,1)] pointer-events-none hidden">
+            0
+        </div>
+    </div>
+
+    <div class="mt-4 text-center text-xs text-indigo-300 max-w-xs">
+        Använd <span class="bg-indigo-900 px-2 py-1 rounded text-white font-bold">Musklick</span>, <span class="bg-indigo-900 px-2 py-1 rounded text-white font-bold">Touch</span> eller <span class="bg-indigo-900 px-2 py-1 rounded text-white font-bold">Blanksteg</span> för att kontrollera karten.
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // UI element
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const finalScore = document.getElementById('finalScore');
+        const highScoreDisplay = document.getElementById('highScoreDisplay');
+
+        // Spelvariabler
+        let gameState = 'START'; // START, PLAYING, GAMEOVER
+        let score = 0;
+        let highScore = localStorage.getItem('mario_flappy_highscore') || 0;
+        let frameCount = 0;
+        let animationId;
+        
+        // Partiklar för avgaser (från gokarten)
+        let particles = [];
+
+        // Mario Kart Spelaren
+        const mario = {
+            x: 80,
+            y: canvas.height / 2,
+            width: 44,
+            height: 34,
+            velocity: 0,
+            gravity: 0.35,      // Dragkraft nedåt
+            jumpPower: -5.8,    // Kraften när man hoppar
+            maxVelocity: 8,
+            angle: 0
+        };
+
+        // Hinder (Mario Rör)
+        let pipes = [];
+        const pipeWidth = 65;
+        const pipeGap = 135; // Lagom utmanande hål för en gokart
+        const pipeSpeed = 2.8;
+
+        // --- Moln för bakgrunden ---
+        let clouds = [
+            { x: 50, y: 40, size: 30, speed: 0.2 },
+            { x: 220, y: 80, size: 45, speed: 0.15 },
+            { x: 380, y: 30, size: 25, speed: 0.3 }
+        ];
+
+        // --- Rita Mario Kart (Vektorgrafik på Canvas) ---
+        function drawMario(x, y, angle) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+
+            // 1. Avgassystem som sprutar rök
+            ctx.fillStyle = '#6b7280';
+            ctx.fillRect(-22, 2, 8, 4);
+
+            // 2. Bakspoiler (Red wing)
+            ctx.fillStyle = '#ef4444'; // Mario Röd
+            ctx.fillRect(-24, -12, 6, 12);
+            ctx.fillStyle = '#b91c1c';
+            ctx.fillRect(-26, -16, 10, 4);
+
+            // 3. Kart Chassi (Röd racerbil)
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(-16, 8);
+            ctx.lineTo(16, 10);
+            ctx.lineTo(12, 0);
+            ctx.lineTo(-14, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            // Sidoskydd / Dekal
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(-2, 5, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 8px sans-serif';
+            ctx.fillText('M', -5, 8);
+
+            // 4. Ratt & Styrstag
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(4, 2);
+            ctx.lineTo(0, -6);
+            ctx.stroke();
+            ctx.fillStyle = '#111827';
+            ctx.fillRect(-3, -8, 6, 2);
+
+            // 5. Mario själv (Kropp och huvud)
+            // Blå tröja/overaller
+            ctx.fillStyle = '#2563eb';
+            ctx.fillRect(-8, -8, 8, 8);
+            // Röda ärmar
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(-4, -6, 5, 4);
+            // Vita handskar på ratten
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(1, -5, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ansikte (Hudfärg)
+            ctx.fillStyle = '#fbcfe8';
+            ctx.beginPath();
+            ctx.arc(-1, -13, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Mustasch & Näsa
+            ctx.fillStyle = '#451a03'; // Brun mustasch
+            ctx.fillRect(1, -13, 4, 3);
+            ctx.fillStyle = '#fbcfe8'; // Näsa
+            ctx.beginPath();
+            ctx.arc(4, -13, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Klassisk röd keps
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(-1, -16, 6, Math.PI, 0);
+            ctx.fill();
+            // Skärmen på kepsen
+            ctx.fillRect(-1, -17, 8, 2);
+
+            // M-emblem på kepsen
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(-1, -16, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 6. Gokarthjul (Snygga däck)
+            ctx.fillStyle = '#1f2937'; // Däckfärg
+            // Bakdäck
+            ctx.beginPath();
+            ctx.arc(-14, 10, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#9ca3af'; // Fälg
+            ctx.beginPath();
+            ctx.arc(-14, 10, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Framdäck
+            ctx.fillStyle = '#1f2937';
+            ctx.beginPath();
+            ctx.arc(12, 11, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#9ca3af';
+            ctx.beginPath();
+            ctx.arc(12, 11, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // --- Avgaspartiklar ---
+        function createSmoke(x, y) {
+            particles.push({
+                x: x - 20,
+                y: y + 2,
+                vx: -Math.random() * 2 - 1,
+                vy: (Math.random() - 0.5) * 1,
+                alpha: 1,
+                size: Math.random() * 4 + 2
+            });
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.03;
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function drawParticles() {
+            ctx.save();
+            for (let p of particles) {
+                ctx.fillStyle = `rgba(243, 244, 246, ${p.alpha})`; // Gråvit rök
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // --- Hoppfunktion ---
+        function marioJump() {
+            if (gameState === 'PLAYING') {
+                mario.velocity = mario.jumpPower;
+            }
+        }
+
+        // --- Hantera rör ---
+        function addPipe(xOffset) {
+            const minHeight = 60;
+            const maxHeight = canvas.height - pipeGap - 120; // Håll fritt för vägbanan
+            const topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+            
+            pipes.push({
+                x: xOffset,
+                topHeight: topHeight,
+                passed: false
+            });
+        }
+
+        // --- Nollställ spel ---
+        function resetGame() {
+            mario.y = canvas.height / 3;
+            mario.velocity = 0;
+            mario.angle = 0;
+            pipes = [];
+            particles = [];
+            score = 0;
+            frameCount = 0;
+            scoreDisplay.innerText = score;
+            
+            addPipe(canvas.width + 100);
+        }
+
+        // --- Uppdatera Spelet ---
+        function updateGame() {
+            if (gameState !== 'PLAYING') return;
+
+            // Fysik för Mario
+            mario.velocity += mario.gravity;
+            if (mario.velocity > mario.maxVelocity) {
+                mario.velocity = mario.maxVelocity;
+            }
+            mario.y += mario.velocity;
+
+            // Beräkna vinkel baserat på fallhastighet (gör att karten lutar)
+            mario.angle = mario.velocity * 0.06;
+
+            // Skapa rökpartiklar kontinuerligt
+            if (frameCount % 3 === 0) {
+                createSmoke(mario.x, mario.y);
+            }
+            updateParticles();
+
+            // Hantera rör
+            frameCount++;
+            if (frameCount % 100 === 0) {
+                addPipe(canvas.width);
+            }
+
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                const p = pipes[i];
+                p.x -= pipeSpeed;
+
+                // Passerat och poäng
+                if (!p.passed && p.x + pipeWidth < mario.x) {
+                    p.passed = true;
+                    score++;
+                    scoreDisplay.innerText = score;
+                }
+
+                if (p.x + pipeWidth < 0) {
+                    pipes.splice(i, 1);
+                }
+            }
+
+            // Kollisionshantering tak och väg (Karten kan inte åka genom marken)
+            const roadY = canvas.height - 40; // Vägens höjd
+            if (mario.y - mario.height / 2 < 0) {
+                mario.y = mario.height / 2;
+                mario.velocity = 0;
+            }
+            if (mario.y + mario.height / 2 > roadY) {
+                gameOver();
+            }
+
+            // Kollision med rör (Man dör om man nuddar dem!)
+            for (let i = 0; i < pipes.length; i++) {
+                const p = pipes[i];
+                
+                // Lite snävare kollisionsbox för roligare spelkänsla
+                const marioBox = {
+                    left: mario.x - mario.width / 2 + 6,
+                    right: mario.x + mario.width / 2 - 6,
+                    top: mario.y - mario.height / 2 + 4,
+                    bottom: mario.y + mario.height / 2 - 2
+                };
+
+                const topPipe = {
+                    left: p.x,
+                    right: p.x + pipeWidth,
+                    top: 0,
+                    bottom: p.topHeight
+                };
+
+                const bottomPipe = {
+                    left: p.x,
+                    right: p.x + pipeWidth,
+                    top: p.topHeight + pipeGap,
+                    bottom: roadY
+                };
+
+                // Kolla övre rör krock
+                if (marioBox.right > topPipe.left && marioBox.left < topPipe.right) {
+                    if (marioBox.top < topPipe.bottom) {
+                        gameOver();
+                    }
+                }
+
+                // Kolla undre rör krock
+                if (marioBox.right > bottomPipe.left && marioBox.left < bottomPipe.right) {
+                    if (marioBox.bottom > bottomPipe.top) {
+                        gameOver();
+                    }
+                }
+            }
+
+            // Uppdatera moln i bakgrunden
+            for (let c of clouds) {
+                c.x -= c.speed;
+                if (c.x + c.size * 2 < 0) {
+                    c.x = canvas.width + c.size;
+                    c.y = Math.random() * 120 + 20;
+                }
+            }
+        }
+
+        // --- Rita Grafik ---
+        function drawGame() {
+            // 1. Himmel
+            ctx.fillStyle = '#60a5fa'; // Mario Blå Himmel
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Moln
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            for (let c of clouds) {
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+                ctx.arc(c.x + c.size * 0.6, c.y - c.size * 0.3, c.size * 0.8, 0, Math.PI * 2);
+                ctx.arc(c.x + c.size * 1.2, c.y, c.size * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 3. Berg i bakgrunden
+            ctx.fillStyle = '#34d399'; // Gröna kullar
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            ctx.quadraticCurveTo(80, canvas.height - 120, 180, canvas.height - 40);
+            ctx.quadraticCurveTo(300, canvas.height - 140, canvas.width, canvas.height - 40);
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+
+            // 4. Rita Rören (Klassiska Mario Warp Pipes)
+            for (let i = 0; i < pipes.length; i++) {
+                const p = pipes[i];
+                
+                // Huvudrör Fyllning
+                ctx.fillStyle = '#22c55e'; // Grön
+                ctx.fillRect(p.x, 0, pipeWidth, p.topHeight);
+                
+                // Rör-skuggning
+                ctx.fillStyle = '#15803d'; // Mörkgrön skugga till höger
+                ctx.fillRect(p.x + pipeWidth - 15, 0, 15, p.topHeight);
+                ctx.fillStyle = '#4ade80'; // Ljusgrön glans till vänster
+                ctx.fillRect(p.x + 4, 0, 8, p.topHeight);
+
+                // Svart kantlinje runt rör
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(p.x, -5, pipeWidth, p.topHeight + 5);
+
+                // Övre Rörslut (Krage)
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(p.x - 4, p.topHeight - 24, pipeWidth + 8, 24);
+                ctx.fillStyle = '#15803d';
+                ctx.fillRect(p.x + pipeWidth - 15, p.topHeight - 24, 19, 24);
+                ctx.fillStyle = '#4ade80';
+                ctx.fillRect(p.x, p.topHeight - 24, 8, 24);
+                ctx.strokeRect(p.x - 4, p.topHeight - 24, pipeWidth + 8, 24);
+
+                // --- Undre Rör ---
+                const bottomY = p.topHeight + pipeGap;
+                const bottomHeight = (canvas.height - 40) - bottomY;
+
+                // Huvudrör fyllning
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(p.x, bottomY, pipeWidth, bottomHeight);
+                
+                // Skuggning och glans
+                ctx.fillStyle = '#15803d';
+                ctx.fillRect(p.x + pipeWidth - 15, bottomY, 15, bottomHeight);
+                ctx.fillStyle = '#4ade80';
+                ctx.fillRect(p.x + 4, bottomY, 8, bottomHeight);
+                ctx.strokeRect(p.x, bottomY, pipeWidth, bottomHeight);
+
+                // Undre rörslut (Krage)
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(p.x - 4, bottomY, pipeWidth + 8, 24);
+                ctx.fillStyle = '#15803d';
+                ctx.fillRect(p.x + pipeWidth - 15, bottomY, 19, 24);
+                ctx.fillStyle = '#4ade80';
+                ctx.fillRect(p.x, bottomY, 8, 24);
+                ctx.strokeRect(p.x - 4, bottomY, pipeWidth + 8, 24);
+            }
+
+            // 5. Avgasrök
+            drawParticles();
+
+            // 6. Rita Spelaren (Mario)
+            drawMario(mario.x, mario.y, mario.angle);
+
+            // 7. Vägbanan (Racerbanan i botten)
+            const roadY = canvas.height - 40;
+            ctx.fillStyle = '#4b5563'; // Grå asfalt
+            ctx.fillRect(0, roadY, canvas.width, 40);
+            
+            // Svart kantlinje överst på vägen
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, roadY);
+            ctx.lineTo(canvas.width, roadY);
+            ctx.stroke();
+
+            // Röd-vit-rutig curbs-kant (Klassisk Mario Kart kant)
+            const curbWidth = 20;
+            for (let x = 0; x < canvas.width; x += curbWidth) {
+                // Skiftande färger på curb-mönstret
+                ctx.fillStyle = (Math.floor((x + (frameCount * pipeSpeed)) / curbWidth) % 2 === 0) ? '#ef4444' : '#ffffff';
+                ctx.fillRect(x, roadY, curbWidth, 8);
+            }
+        }
+
+        // --- Game Over trigg ---
+        function gameOver() {
+            gameState = 'GAMEOVER';
+            
+            // Spara highscore i webbläsaren
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('mario_flappy_highscore', highScore);
+            }
+
+            finalScore.innerText = score;
+            highScoreDisplay.innerText = highScore;
+            
+            gameOverScreen.classList.remove('hidden');
+            scoreDisplay.classList.add('hidden');
+        }
+
+        // --- Huvudloop ---
+        function loop() {
+            updateGame();
+            drawGame();
+            animationId = requestAnimationFrame(loop);
+        }
+
+        // --- Event Listeners för styrning (Klick, Touch, Tangentbord) ---
+        
+        // Hopp med klick på spelytan
+        canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            marioJump();
+        });
+
+        // Hopp på mobila touch-skärmar
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            marioJump();
+        });
+
+        // Hopp med blanksteg
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Stoppa sidan från att rulla nedåt
+                marioJump();
+            }
+        });
+
+        // UI knappar
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            scoreDisplay.classList.remove('hidden');
+            gameState = 'PLAYING';
+            resetGame();
+        });
+
+        restartBtn.addEventListener('click', () => {
+            gameOverScreen.classList.add('hidden');
+            scoreDisplay.classList.remove('hidden');
+            gameState = 'PLAYING';
+            resetGame();
+        });
+
+        // Initial rendering för att rita upp banan bakom startskärmen
+        resetGame();
+        loop();
+
+    </script>
+</body>
+</html>
