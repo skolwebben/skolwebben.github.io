@@ -65,9 +65,6 @@
         // Data för hela kalenderåret
         // splitDay: 1=Mån, 2=Tis, 3=Ons, 4=Tor, 5=Fre, 6=Lör, 7=Sön
         const schedule = [
-            { w: 42, y: 2026, owner: "Peter", note: "", holiday: "" },
-            { w: 43, y: 2026, owner: "Tove", note: "", holiday: "" },
-            { w: 44, y: 2026, owner: "Peter", note: "", holiday: "🍂 Höstlov" },
             { w: 45, y: 2026, owner: "Tove", note: "", holiday: "" },
             { w: 46, y: 2026, owner: "Peter", note: "", holiday: "" },
             { w: 47, y: 2026, owner: "Tove", note: "", holiday: "" },
@@ -75,8 +72,8 @@
             { w: 49, y: 2026, owner: "Tove", note: "", holiday: "" },
             { w: 50, y: 2026, owner: "Peter", note: "", holiday: "" },
             { w: 51, y: 2026, owner: "Tove", note: "", holiday: "" },
-            { w: 52, y: 2026, owner: "Peter", nextOwner: "Tove", splitDay: 4, nextOwner2: "Peter", splitDay2: 5, note: "Tove från julafton 13:00 till 25:e 13:00", holiday: "🎄 Jul" },
-            { w: 53, y: 2026, owner: "Tove", note: "", holiday: "🎄 Jullov" },
+            { w: 52, y: 2026, owner: "Peter", nextOwner: "Tove", splitDay: 4, note: "Byte julafton kl 14", holiday: "🎄 Jul" },
+            { w: 53, y: 2026, owner: "Tove", nextOwner: "Peter", splitDay: 7, note: "Byte sön 3 jan kl 12", holiday: "🎄 Jullov" },
             { w: 1, y: 2027, owner: "Peter", note: "", holiday: "🎄 Jullov" },
             { w: 2, y: 2027, owner: "Tove", note: "", holiday: "" },
             { w: 3, y: 2027, owner: "Peter", note: "", holiday: "" },
@@ -89,7 +86,7 @@
             { w: 10, y: 2027, owner: "Tove", note: "", holiday: "" },
             { w: 11, y: 2027, owner: "Peter", note: "", holiday: "" },
             { w: 12, y: 2027, owner: "Tove", note: "", holiday: "🐣 Påsk" },
-            { w: 13, y: 2027, owner: "Peter", note: "", holiday: "🐣 Påsklov" },
+            { w: 13, y: 2027, owner: "Tove", nextOwner: "Peter", splitDay: 4, note: "Byte torsdag kl 20", holiday: "🐣 Påsklov" },
             { w: 14, y: 2027, owner: "Tove", note: "", holiday: "" },
             { w: 15, y: 2027, owner: "Peter", note: "", holiday: "" },
             { w: 16, y: 2027, owner: "Tove", note: "", holiday: "" },
@@ -127,10 +124,8 @@
             { w: 48, y: 2027, owner: "Tove", note: "", holiday: "" },
             { w: 49, y: 2027, owner: "Peter", note: "", holiday: "" },
             { w: 50, y: 2027, owner: "Tove", note: "", holiday: "" },
-            { w: 51, y: 2027, owner: "Peter", nextOwner: "Tove", splitDay: 5, nextOwner2: "Peter", splitDay2: 6, note: "Tove från julafton 13:00 till 25:e 13:00", holiday: "🎄 Jul" },
-            { w: 52, y: 2027, owner: "Tove", note: "", holiday: "🎄 Jullov" },
-            { w: 1, y: 2028, owner: "Peter", note: "", holiday: "🎄 Jullov" },
-            { w: 2, y: 2028, owner: "Tove", note: "", holiday: "" }
+            { w: 51, y: 2027, owner: "Tove", nextOwner: "Peter", splitDay: 5, note: "Byte julafton kl 14", holiday: "🎄 Jul" },
+            { w: 52, y: 2027, owner: "Peter", note: "", holiday: "🎄 Jullov" }
         ];
 
         // Få fram måndagens datum för en specifik ISO-vecka
